@@ -5,13 +5,13 @@ This is a getting started guide to XGBoost4J-Spark on Apache Hadoop YARN support
 Prerequisites
 -------------
 
-* Apache Spark 3.0+ running on YARN supporting GPU scheduling. (e.g.: Spark 3.0, Hadoop-Yarn 3.1.0)
+* Apache Spark 3.0.1+ running on YARN supporting GPU scheduling. (e.g.: Spark 3.0.1, Hadoop-Yarn 3.1.0)
 * Hardware Requirements
   * NVIDIA Pascal™ GPU architecture or better
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
-  * Ubuntu 16.04/CentOS7
-  * CUDA V10.1/10.2/11.0  （CUDA 10.0 is no longer supported）
+  * Ubuntu 18.04, 20.04/CentOS7, CentOS8
+  * CUDA v11.0 (XGBoost v1.3.0-0.1.0 only supports CUDA 11.0 with cuDF v21.06.1)
   * NVIDIA driver compatible with your CUDA
   * NCCL 2.7.8
   * Python 2.7/3.4/3.5/3.6/3.7
