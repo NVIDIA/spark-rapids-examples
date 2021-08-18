@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM nvidia/cuda:10.2-devel-ubuntu18.04
+FROM nvidia/cuda:11.0-devel-ubuntu18.04
 ARG spark_uid=185
 
 # Install java dependencies 

@@ -12,7 +12,7 @@ Prerequisites
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
   * Ubuntu 18.04, 20.04/CentOS7, CentOS8
-  * CUDA v11.0 (XGBoost v1.3.0-0.1.0 only supports CUDA 11.0 with cuDF v21.06.1)
+  * CUDA 11.0-11.4
   * NVIDIA driver compatible with your CUDA
   * NCCL 2.7.8
 
@@ -35,10 +35,10 @@ After you start a Databricks cluster, use the initialization notebooks -- [7.0 n
 The initialization notebooks will perform the following steps:
 
 1. Downloading the CUDA, Rapids-4-spark and Rapids XGBoost4j Spark jars
-    * [*cudf-latest.jar*](https://repo1.maven.org/maven2/ai/rapids/cudf/21.06.1/)
-    * [*xgboost4j-latest.jar*](https://repo1.maven.org/maven2/com/nvidia/xgboost4j_3.0/1.3.0-0.1.0/)
-    * [*xgboost4j-spark-latest.jar*](https://repo1.maven.org/maven2/com/nvidia/xgboost4j-spark_3.0/1.3.0-0.1.0/)
-    * [*rapids-latest.jar*](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/21.06.0/)
+    * [*cudf-latest.jar*](https://repo1.maven.org/maven2/ai/rapids/cudf/21.08.2/)
+    * [*xgboost4j-latest.jar*](https://repo1.maven.org/maven2/com/nvidia/xgboost4j_3.0/1.4.2-0.1.0/)
+    * [*xgboost4j-spark-latest.jar*](https://repo1.maven.org/maven2/com/nvidia/xgboost4j-spark_3.0/1.4.2-0.1.0/)
+    * [*rapids-latest.jar*](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/21.08.0/)
 2. Creating a new directory for initialization script in Databricks file system (DBFS)
 3. Creating an initialization script inside the new directory to copy jars inside Databricks jar directory
 4. Download and decompress the Sample Mortgage Notebook dataset
