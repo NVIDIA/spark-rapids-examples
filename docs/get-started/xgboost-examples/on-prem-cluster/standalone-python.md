@@ -11,10 +11,10 @@ Prerequisites
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
   * Ubuntu 18.04, 20.04/CentOS7, CentOS8
-  * CUDA v11.0 (XGBoost v1.3.0-0.1.0 only supports CUDA 11.0 with cuDF v21.06.1)
+  * CUDA 11.0-11.4
   * NVIDIA driver compatible with your CUDA
   * NCCL 2.7.8
-  * Python 2.7/3.4/3.5/3.6/3.7
+  * Python 3.6+
   * NumPy
 
 The number of GPUs in each host dictates the number of Spark executors that can run there. Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
