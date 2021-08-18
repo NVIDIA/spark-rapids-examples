@@ -1,4 +1,4 @@
-# spark-examples
+# spark-rapids-examples
 
 A repo for all spark examples using Rapids Accelerator including ETL, ML/DL, etc.
 
