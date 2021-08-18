@@ -5,8 +5,8 @@
 Follow these steps to package the Python zip file:
 
 ``` bash
-git clone https://gitlab-master.nvidia.com/nvspark/spark-examples2.git
-cd spark-examples2/scripts/building
+git clone https://github.com/NVIDIA/spark-rapids-examples.git
+cd spark-rapids-examples/scripts/building
 sh python_build.sh
 ```
 
