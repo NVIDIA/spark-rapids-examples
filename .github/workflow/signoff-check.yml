@@ -29,6 +29,6 @@ jobs:
         uses: ./.github/workflows/signoff-check
         env:
           OWNER: NVIDIA
-          REPO_NAME: spark-xgboost-examples 
+          REPO_NAME: spark-rapids-examples 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_NUMBER: ${{ github.event.number }}
