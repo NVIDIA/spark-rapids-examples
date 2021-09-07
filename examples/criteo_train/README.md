@@ -22,7 +22,7 @@ nvidia-docker build -f Dockerfile -t nvspark/tf-hvd-train:0.1 .
  --device /dev/infiniband \
  --privileged \
  -v /raid/spark-team/criteo/parquet:/data/parquet \
- -it nvspark/tf-hvd-train-pure:0.1 bash
+ -it nvspark/tf-hvd-train:0.1 bash
 ```
 
 3. when you are inside the container
