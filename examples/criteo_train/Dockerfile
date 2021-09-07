@@ -147,7 +147,7 @@ RUN pip install pandas sklearn ortools nvtx-plugins pydot && \
 
 # tf-nightly for performance test
 # more details: https://github.com/tensorflow/tensorflow/issues/44194
-RUN pip uninstall tensorflow -y; pip install tf-nightly==2.7.0.dev20210802
+RUN pip uninstall tensorflow -y; pip install tf-nightly==2.7.0.dev20210722
 
 RUN mkdir -p /usr/local/nvidia/lib64 && \
     ln -s /usr/local/cuda/lib64/libcusolver.so /usr/local/nvidia/lib64/libcusolver.so.10
