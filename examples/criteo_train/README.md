@@ -2,6 +2,8 @@
 
 ETL and deep learning training of the Criteo 1TB Click Logs dataset. Users can prepare their dataset accordingly.
 
+_Please note: The following demo is dedicated for DGX-2 machine(with V100 GPUs)._ We optimized the whole workflow on DGX-2 and it's not guaranteed that it can run successfully on other type of machines.
+
 ## Dataset
 
 We are using the preprocessed data from DLRM. All 40 columns(1 label + 39 features) are already numeric.
@@ -34,6 +36,35 @@ cd /workspace
 # start training
 ./submit.sh
 ```
+
+## Notebook demo
+
+We also provide a Notebook demo for quick test, user can set it up by the following command:
+
+```bash
+SPARK_HOME= $PATH_TO_SPARK_HOME
+SPARK_URL=spark://$SPARK_MASTER_IP:7077
+export PYSPARK_DRIVER_PYTHON=jupyter
+export PYSPARK_DRIVER_PYTHON_OPTS='notebook'
+
+$SPARK_HOME/bin/pyspark --master $SPARK_URL --deploy-mode client \
+--driver-memory 20G \
+--executor-memory 50G \
+--executor-cores 6 \
+--conf spark.cores.max=96 \
+--conf spark.task.cpus=6 \
+--conf spark.locality.wait=0 \
+--conf spark.yarn.maxAppAttempts=1 \
+--conf spark.sql.shuffle.partitions=4 \
+--conf spark.sql.files.maxPartitionBytes=1024m \
+--conf spark.sql.warehouse.dir=$OUT \
+--conf spark.task.resource.gpu.amount=0.08 \
+--conf spark.executor.resource.gpu.amount=1 \
+--conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
+--files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh
+
+```
+
 
 ## Note: 
 

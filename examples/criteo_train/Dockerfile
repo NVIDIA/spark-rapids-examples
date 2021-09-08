@@ -188,7 +188,7 @@ RUN pip uninstall pandas -y; pip install pandas==1.1.5
 RUN echo $(du -h --max-depth=1 /)
 
 
-# install spark-3.0.2-bin-hadoop3.2
+# install spark-3.1.2-bin-hadoop3.2
 RUN wget \
     https://mirror-hk.koddos.net/apache/spark/spark-3.1.2/spark-3.1.2-bin-hadoop3.2.tgz \
     && tar -xzf spark-3.1.2-bin-hadoop3.2.tgz -C /opt/ \
