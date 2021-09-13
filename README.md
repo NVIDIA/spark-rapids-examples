@@ -67,7 +67,7 @@ build/sbt "test:runMain com.databricks.spark.sql.perf.tpcds.GenTPCDSData -d /dat
 You will see the [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) can give speedups of up to 10x over the CPU, and in some cases up to 80x.
 It is easy to compare the [microbenchmarks on CPU](/examples/micro-benchmarks/notebooks/micro-benchmarks-cpu.ipynb) and [GPU](/examples/micro-benchmarks/notebooks/micro-benchmarks-gpu.ipynb) side by side.
 You can see some queries are faster in the second time, it can be caused by many reasons such as JVM JIT or initialization overhead or caching input data in the OS page cache, etc.
-You can get a clear and visual impression of the improved performance with or without the benefits of post-running. The improved performance is influenced by many conditions, including the dataset scale factors or the GPU card
+You can get a clear and visual impression of the improved performance with or without the benefits of post-running. The improved performance is influenced by many conditions, including the dataset's scale factors or the GPU card.
 If the application running time is too long or failed, you can run the queries on a smaller dataset.
 
 ## API
