@@ -68,7 +68,7 @@ $SPARK_HOME/bin/pyspark --master $SPARK_URL --deploy-mode client \
 
 ## Note: 
 
-if you only want to try in a node with only 1 GPU, please modify the GPU number per worker in `$SPARK_HOME/conf/spark-env.sh` before you launch spark workers becasue the docker image is targeted for DGX-2 with 16 GPUs
+If you want to try in a node with only 1 GPU, please modify the GPU number per worker in `$SPARK_HOME/conf/spark-env.sh` before you launch spark workers becasue the docker image is targeted for DGX-2 with 16 GPUs
 
 ## file decription:
 
