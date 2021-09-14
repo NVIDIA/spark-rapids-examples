@@ -9,7 +9,7 @@ We describe main API changes for gpu accelerated algorithms:
 
 
 ```scala
-val pca = new org.apache.spark.ml.feature.PCA()
+val pca = new com.nvidia.ml.feature.PCA()
   .setInputCol("feature")
   .setOutputCol("feature_value_3d")
   .setK(3)
