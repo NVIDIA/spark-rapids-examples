@@ -12,6 +12,10 @@ It includes docs and example applications that demonstrate the RAPIDS.ai GPU-acc
 - Taxi: [Scala](/examples/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](/examples/taxi/python/com/nvidia/spark/examples/taxi)
 - Agaricus: [Scala](/examples/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](/examples/agaricus/python/com/nvidia/spark/examples/agaricus)
 
+### 2. TensorFlow training on Horovod Spark example
+
+- Criteo: [Python](/examples/criteo_train/criteo_keras.py)
+
 ## Getting Started Guides
 
 ### 1. Xgboost examples guide
@@ -45,6 +49,10 @@ which is used in the guides below.
 These examples use default parameters for demo purposes. For a full list please see "Supported Parameters" 
 for [Scala](/examples/app-parameters/supported_xgboost_parameters_scala.md) 
 or [Python](/examples/app-parameters/supported_xgboost_parameters_python.md)
+
+### 2. TensorFlow training on Horovod Spark example guide
+
+Please follow the README guide here: [README](examples/criteo_train/README.md)
 
 ## API
 ### 1. Xgboost examples API
