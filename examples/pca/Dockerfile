@@ -7,13 +7,17 @@ RUN apt-get install -y wget ninja-build git
 ENV PATH="/root/miniconda3/bin:${PATH}"
 ARG PATH="/root/miniconda3/bin:${PATH}"
 RUN wget --quiet \
-    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    https://repo.anaconda.com/miniconda/Miniconda3-py38_4.10.3-Linux-x86_64.sh \
     && mkdir /root/.conda \
-    && bash Miniconda3-latest-Linux-x86_64.sh -b \
-    && rm -f Miniconda3-latest-Linux-x86_64.sh
+    && bash Miniconda3-py38_4.10.3-Linux-x86_64.sh -b \
+    && rm -f Miniconda3-py38_4.10.3-Linux-x86_64.sh \
+    && conda init
 
+SHELL ["conda", "run", "--no-capture-output", "-n", "base", "/bin/bash", "-c"]
+RUN echo $PATH
+RUN echo $CONDA_PREFIX
 RUN conda --version
-   
+
 RUN conda install openjdk=8 maven=3.8.1 -y
 
 RUN wget --quiet \
@@ -23,13 +27,14 @@ RUN wget --quiet \
 
 ENV PATH="/cmake-3.21.3-linux-x86_64/bin:${PATH}"
 
-RUN git clone --recurse-submodules https://github.com/rapidsai/rmm.git \
+RUN git clone --recurse-submodules -b branch-21.10 https://github.com/rapidsai/rmm.git \
     && cd rmm \
     && mkdir build \
     && cd build \
     && cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
     && make -j \
-    && make install
+    && make install \
+    && cp -r ./_deps/spdlog-src/include/spdlog /root/miniconda3/include/
 
 RUN git clone https://github.com/rapidsai/raft.git
 
@@ -38,9 +43,11 @@ ENV RMM_PATH=/rmm
 
 RUN git clone https://github.com/NVIDIA/spark-rapids-ml.git \
     && cd spark-rapids-ml \
-    && mvn clean package install
+    && mvn clean
+RUN cd /spark-rapids-ml \
+    && mvn install -DskipTests
 
-ADD scala /workspace/
+ADD scala /workspace/scala
 ADD pom.xml /workspace/
 
 RUN cd /workspace/ \
@@ -51,7 +58,7 @@ RUN wget --quiet \
     https://archive.apache.org/dist/spark/spark-3.1.2/spark-3.1.2-bin-hadoop3.2.tgz \
     && tar -xzf spark-3.1.2-bin-hadoop3.2.tgz -C /opt/ \
     && rm spark-3.1.2-bin-hadoop3.2.tgz
-
+ENV SPARK_HOME=/opt/spark-3.1.2-bin-hadoop3.2
 # add spark env to conf
 ADD spark-env.sh /opt/spark-3.1.2-bin-hadoop3.2/conf/
 ADD start-spark.sh /workspace/
