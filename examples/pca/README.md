@@ -62,3 +62,25 @@ It is assumed that a Standalone Spark cluster has been set up, the `SPARK_MASTER
     ```
 
     Please choose "spark-rapids-ml-pca" as your notebook kernel.
+
+
+
+## Submit app jar
+
+We also provide the spark-submit way to run the PCA example. We suggest using Dockerfile to get a clean runnning environment:
+
+```bash
+docker build -f Dockerfile -t nvspark/pca:0.1 .
+```
+Then get into the container of this image(`nvidia-docker` is required as we will use GPU then):
+```bash
+nvidia-docker run -it nvspark/pca:0.1 bash
+```
+
+In this docker image, we assume that user has 2 GPUs in his machine. If you are not the condition, please modify the `-Dspark.worker.resource.gpu.amount` in `spark-env.sh` according to your actual environment.
+
+Then just start the standalone Spark and submit the job:
+``` bash
+./start-spark.sh
+./spark-submit.sh
+```

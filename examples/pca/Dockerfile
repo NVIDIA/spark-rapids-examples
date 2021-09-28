@@ -17,28 +17,28 @@ RUN conda --version
 
 RUN conda install openjdk=8 maven=3.8.1 -y
 
-# RUN wget --quiet \
-#     https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-linux-x86_64.tar.gz \
-#     && tar -xzf cmake-3.21.3-linux-x86_64.tar.gz \
-#     && rm -rf cmake-3.21.3-linux-x86_64.tar.gz \
+RUN wget --quiet \
+    https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-linux-x86_64.tar.gz \
+    && tar -xzf cmake-3.21.3-linux-x86_64.tar.gz \
+    && rm -rf cmake-3.21.3-linux-x86_64.tar.gz \
 
-# ENV PATH="/cmake-3.21.3-linux-x86_64/bin:${PATH}"
+ENV PATH="/cmake-3.21.3-linux-x86_64/bin:${PATH}"
 
-# RUN git clone --recurse-submodules https://github.com/rapidsai/rmm.git \
-#     && cd rmm
-#     && mkdir build
-#     && cd build
-#     && cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
-#     && make -j
-#     && make install
-# RUN git clone https://github.com/rapidsai/raft.git
+RUN git clone --recurse-submodules https://github.com/rapidsai/rmm.git \
+    && cd rmm
+    && mkdir build
+    && cd build
+    && cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+    && make -j
+    && make install
+RUN git clone https://github.com/rapidsai/raft.git
 
-# ENV RAFT_PATH=/raft
-# ENV RMM_PATH=/rmm
+ENV RAFT_PATH=/raft
+ENV RMM_PATH=/rmm
 
-# RUN git clone https://github.com/NVIDIA/spark-rapids-ml.git \
-#     && cd spark-rapids-ml \
-#     && mvn clean package install
+RUN git clone https://github.com/NVIDIA/spark-rapids-ml.git \
+    && cd spark-rapids-ml \
+    && mvn clean package install
 
 ADD scala /workspace/
 ADD pom.xml /workspace/
