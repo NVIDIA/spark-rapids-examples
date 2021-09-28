@@ -14,13 +14,12 @@ RUN wget --quiet \
 
 RUN conda --version
    
-
 RUN conda install openjdk=8 maven=3.8.1 -y
 
 RUN wget --quiet \
     https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-linux-x86_64.tar.gz \
     && tar -xzf cmake-3.21.3-linux-x86_64.tar.gz \
-    && rm -rf cmake-3.21.3-linux-x86_64.tar.gz \
+    && rm -rf cmake-3.21.3-linux-x86_64.tar.gz
 
 ENV PATH="/cmake-3.21.3-linux-x86_64/bin:${PATH}"
 
