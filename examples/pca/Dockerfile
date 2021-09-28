@@ -30,8 +30,8 @@ RUN git clone --recurse-submodules https://github.com/rapidsai/rmm.git \
     && cd build \
     && cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
     && make -j \
-    && make install \
-    
+    && make install
+
 RUN git clone https://github.com/rapidsai/raft.git
 
 ENV RAFT_PATH=/raft
