@@ -25,12 +25,13 @@ RUN wget --quiet \
 ENV PATH="/cmake-3.21.3-linux-x86_64/bin:${PATH}"
 
 RUN git clone --recurse-submodules https://github.com/rapidsai/rmm.git \
-    && cd rmm
-    && mkdir build
-    && cd build
-    && cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
-    && make -j
-    && make install
+    && cd rmm \
+    && mkdir build \
+    && cd build \
+    && cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+    && make -j \
+    && make install \
+    
 RUN git clone https://github.com/rapidsai/raft.git
 
 ENV RAFT_PATH=/raft
