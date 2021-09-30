@@ -36,7 +36,7 @@ RUN git clone --recurse-submodules -b branch-21.10 https://github.com/rapidsai/r
     && make install \
     && cp -r ./_deps/spdlog-src/include/spdlog /root/miniconda3/include/
 
-RUN git clone https://github.com/rapidsai/raft.git
+RUN git clone -b branch-21.10 https://github.com/rapidsai/raft.git
 
 ENV RAFT_PATH=/raft
 ENV RMM_PATH=/rmm
