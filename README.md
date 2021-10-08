@@ -2,7 +2,7 @@
 
 A repo for all spark examples using Rapids Accelerator including ETL, ML/DL, etc.
 
-It includes docs and example applications that demonstrate the RAPIDS.ai GPU-accelerated XGBoost-Spark project. It now supports Spark 3.0.0+
+It includes docs and example applications that demonstrate the RAPIDS.ai GPU-accelerated XGBoost-Spark and Spark-ML(PCA Algorithm) projects. It now supports Spark 3.0.0+.
 
 ## Examples
 
@@ -11,6 +11,8 @@ It includes docs and example applications that demonstrate the RAPIDS.ai GPU-acc
 - Mortgage: [Scala](/examples/mortgage/scala/src/com/nvidia/spark/examples/mortgage), [Python](/examples/mortgage/python/com/nvidia/spark/examples/mortgage)
 - Taxi: [Scala](/examples/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](/examples/taxi/python/com/nvidia/spark/examples/taxi)
 - Agaricus: [Scala](/examples/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](/examples/agaricus/python/com/nvidia/spark/examples/agaricus)
+### 2. Spark-ML examples
+- PCA: [Scala](/examples/pca)
 
 ### 2. TensorFlow training on Horovod Spark example
 
@@ -53,6 +55,9 @@ or [Python](/examples/app-parameters/supported_xgboost_parameters_python.md)
 ### 2. TensorFlow training on Horovod Spark example guide
 
 Please follow the README guide here: [README](examples/criteo_train/README.md)
+
+### 3. PCA example guide
+Please follow the README guide here: [README](/examples/pca/README.md)
 
 ## API
 ### 1. Xgboost examples API

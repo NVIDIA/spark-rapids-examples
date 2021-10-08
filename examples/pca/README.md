@@ -6,6 +6,15 @@ This is an example of the GPU accelerated PCA algorithm running on Spark.
 
 Please refer to [README](https://github.com/NVIDIA/spark-rapids-ml#readme) in the [spark-rapids-ml](https://github.com/NVIDIA/spark-rapids-ml) github repository for build instructions and API usage.
 
+## Get jars from Maven Central
+
+User can also download the release jar from Maven central. Due to incompatible cuda libraries, we provide 2 jars for different cuda environments:
+
+For `cuda11.0` : [rapids-4-spark-ml_2.12-21.10.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/21.10.0/rapids-4-spark-ml_2.12-21.10.0-cuda11.jar)
+
+For `cuda11.1` to `cuda11.4` : [rapids-4-spark-ml_2.12-21.10.0-cuda11-2.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/21.10.0/rapids-4-spark-ml_2.12-21.10.0-cuda11-2.jar)
+
+
 ## Sample code
 
 User can find sample scala code in [`main.scala`](./main.scala). In the sample code, we will generate random data with 2048 feature dimensions. Then we use PCA to reduce number of features to 3.
