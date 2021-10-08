@@ -11,12 +11,13 @@ It includes docs and example applications that demonstrate the RAPIDS.ai GPU-acc
 - Mortgage: [Scala](/examples/mortgage/scala/src/com/nvidia/spark/examples/mortgage), [Python](/examples/mortgage/python/com/nvidia/spark/examples/mortgage)
 - Taxi: [Scala](/examples/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](/examples/taxi/python/com/nvidia/spark/examples/taxi)
 - Agaricus: [Scala](/examples/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](/examples/agaricus/python/com/nvidia/spark/examples/agaricus)
-### 2. Spark-ML examples
-- PCA: [Scala](/examples/pca)
 
 ### 2. TensorFlow training on Horovod Spark example
 
 - Criteo: [Python](/examples/criteo_train/criteo_keras.py)
+
+### 3. Spark-ML examples
+- PCA: [Scala](/examples/pca)
 
 ## Getting Started Guides
 
