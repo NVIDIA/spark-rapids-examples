@@ -45,7 +45,7 @@ RUN wget --quiet \
 
 ENV PATH="/cmake-3.21.3-linux-x86_64/bin:${PATH}"
 
-RUN git clone --recurse-submodules -b branch-21.10 https://github.com/rapidsai/rmm.git \
+RUN git clone --recurse-submodules -b ${BRANCH} https://github.com/rapidsai/rmm.git \
     && cd rmm \
     && mkdir build \
     && cd build \
@@ -54,7 +54,7 @@ RUN git clone --recurse-submodules -b branch-21.10 https://github.com/rapidsai/r
     && make install \
     && cp -r ./_deps/spdlog-src/include/spdlog /root/miniconda3/include/
 
-RUN git clone -b branch-21.10 https://github.com/rapidsai/raft.git
+RUN git clone -b ${BRANCH} https://github.com/rapidsai/raft.git
 
 ENV RAFT_PATH=/raft
 ENV RMM_PATH=/rmm
