@@ -17,6 +17,7 @@
 
 ARG CUDA_VER=11.2.2
 FROM nvidia/cuda:${CUDA_VER}-devel-ubuntu20.04
+ARG BRANCH=branch-21.10
 
 RUN apt-get update
 RUN apt-get install -y wget ninja-build git
@@ -58,7 +59,7 @@ RUN git clone -b branch-21.10 https://github.com/rapidsai/raft.git
 ENV RAFT_PATH=/raft
 ENV RMM_PATH=/rmm
 
-RUN git clone https://github.com/NVIDIA/spark-rapids-ml.git \
+RUN git clone -b ${BRANCH} https://github.com/NVIDIA/spark-rapids-ml.git \
     && cd spark-rapids-ml \
     && mvn clean
 RUN cd /spark-rapids-ml \
