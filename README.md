@@ -2,7 +2,7 @@
 
 A repo for all spark examples using Rapids Accelerator including ETL, ML/DL, etc.
 
-It includes docs and example applications that demonstrate the RAPIDS.ai GPU-accelerated XGBoost-Spark project. It now supports Spark 3.0.0+
+It includes docs and example applications that demonstrate the RAPIDS.ai GPU-accelerated XGBoost-Spark and Spark-ML(PCA Algorithm) projects. It now supports Spark 3.0.0+.
 
 ## Examples
 
@@ -15,6 +15,9 @@ It includes docs and example applications that demonstrate the RAPIDS.ai GPU-acc
 ### 2. TensorFlow training on Horovod Spark example
 
 - Criteo: [Python](/examples/criteo_train/criteo_keras.py)
+
+### 3. Spark-ML examples
+- PCA: [Scala](/examples/pca)
 
 ## Getting Started Guides
 
@@ -53,6 +56,9 @@ or [Python](/examples/app-parameters/supported_xgboost_parameters_python.md)
 ### 2. TensorFlow training on Horovod Spark example guide
 
 Please follow the README guide here: [README](examples/criteo_train/README.md)
+
+### 3. PCA example guide
+Please follow the README guide here: [README](/examples/pca/README.md)
 
 ## API
 ### 1. Xgboost examples API
