@@ -3,7 +3,7 @@
 A repo for all spark examples using Rapids Accelerator including ETL, ML/DL, etc.
 
 It includes docs and example applications that demonstrate the RAPIDS.ai GPU-accelerated XGBoost-Spark and Spark-ML(PCA Algorithm) projects. It now supports Spark 3.0.0+.
-It is recommended to set up Spark Cluster with jdk8.
+It is recommended to set up Spark Cluster with JDK8.
 
 ## Examples
 
