@@ -12,17 +12,17 @@ It includes docs and example applications that demonstrate the RAPIDS.ai GPU-acc
 - Taxi: [Scala](/examples/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](/examples/taxi/python/com/nvidia/spark/examples/taxi)
 - Agaricus: [Scala](/examples/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](/examples/agaricus/python/com/nvidia/spark/examples/agaricus)
 
-### 2. TensorFlow training on Horovod Spark example
-
-- Criteo: [Python](/examples/criteo_train/criteo_keras.py)
-
-### 3. Spark-ML examples
-- PCA: [Scala](/examples/pca)
-
 ### 2. Microbenchmarks
 
 - [Microbenchmarks on CPU](/examples/micro-benchmarks/notebooks/micro-benchmarks-cpu.ipynb)
 - [Microbenchmarks on GPU](/examples/micro-benchmarks/notebooks/micro-benchmarks-gpu.ipynb)
+
+### 3. TensorFlow training on Horovod Spark example
+
+- Criteo: [Python](/examples/criteo_train/criteo_keras.py)
+
+### 4. Spark-ML examples
+- PCA: [Scala](/examples/pca)
 
 ## Getting Started Guides
 
@@ -58,13 +58,6 @@ These examples use default parameters for demo purposes. For a full list please 
 for [Scala](/examples/app-parameters/supported_xgboost_parameters_scala.md) 
 or [Python](/examples/app-parameters/supported_xgboost_parameters_python.md)
 
-### 2. TensorFlow training on Horovod Spark example guide
-
-Please follow the README guide here: [README](examples/criteo_train/README.md)
-
-### 3. PCA example guide
-Please follow the README guide here: [README](/examples/pca/README.md)
-
 ### 2. Microbenchmark guide
 
 The microbenchmark on [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) is to identify, 
@@ -87,6 +80,13 @@ You can see some queries are faster in the second time, it can be caused by many
 You can get a clear and visual impression of the improved performance with or without the benefits of post-running.
 The improved performance is influenced by many conditions, including the dataset's scale factors or the GPU card.
 If the application ran for too long or even failed, you can run the queries on a smaller dataset.
+
+### 3. TensorFlow training on Horovod Spark example guide
+
+Please follow the README guide here: [README](examples/criteo_train/README.md)
+
+### 4. PCA example guide
+Please follow the README guide here: [README](/examples/pca/README.md)
 
 ## API
 ### 1. Xgboost examples API
