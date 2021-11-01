@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/extra
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG RELEASE=true
-ARG RMM_VER=v21.08.00
-ARG CUDF_VER=v21.08.03
+ARG RMM_VER=v21.10.00
+ARG CUDF_VER=v21.10.00
 ARG NVTAB_VER=v0.6.0
 ARG SM="60;61;70;75;80"
 
