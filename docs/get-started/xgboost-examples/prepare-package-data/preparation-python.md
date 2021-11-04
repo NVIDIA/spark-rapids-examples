@@ -21,7 +21,7 @@ Following this [guide](/docs/get-started/xgboost-examples/building-sample-apps/p
 
 ### Download dataset
 
-You need to download mortgage dataset to `/opt/xgboost` from this [site](https://rapidsai.github.io/demos/datasets/mortgage-data)
+You need to download mortgage dataset to `/opt/xgboost` from this [site](https://docs.rapids.ai/datasets/mortgage-data)
 
 ### Setup environments
 
