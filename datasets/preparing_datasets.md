@@ -3,7 +3,7 @@ Preparing Datasets
 
 ## Mortgage Example
 1. Setup [Apache Toree Jupyter notebook](/docs/get-started/xgboost-examples/notebook/toree.md).
-2. Download raw data from: https://rapidsai.github.io/demos/datasets/mortgage-data
+2. Download raw data from: https://docs.rapids.ai/datasets/mortgage-data
 3. Run [Mortgage ETL job](/examples/mortgage/notebooks/python/MortgageETL.ipynb).
 
 ## Taxi Example
