@@ -2,7 +2,7 @@
 
 A repo for Spark related utilities and examples using the Rapids Accelerator,including ETL, ML/DL, etc.
 
-It include utilities related to running Spark using the Rapids Accelerator, docs and example applications that
+It includes utilities related to running Spark using the Rapids Accelerator, docs and example applications that
 demonstrate the RAPIDS.ai GPU-accelerated Spark and Spark-ML(PCA Algorithm) projects.
 It now supports Spark 3.0.0+.  It is recommended to set up Spark Cluster with JDK8.
 
