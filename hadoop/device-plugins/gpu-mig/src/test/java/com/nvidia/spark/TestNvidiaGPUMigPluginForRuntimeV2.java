@@ -123,6 +123,76 @@ public class TestNvidiaGPUMigPluginForRuntimeV2 {
     }
 
     @Test
+    public void testMultiGPUsEnvPrecedence() throws Exception {
+        NvidiaGPUMigPluginForRuntimeV2 plugin = new NvidiaGPUMigPluginForRuntimeV2();
+        Set<Device> allocatedDevices = new TreeSet<>();
+
+        DeviceRuntimeSpec spec = plugin.onDevicesAllocated(allocatedDevices,
+                YarnRuntimeType.RUNTIME_DEFAULT);
+        Assert.assertNull(spec);
+
+        // allocate one device
+        allocatedDevices.add(Device.Builder.newInstance()
+                .setId(0).setHealthy(true)
+                .setBusID("00000000:04:00.0")
+                .setDevPath("/dev/nvidia0")
+                .setMajorNumber(195)
+                .setMinorNumber(0).build());
+
+        // two device allowed
+        allocatedDevices.add(Device.Builder.newInstance()
+                .setId(0).setHealthy(true)
+                .setBusID("00000000:82:00.0")
+                .setDevPath("/dev/nvidia1")
+                .setMajorNumber(195)
+                .setMinorNumber(1).build());
+
+        // test that env variable takes presedence
+        plugin.setShouldThrowOnMultipleGPUFromConf(true);
+        Map<String, String> envs = new HashMap<>();
+        envs.put("NVIDIA_MIG_PLUGIN_THROW_ON_MULTIPLE_GPUS", "false");
+        // note the allocated devices doesn't matter here, just the env passed in
+        plugin.allocateDevices(allocatedDevices, 2, envs);
+        spec = plugin.onDevicesAllocated(allocatedDevices,
+                YarnRuntimeType.RUNTIME_DOCKER);
+        Assert.assertEquals("nvidia", spec.getContainerRuntime());
+        Assert.assertEquals("0,1", spec.getEnvs().get("NVIDIA_VISIBLE_DEVICES"));
+    }
+
+    @Test
+    public void testMultiGPUsConf() throws Exception {
+        NvidiaGPUMigPluginForRuntimeV2 plugin = new NvidiaGPUMigPluginForRuntimeV2();
+        Set<Device> allocatedDevices = new TreeSet<>();
+
+        DeviceRuntimeSpec spec = plugin.onDevicesAllocated(allocatedDevices,
+                YarnRuntimeType.RUNTIME_DEFAULT);
+        Assert.assertNull(spec);
+
+        // allocate one device
+        allocatedDevices.add(Device.Builder.newInstance()
+                .setId(0).setHealthy(true)
+                .setBusID("00000000:04:00.0")
+                .setDevPath("/dev/nvidia0")
+                .setMajorNumber(195)
+                .setMinorNumber(0).build());
+
+        // two device allowed
+        allocatedDevices.add(Device.Builder.newInstance()
+                .setId(0).setHealthy(true)
+                .setBusID("00000000:82:00.0")
+                .setDevPath("/dev/nvidia1")
+                .setMajorNumber(195)
+                .setMinorNumber(1).build());
+
+        // test that env variable takes presedence
+        plugin.setShouldThrowOnMultipleGPUFromConf(false);
+        spec = plugin.onDevicesAllocated(allocatedDevices,
+                YarnRuntimeType.RUNTIME_DOCKER);
+        Assert.assertEquals("nvidia", spec.getContainerRuntime());
+        Assert.assertEquals("0,1", spec.getEnvs().get("NVIDIA_VISIBLE_DEVICES"));
+    }
+
+    @Test
     public void testOnDeviceAllocatedMig() throws Exception {
         NvidiaGPUMigPluginForRuntimeV2 plugin = new NvidiaGPUMigPluginForRuntimeV2();
         Set<Device> allocatedDevices = new TreeSet<>();

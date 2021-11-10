@@ -1,7 +1,7 @@
 # NVIDIA GPU Plugin for YARN with MIG support
 
-This Plugin adds support for GPU's with [MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/) on YARN. The built-in YARN GPU plugin does not support MIG enabled GPUs.
-This Plugin also works with GPUs without MIG or GPUs with MIG disabled but the limitation section still applies. It supports heterogenous environments where
+This plugin adds support for GPUs with [MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/) on YARN. The built-in YARN GPU plugin does not support MIG enabled GPUs.
+This plugin also works with GPUs without MIG or GPUs with MIG disabled but the limitation section still applies. It supports heterogenous environments where
 there may be some MIG enabled GPUs and some without MIG. If you are not using MIG enabled GPUs, you should use the built-in YARN GPU plugin.
 
 ## Compatibility
@@ -13,15 +13,15 @@ It works with Apache YARN 3.3.0+ versions that support the [Pluggable Device Fra
 Please see the [MIG Application Considerations](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/#app-considerations)
 and [CUDA Device Enumeration](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html#cuda-visible-devices).
 
-Its important to note the with CUDA 11, only enumeration of a single MIG instance is supported, limitation. This means that this plugin
+It is important to note that CUDA 11 only supports enumeration of a single MIG instance. This means that this plugin
 only supports 1 GPU per container and the plugin will throw an exception by default if you request more.
 It is recommended that you configure YARN to only allow a single GPU be requested. See the yarn config:
 ```
  yarn.resource-types.nvidia/miggpu.maximum-allocation
 ```
 See [YARN Resource Configuration](https://hadoop.apache.org/docs/r3.3.1/hadoop-yarn/hadoop-yarn-site/ResourceModel.html) for more details.
-If you do not configure the maximum allocation and someone requests multiple GPUs, the default behavior is to throw an exception and the user
-visible exception is not very useful, the real exception will be in the nodemanager logs. See the [Configuration](#configuration) section for options on
+If you do not configure the maximum allocation and someone requests multiple GPUs, the default behavior is to throw an exception. The user
+visible exception is not very useful, as the real exception will be in the nodemanager logs. See the [Configuration](#configuration) section for options
 if it throws an exception.
 
 ## Building From Source
@@ -34,7 +34,7 @@ This will create a jar `target/yarn-gpu-mig-plugin-1.0.0.jar`. This jar can be i
 
 ## Installation
 
-Assumes YARN is already installed and configured with cgroups enabled and Nvidia Docker runtime v2.
+These instructions assume YARN is already installed and configured with cgroups enabled and Nvidia Docker runtime v2.
 Enable and configure your [GPUs with MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html) on all of the nodes it applies to.
 
 Install the jar into your Hadoop Cluster, see the [Test and Use Your Own Plugin](https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/DevelopYourOwnDevicePlugin.html)
@@ -65,10 +65,11 @@ Restart YARN to pick up any configuration changes.
 
 ## Configuration
 
-To change the behavior of throwing when the user allocates multiple GPUs you can either set a config in the `yarn-site.xml` or set
-an environment variable when launching the Spark application. In either case, `true` means to throw if a user requests multiple
-GPUs(this is the default), `false` means it won't throw and if the container is allocated with multiple MIG devices from the same
-GPU, its up to the application to know how to use them.
+To change the behavior of throwing when the user allocates multiple GPUs, you can either set a config in the `yarn-site.xml` or set
+an environment variable when launching the Spark application. The environment variable will take precendence if both are set.
+In either case, `true` means to throw if a user requests multiple GPUs (this is the default), `false`
+means it won't throw and if the container is allocated with multiple MIG devices from the same
+GPU, it is up to the application to know how to use them.
 
 Config for `yarn-site.xml`:
 ```
@@ -80,13 +81,13 @@ Config for `yarn-site.xml`:
 
 Environment variable for Spark application:
 ```
---conf spark.executorEnv.NVIDIA_THROW_ON_MULTIPLE_GPUS=true
+--conf spark.executorEnv.NVIDIA_MIG_PLUGIN_THROW_ON_MULTIPLE_GPUS=true
 ```
 
 ## Using with Apache Spark on YARN
 Spark supports [scheduling GPUs and other custom resources on YARN](http://spark.apache.org/docs/latest/running-on-yarn.html#resource-allocation-and-configuration-overview). There are 2 options for using this plugin with Spark to allocate GPUs with MIG support: 
 
-- Use Spark 3.2.1 or newer and remap the standard Spark `gpu` resource (ie spark.executor.resource.gpu.amount) to be the new MIG GPU resource type using:
+- Use Spark 3.2.1 or newer and remap the standard Spark `gpu` resource (i.e.: `spark.executor.resource.gpu.amount`) to be the new MIG GPU resource type using:
 ```
 --conf spark.yarn.resourceGpuDeviceName=nvidia/miggpu
 ```

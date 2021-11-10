@@ -45,7 +45,7 @@ import java.util.TreeSet;
  * this plugin officially only supports 1 GPU per container and by default
  * will throw an exception if more are requested. The behavior of throwing
  * an exception is configurable by either setting the environment variable
- * {@code NVIDIA_THROW_ON_MULTIPLE_GPUS} or by setting the YARN config
+ * {@code NVIDIA_MIG_PLUGIN_THROW_ON_MULTIPLE_GPUS} or by setting the YARN config
  * {@code com.nvidia.spark.NvidiaGPUMigPluginForRuntimeV2.throwOnMultipleGPUs}
  * to false.
  */
@@ -70,10 +70,11 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
     private static final String THROW_MULTI_CONF =
             "com.nvidia.spark.NvidiaGPUMigPluginForRuntimeV2.throwOnMultipleGPUs";
 
-    private static final String THROW_MULTI_ENV = "NVIDIA_THROW_ON_MULTIPLE_GPUS";
+    private static final String THROW_MULTI_ENV = "NVIDIA_MIG_PLUGIN_THROW_ON_MULTIPLE_GPUS";
 
-    private Boolean shouldThrowOnMultipleGPUFromConf = true;
-    private Boolean shouldThrowOnMultipleGPUFromEnv = true;
+    private Boolean shouldThrowOnMultipleGPUFromConf =
+        new Configuration().getBoolean(THROW_MULTI_CONF, true);
+    private String shouldThrowOnMultipleGPUFromEnv = null;
 
     private String pathOfGpuBinary = null;
 
@@ -92,6 +93,7 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
 
     private String migInfoOutput = null;
 
+
     @Override
     public DeviceRegisterRequest getRegisterRequestInfo() throws Exception {
         return DeviceRegisterRequest.Builder.newInstance()
@@ -106,8 +108,6 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
         try {
             output = shellExecutor.getDeviceInfo();
             String[] lines = output.trim().split("\n");
-            Configuration confs = new Configuration();
-            shouldThrowOnMultipleGPUFromConf = confs.getBoolean(THROW_MULTI_CONF, true);
             int id = 0;
             for (String oneLine : lines) {
                 String[] tokensEachLine = oneLine.split(",");
@@ -133,11 +133,12 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
                         String[] linesMig = migInfoOutput.trim().split("\n");
                         Integer minorNumInt = Integer.parseInt(minorNumber);
                         Integer migDevCount = 0;
-                        for (int idmig = 0; idmig < linesMig.length; idmig++) {
+                        Integer numMigOutputLines = linesMig.length;
+                        for (int idmig = 0; idmig < numMigOutputLines; idmig++) {
                             // first line should start with GPU
                             // GPU 0: NVIDIA A30 (UUID: GPU-e7076666-0544-e103-4f65-a047fc18269e)
                             // MIG 1g.6gb      Device  0: (UUID: MIG-de9876e2-eef7-5b5a-9701-db694ffe8a77)
-                            if (linesMig[idmig].startsWith("GPU " + minorNumInt)) {
+                            if (linesMig[idmig].startsWith("GPU " + minorNumInt) && numMigOutputLines > (idmig + 1)) {
                                 // process any MIG devices, this expects all the lines to be MIG devices until
                                 // we find one that starts with GPU
                                 String nextLine = linesMig[++idmig].trim();
@@ -159,18 +160,19 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
                                                 .setStatus(devId)
                                                 .build());
                                         id++;
-                                        if (++idmig < linesMig.length) {
+                                        if (++idmig < numMigOutputLines) {
                                             nextLine = linesMig[idmig].trim();
                                         } else {
                                             nextLine = "";
                                         }
                                     }
                                 }
-                                idmig = linesMig.length;
+                                idmig = numMigOutputLines;
                             }
                         }
                         if (migDevCount < 1) {
-                            throw new IOException("Error finding MIG devices: " + migInfoOutput);
+                            throw new IOException("Error finding MIG devices on GPU with " +
+                                "MIG enabled: " + migInfoOutput);
                         }
                         LOG.info("GPU " + majorNumber + ":" + minorNumInt +
                             " has MIG Enabled, found " + migDevCount + " MIG devices");
@@ -194,13 +196,20 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
         }
     }
 
+    private Boolean shouldThrowOnMultipleGPUs() {
+        // env setting takes highest priority if it is set
+        if (shouldThrowOnMultipleGPUFromEnv != null) {
+            return Boolean.parseBoolean(shouldThrowOnMultipleGPUFromEnv);
+        }
+        return shouldThrowOnMultipleGPUFromConf;
+    }
+
     @Override
     public DeviceRuntimeSpec onDevicesAllocated(Set<Device> allocatedDevices,
                                                 YarnRuntimeType yarnRuntime) throws Exception {
         LOG.debug("Generating runtime spec for allocated devices: {}, {}",
                 allocatedDevices, yarnRuntime.getName());
-        if (shouldThrowOnMultipleGPUFromEnv && shouldThrowOnMultipleGPUFromConf
-                && allocatedDevices.size() > 1) {
+        if (allocatedDevices.size() > 1 && shouldThrowOnMultipleGPUs()) {
             throw new YarnException("Allocating more than 1 GPU per container is" +
                     " not supported with use of MIG!");
         }
@@ -259,9 +268,7 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
         Set<Device> allocation = new TreeSet<>();
         String envShouldThrow = envs.get(THROW_MULTI_ENV);
         if (envShouldThrow != null) {
-            shouldThrowOnMultipleGPUFromEnv = Boolean.parseBoolean(envShouldThrow);
-        } else {
-            shouldThrowOnMultipleGPUFromEnv = true;
+            shouldThrowOnMultipleGPUFromEnv = envShouldThrow;
         }
         // Only officially support 1 GPU per container so don't worry about topology
         // scheduling.
@@ -313,7 +320,7 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
 
         public void searchBinary() throws Exception {
             if (pathOfGpuBinary != null) {
-                LOG.info("Skip searching, the nvidia gpu binary is already set: "
+                LOG.info("Skip searching, the NVIDIA gpu binary is already set: "
                         + pathOfGpuBinary);
                 return;
             }
@@ -322,11 +329,11 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
             if (null != envBinaryPath) {
                 if (new File(envBinaryPath).exists()) {
                     pathOfGpuBinary = envBinaryPath;
-                    LOG.info("Use nvidia gpu binary: " + pathOfGpuBinary);
+                    LOG.info("Use NVIDIA gpu binary: " + pathOfGpuBinary);
                     return;
                 }
             }
-            LOG.info("Search binary..");
+            LOG.debug("Search binary..");
             // search if binary exists in default folders
             File binaryFile;
             boolean found = false;
@@ -362,5 +369,10 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
     // visible for testing
     public void setMigDevices(Map<Integer, String> migDevices) {
         this.migDevices = migDevices;
+    }
+
+    // visible for testing
+    public void setShouldThrowOnMultipleGPUFromConf(Boolean shouldThrow) {
+        this.shouldThrowOnMultipleGPUFromConf = shouldThrow;
     }
 }
