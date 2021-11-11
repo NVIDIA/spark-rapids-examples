@@ -174,17 +174,20 @@ public class NvidiaGPUMigPluginForRuntimeV2 implements DevicePlugin,
                             throw new IOException("Error finding MIG devices on GPU with " +
                                 "MIG enabled: " + migInfoOutput);
                         }
-                        LOG.info("GPU " + majorNumber + ":" + minorNumInt +
-                            " has MIG Enabled, found " + migDevCount + " MIG devices");
+                        LOG.info("Added GPU " + majorNumber + ":" + minorNumInt +
+                            " with MIG Enabled, found " + migDevCount + " MIG devices");
                     } else {
+                        Integer majorNumInt = Integer.parseInt(majorNumber);
+                        Integer minorNumInt = Integer.parseInt(minorNumber);
                         r.add(Device.Builder.newInstance()
                                 .setId(id)
-                                .setMajorNumber(Integer.parseInt(majorNumber))
-                                .setMinorNumber(Integer.parseInt(minorNumber))
+                                .setMajorNumber(majorNumInt)
+                                .setMinorNumber(minorNumInt)
                                 .setBusID(busId)
                                 .setDevPath("/dev/" + DEV_NAME_PREFIX + minorNumber)
                                 .setHealthy(true)
                                 .build());
+                        LOG.info("Added GPU " + majorNumInt + ":" + minorNumInt);
                         id++;
                     }
                 }
