@@ -1,11 +1,13 @@
 # spark-rapids-examples
 
-A repo for all spark examples using Rapids Accelerator including ETL, ML/DL, etc.
+A repo for Spark related utilities and examples using the Rapids Accelerator,including ETL, ML/DL, etc.
 
-It includes docs and example applications that demonstrate the RAPIDS.ai GPU-accelerated XGBoost-Spark and Spark-ML(PCA Algorithm) projects. It now supports Spark 3.0.0+.
-It is recommended to set up Spark Cluster with JDK8.
+It includes utilities related to running Spark using the Rapids Accelerator, docs and example applications that
+demonstrate the RAPIDS.ai GPU-accelerated Spark and Spark-ML(PCA Algorithm) projects.
+Please see the [Rapids Accelerator for Spark documentation](https://nvidia.github.io/spark-rapids/Getting-Started/) for supported
+Spark versions and requirements. It is recommended to set up Spark Cluster with JDK8.
 
-## Examples
+## Utilities and Examples
 
 ### 1. Xgboost examples
 
@@ -24,6 +26,9 @@ It is recommended to set up Spark Cluster with JDK8.
 
 ### 4. Spark-ML examples
 - PCA: [Scala](/examples/pca)
+
+### 5. NVIDIA GPU Plugin for YARN with MIG support
+- [YARN MIG GPU Plugin](hadoop/device-plugins/gpu-mig)
 
 ## Getting Started Guides
 
