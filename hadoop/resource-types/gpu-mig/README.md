@@ -1,6 +1,6 @@
-# NVIDIA Support for GPU for YARN with MIG support for Hadoop 3.1.2 until Hadoop 3.3.0
+# NVIDIA Support for GPU for YARN with MIG support for YARN 3.1.2 until YARN 3.3.0
 
-This patch adds support for GPUs with [MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/) on YARN for Hadoop versions 3.1.2 until 3.3.0 (not including 3.3.0). Use the [GPU Plugin for YARN with MIG support](../device-plugins/gpu-mig/README.md) for Hadoop 3.3.0 and newer versions.
+This patch adds support for GPUs with [MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/) on YARN for YARN versions 3.1.2 until 3.3.0 (not including 3.3.0). Use the [GPU Plugin for YARN with MIG support](../device-plugins/gpu-mig/README.md) for YARN 3.3.0 and newer versions.
 The built-in YARN GPU plugin does not support MIG enabled GPUs so this patch is needed to properly support.
 This patch also works with GPUs without MIG or GPUs with MIG disabled but the limitation section still applies. It supports heterogenous
 environments where there may be some MIG enabled GPUs and some without MIG.
@@ -27,6 +27,9 @@ See the [Configuration](#configuration) section for options if it throws an exce
 
 ## Building
 Apply the patch to your YARN version and build it like you would normally for your deployment.
+
+- For YARN 3.1.2 use patch `yarn312MIG.patch`
+- For YARN versions 3.1.3 to 3.1.5 (git hash cd7c34f9b4005d27886f73e58bef88e706fcccf9 since 3.1.5 was not released when this was tested) use `yarn313to315MIG.patch`
 
 For example:
 ```
