@@ -1,4 +1,4 @@
-# NVIDIA GPU Plugin for YARN with MIG support
+# NVIDIA GPU Plugin for YARN with MIG support for YARN 3.3.0+
 
 This plugin adds support for GPUs with [MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/) on YARN. The built-in YARN GPU plugin does not support MIG enabled GPUs.
 This plugin also works with GPUs without MIG or GPUs with MIG disabled but the limitation section still applies. It supports heterogenous environments where
@@ -6,7 +6,7 @@ there may be some MIG enabled GPUs and some without MIG. If you are not using MI
 
 ## Compatibility
 
-It works with Apache YARN 3.3.0+ versions that support the [Pluggable Device Framework](https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/PluggableDeviceFramework.html). This plugin requires YARN to be configured with cgroups and Nvidia Docker runtime v2.
+It works with Apache YARN 3.3.0+ versions that support the [Pluggable Device Framework](https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/PluggableDeviceFramework.html). This plugin requires YARN to be configured with cgroups and NVIDIA Docker runtime v2.
 
 ## Limitations
 

@@ -30,10 +30,12 @@ Apply the patch to your YARN version and build it like you would normally for yo
 
 - For YARN 3.1.2 use patch `yarn312MIG.patch`
 - For YARN versions 3.1.3 to 3.1.5 (git hash cd7c34f9b4005d27886f73e58bef88e706fcccf9 since 3.1.5 was not released when this was tested) use `yarn313to315MIG.patch`
+- YARN 3.2.0, 3.2.1 not available, backport patch for YARN 3.2.2 or contact us.
+- YARN 3.2.2 use patch `yarn322MIG.patch`
 
 For example:
 ```
-patch -p1 < hadoop312MIG.patch
+patch -p1 < yarn312MIG.patch
 mvn clean package -Pdist -Dtar -DskipTests
 ```
 

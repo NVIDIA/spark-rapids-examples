@@ -1,8 +1,8 @@
 diff --git a/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-api/src/main/java/org/apache/hadoop/yarn/conf/YarnConfiguration.java b/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-api/src/main/java/org/apache/hadoop/yarn/conf/YarnConfiguration.java
-index 737baee70bb..0e113036a80 100644
+index ad4d87daa1a..95259b1d956 100644
 --- a/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-api/src/main/java/org/apache/hadoop/yarn/conf/YarnConfiguration.java
 +++ b/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-api/src/main/java/org/apache/hadoop/yarn/conf/YarnConfiguration.java
-@@ -1655,6 +1655,10 @@ public static boolean isAclEnabled(Configuration conf) {
+@@ -1716,6 +1716,10 @@ public static boolean isAclEnabled(Configuration conf) {
    @Private
    public static final String AUTOMATICALLY_DISCOVER_GPU_DEVICES = "auto";
  
@@ -127,7 +127,7 @@ index bce1d9fa480..3cb42d3c58f 100644
    }
  }
 diff --git a/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/GpuDeviceSpecificationException.java b/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/GpuDeviceSpecificationException.java
-index 9d61b91a1f2..d775aab0226 100644
+index 9d61b91a1f2..ffc2a4c19af 100644
 --- a/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/GpuDeviceSpecificationException.java
 +++ b/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/GpuDeviceSpecificationException.java
 @@ -26,6 +26,8 @@
@@ -135,14 +135,20 @@ index 9d61b91a1f2..d775aab0226 100644
    private static final String VALID_FORMAT_MESSAGE = "The valid format " +
        "should be: index:minor_number";
 +  private static final String VALID_MIG_FORMAT_MESSAGE = VALID_FORMAT_MESSAGE +
-+      "or with MIG enabled: index:minor_number:mig_index";
++      " or with MIG enabled: index:minor_number:mig_index";
  
    private GpuDeviceSpecificationException(String message) {
      super(message);
-@@ -57,12 +59,25 @@ public static GpuDeviceSpecificationException createWithWrongValueSpecified(
+@@ -57,12 +59,31 @@ public static GpuDeviceSpecificationException createWithWrongValueSpecified(
      return new GpuDeviceSpecificationException(message);
    }
  
++  public static GpuDeviceSpecificationException createWithWrongValueSpecifiedMIG(
++      String device, String configValue, Exception cause) {
++    final String message = createIllegalFormatMessageMIG(device, configValue);
++    return new GpuDeviceSpecificationException(message, cause);
++  }
++
 +  public static GpuDeviceSpecificationException createWithWrongValueSpecifiedMIG(
 +      String device, String configValue) {
 +    final String message = createIllegalFormatMessageMIG(device, configValue);
@@ -165,7 +171,7 @@ index 9d61b91a1f2..d775aab0226 100644
    private static String createIllegalFormatMessage(String device,
        String configValue) {
      return String.format("Illegal format of individual GPU device: %s, " +
-@@ -79,4 +94,4 @@ private static String createDuplicateFormatMessage(String device,
+@@ -79,4 +100,4 @@ private static String createDuplicateFormatMessage(String device,
              "! Current value of the configuration is: %s",
          device, configValue);
    }
@@ -173,10 +179,10 @@ index 9d61b91a1f2..d775aab0226 100644
 \ No newline at end of file
 +}
 diff --git a/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/GpuDiscoverer.java b/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/GpuDiscoverer.java
-index ce767229e50..c74651b41df 100644
+index f710ff0bccd..1517e12599a 100644
 --- a/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/GpuDiscoverer.java
 +++ b/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/GpuDiscoverer.java
-@@ -31,6 +31,7 @@
+@@ -36,6 +36,7 @@
  import org.apache.hadoop.yarn.server.nodemanager.webapp.dao.gpu.GpuDeviceInformation;
  import org.apache.hadoop.yarn.server.nodemanager.webapp.dao.gpu.GpuDeviceInformationParser;
  import org.apache.hadoop.yarn.server.nodemanager.webapp.dao.gpu.PerGpuDeviceInformation;
@@ -184,7 +190,7 @@ index ce767229e50..c74651b41df 100644
  import org.slf4j.Logger;
  import org.slf4j.LoggerFactory;
  
-@@ -69,6 +70,7 @@
+@@ -70,6 +71,7 @@
    private GpuDeviceInformation lastDiscoveredGpuInformation = null;
  
    private List<GpuDevice> gpuDevicesFromUser;
@@ -192,7 +198,7 @@ index ce767229e50..c74651b41df 100644
  
    private void validateConfOrThrowException() throws YarnException {
      if (conf == null) {
-@@ -194,8 +196,17 @@ private boolean IsAutoDiscoveryEnabled() {
+@@ -188,8 +190,17 @@ private boolean isAutoDiscoveryEnabled() {
        for (int i = 0; i < numberOfGpus; i++) {
          List<PerGpuDeviceInformation> gpuInfos =
              lastDiscoveredGpuInformation.getGpus();
@@ -211,29 +217,43 @@ index ce767229e50..c74651b41df 100644
      }
      return gpuDevices;
    }
-@@ -218,18 +229,39 @@ private boolean IsAutoDiscoveryEnabled() {
+@@ -212,28 +223,56 @@ private boolean isAutoDiscoveryEnabled() {
      for (String device : devices.split(",")) {
        if (device.trim().length() > 0) {
          String[] splitByColon = device.trim().split(":");
 -        if (splitByColon.length != 2) {
--          throw GpuDeviceSpecificationException.
--              createWithWrongValueSpecified(device, devices);
+-          throwIfNecessary(GpuDeviceSpecificationException
+-              .createWithWrongValueSpecified(device, devices), conf);
+-          LOG.warn("Wrong GPU specification string {}, ignored", device);
 -        }
--
--        GpuDevice gpuDevice = parseGpuDevice(device, splitByColon, devices);
--        if (!gpuDevices.contains(gpuDevice)) {
--          gpuDevices.add(gpuDevice);
+ 
+-        GpuDevice gpuDevice;
+-        try {
+-          gpuDevice = parseGpuDevice(splitByColon);
+-        } catch (NumberFormatException e) {
+-          throwIfNecessary(GpuDeviceSpecificationException
+-              .createWithWrongValueSpecified(device, devices, e), conf);
+-          LOG.warn("Cannot parse GPU device numbers: {}", device);
+-          continue;
+-        }
 +        if (useMIGEnabledGPUs) {
 +          if (splitByColon.length != 2 && splitByColon.length != 3) {
-+            throw GpuDeviceSpecificationException.
-+                createWithWrongValueSpecifiedMIG(device, devices);
++            throwIfNecessary(GpuDeviceSpecificationException
++                .createWithWrongValueSpecifiedMIG(device, devices), conf);
++            LOG.warn("Wrong GPU specification string {}, ignored", device);
 +          }
-+
 +          GpuDevice gpuDevice;
-+          if (splitByColon.length == 3) {
-+            gpuDevice = parseGpuMIGDevice(device, splitByColon, devices);
-+          } else {
-+            gpuDevice = parseGpuDevice(device, splitByColon, devices);
++          try {
++            if (splitByColon.length == 3) {
++              gpuDevice = parseGpuMIGDevice(splitByColon);
++            } else {
++              gpuDevice = parseGpuDevice(splitByColon);
++            }
++          } catch (NumberFormatException e) {
++            throwIfNecessary(GpuDeviceSpecificationException
++                .createWithWrongValueSpecifiedMIG(device, devices, e), conf);
++            LOG.warn("Cannot parse GPU device numbers: {}", device);
++            continue;
 +          }
 +          if (!gpuDevices.contains(gpuDevice)) {
 +            gpuDevices.add(gpuDevice);
@@ -241,47 +261,52 @@ index ce767229e50..c74651b41df 100644
 +            throw GpuDeviceSpecificationException
 +                .createWithDuplicateValueSpecified(device, devices);
 +          }
+ 
+-        if (!gpuDevices.contains(gpuDevice)) {
+-          gpuDevices.add(gpuDevice);
          } else {
--          throw GpuDeviceSpecificationException
--              .createWithDuplicateValueSpecified(device, devices);
+-          throwIfNecessary(GpuDeviceSpecificationException
+-              .createWithDuplicateValueSpecified(device, devices), conf);
+-          LOG.warn("CPU device is duplicated: {}", device);
 +          if (splitByColon.length != 2) {
-+            throw GpuDeviceSpecificationException.
-+                createWithWrongValueSpecified(device, devices);
++            throwIfNecessary(GpuDeviceSpecificationException
++                .createWithWrongValueSpecified(device, devices), conf);
++            LOG.warn("Wrong GPU specification string {}, ignored", device);
++          }
++          GpuDevice gpuDevice;
++          try {
++            gpuDevice = parseGpuDevice(splitByColon);
++          } catch (NumberFormatException e) {
++            throwIfNecessary(GpuDeviceSpecificationException
++                .createWithWrongValueSpecified(device, devices, e), conf);
++            LOG.warn("Cannot parse GPU device numbers: {}", device);
++            continue;
 +          }
 +
-+          GpuDevice gpuDevice = parseGpuDevice(device, splitByColon, devices);
 +          if (!gpuDevices.contains(gpuDevice)) {
 +            gpuDevices.add(gpuDevice);
 +          } else {
-+            throw GpuDeviceSpecificationException
-+                .createWithDuplicateValueSpecified(device, devices);
++            throwIfNecessary(GpuDeviceSpecificationException
++                .createWithDuplicateValueSpecified(device, devices), conf);
++            LOG.warn("CPU device is duplicated: {}", device);
 +          }
          }
-+
        }
      }
-     LOG.info("Allowed GPU devices:" + gpuDevices);
-@@ -237,6 +269,19 @@ private boolean IsAutoDiscoveryEnabled() {
-     return gpuDevices;
+@@ -248,6 +287,12 @@ private GpuDevice parseGpuDevice(String[] splitByColon) {
+     return new GpuDevice(index, minorNumber);
    }
  
-+  private GpuDevice parseGpuMIGDevice(String device, String[] splitByColon,
-+      String allowedDevicesStr) throws YarnException {
-+    try {
++  private GpuDevice parseGpuMIGDevice(String[] splitByColon) {
 +      int index = Integer.parseInt(splitByColon[0]);
 +      int minorNumber = Integer.parseInt(splitByColon[1]);
 +      int migIndex = Integer.parseInt(splitByColon[2]);
 +      return new GpuDevice(index, minorNumber, migIndex);
-+    } catch (NumberFormatException e) {
-+      throw GpuDeviceSpecificationException.
-+          createWithWrongValueSpecified(device, allowedDevicesStr, e);
-+    }
 +  }
-+
-   private GpuDevice parseGpuDevice(String device, String[] splitByColon,
-       String allowedDevicesStr) throws YarnException {
-     try {
-@@ -268,6 +313,9 @@ public synchronized void initialize(Configuration config)
+ 
+   public synchronized void initialize(Configuration config,
+       NvidiaBinaryHelper nvidiaHelper) throws YarnException {
+@@ -269,6 +314,9 @@ public synchronized void initialize(Configuration config,
          LOG.warn(msg);
        }
      }
@@ -517,10 +542,10 @@ index 00000000000..b706df2c3bb
 +  }
 +}
 diff --git a/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/test/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/TestGpuDiscoverer.java b/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/test/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/TestGpuDiscoverer.java
-index f0f100c1f8b..02b213b6734 100644
+index 8261895b2a9..6c1f500009c 100644
 --- a/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/test/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/TestGpuDiscoverer.java
 +++ b/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/test/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/TestGpuDiscoverer.java
-@@ -372,6 +372,37 @@ public void testGetNumberOfUsableGpusFromConfig() throws YarnException {
+@@ -373,6 +373,37 @@ public void testGetNumberOfUsableGpusFromConfig() throws YarnException {
      assertEquals(4, usableGpuDevices.get(3).getMinorNumber());
    }
  
@@ -529,7 +554,7 @@ index f0f100c1f8b..02b213b6734 100644
 +    Configuration conf = createConfigWithAllowedDevices("0:0,1:1:0,1:1:3,2:2,3:4");
 +    conf.set(YarnConfiguration.USE_MIG_ENABLED_GPUS, "true");
 +    GpuDiscoverer discoverer = new GpuDiscoverer();
-+    discoverer.initialize(conf);
++    discoverer.initialize(conf, binaryHelper);
 +
 +    List<GpuDevice> usableGpuDevices = discoverer.getGpusUsableByYarn();
 +    assertEquals(5, usableGpuDevices.size());
@@ -558,12 +583,13 @@ index f0f100c1f8b..02b213b6734 100644
    @Test
    public void testGetNumberOfUsableGpusFromConfigDuplicateValues()
        throws YarnException {
-@@ -512,4 +543,5 @@ public void testScriptNotCalled() throws YarnException {
+@@ -513,4 +544,4 @@ public void testScriptNotCalled() throws YarnException, IOException {
  
      verify(gpuSpy, never()).getGpuDeviceInformation();
    }
-+
- }
+-}
+\ No newline at end of file
++}
 diff --git a/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/test/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/TestNvidiaDockerV2CommandPlugin.java b/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/test/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/TestNvidiaDockerV2CommandPlugin.java
 index b0b523360ef..798a95cb009 100644
 --- a/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/test/java/org/apache/hadoop/yarn/server/nodemanager/containermanager/resourceplugin/gpu/TestNvidiaDockerV2CommandPlugin.java
