@@ -34,7 +34,7 @@ This will create a jar `target/yarn-gpu-mig-plugin-1.0.0.jar`. This jar can be i
 
 ## Installation
 
-These instructions assume YARN is already installed and configured with cgroups enabled and Nvidia Docker runtime v2.
+These instructions assume YARN is already installed and configured with cgroups enabled and NVIDIA Docker runtime v2.
 Enable and configure your [GPUs with MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html) on all of the nodes it applies to.
 
 Install the jar into your Hadoop Cluster, see the [Test and Use Your Own Plugin](https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/DevelopYourOwnDevicePlugin.html)
