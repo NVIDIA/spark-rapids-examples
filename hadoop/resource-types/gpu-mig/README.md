@@ -2,7 +2,7 @@
 
 This adds support for GPUs with [MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/) on YARN for versions prior to
 YARN 3.3.0 which don't support the pluggable device framwork. Use the [GPU Plugin for YARN with MIG support](../../device-plugins/gpu-mig/README.md)
-for YARN 3.3.0 and newer versions. The built-in YARN GPU plugin does not support MIG enabled GPUs. This add support for MIG copable GPUs. It also
+for YARN 3.3.0 and newer versions. The built-in YARN GPU plugin does not support MIG enabled GPUs. This patch
 works with GPUs without MIG or GPUs with MIG disabled but the limitation section still applies. It supports heterogenous
 environments where there may be some MIG enabled GPUs and some without MIG. This requires patching YARN and rebuilding it.
 
