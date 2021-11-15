@@ -1,14 +1,15 @@
 # NVIDIA Support for GPU for YARN with MIG support for YARN 3.1.2 until YARN 3.3.0
 
-This patch adds support for GPUs with [MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/) on YARN for YARN versions 3.1.2 until 3.3.0 (not including 3.3.0). Use the [GPU Plugin for YARN with MIG support](../device-plugins/gpu-mig/README.md) for YARN 3.3.0 and newer versions.
-The built-in YARN GPU plugin does not support MIG enabled GPUs so this patch is needed to properly support.
-This patch also works with GPUs without MIG or GPUs with MIG disabled but the limitation section still applies. It supports heterogenous
-environments where there may be some MIG enabled GPUs and some without MIG.
-This requires patching YARN and rebuilding it.
+This adds support for GPUs with [MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/) on YARN for versions prior to
+YARN 3.3.0 which don't support the pluggable device framwork. Use the [GPU Plugin for YARN with MIG support](../device-plugins/gpu-mig/README.md)
+for YARN 3.3.0 and newer versions. The built-in YARN GPU plugin does not support MIG enabled GPUs. This add support for MIG copable GPUs. It also
+works with GPUs without MIG or GPUs with MIG disabled but the limitation section still applies. It supports heterogenous
+environments where there may be some MIG enabled GPUs and some without MIG. This requires patching YARN and rebuilding it.
 
 ## Compatibility
 
-It works with Apache YARN 3.1.2 until 3.3.0 versions that support GPU scheduling. MIG support requires YARN to be configured with cgroups and NVIDIA Docker runtime v2.
+Requires YARN 3.1.2 or newer that support GPU scheduling. See the [supported versions](#supported-versions) section below for specific versions supported.
+MIG support requires YARN to be configured with cgroups and NVIDIA Docker runtime v2.
 
 ## Limitations
 
@@ -25,13 +26,16 @@ See [YARN Resource Configuration](https://hadoop.apache.org/docs/r3.1.2/hadoop-y
 If you do not configure the maximum allocation and someone requests multiple GPUs, the default behavior is to throw an exception.
 See the [Configuration](#configuration) section for options if it throws an exception.
 
+## Supported Versions
+There are different patches available depending on the YARN version you are using:
+
+- YARN 3.1.2 use patch `yarn312MIG.patch`
+- YARN versions 3.1.3 to 3.1.5 (git hash cd7c34f9b4005d27886f73e58bef88e706fcccf9 since 3.1.5 was not released when this was tested) use `yarn313to315MIG.patch`
+- YARN 3.2.0, no patch is currently available, backport patch for YARN 3.2.1 or contact us.
+- YARN 3.2.1 and 3.2.3 use patch `yarn321to323MIG.patch`
+
 ## Building
 Apply the patch to your YARN version and build it like you would normally for your deployment.
-
-- For YARN 3.1.2 use patch `yarn312MIG.patch`
-- For YARN versions 3.1.3 to 3.1.5 (git hash cd7c34f9b4005d27886f73e58bef88e706fcccf9 since 3.1.5 was not released when this was tested) use `yarn313to315MIG.patch`
-- YARN 3.2.0, 3.2.1 not available, backport patch for YARN 3.2.2 or contact us.
-- YARN 3.2.2 use patch `yarn322MIG.patch`
 
 For example:
 ```
