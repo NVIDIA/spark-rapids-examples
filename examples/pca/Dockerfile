@@ -39,7 +39,7 @@ RUN conda --version
 RUN conda install openjdk=8 maven=3.8.1 -y
 
 # install cuDF dependency.
-RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=21.12 python=3.8 cudatoolkit=11.2
+RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=21.12 python=3.8 cudatoolkit=11.2 -y
 
 RUN wget --quiet \
     https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-linux-x86_64.tar.gz \
