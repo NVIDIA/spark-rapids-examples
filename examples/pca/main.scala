@@ -23,17 +23,17 @@ val r = new scala.util.Random(0)
 
 // generate dummy data
 val dataDf = spark.createDataFrame(
-  (0 until rows).map(_ => Tuple1(List.fill(dim)(r.nextDouble)))).withColumnRenamed("_1", "feature")
+  (0 until rows).map(_ => Tuple1(Array.fill(dim)(r.nextDouble)))).withColumnRenamed("_1", "feature")
 
 // use udf to meet ML algo input requirement: Vector input
 val convertToVector = udf((array: Seq[Float]) => {
   Vectors.dense(array.map(_.toDouble).toArray)
 })
 
-val vectorDf = dataDf.withColumn("feature", convertToVector(col("feature")))
+val vectorDf = dataDf.withColumn("feature_vec", convertToVector(col("feature")))
 
 // use RAPIDS PCA class and enable cuBLAS gemm
-val pcaGpu = new com.nvidia.spark.ml.feature.PCA().setInputCol("feature").setOutputCol("pca_features").setK(3).setUseGemm(true)
+val pcaGpu = new com.nvidia.spark.ml.feature.PCA().setInputCol("feature_vec").setOutputCol("pca_features").setK(3).setUseGemm(true).setTransformInputCol("feature")
  
 // train
 val pcaModelGpu = spark.time(pcaGpu.fit(vectorDf))
