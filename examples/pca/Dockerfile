@@ -17,7 +17,7 @@
 
 ARG CUDA_VER=11.2.2
 FROM nvidia/cuda:${CUDA_VER}-devel-ubuntu20.04
-ARG BRANCH=branch-21.10
+ARG BRANCH=branch-21.12
 
 RUN apt-get update
 RUN apt-get install -y wget ninja-build git
@@ -38,6 +38,9 @@ RUN conda --version
 
 RUN conda install openjdk=8 maven=3.8.1 -y
 
+# install cuDF dependency.
+RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=21.12 python=3.8 cudatoolkit=11.2 -y
+
 RUN wget --quiet \
     https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-linux-x86_64.tar.gz \
     && tar -xzf cmake-3.21.3-linux-x86_64.tar.gz \
@@ -45,19 +48,9 @@ RUN wget --quiet \
 
 ENV PATH="/cmake-3.21.3-linux-x86_64/bin:${PATH}"
 
-RUN git clone --recurse-submodules -b ${BRANCH} https://github.com/rapidsai/rmm.git \
-    && cd rmm \
-    && mkdir build \
-    && cd build \
-    && cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
-    && make -j \
-    && make install \
-    && cp -r ./_deps/spdlog-src/include/spdlog /root/miniconda3/include/
-
 RUN git clone -b ${BRANCH} https://github.com/rapidsai/raft.git
 
 ENV RAFT_PATH=/raft
-ENV RMM_PATH=/rmm
 
 RUN git clone -b ${BRANCH} https://github.com/NVIDIA/spark-rapids-ml.git \
     && cd spark-rapids-ml \

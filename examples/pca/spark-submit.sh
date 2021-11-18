@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/21.10.0-SNAPSHOT/rapids-4-spark-ml_2.12-21.10.0-SNAPSHOT.jar
+CUDF_JAR=/root/.m2/repository/ai/rapids/cudf/21.12.0-SNAPSHOT/cudf-21.12.0-SNAPSHOT-cuda11.jar
+PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/21.12.0-SNAPSHOT/rapids-4-spark_2.12-21.12.0-SNAPSHOT.jar
+
 $SPARK_HOME/bin/spark-submit \
 --master spark://127.0.0.1:7077  \
 --conf spark.executor.cores=12         \
@@ -29,6 +33,6 @@ $SPARK_HOME/bin/spark-submit \
 --conf spark.rpc.message.maxSize=2046 \
 --conf spark.executor.heartbeatInterval=500s \
 --conf spark.network.timeout=1000s \
---jars /root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/21.10.0-SNAPSHOT/rapids-4-spark-ml_2.12-21.10.0-SNAPSHOT.jar \
+--jars $ML_JAR,$CUDF_JAR,$PLUGIN_JAR \
 --class com.nvidia.spark.examples.pca.Main \
 /workspace/target/PCAExample-21.10.0-SNAPSHOT.jar
