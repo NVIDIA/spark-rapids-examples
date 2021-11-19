@@ -18,7 +18,7 @@ import com.nvidia.spark.ml.feature.PCA
 import org.apache.spark.ml.linalg._
 import org.apache.spark.sql.functions._
 val dim = 2048
-val rows = 100000
+val rows = 1000
 val r = new scala.util.Random(0)
 
 // generate dummy data
