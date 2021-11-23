@@ -27,8 +27,11 @@ Spark versions and requirements. It is recommended to set up Spark Cluster with 
 ### 4. Spark-ML examples
 - PCA: [Scala](/examples/pca)
 
-### 5. NVIDIA GPU Plugin for YARN with MIG support
-- [YARN MIG GPU Plugin](hadoop/device-plugins/gpu-mig)
+### 5. YARN 3.3.0+ MIG support
+- [YARN 3.3.0+ MIG GPU Plugin](hadoop/device-plugins/gpu-mig)
+
+### 6. YARN 3.1.2 until YARN 3.3.0 MIG support
+- [YARN 3.1.2 until YARN 3.3.0 MIG GPU Support](hadoop/resource-types/gpu-mig)
 
 ## Getting Started Guides
 
