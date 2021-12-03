@@ -34,6 +34,45 @@ Create a directory in HDFS, and copy:
 [xgboost4j_spark]$ hadoop fs -copyFromLocal ${SPARK_XGBOOST_DIR}/mortgage/* /tmp/xgboost4j_spark
 ```
 
+<span id="etl">Launch Mortgage ETL</span>
+---------------------------
+
+If user wants to use a larger size dataset other than the default one, we provide an ETL app to process raw Mortgage data.
+
+Run spark-submit
+
+``` bash
+${SPARK_HOME}/bin/spark-submit \
+   --conf spark.plugins=com.nvidia.spark.SQLPlugin \
+   --conf spark.rapids.memory.gpu.pooling.enabled=false \
+   --conf spark.executor.resource.gpu.amount=1 \
+   --conf spark.task.resource.gpu.amount=1 \
+   --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
+   --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh \
+   --jars ${CUDF_JAR},${RAPIDS_JAR}                                           \
+   --master yarn                                                                  \
+   --deploy-mode ${SPARK_DEPLOY_MODE}                                             \
+   --num-executors ${SPARK_NUM_EXECUTORS}                                         \
+   --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
+   --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
+   --class ${EXAMPLE_CLASS}                                                       \
+   --class com.nvidia.spark.examples.mortgage.ETLMain  \
+   $SAMPLE_JAR \
+   -format=csv \
+   -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-train/" \
+   -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-train/" \
+   -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/train/"
+
+# if generating eval data, change the data path to eval as well as the corresponding perf-eval and acq-eval data
+# -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-eval"
+# -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-eval"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/eval/"
+# if running Taxi ETL benchmark, change the class and data path params to
+# -class com.nvidia.spark.examples.taxi.ETLMain  
+# -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
+```
+
 Launch GPU Mortgage Example
 ---------------------------
 
@@ -58,6 +97,8 @@ export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
 export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.GPUMain
+# or change to com.nvidia.spark.examples.taxi.GPUMain to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.GPUMain to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=gpu_hist
@@ -88,6 +129,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  -treeMethod=${TREE_METHOD}                                                     \
  -numRound=100                                                                  \
  -maxDepth=8                                                                    
+  # Please make sure to change the class and data path while running Taxi or Agaricus benchmark   
 ```
 
 In the `stdout` driver log, you should see timings<sup>*</sup> (in seconds), and the accuracy metric:
@@ -130,6 +172,7 @@ export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
 export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.CPUMain
+# Please make sure to change the class while running Taxi or Agaricus benchmark   
 
 # tree construction algorithm
 export TREE_METHOD=hist
@@ -152,7 +195,10 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  -numWorkers=${SPARK_NUM_EXECUTORS}                                             \
  -treeMethod=${TREE_METHOD}                                                     \
  -numRound=100                                                                  \
- -maxDepth=8                                                                    
+ -maxDepth=8                            
+   
+  # Please make sure to change the class and data path while running Taxi or Agaricus benchmark                                                       
+                                      
 ```
 
 In the `stdout` driver log, you should see timings<sup>*</sup> (in seconds), and the accuracy metric:
