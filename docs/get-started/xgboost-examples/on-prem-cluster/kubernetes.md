@@ -71,6 +71,45 @@ spec:
 
 This 1 GPU template file should be sufficient for all XGBoost jobs because each executor should only run 1 task on a single GPU. Save this yaml file to the local environment of the machine you are submitting jobs from, you will need to provide a path to it as an argument in your spark-submit command. Without the template file a pod will see every GPU on the cluster node it is allocated on and can attempt to execute using a GPU that is already in use -- causing undefined behavior and errors.
 
+<span id="etl">Launch Mortgage ETL</span>
+---------------------------
+
+If user wants to use a larger size dataset other than the default one, we provide an ETL app to process raw Mortgage data.
+
+Run spark-submit
+
+``` bash
+${SPARK_HOME}/bin/spark-submit \
+   --conf spark.plugins=com.nvidia.spark.SQLPlugin \
+   --conf spark.rapids.memory.gpu.pooling.enabled=false \
+   --conf spark.executor.resource.gpu.amount=1 \
+   --conf spark.task.resource.gpu.amount=1 \
+   --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
+   --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh \
+   --jars ${CUDF_JAR},${RAPIDS_JAR}                                           \
+   --master <k8s://ip:port or k8s://URL>                                                                  \
+   --deploy-mode ${SPARK_DEPLOY_MODE}                                             \
+   --num-executors ${SPARK_NUM_EXECUTORS}                                         \
+   --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
+   --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
+   --class ${EXAMPLE_CLASS}                                                       \
+   --class com.nvidia.spark.examples.mortgage.ETLMain  \
+   $SAMPLE_JAR \
+   -format=csv \
+   -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-train/" \
+   -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-train/" \
+   -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/train/"
+
+# if generating eval data, change the data path to eval as well as the corresponding perf-eval and acq-eval data
+# -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-eval"
+# -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-eval"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/eval/"
+# if running Taxi ETL benchmark, change the class and data path params to
+# -class com.nvidia.spark.examples.taxi.ETLMain  
+# -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
+```
+
 Launch GPU Mortgage Example
 ---------------------------
 
@@ -111,6 +150,8 @@ export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
 export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.GPUMain
+# or change to com.nvidia.spark.examples.taxi.GPUMain to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.GPUMain to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=gpu_hist
@@ -143,7 +184,10 @@ ${SPARK_HOME}/bin/spark-submit                                                  
   -numWorkers=${SPARK_NUM_EXECUTORS}                                                    \
   -treeMethod=${TREE_METHOD}                                                            \
   -numRound=100                                                                         \
-  -maxDepth=8                                                                   
+  -maxDepth=8                   
+  
+   # Please make sure to change the class and data path while running Taxi or Agaricus benchmark                                                       
+                                                
 ```
 
 Retrieve the logs using the driver's pod name that is printed to `stdout` by spark-submit 
