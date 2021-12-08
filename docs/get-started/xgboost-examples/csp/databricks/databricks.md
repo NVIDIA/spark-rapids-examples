@@ -77,7 +77,7 @@ Import the GPU Mortgage Example Notebook
 "/data/datasets/mortgage-small/eval" to "dbfs:/FileStore/tables/mortgage/csv/test/mortgage_eval_merged.csv"
 
 The example notebook comes with the following configuration, you can adjust this according to your setup.
-See supported configuration options here: [xgboost parameters](/examples/app-parameters/supported_xgboost_parameters_python.md)
+See supported configuration options here: [xgboost parameters](/examples/Spark-ETL+XGBoost/app-parameters/supported_xgboost_parameters_python.md)
 
 ``` bash
 params = { 
