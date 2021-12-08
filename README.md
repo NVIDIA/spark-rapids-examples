@@ -45,10 +45,10 @@ This is an example of the GPU accelerated PCA algorithm running on Spark. For de
 [guide](/examples/Spark-cuML/pca/README.md).
 
 ### 5. YARN 3.3.0+ MIG support
-- [YARN 3.3.0+ MIG GPU Plugin](hadoop/device-plugins/gpu-mig)
+- [YARN 3.3.0+ MIG GPU Plugin](/examples/MIG-Support/device-plugins/gpu-mig)
 
 ### 6. YARN 3.1.2 until YARN 3.3.0 MIG support
-- [YARN 3.1.2 until YARN 3.3.0 MIG GPU Support](hadoop/resource-types/gpu-mig)
+- [YARN 3.1.2 until YARN 3.3.0 MIG GPU Support](/examples/MIG-Support/resource-types/gpu-mig)
 
 ## API
 ### 1. Xgboost examples API

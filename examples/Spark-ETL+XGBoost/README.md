@@ -2,11 +2,11 @@
 
 ## 1. Spark-ETL+XGBoost examples codes
 
-- Mortgage: [Scala](/mortgage/scala/src/com/nvidia/spark/examples/mortgage), [Python](/mortgage/python/com/nvidia/spark/examples/mortgage)
-- Taxi: [Scala](/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](/taxi/python/com/nvidia/spark/examples/taxi)
-- Agaricus: [Scala](/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](/agaricus/python/com/nvidia/spark/examples/agaricus)
+- Mortgage: [Scala](../../examples/Spark-ETL+XGBoost/mortgage/scala/src/com/nvidia/spark/examples/mortgage), [Python](../../examples/Spark-ETL+XGBoost/mortgage/python/com/nvidia/spark/examples/mortgage)
+- Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](../../examples/Spark-ETL+XGBoost/taxi/python/com/nvidia/spark/examples/taxi)
+- Agaricus: [Scala](../../examples/Spark-ETL+XGBoost/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](../../examples/Spark-ETL+XGBoost/agaricus/python/com/nvidia/spark/examples/agaricus)
 
-## 2. Spark-ETL+XGBoost getting started guide
+## 2. Spark-ETL+XGBoost getting started guides
 
 You can get a small size datasets for each example in the [datasets](../../datasets) folder. 
 These datasets are only provided for convenience. In order to test for performance, 
