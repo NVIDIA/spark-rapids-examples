@@ -10,8 +10,16 @@ Please refer to [README](https://github.com/NVIDIA/spark-rapids-ml#readme) in th
 
 User can also download the release jar from Maven central:
 
-[rapids-4-spark-ml_2.12-21.10.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/21.12.0/rapids-4-spark-ml_2.12-21.12.0-cuda11.jar)
+[rapids-4-spark-ml_2.12-21.12.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/21.12.0/rapids-4-spark-ml_2.12-21.12.0-cuda11.jar)
 
+[cudf-21.12.0-cuda11.jar](https://repo1.maven.org/maven2/ai/rapids/cudf/21.12.0/cudf-21.12.0-cuda11.jar)
+
+[rapids-4-spark_2.12-21.12.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/21.10.0/rapids-4-spark_2.12-21.12.0.jar)
+
+Note: before preceeding to the running section, make sure you have conda with cuDF installed by
+```
+conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=21.12 python=3.8 -y
+```
 
 ## Sample code
 
@@ -45,17 +53,26 @@ It is assumed that a Standalone Spark cluster has been set up, the `SPARK_MASTER
 3. Install a new kernel with the jar(use $RAPIDS_ML_JAR for reference) built from section [Build](#build) and launch
 
     ``` bash
+    RAPIDS_ML_JAR=PATH_TO_rapids-4-spark-ml_2.12-21.12.0-cuda11.jar
+    CUDF_JAR=PATH_TO_cudf-21.12.0-cuda11.jar
+    PLUGIN_JAR=PATH_TO_rapids-4-spark_2.12-21.12.0.jar
+
     jupyter toree install                                \
     --spark_home=${SPARK_HOME}                             \
     --user                                          \
     --toree_opts='--nosparkcontext'                         \
     --kernel_name="spark-rapids-ml-pca"                         \
     --spark_opts='--master ${SPARK_MASTER} \
-      --jars ${RAPIDS_ML_JAR}       \
+      --jars ${RAPIDS_ML_JAR},${CUDF_JAR},${PLUGIN_JAR}       \
       --conf spark.driver.memory=10G \
       --conf spark.executor.memory=10G \
       --conf spark.executor.heartbeatInterval=20s \
-      --conf spark.executor.extraClassPath=${RAPIDS_ML_JAR} \
+      --conf spark.driver.extraClassPath=${RAPIDS_ML_JAR}:${CUDF_JAR}:${PLUGIN_JAR} \
+      --conf spark.executor.extraClassPath=${RAPIDS_ML_JAR}:${CUDF_JAR}:${PLUGIN_JAR} \
+      --conf spark.rapids.sql.enabled=true \
+      --conf spark.plugins=com.nvidia.spark.SQLPlugin \
+      --conf spark.rapids.memory.gpu.allocFraction=0.35 \
+      --conf spark.rapids.memory.gpu.maxAllocFraction=0.6 \
       --conf spark.executor.resource.gpu.amount=1 \
       --conf spark.task.resource.gpu.amount=1 \
       --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
