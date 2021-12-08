@@ -8,11 +8,9 @@ Please refer to [README](https://github.com/NVIDIA/spark-rapids-ml#readme) in th
 
 ## Get jars from Maven Central
 
-User can also download the release jar from Maven central. Due to incompatible cuda libraries, we provide 2 jars for different cuda environments:
+User can also download the release jar from Maven central:
 
-For `cuda11.0` : [rapids-4-spark-ml_2.12-21.10.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/21.10.0/rapids-4-spark-ml_2.12-21.10.0-cuda11.jar)
-
-For `cuda11.1` to `cuda11.4` : [rapids-4-spark-ml_2.12-21.10.0-cuda11-2.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/21.10.0/rapids-4-spark-ml_2.12-21.10.0-cuda11-2.jar)
+[rapids-4-spark-ml_2.12-21.10.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/21.12.0/rapids-4-spark-ml_2.12-21.12.0-cuda11.jar)
 
 
 ## Sample code
