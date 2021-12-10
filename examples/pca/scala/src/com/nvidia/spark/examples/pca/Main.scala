@@ -41,7 +41,7 @@ object Main {
     // use original Spark ML PCA class
     val pcaCpu = new org.apache.spark.ml.feature.PCA().setInputCol("feature").setOutputCol("pca_features").setK(3)
 
-    // use udf to meet ML algo input requirement: Vector input
+    // use udf to meet standard CPU ML algo input requirement: Vector input
     val convertToVector = udf((array: Seq[Double]) => {
       Vectors.dense(array.map(_.toDouble).toArray)
     })
