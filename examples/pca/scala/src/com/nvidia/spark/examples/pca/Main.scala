@@ -32,7 +32,7 @@ object Main {
     val dataDf = spark.createDataFrame(
       (0 until rows).map(_ => Tuple1(Array.fill(dim)(r.nextDouble)))).withColumnRenamed("_1", "feature")
     // use udf to meet ML algo input requirement: Vector input
-    val convertToVector = udf((array: Seq[Float]) => {
+    val convertToVector = udf((array: Seq[Double]) => {
       Vectors.dense(array.map(_.toDouble).toArray)
     })
 
