@@ -45,8 +45,7 @@ object Main {
     val gpuEnd = System.currentTimeMillis()
 
     // use original Spark ML PCA class
-    val pcaCpu = new org.apache.spark.ml.feature.PCA().setInputCol("feature").setOutputCol("pca_features").setK(3)
-
+    val pcaCpu = new org.apache.spark.ml.feature.PCA().setInputCol("feature_vec").setOutputCol("pca_features").setK(3)
     // CPU train
     
     val cpuStart = System.currentTimeMillis()
