@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/21.10.0-SNAPSHOT/rapids-4-spark-ml_2.12-21.12.0-SNAPSHOT.jar
+ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/21.12.0-SNAPSHOT/rapids-4-spark-ml_2.12-21.12.0-SNAPSHOT.jar
 CUDF_JAR=/root/.m2/repository/ai/rapids/cudf/21.12.0-SNAPSHOT/cudf-21.12.0-SNAPSHOT-cuda11.jar
 PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/21.12.0-SNAPSHOT/rapids-4-spark_2.12-21.12.0-SNAPSHOT.jar
 
