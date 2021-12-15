@@ -25,6 +25,7 @@
     <packaging>pom</packaging>
     <description>Sample XGBoost4J-Spark applications</description>
     <modules>
+        
         <module>utility</module>
         <module>agaricus</module>
         <module>mortgage</module>

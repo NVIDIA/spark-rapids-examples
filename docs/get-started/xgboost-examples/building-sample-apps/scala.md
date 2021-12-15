@@ -8,7 +8,7 @@ Follow these steps to build the Scala jars:
 
 ``` bash
 git clone https://github.com/NVIDIA/spark-rapids-examples.git
-cd spark-rapids-examples/examples
+cd spark-rapids-examples/examples/Spark-ETL+XGBoost
 mvn package
 ```
 
