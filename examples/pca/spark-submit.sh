@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/21.10.0-SNAPSHOT/rapids-4-spark-ml_2.12-21.10.0-SNAPSHOT.jar
+ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/21.10.0-SNAPSHOT/rapids-4-spark-ml_2.12-21.12.0-SNAPSHOT.jar
 CUDF_JAR=/root/.m2/repository/ai/rapids/cudf/21.12.0-SNAPSHOT/cudf-21.12.0-SNAPSHOT-cuda11.jar
 PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/21.12.0-SNAPSHOT/rapids-4-spark_2.12-21.12.0-SNAPSHOT.jar
 
@@ -26,13 +26,17 @@ $SPARK_HOME/bin/spark-submit \
 --driver-memory 30G          \
 --executor-memory 30G          \
 --conf spark.driver.maxResultSize=8G          \
---conf spark.executor.extraClassPath=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/21.10.0-SNAPSHOT/rapids-4-spark-ml_2.12-21.10.0-SNAPSHOT.jar \
---conf spark.task.resource.gpu.amount=0.08        \
---conf spark.driver.extraClassPath=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/21.10.0-SNAPSHOT/rapids-4-spark-ml_2.12-21.10.0-SNAPSHOT.jar \
+--conf spark.rapids.sql.enabled=true \
+--conf spark.plugins=com.nvidia.spark.SQLPlugin \
+--conf spark.rapids.memory.gpu.allocFraction=0.35 \
+--conf spark.rapids.memory.gpu.maxAllocFraction=0.6 \
+--conf spark.task.resource.gpu.amount=0.08 \
+--conf spark.executor.extraClassPath=$ML_JAR:$CUDF_JAR:$PLUGIN_JAR \
+--conf spark.driver.extraClassPath=$ML_JAR:$CUDF_JAR:$PLUGIN_JAR \
 --conf spark.executor.resource.gpu.amount=1  \
 --conf spark.rpc.message.maxSize=2046 \
 --conf spark.executor.heartbeatInterval=500s \
 --conf spark.network.timeout=1000s \
 --jars $ML_JAR,$CUDF_JAR,$PLUGIN_JAR \
 --class com.nvidia.spark.examples.pca.Main \
-/workspace/target/PCAExample-21.10.0-SNAPSHOT.jar
+/workspace/target/PCAExample-21.12.0-SNAPSHOT.jar
