@@ -59,6 +59,10 @@ ${SPARK_HOME}/bin/spark-submit \
 
 # if generate eval data, change the data path to eval
 # --dataPath="out::${DATA_PATH}/mortgage/data/mortgage/out/eval/
+# if running Taxi ETL benchmark, change the class and data path params to
+# -class com.nvidia.spark.examples.taxi.ETLMain  
+# -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
 ```
 
 Launch GPU Mortgage Example
@@ -88,6 +92,8 @@ export SPARK_PYTHON_ENTRYPOINT=${LIBS_PATH}/main.py
 
 # example class to use
 export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.gpu_main
+# or change to com.nvidia.spark.examples.taxi.gpu_main to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.gpu_main to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=gpu_hist
@@ -121,6 +127,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --maxDepth=8
 
 # Change the format to csv if your input file is CSV format.
+# Please make sure to change the class and data path while running Taxi or Agaricus benchmark  
 ```
 
 In the `stdout` driver log, you should see timings<sup>*</sup> (in seconds), and the accuracy metric:
@@ -160,6 +167,8 @@ export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
 export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.cpu_main
+# or change to com.nvidia.spark.examples.taxi.cpu_main to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.cpu_main to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=hist
@@ -185,6 +194,8 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --treeMethod=${TREE_METHOD}                                                    \
  --numRound=100                                                                 \
  --maxDepth=8
+ 
+ # Please make sure to change the class and data path while running Taxi or Agaricus benchmark  
 ```
 
 In the `stdout` driver log, you should see timings<sup>*</sup> (in seconds), and the accuracy metric:
