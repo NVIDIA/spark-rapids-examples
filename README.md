@@ -37,9 +37,8 @@ Spark versions and requirements. It is recommended to set up Spark Cluster with 
 
 ### 1. Xgboost examples guide
 
-We provide three similar Xgboost benchmarks, Mortgage, Taxi and Agaricus. Try one of the "Getting Started Guides" below. 
-Please note that they target the Mortgage dataset as written with a few changes 
-to `EXAMPLE_CLASS` and `dataPath`, they can be easily adapted with each other with different datasets.
+Try one of the "Getting Started Guides" below. Please note that they target the Mortgage dataset as written, 
+but with a few changes to `EXAMPLE_CLASS` and `dataPath`, they can be easily adapted to the Taxi or Agaricus datasets.
 
 You can get a small size datasets for each example in the [datasets](/datasets) folder. 
 These datasets are only provided for convenience. In order to test for performance, 
@@ -71,29 +70,41 @@ or [Python](/examples/app-parameters/supported_xgboost_parameters_python.md)
 ### 2. Microbenchmark guide
 
 The microbenchmark on [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) is to identify, 
-test and analyze the best queries which can be accelerated on the GPU. For detail information please refer to this
-[guide](/examples/micro-benchmarks/README.md).
+test and analyze the best queries which can be accelerated on the GPU. 
+The queries are based on several tables in [TPC-DS](http://www.tpc.org/tpcds/) parquet format with Double replacing Decimal,
+so that similar speedups can be reproducible by others.
+The microbenchmark includes commonly used Spark SQL operations such as expand, hash aggregate, windowing, and cross joins,
+and runs the same queries in CPU mode and GPU mode. Some queries will involve data skew.
+Each of them is highly [tuned](https://nvidia.github.io/spark-rapids/docs/tuning-guide.html) and works with the optimal configuration
+on an 8 nodes Spark standalone cluster which with 128 CPU cores and 1 A100 GPU on each node. 
+
+You can generate the parquet format dataset using this [Databricks Tool](https://github.com/databricks/spark-sql-perf).
+All the queries are running on the SF3000(Scale Factors 3TB) dataset. You can generate it with the following command:
+```
+build/sbt "test:runMain com.databricks.spark.sql.perf.tpcds.GenTPCDSData -d /databricks-tpcds-kit-path -s 3000G -l /your-dataset-path -f parquet"
+```
+You will see the [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) can give speedups of up to 10x over the CPU, and in some cases up to 80x.
+It is easy to compare the [microbenchmarks on CPU](/examples/micro-benchmarks/notebooks/micro-benchmarks-cpu.ipynb) and [GPU](/examples/micro-benchmarks/notebooks/micro-benchmarks-gpu.ipynb) side by side.
+You can see some queries are faster in the second time, it can be caused by many reasons such as JVM JIT or initialization overhead or caching input data in the OS page cache, etc.
+You can get a clear and visual impression of the improved performance with or without the benefits of post-running.
+The improved performance is influenced by many conditions, including the dataset's scale factors or the GPU card.
+If the application ran for too long or even failed, you can run the queries on a smaller dataset.
 
 ### 3. TensorFlow training on Horovod Spark example guide
 
-We provide a Criteo Benchmark to demo ETL and deep learning training on Horovod Spark, please refer to 
-this [guide](examples/criteo_train/README.md).
+Please follow the README guide here: [README](examples/criteo_train/README.md)
 
 ### 4. PCA example guide
-
-This is an example of the GPU accelerated PCA algorithm running on Spark. For detail information please refer to this
-[guide](/examples/pca/README.md).
+Please follow the README guide here: [README](/examples/pca/README.md)
 
 ## API
 ### 1. Xgboost examples API
 
-These guides focus on GPU related Scala and python API interfaces.
 - [Scala API](/docs/api-docs/xgboost-examples-api-docs/scala.md)
 - [Python API](/docs/api-docs/xgboost-examples-api-docs/python.md)
 
 ## Troubleshooting
-You can trouble-shooting issues according to following guides.
-- [Trouble Shooting XGBoost](/docs/trouble-shooting/xgboost-examples-trouble-shooting.md)
+- [Trouble Shooting](/docs/trouble-shooting/xgboost-examples-trouble-shooting.md)
 
 ## Contributing
 See the [Contributing guide](CONTRIBUTING.md).

@@ -18,7 +18,6 @@ Following this [guide](/docs/get-started/xgboost-examples/building-sample-apps/s
 ### Download dataset
 
 You need to download mortgage dataset to `/opt/xgboost` from this [site](https://docs.rapids.ai/datasets/mortgage-data)
-and download taxi dataset from this [site](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
 
 ### Setup environments
 
