@@ -15,7 +15,7 @@ The number of GPUs per node dictates the number of Spark executors that can run 
 Start A Databricks Cluster
 --------------------------
 
-Create a Databricks cluster by going to Clusters, then clicking `+ Create Cluster`.  Ensure the
+Create a Databricks cluster by clicking "+ Create -> Cluster" on the left panel. Ensure the
 cluster meets the prerequisites above by configuring it as follows:
 1. Select the Databricks Runtime Version from one of the supported runtimes specified in the
    Prerequisites section.
