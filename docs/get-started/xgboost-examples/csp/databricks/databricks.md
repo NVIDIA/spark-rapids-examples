@@ -6,58 +6,87 @@ This is a getting started guide to XGBoost4J-Spark on Databricks. At the end of 
 Prerequisites
 -------------
 
-* Apache Spark 3.0.1+ running in DataBricks Runtime 7.3 ML with GPU. Make sure it matches the hardware and software requirements below.
-* Hardware Requirements
-  * NVIDIA Pascal™ GPU architecture or better
-  * Multi-node clusters with homogenous GPU configuration
-* Software Requirements
-  * Ubuntu 18.04, 20.04/CentOS7, CentOS8
-  * CUDA 11.0-11.4
-  * NVIDIA driver compatible with your CUDA
-  * NCCL 2.7.8
+    * Apache Spark 3.x running in Databricks Runtime 7.3 ML or 9.1 ML with GPU
+    * AWS: 7.3 LTS ML (GPU, Scala 2.12, Spark 3.0.1) or 9.1 LTS ML (GPU, Scala 2.12, Spark 3.1.2)
+    * Azure: 7.3 LTS ML (GPU, Scala 2.12, Spark 3.0.1) or 9.1 LTS ML (GPU, Scala 2.12, Spark 3.1.2)
 
 The number of GPUs per node dictates the number of Spark executors that can run in that node. Each executor should only be allowed to run 1 task at any given time.
-
+   
 Start A Databricks Cluster
 --------------------------
 
-Create a Databricks cluster (`Clusters` -> `+ Create Cluster`) that meets the above prerequisites.
+Create a Databricks cluster by going to Clusters, then clicking `+ Create Cluster`.  Ensure the
+cluster meets the prerequisites above by configuring it as follows:
+1. Select the Databricks Runtime Version from one of the supported runtimes specified in the
+   Prerequisites section.
+2. Under Autopilot Options, disable autoscaling.
+3. Choose the number of workers that matches the number of GPUs you want to use.
+4. Select a worker type.  On AWS, use nodes with 1 GPU each such as `p3.2xlarge` or `g4dn.xlarge`.
+   p2 nodes do not meet the architecture requirements (Pascal or higher) for the Spark worker
+   (although they can be used for the driver node).  For Azure, choose GPU nodes such as
+   Standard_NC6s_v3.  For GCP, choose N1 or A2 instance types with GPUs. 
+5. Select the driver type. Generally this can be set to be the same as the worker.
+6. Start the cluster.
 
-1. Make sure to use the 7.0 ML with GPU Databricks runtime.
-2. Use nodes with 1 GPU each such as p3.xlarge or Standard\_NC6s\_v3. We currently don't support nodes with multiple GPUs.  p2 (AWS) and NC12/24 (Azure) nodes do not meet the architecture requirements for the XGBoost worker (although they can be used for the driver node).  
-3. Under Autopilot Options, disable autoscaling.
-4. Choose the number of workers that matches the number of GPUs you want to use.
-5. Select a worker type that has 1 GPU for the worker like p3.xlarge or NC6s_v3, for example.
+Advanced Cluster Configuration
+--------------------------
 
-After you start a Databricks cluster, use the initialization notebooks -- [7.0 notebook](/docs/get-started/xgboost-examples/csp/databricks/init-notebook-for-rapids-spark-xgboost-on-databricks-gpu-7.0-ml.ipynb
-) to setup execution.
+We will need to create an initialization script for the cluster that installs the RAPIDS jars to the
+cluster.
 
-The initialization notebooks will perform the following steps:
+1. To create the initialization script, import the initialization script notebook from the repo to
+   your workspace.  See [Managing
+   Notebooks](https://docs.databricks.com/notebooks/notebooks-manage.html#id2) for instructions on
+   how to import a notebook.  
+   Select the initialization script based on the Databricks runtime
+   version:
+    - [Databricks 9.1 LTS
+    ML](https://docs.databricks.com/release-notes/runtime/9.1ml.html#system-environment) has CUDA 11
+    installed.  Users will need to use 21.12.0 or later on Databricks 9.1 LTS ML. In this case use
+    [generate-init-script.ipynb](generate-init-script.ipynb) which will install
+    the RAPIDS Spark plugin.
+2. Once you are in the notebook, click the “Run All” button.
+3. Ensure that the newly created init.sh script is present in the output from cell 2 and that the
+   contents of the script are correct.
+4. Go back and edit your cluster to configure it to use the init script.  To do this, click the
+   “Clusters” button on the left panel, then select your cluster.
+5. Click the “Edit” button, then navigate down to the “Advanced Options” section.  Select the “Init
+   Scripts” tab in the advanced options section, and paste the initialization script:
+   `dbfs:/databricks/init_scripts/init.sh`, then click “Add”.
 
-1. Downloading the CUDA, Rapids-4-spark and Rapids XGBoost4j Spark jars
-    * [*cudf-latest.jar*](https://repo1.maven.org/maven2/ai/rapids/cudf/21.12.0/)
-    * [*xgboost4j-latest.jar*](https://repo1.maven.org/maven2/com/nvidia/xgboost4j_3.0/1.4.2-0.2.0/)
-    * [*xgboost4j-spark-latest.jar*](https://repo1.maven.org/maven2/com/nvidia/xgboost4j-spark_3.0/1.4.2-0.2.0/)
-    * [*rapids-latest.jar*](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/21.12.0/)
-2. Creating a new directory for initialization script in Databricks file system (DBFS)
-3. Creating an initialization script inside the new directory to copy jars inside Databricks jar directory
-4. Download and decompress the Sample Mortgage Notebook dataset
+    ![Init Script](../../../../img/databricks/initscript.png)
 
-After executing the steps in the initialization notebook, please follow the 1. Cluster initialization script and 2. Install the xgboost4j_spark jar in the cluster to ensure it is ready for XGBoost training.
+6. Now select the “Spark” tab, and paste the following config options into the Spark Config section.
+   Change the config values based on the workers you choose.  See Apache Spark
+   [configuration](https://spark.apache.org/docs/latest/configuration.html) and RAPIDS Accelerator
+   for Apache Spark [descriptions](https://nvidia.github.io/spark-rapids/docs/configs.html) for each config.
 
-Add cluster initialization script and Spark Configs
----------------------------
+    The
+    [`spark.task.resource.gpu.amount`](https://spark.apache.org/docs/latest/configuration.html#scheduling)
+    configuration is defaulted to 1 by Databricks. That means that only 1 task can run on an
+    executor with 1 GPU, which is limiting, especially on the reads and writes from Parquet.  Set
+    this to 1/(number of cores per executor) which will allow multiple tasks to run in parallel just
+    like the CPU side.  Having the value smaller is fine as well.
 
-1. See [Initialization scripts](https://docs.databricks.com/user-guide/clusters/init-scripts.html) for how to configure cluster initialization scripts.
-2. Edit your cluster, adding an initialization script from dbfs:/databricks/init_scripts/init.sh in the "Advanced Options" under "Init Scripts" tab
-3. Now select the “Spark” tab, and paste the following config options into the Spark Config section. Change the config values based on the workers you choose.
+	There is an incompatibility between the Databricks specific implementation of adaptive query
+    execution (AQE) and the spark-rapids plugin.  In order to mitigate this,
+    `spark.sql.adaptive.enabled` should be set to false.  In addition, the plugin does not work with
+    the Databricks `spark.databricks.delta.optimizeWrite` option.
 
-    ``` bash
+    ```bash
     spark.plugins com.nvidia.spark.SQLPlugin
-    spark.rapids.memory.gpu.pooling.enabled false
+    spark.task.resource.gpu.amount 0.1
+    spark.rapids.memory.pinnedPool.size 2G
+    spark.locality.wait 0s
+    spark.databricks.delta.optimizeWrite.enabled false
+    spark.sql.adaptive.enabled false
+    spark.rapids.sql.concurrentGpuTasks 2
     ```
 
-4. Reboot the cluster
+    ![Spark Config](../../../../img/databricks/sparkconfig.png)
+
+7. Once you’ve added the Spark config, click “Confirm and Restart”.
+8. Once the cluster comes back up, it is now enabled for GPU-accelerated Spark with RAPIDS and cuDF.
 
 Install the xgboost4j_spark jar in the cluster
 ---------------------------
@@ -71,7 +100,7 @@ Import the GPU Mortgage Example Notebook
 ---------------------------
 
 1. See [Managing Notebooks](https://docs.databricks.com/user-guide/notebooks/notebook-manage.html) on how to import a notebook.
-2. Import the example notebook: [XGBoost4j-Spark mortgage notebook](/examples/mortgage/notebooks/scala/mortgage-gpu.ipynb)
+2. Import the example notebook: [XGBoost4j-Spark mortgage notebook](/examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-gpu.ipynb)
 3. Inside the mortgage example notebook, update the data paths from 
 "/data/datasets/mortgage-small/train" to "dbfs:/FileStore/tables/mortgage/csv/train/mortgage_train_merged.csv"
 "/data/datasets/mortgage-small/eval" to "dbfs:/FileStore/tables/mortgage/csv/test/mortgage_eval_merged.csv"
@@ -119,4 +148,38 @@ Accuracy is 0.9980699597729774
 
 ```
 
+Limitations
+-------------
+
+1. Adaptive query execution(AQE) and Delta optimization write do not work. These should be disabled
+when using the plugin. Queries may still see significant speedups even with AQE disabled.
+
+    ```bash 
+    spark.databricks.delta.optimizeWrite.enabled false
+    spark.sql.adaptive.enabled false
+    ```
+    
+    See [issue-1059](https://github.com/NVIDIA/spark-rapids/issues/1059) for more detail. 
+
+2. Dynamic partition pruning(DPP) does not work.  This results in poor performance for queries which
+   would normally benefit from DPP.  See
+   [issue-3143](https://github.com/NVIDIA/spark-rapids/issues/3143) for more detail.
+
+3. When selecting GPU nodes, Databricks requires the driver node to be a GPU node.  Outside of
+   Databricks the plugin can operate with the driver as a CPU node and workers as GPU nodes.
+
+4. Cannot spin off multiple executors on a multi-GPU node. 
+
+	Even though it is possible to set `spark.executor.resource.gpu.amount=N` (where N is the number
+    of GPUs per node) in the in Spark Configuration tab, Databricks overrides this to
+    `spark.executor.resource.gpu.amount=1`.  This will result in failed executors when starting the
+    cluster.
+
+5. Databricks makes changes to the runtime without notification.
+
+    Databricks makes changes to existing runtimes, applying patches, without notification.
+	[Issue-3098](https://github.com/NVIDIA/spark-rapids/issues/3098) is one example of this.  We run
+	regular integration tests on the Databricks environment to catch these issues and fix them once
+	detected.
+   
 <sup>*</sup> The timings in this Getting Started guide are only illustrative. Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.
