@@ -15,12 +15,12 @@ The number of GPUs per node dictates the number of Spark executors that can run 
 Start A Databricks Cluster
 --------------------------
 
-Create a Databricks cluster by going to Clusters, then clicking `+ Create Cluster`.  Ensure the
+Create a Databricks cluster by clicking "+ Create -> Cluster" on the left panel. Ensure the
 cluster meets the prerequisites above by configuring it as follows:
 1. Select the Databricks Runtime Version from one of the supported runtimes specified in the
    Prerequisites section.
 2. Under Autopilot Options, disable autoscaling.
-3. Choose the number of workers that matches the number of GPUs you want to use.
+3. Choose the number of workers you want to use.
 4. Select a worker type.  On AWS, use nodes with 1 GPU each such as `p3.2xlarge` or `g4dn.xlarge`.
    p2 nodes do not meet the architecture requirements (Pascal or higher) for the Spark worker
    (although they can be used for the driver node).  For Azure, choose GPU nodes such as
@@ -49,7 +49,7 @@ cluster.
 3. Ensure that the newly created init.sh script is present in the output from cell 2 and that the
    contents of the script are correct.
 4. Go back and edit your cluster to configure it to use the init script.  To do this, click the
-   “Clusters” button on the left panel, then select your cluster.
+   “Compute” button on the left panel, then select your cluster.
 5. Click the “Edit” button, then navigate down to the “Advanced Options” section.  Select the “Init
    Scripts” tab in the advanced options section, and paste the initialization script:
    `dbfs:/databricks/init_scripts/init.sh`, then click “Add”.
