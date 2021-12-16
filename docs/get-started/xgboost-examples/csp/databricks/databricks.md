@@ -49,7 +49,7 @@ cluster.
 3. Ensure that the newly created init.sh script is present in the output from cell 2 and that the
    contents of the script are correct.
 4. Go back and edit your cluster to configure it to use the init script.  To do this, click the
-   “Clusters” button on the left panel, then select your cluster.
+   “Compute” button on the left panel, then select your cluster.
 5. Click the “Edit” button, then navigate down to the “Advanced Options” section.  Select the “Init
    Scripts” tab in the advanced options section, and paste the initialization script:
    `dbfs:/databricks/init_scripts/init.sh`, then click “Add”.
