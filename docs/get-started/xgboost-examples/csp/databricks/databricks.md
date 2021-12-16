@@ -24,7 +24,7 @@ cluster meets the prerequisites above by configuring it as follows:
 4. Select a worker type.  On AWS, use nodes with 1 GPU each such as `p3.2xlarge` or `g4dn.xlarge`.
    p2 nodes do not meet the architecture requirements (Pascal or higher) for the Spark worker
    (although they can be used for the driver node).  For Azure, choose GPU nodes such as
-   Standard_NC6s_v3.  For GCP, choose N1 or A2 instance types with GPUs. 
+   Standard_NC6s_v3.
 5. Select the driver type. Generally this can be set to be the same as the worker.
 6. Start the cluster.
 
