@@ -40,6 +40,12 @@ cluster.
    how to import a notebook.  
    Select the initialization script based on the Databricks runtime
    version:
+   - [Databricks 7.3 LTS
+ML](https://docs.databricks.com/release-notes/runtime/7.3ml.html#system-environment) runs CUDA 10.1
+Update 2. Users wishing to try 21.06.1 or later on Databricks 7.3 LTS ML will need to install the
+CUDA 11.0 toolkit on the cluster.  This can be done with the [generate-init-script-7.3ML-cuda11.ipynb
+](generate-init-script-7.3.ipynb) init script, which installs both the RAPIDS
+Spark plugin and the CUDA 11 toolkit. 
     - [Databricks 9.1 LTS
     ML](https://docs.databricks.com/release-notes/runtime/9.1ml.html#system-environment) has CUDA 11
     installed.  Users will need to use 21.12.0 or later on Databricks 9.1 LTS ML. In this case use
