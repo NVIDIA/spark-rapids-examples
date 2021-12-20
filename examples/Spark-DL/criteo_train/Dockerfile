@@ -24,8 +24,9 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/extra
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG RELEASE=true
-ARG RMM_VER=v21.10.00
-ARG CUDF_VER=v21.10.00
+# Please don't change the version here in future release.
+ARG RMM_VER=v21.08.00
+ARG CUDF_VER=v21.08.03
 ARG NVTAB_VER=v0.6.0
 ARG SM="60;61;70;75;80"
 
