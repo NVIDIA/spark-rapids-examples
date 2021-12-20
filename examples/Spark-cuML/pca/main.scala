@@ -33,16 +33,23 @@ val convertToVector = udf((array: Seq[Double]) => {
 val vectorDf = dataDf.withColumn("feature_vec", convertToVector(col("feature")))
 
 // use RAPIDS PCA class and enable cuBLAS gemm
-val pcaGpu = new com.nvidia.spark.ml.feature.PCA().setInputCol("feature_vec").setOutputCol("pca_features").setK(3).setUseGemm(true).setTransformInputCol("feature")
+val pcaGpu = new com.nvidia.spark.ml.feature.PCA().setInputCol("feature").setOutputCol("pca_features").setK(3)
  
 // train
-val pcaModelGpu = spark.time(pcaGpu.fit(vectorDf))
+val pcaModelGpu = spark.time(pcaGpu.fit(dataDf))
 
 // transform
 pcaModelGpu.transform(vectorDf).select("pca_features").show(false)
 
 // use original Spark ML PCA class
 val pcaCpu = new org.apache.spark.ml.feature.PCA().setInputCol("feature_vec").setOutputCol("pca_features").setK(3)
+
+// use udf to meet standard CPU ML algo input requirement: Vector input
+val convertToVector = udf((array: Seq[Double]) => {
+  Vectors.dense(array.map(_.toDouble).toArray)
+})
+
+val vectorDf = dataDf.withColumn("feature_vec", convertToVector(col("feature")))
 
 // train
 val pcaModelCpu = spark.time(pcaCpu.fit(vectorDf))
