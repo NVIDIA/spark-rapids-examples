@@ -33,7 +33,7 @@ val pcaGpu = new com.nvidia.spark.ml.feature.PCA().setInputCol("feature").setOut
 val pcaModelGpu = spark.time(pcaGpu.fit(dataDf))
 
 // transform
-pcaModelGpu.transform(vectorDf).select("pca_features").show(false)
+pcaModelGpu.transform(dataDf).select("pca_features").show(false)
 
 // use original Spark ML PCA class
 val pcaCpu = new org.apache.spark.ml.feature.PCA().setInputCol("feature_vec").setOutputCol("pca_features").setK(3)
