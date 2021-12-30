@@ -103,7 +103,7 @@ wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-s3/1.11.687/aws-j
 
 ### Step 4: Start Spark Standalone
 
-#### Step 4.1: Edit spark-defualt.conf
+#### Step 4.1: Edit spark-default.conf
 
 cd $SPARK_HOME/conf and edit spark-defaults.conf
 
