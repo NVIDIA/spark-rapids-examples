@@ -1,18 +1,18 @@
-/*
- * Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+#
+# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 
 FROM nvidia/cuda:11.2.1-cudnn8-devel-ubuntu20.04
@@ -57,7 +57,7 @@ RUN mkdir -p /usr/local/nvidia/lib64 && \
     ln -s /usr/local/cuda/lib64/libcusolver.so /usr/local/nvidia/lib64/libcusolver.so.10
 
 # install openjdk8, cmake, openmpi openmpi-mpicc
-RUN conda install cmake=3.19.6 openmpi openmpi-mpicc -y 
+RUN conda install -c conda-forge cmake=3.19.6 openmpi openmpi-mpicc -y 
 
 RUN HOROVOD_WITH_MPI=1 HOROVOD_WITH_TENSORFLOW=1 HOROVOD_GPU_OPERATIONS=NCCL \
     pip install horovod[spark] --no-cache-dir
@@ -66,7 +66,7 @@ RUN conda install -c nvidia -c rapidsai -c numba -c conda-forge nvtabular=0.6.1 
 
 RUN pip install pynvml
 
-RUN conda install ipython==7.19.0 matplotlib==3.4.2 jinja2==2.11.3
+RUN conda install -c conda-forge ipython==7.19.0 matplotlib==3.4.2 jinja2==2.11.3
 RUN pip uninstall pandas -y; pip install pandas==1.1.5
 RUN apt-get update && apt-get install wget openssh-client openssh-server \
     -y --allow-downgrades --allow-change-held-packages --no-install-recommends
