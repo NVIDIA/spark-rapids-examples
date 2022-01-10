@@ -86,7 +86,7 @@ If you want to try in a node with only 1 GPU, please modify the GPU number per w
 
 `/workspace/`
 
-## Run in Databriks Runtime
+## Run in Databricks Runtime
 Some extra packages are required to run the example, we provide a Dockerfile [Dockerfile.conda_db](./Dockerfile.conda_db)
 to use [Customize containers with Databricks Container Services](https://docs.databricks.com/clusters/custom-containers.html)
 in Databricks cloud environment.
@@ -95,3 +95,4 @@ To use it:
 1. build the docker image locally
 2. push the image to a DB supported Docker hub.
 3. set the image url in DB cluster setup page.
+
