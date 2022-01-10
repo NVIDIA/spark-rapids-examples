@@ -49,4 +49,4 @@ It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are
     jupyter notebook
     ```
 
-    Then you start your notebook and open [`mortgage-gpu.ipynb`](/examples/mortgage/notebooks/scala/mortgage-gpu.ipynb) to explore.
+    Then you start your notebook and open [`mortgage-gpu.ipynb`](../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-gpu.ipynb) to explore.
