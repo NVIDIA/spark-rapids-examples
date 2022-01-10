@@ -10,7 +10,7 @@
 
 You can get a small size datasets for each example in the [datasets](../../datasets) folder. 
 These datasets are only provided for convenience. In order to test for performance, 
-please prepare a larger dataset by following [Preparing Datasets via Notebook](../../datasets/preparing_datasets.md). 
+please prepare a larger dataset by following [Preparing Datasets via Notebook](../../datasets/README.md). 
 We also provide a larger dataset: [Morgage Dataset (1 GB uncompressed)](https://rapidsai-data.s3.us-east-2.amazonaws.com/spark/mortgage.zip), 
 which is used in the guides below.
 
