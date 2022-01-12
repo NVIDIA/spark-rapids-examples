@@ -78,7 +78,7 @@ and the home directory for Apache Spark respectively.
     ```
     You can also run python notebook with Spylon Kernel
     ``` bash
-    # restart Jupiter notebook
+    # restart Jupyter Notebook
   
     export PYSPARK_DRIVER_PYTHON=jupyter
     export PYSPARK_DRIVER_PYTHON_OPTS="notebook --allow-root --notebook-dir=$WORKSPACE --config=$JUPYTER_CONFIG_FILE"
