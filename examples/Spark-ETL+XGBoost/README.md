@@ -29,7 +29,7 @@ which is used in the guides below.
     - [Databricks](../../docs/get-started/xgboost-examples/csp/databricks/databricks.md)
 - Getting started for Jupyter Notebook applications
     - [Apache Toree Notebook for Scala](../../docs/get-started/xgboost-examples/notebook/toree.md)
-    - [Spylon kernel Notebook for Scala](../../docs/get-started/xgboost-examples/notebook/spylon.md)
+    - [Jupyter Notebook with spylon kernel for Scala](../../docs/get-started/xgboost-examples/notebook/spylon.md)
     - [Jupyter Notebook for Python](../../docs/get-started/xgboost-examples/notebook/python-notebook.md)
 
 These examples use default parameters for demo purposes. For a full list please see "Supported Parameters" 
