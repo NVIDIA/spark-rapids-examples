@@ -38,17 +38,17 @@ object Main {
     val pcaModelGpu = pcaGpu.fit(dataDf)
     val gpuEnd = System.currentTimeMillis()
 
-    // use original Spark ML PCA class
-    val pcaCpu = new org.apache.spark.ml.feature.PCA().setInputCol("feature").setOutputCol("pca_features").setK(3)
-
     // use udf to meet standard CPU ML algo input requirement: Vector input
     val convertToVector = udf((array: Seq[Double]) => {
       Vectors.dense(array.map(_.toDouble).toArray)
     })
 
     val vectorDf = dataDf.withColumn("feature_vec", convertToVector(col("feature")))
+
+    // use original Spark ML PCA class
+    val pcaCpu = new org.apache.spark.ml.feature.PCA().setInputCol("feature_vec").setOutputCol("pca_features").setK(3)
+
     // CPU train
-    
     val cpuStart = System.currentTimeMillis()
     val pcaModelCpu = pcaCpu.fit(vectorDf)
     val cpuEnd = System.currentTimeMillis()
