@@ -1,12 +1,6 @@
-# Spark-ETL+XGBoost examples 
+# Spark-ETL+XGBoost examples
 
-## 1. Spark-ETL+XGBoost examples codes
-
-- Mortgage: [Scala](../../examples/Spark-ETL+XGBoost/mortgage/scala/src/com/nvidia/spark/examples/mortgage), [Python](../../examples/Spark-ETL+XGBoost/mortgage/python/com/nvidia/spark/examples/mortgage)
-- Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](../../examples/Spark-ETL+XGBoost/taxi/python/com/nvidia/spark/examples/taxi)
-- Agaricus: [Scala](../../examples/Spark-ETL+XGBoost/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](../../examples/Spark-ETL+XGBoost/agaricus/python/com/nvidia/spark/examples/agaricus)
-
-## 2. Spark-ETL+XGBoost getting started guides
+## 1. Prepare the dataset Spark-ETL+XGBoost examples codes
 
 You can get a small size datasets for each example in the [datasets](../../datasets) folder. 
 These datasets are only provided for convenience. In order to test for performance, 
@@ -17,6 +11,18 @@ which is used in the guides below.
 - Prepare packages and dataset
     - [Scala](../../docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
     - [Python](../../docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
+  
+## 2. Spark-ETL+XGBoost getting started guides
+We have three sub demos to demonstrate the Spark ETL + XGBoost process as Mortgage, Taxi and Agaricus(Agaricus demo has 
+very simple ETL part as just a filter process, so we combined the ETL part into XGBoost process).
+You have two ways to get start, you can start by running scala or python codes, or you can start by running notebooks.
+
+### 1. Getting Started From Codes
+
+- Mortgage: [Scala](../../examples/Spark-ETL+XGBoost/mortgage/scala/src/com/nvidia/spark/examples/mortgage), [Python](../../examples/Spark-ETL+XGBoost/mortgage/python/com/nvidia/spark/examples/mortgage)
+- Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](../../examples/Spark-ETL+XGBoost/taxi/python/com/nvidia/spark/examples/taxi)
+- Agaricus: [Scala](../../examples/Spark-ETL+XGBoost/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](../../examples/Spark-ETL+XGBoost/agaricus/python/com/nvidia/spark/examples/agaricus)
+
 - Getting started on on-premises clusters
     - [Standalone cluster for Scala](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md)
     - [Standalone cluster for Python](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md)
@@ -30,6 +36,13 @@ which is used in the guides below.
 - Getting started for Jupyter Notebook applications
     - [Apache Toree Notebook for Scala](../../docs/get-started/xgboost-examples/notebook/toree.md)
     - [Jupyter Notebook for Python](../../docs/get-started/xgboost-examples/notebook/python-notebook.md)
+
+### 2. Getting Started From Notebooks
+
+- Mortgage: [Scala](../../examples/Spark-ETL+XGBoost/mortgage/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python)
+- Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/taxi/notebooks/python)
+- Agaricus: [Scala](../../examples/Spark-ETL+XGBoost/agaricus/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/agaricus/notebooks/python)
+
 
 These examples use default parameters for demo purposes. For a full list please see "Supported Parameters" 
 for [Scala](../Spark-ETL+XGBoost/app-parameters/supported_xgboost_parameters_scala.md) 
