@@ -19,7 +19,7 @@ and the home directory for Apache Spark respectively.
    # Latest version breaks nbconvert: https://github.com/ipython/ipykernel/issues/422
    RUN pip3 install ipykernel==5.1.1
    ```
-2. Start up Jupiter notebook. You can debug from webUI http://your_ip:your_port with your password.
+2. Start up Jupyter Notebook. You can debug from webUI http://your_ip:your_port with your password.
     
     ``` bash
     export JUPYTER_CONFIG_FILE=~/.jupyter/jupyter_notebook_config.py
