@@ -12,9 +12,9 @@ Prerequisites
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
   * Ubuntu 18.04, 20.04/CentOS7, CentOS8
-  * CUDA 11.0-11.4
+  * CUDA 11.0+
   * NVIDIA driver compatible with your CUDA
-  * NCCL 2.7.8
+  * NCCL 2.7.8+
   * Python 3.6+
   * NumPy
 
