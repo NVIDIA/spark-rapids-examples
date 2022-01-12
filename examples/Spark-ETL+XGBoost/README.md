@@ -28,7 +28,7 @@ You have two ways to get start, you can start by running scala or python codes, 
     - [Standalone cluster for Python](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md)
     - [YARN for Scala](../../docs/get-started/xgboost-examples/on-prem-cluster/yarn-scala.md)
     - [YARN for Python](../../docs/get-started/xgboost-examples/on-prem-cluster/yarn-python.md)
-    - [Kubernetes](../../docs/get-started/xgboost-examples/on-prem-cluster/kubernetes.md)
+    - [Kubernetes](../../docs/get-started/xgboost-examples/on-prem-cluster/kubernetes-scala.md)
 - Getting started on cloud service providers
     - Amazon AWS
         - [EC2](../../docs/get-started/xgboost-examples/csp/aws/ec2.md)
