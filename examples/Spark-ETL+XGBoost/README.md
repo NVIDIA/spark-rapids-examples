@@ -33,16 +33,16 @@ You have two ways to get start, you can start by running scala or python codes, 
     - Amazon AWS
         - [EC2](../../docs/get-started/xgboost-examples/csp/aws/ec2.md)
     - [Databricks](../../docs/get-started/xgboost-examples/csp/databricks/databricks.md)
-- Getting started for Jupyter Notebook applications
-    - [Apache Toree Notebook for Scala](../../docs/get-started/xgboost-examples/notebook/toree.md)
-    - [Jupyter Notebook for Python](../../docs/get-started/xgboost-examples/notebook/python-notebook.md)
-
+  
 ### 2. Getting Started From Notebooks
 
 - Mortgage: [Scala](../../examples/Spark-ETL+XGBoost/mortgage/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python)
 - Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/taxi/notebooks/python)
 - Agaricus: [Scala](../../examples/Spark-ETL+XGBoost/agaricus/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/agaricus/notebooks/python)
 
+- Getting started for Jupyter Notebook applications
+    - [Apache Toree Notebook for Scala](../../docs/get-started/xgboost-examples/notebook/toree.md)
+    - [Jupyter Notebook for Python](../../docs/get-started/xgboost-examples/notebook/python-notebook.md)
 
 These examples use default parameters for demo purposes. For a full list please see "Supported Parameters" 
 for [Scala](../Spark-ETL+XGBoost/app-parameters/supported_xgboost_parameters_scala.md) 
