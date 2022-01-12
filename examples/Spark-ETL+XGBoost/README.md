@@ -32,5 +32,5 @@ which is used in the guides below.
     - [Jupyter Notebook for Python](../../docs/get-started/xgboost-examples/notebook/python-notebook.md)
 
 These examples use default parameters for demo purposes. For a full list please see "Supported Parameters" 
-for [Scala](/app-parameters/supported_xgboost_parameters_scala.md) 
-or [Python](/app-parameters/supported_xgboost_parameters_python.md)
+for [Scala](../Spark-ETL+XGBoost/app-parameters/supported_xgboost_parameters_scala.md) 
+or [Python](../Spark-ETL+XGBoost/app-parameters/supported_xgboost_parameters_python.md)
