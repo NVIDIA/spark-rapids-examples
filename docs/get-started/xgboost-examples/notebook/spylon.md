@@ -10,7 +10,7 @@ a [Spark Standalone Cluster](/docs/get-started/xgboost-examples/on-prem-cluster/
 It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are defined and point to the Spark Master URL, 
 and the home directory for Apache Spark respectively.
 
-1. Install jupyter notebook with spylon-kernel.
+1. Install Jupyter Notebook with spylon-kernel.
    ``` bash
    # Install notebook and spylon-kernel (Scala kernel for Jupyter Notebook), https://pypi.org/project/spylon-kernel/
    # You can use spylon-kernel as Scala kernel for Jupyter Notebook. Do this when you want to work with Spark in Scala with a bit of Python code mixed in.
