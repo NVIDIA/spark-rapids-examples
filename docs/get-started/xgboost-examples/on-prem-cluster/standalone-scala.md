@@ -43,9 +43,13 @@ We use `SPARK_HOME` to point to the cluster's Apache Spark cluster, and here are
 Get Jars and Dataset
 -------------------------------
 
-Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
+Make sure you have prepared the necessary packages and dataset according to the code type, 
+[python](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md) or
+[scala](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md) 
 
-Note: the `mortgage_eval_merged.csv` and `mortgage_train_merged.csv` are not Mortgage raw data, they are the data produced by Mortgage ETL job. If user wants to use a larger size Mortgage data, please refer to [Launch ETL job](#etl)
+Note: the `mortgage_eval_merged.csv` and `mortgage_train_merged.csv` are not Mortgage raw data,
+they are the data produced by Mortgage ETL job. If user wants to use a larger size Mortgage data, please refer to [Launch ETL job](#etl).
+Taxi ETL job is the same. But Agaricus does not have ETL process, it is combined with XGBoost as there is just a filter operation.
 
 Launch a Standalone Spark Cluster
 ---------------------------------
@@ -76,7 +80,7 @@ Launch a Standalone Spark Cluster
 
     Note that in this example the Master and Worker processes are both running on the same host. This is not a requirement, as long as all hosts that are used to run the Spark app have access to the dataset.
 
-<span id="etl">Launch Mortgage ETL</span>
+<span id="etl">Launch Mortgage or Taxi ETL Part</span>
 ---------------------------
 
 If user wants to use a larger size dataset other than the default one, we provide an ETL app to process raw Mortgage data.
@@ -112,7 +116,7 @@ ${SPARK_HOME}/bin/spark-submit \
 # -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
 ```
 
-Launch GPU Mortgage Example
+Launch XGBoost Part on GPU
 ---------------------------
 
 Variables required to run spark-submit command:
@@ -174,7 +178,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  # Please make sure to change the class and data path while running Taxi or Agaricus benchmark                                              
 ```
 
-In `stdout` log on driver side, you should see timings<sup>*</sup> (in seconds), and the accuracy metric:
+In `stdout` log on driver side, you should see timings<sup>*</sup> (in seconds), and the accuracy metric(take Mortgage as example):
 
 ```
 --------------
@@ -190,7 +194,7 @@ In `stdout` log on driver side, you should see timings<sup>*</sup> (in seconds),
 --------------
 ```
 
-Launch CPU Mortgage Example
+Launch XGBoost Part on CPU
 ---------------------------
 
 If you are running this example after running the GPU example above, please set these variables, to set both training and testing to run on the CPU exclusively:
@@ -247,7 +251,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  # Please make sure to change the class and data path while running Taxi or Agaricus benchmark                                                       
 ```
 
-In the `stdout` log on driver side, you should see timings<sup>*</sup> (in seconds), and the accuracy metric:
+In the `stdout` log on driver side, you should see timings<sup>*</sup> (in seconds), and the accuracy metric(take Mortgage as example):
 
 ```
 --------------
@@ -263,4 +267,6 @@ In the `stdout` log on driver side, you should see timings<sup>*</sup> (in secon
 --------------
 ```
 
-<sup>*</sup> The timings in this Getting Started guide are only illustrative. Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.
+<sup>*</sup> The timings in this Getting Started guide are only illustrative. 
+Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) 
+for official benchmarks.

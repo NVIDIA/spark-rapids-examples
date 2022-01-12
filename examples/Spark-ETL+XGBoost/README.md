@@ -4,14 +4,14 @@
 
 You can get a small size datasets for each example in the [datasets](../../datasets) folder. 
 These datasets are only provided for convenience. In order to test for performance, 
-please prepare a larger dataset by following [Preparing Datasets via Notebook](../../datasets/README.md). 
-We also provide a larger dataset: [Morgage Dataset (1 GB uncompressed)](https://rapidsai-data.s3.us-east-2.amazonaws.com/spark/mortgage.zip), 
-which is used in the guides below.
-
-- Prepare packages and dataset
+please prepare packages and download a larger dataset by following links:
+- Prepare packages and datasets
     - [Scala](../../docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
     - [Python](../../docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
-  
+
+We provided a [Morgage Dataset (1 GB uncompressed)](https://rapidsai-data.s3.us-east-2.amazonaws.com/spark/mortgage.zip), 
+which is used in the Mortgage demo blow for quick download.
+
 ## 2. Spark-ETL+XGBoost getting started guides
 We have three sub demos to demonstrate the Spark ETL + XGBoost process as Mortgage, Taxi and Agaricus(Agaricus demo has 
 very simple ETL part as just a filter process, so we combined the ETL part into XGBoost process).
