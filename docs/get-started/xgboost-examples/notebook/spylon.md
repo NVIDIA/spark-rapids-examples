@@ -7,7 +7,7 @@ At the end of this guide, the reader will be able to run a sample notebook that 
 Before you begin, please ensure that you have setup 
 a [Spark Standalone Cluster](/docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md).
 
-It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are defined and point to the master spark URL, 
+It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are defined and point to the Spark Master URL, 
 and the home directory for Apache Spark respectively.
 
 1. Install jupyter notebook with spylon-kernel.
