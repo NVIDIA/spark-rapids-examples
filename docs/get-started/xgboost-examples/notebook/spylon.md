@@ -27,7 +27,7 @@ and the home directory for Apache Spark respectively.
     # Let's make the default password as '123456'
     rm -rf `dirname $JUPYTER_CONFIG_FILE` && mkdir -p `dirname $JUPYTER_CONFIG_FILE` && echo """
     c.NotebookApp.ip='*'
-    c.NotebookApp.password = u'sha1:cb0789ab252c:9b3f194578bc38c2e752e7a207754e4840280881'
+    c.NotebookApp.password = your_hashed_password
     c.NotebookApp.password = your_password 
     c.NotebookApp.open_browser = False
     c.NotebookApp.port = your_port
