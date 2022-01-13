@@ -85,7 +85,7 @@ This 1 GPU template file should be sufficient for all XGBoost jobs because each 
 Save this yaml file to the local environment of the machine you are submitting jobs from, 
 you will need to provide a path to it as an argument in your spark-submit command. 
 Without the template file a pod will see every GPU on the cluster node it is allocated on and can attempt
-to execute using a GPU that is already in use -- causing undefined behavior and errors.
+to execute using a GPU which is already in use -- causing undefined behavior and errors.
 
 <span id="etl">Launch Mortgage or Taxi ETL Part</span>
 ---------------------------

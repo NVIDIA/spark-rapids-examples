@@ -28,8 +28,9 @@ you may need to adjust `spark.task.cpus` and `spark.executor.cores` to match (bo
 Additionally, we recommend adjusting `executor-memory` to divide host memory evenly amongst the number of GPUs in each NodeManager,
 such that Spark will schedule as many executors as there are GPUs in each NodeManager.
 
-We use `SPARK_HOME` environment variable to point to the cluster's Apache Spark cluster. 
-And as to how to enable GPU scheduling and isolation for Yarn, please refer to [here](https://hadoop.apache.org/docs/r3.1.0/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
+We use `SPARK_HOME` environment variable to point to the Apache Spark cluster. 
+And as to how to enable GPU scheduling and isolation for Yarn,
+please refer to [here](https://hadoop.apache.org/docs/r3.1.0/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
 
 Get Application Files, Jar and Dataset
 -------------------------------

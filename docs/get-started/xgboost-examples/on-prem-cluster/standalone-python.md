@@ -28,7 +28,7 @@ In Spark Standalone mode, the default configuration is for an executor to take u
 In this example, we will limit the number of cores to 1, to match our dataset.
 Please see https://spark.apache.org/docs/latest/spark-standalone.html for more documentation regarding Standalone configuration.
 
-We use `SPARK_HOME` environment variable to point to the cluster's Apache Spark cluster.
+We use `SPARK_HOME` environment variable to point to the Apache Spark cluster.
 And here are the steps to enable the GPU resources discovery for Spark 3.0+.
 
 1. Copy the spark config file from template
