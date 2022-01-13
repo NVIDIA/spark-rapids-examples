@@ -44,6 +44,7 @@ Here are 2 ways to get started:
 
 - Getting started for Jupyter Notebook applications
     - [Apache Toree Notebook for Scala](../../docs/get-started/xgboost-examples/notebook/toree.md)
+    - [Jupyter Notebook with spylon kernel](../../docs/get-started/xgboost-examples/notebook/spylon.md)
     - [Jupyter Notebook for Python](../../docs/get-started/xgboost-examples/notebook/python-notebook.md)
 
 These examples use default parameters for demo purposes. For a full list please see "Supported Parameters" 
