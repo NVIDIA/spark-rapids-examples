@@ -15,7 +15,9 @@ which is used in the Mortgage demo blow for quick download.
 ## 2. Spark-ETL+XGBoost getting started guides
 We have three sub demos to demonstrate the Spark ETL + XGBoost process as Mortgage, Taxi and Agaricus(Agaricus demo has 
 very simple ETL part as just a filter process, so we combined the ETL part into XGBoost process).
-You have two ways to get start, you can start by running scala or python codes, or you can start by running notebooks.
+Here are 2 ways to get started:
+- Running Spark jobs
+- Notebooks
 
 ### 1. Getting Started by running Spark jobs
 
