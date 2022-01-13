@@ -17,7 +17,7 @@ We have three sub demos to demonstrate the Spark ETL + XGBoost process as Mortga
 very simple ETL part as just a filter process, so we combined the ETL part into XGBoost process).
 You have two ways to get start, you can start by running scala or python codes, or you can start by running notebooks.
 
-### 1. Getting Started From Codes
+### 1. Getting Started by running Spark jobs
 
 - Mortgage: [Scala](../../examples/Spark-ETL+XGBoost/mortgage/scala/src/com/nvidia/spark/examples/mortgage), [Python](../../examples/Spark-ETL+XGBoost/mortgage/python/com/nvidia/spark/examples/mortgage)
 - Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](../../examples/Spark-ETL+XGBoost/taxi/python/com/nvidia/spark/examples/taxi)
