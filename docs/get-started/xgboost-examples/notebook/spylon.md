@@ -39,7 +39,7 @@ and the home directory for Apache Spark respectively.
 
     Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
 
-4. CLI to run scala notebook (e.g. [mortgage-gpu.ipynb](../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-gpu.ipynb))
+4. CLI to run scala notebook (e.g. [mortgage-gpu.ipynb](/examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-gpu.ipynb))
 
     ``` bash
     # Suppose your Scala file is $WORKSPACE/mortgage-gpu.ipynb
@@ -89,17 +89,16 @@ and the home directory for Apache Spark respectively.
     ```
    
 5. Launch ETL Part 
-- Mortgage ETL Notebook: [Scala](../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-ETL.ipynb) or
-  [Python](../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python/MortgageETL.ipynb)
-- Taxi ETL Notebook: [Scala](../../../../examples/Spark-ETL+XGBoost/taxi/notebooks/scala/taxi-ETL.ipynb) or
-  [Python](../../../../examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-ETL.ipynb)
+- Mortgage ETL Notebook: [Scala](/examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-ETL.ipynb) or
+  [Python](/examples/Spark-ETL+XGBoost/mortgage/notebooks/python/MortgageETL.ipynb)
+- Taxi ETL Notebook: [Scala](/examples/Spark-ETL+XGBoost/taxi/notebooks/scala/taxi-ETL.ipynb) or
+  [Python](/examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-ETL.ipynb)
 - Note: Agaricus does not have ETL part.
    
 6. Launch XGBoost Part
-- Mortgage XGBoost Notebook: [Scala](../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-gpu.ipynb) or
-  [Python](../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python/mortgage-gpu.ipynb)
-- Taxi XGBoost Notebook: [Scala](../../../../examples/Spark-ETL+XGBoost/taxi/notebooks/scala/taxi-gpu.ipynb) or 
-  [Python](../../../../examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-gpu.ipynb)
-- Agaricus XGBoost Notebook: [Scala](../../../../examples/Spark-ETL+XGBoost/agaricus/notebooks/scala/agaricus-gpu.ipynb) or
-  [Python](../../../../examples/Spark-ETL+XGBoost/agaricus/notebooks/python/agaricus-gpu.ipynb)
-  
+- Mortgage XGBoost Notebook: [Scala](/examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-gpu.ipynb) or
+  [Python](/examples/Spark-ETL+XGBoost/mortgage/notebooks/python/mortgage-gpu.ipynb)
+- Taxi XGBoost Notebook: [Scala](/examples/Spark-ETL+XGBoost/taxi/notebooks/scala/taxi-gpu.ipynb) or 
+  [Python](/examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-gpu.ipynb)
+- Agaricus XGBoost Notebook: [Scala](/examples/Spark-ETL+XGBoost/agaricus/notebooks/scala/agaricus-gpu.ipynb) or
+  [Python](/examples/Spark-ETL+XGBoost/agaricus/notebooks/python/agaricus-gpu.ipynb)
