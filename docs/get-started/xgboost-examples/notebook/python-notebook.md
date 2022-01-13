@@ -35,7 +35,7 @@ It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are
     --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh
     ```
 
-4. Launch Mortgage or Taxi ETL Part 
+4. Launch ETL Part 
 - Mortgage ETL Notebook: [Python](.../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python/MortgageETL.ipynb)
 - Taxi ETL Notebook: [Python](../../../../examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-ETL.ipynb)
 - Note: Agaricus does not have ETL part.
