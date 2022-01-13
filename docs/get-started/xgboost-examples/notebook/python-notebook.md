@@ -2,12 +2,13 @@ Get Started with XGBoost4J-Spark with Jupyter Notebook
 ===================================================================
 
 This is a getting started guide to XGBoost4J-Spark using an [Jupyter notebook](https://jupyter.org/). 
-At the end of this guide, the reader will be able to run a sample notebook that runs on NVIDIA GPUs.
+At the end of this guide, you will be able to run a sample notebook that runs on NVIDIA GPUs.
 
 Before you begin, please ensure that you have setup a Spark Cluster(Standalone or YARN).
 You should change `--master` config according to your cluster architecture. For example, set `--master yarn` for spark on YARN.
 
-It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are defined and point to the master spark URL (e.g. `spark://localhost:7077`), and the home directory for Apache Spark respectively.
+It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are defined and point to the master spark URL (e.g. `spark://localhost:7077`),
+and the home directory for Apache Spark respectively.
 
 1. Make sure you have [Jupyter notebook installed](https://jupyter.org/install.html).
 
@@ -36,7 +37,7 @@ It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are
     ```
 
 4. Launch ETL Part 
-- Mortgage ETL Notebook: [Python](.../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python/MortgageETL.ipynb)
+- Mortgage ETL Notebook: [Python](../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python/MortgageETL.ipynb)
 - Taxi ETL Notebook: [Python](../../../../examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-ETL.ipynb)
 - Note: Agaricus does not have ETL part.
    
