@@ -44,10 +44,9 @@ this [guide](examples/Spark-DL/criteo_train/README.md).
 This is an example of the GPU accelerated PCA algorithm running on Spark. For detail information please refer to this
 [guide](/examples/Spark-cuML/pca/README.md).
 
-### 5. YARN 3.3.0+ MIG support
+### 5. MIG support
+We provide some guides about the Multi-Instance GPU (MIG) feature based on the NVIDIA Ampere architecture (such as NVIDIA A100 and A30) GPU.
 - [YARN 3.3.0+ MIG GPU Plugin](/examples/MIG-Support/device-plugins/gpu-mig)
-
-### 6. YARN 3.1.2 until YARN 3.3.0 MIG support
 - [YARN 3.1.2 until YARN 3.3.0 MIG GPU Support](/examples/MIG-Support/resource-types/gpu-mig)
 
 ## API
