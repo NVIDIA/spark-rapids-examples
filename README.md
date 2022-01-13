@@ -37,7 +37,7 @@ to `EXAMPLE_CLASS` and `dataPath`, they can be easily adapted with each other wi
 ### 3. TensorFlow training on Horovod Spark example guide
 
 We provide a Criteo Benchmark to demo ETL and deep learning training on Horovod Spark, please refer to 
-this [guide](examples/Spark-DL/criteo_train/README.md).
+this [guide](/examples/Spark-DL/criteo_train/README.md).
 
 ### 4. PCA example guide
 
