@@ -34,7 +34,7 @@ You have two ways to get start, you can start by running scala or python codes, 
         - [EC2](../../docs/get-started/xgboost-examples/csp/aws/ec2.md)
     - [Databricks](../../docs/get-started/xgboost-examples/csp/databricks/databricks.md)
   
-### 2. Getting Started From Notebooks
+### 2. Getting Started by using Notebooks
 
 - Mortgage: [Scala](../../examples/Spark-ETL+XGBoost/mortgage/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python)
 - Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/taxi/notebooks/python)
