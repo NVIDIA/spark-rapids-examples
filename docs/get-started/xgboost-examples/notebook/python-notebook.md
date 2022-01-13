@@ -36,7 +36,7 @@ It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are
     ```
 
 4. Launch Mortgage or Taxi ETL Part 
-   Run [Mortgage ETL Notebook](../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python/MortgageETL.ipynb) to process ETL part.
+- Mortgage ETL Notebook: [Python](.../../../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python/MortgageETL.ipynb)
    Taxi ETL job is the same, just change to [Taxi ETL Notebook](../../../../examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-ETL.ipynb).
    But Agaricus does not have ETL process, it is combined with XGBoost as there is just a filter operation.
    
