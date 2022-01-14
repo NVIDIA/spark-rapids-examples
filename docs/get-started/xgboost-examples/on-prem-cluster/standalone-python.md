@@ -21,7 +21,7 @@ Prerequisites
 The number of GPUs in each host dictates the number of Spark executors that can run there.
 Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
 
-For example, if each host has 4 GPUs, there should be 4 or less executors running on each host,
+For example, if each host has 4 GPUs, there should be 4 or fewer executors running on each host,
 and each executor should run at most 1 task (e.g.: a total of 4 tasks running on 4 GPUs).
 
 In Spark Standalone mode, the default configuration is for an executor to take up all the cores assigned to each Spark Worker.

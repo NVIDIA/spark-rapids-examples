@@ -12,7 +12,7 @@ and the home directory for Apache Spark respectively.
 
 1. Make sure you have [Jupyter notebook installed](https://jupyter.org/install.html).
 
-   If you install it with conda, please makes sure your Python version is consistent.
+   If you install it with conda, please make sure your Python version is consistent.
 
 2. Prepare packages and dataset.
 

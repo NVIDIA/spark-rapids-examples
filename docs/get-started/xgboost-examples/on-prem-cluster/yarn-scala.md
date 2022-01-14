@@ -20,7 +20,7 @@ Prerequisites
 The number of GPUs per NodeManager dictates the number of Spark executors that can run in that NodeManager. 
 Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
 
-For example: if each NodeManager has 4 GPUs, there should be 4 or less executors running on each NodeManager, 
+For example: if each NodeManager has 4 GPUs, there should be 4 or fewer executors running on each NodeManager, 
 and each executor should run 1 task (e.g.: A total of 4 tasks running on 4 GPUs). In order to achieve this, 
 you may need to adjust `spark.task.cpus` and `spark.executor.cores` to match (both set to 1 by default).
 Additionally, we recommend adjusting `executor-memory` to divide host memory evenly amongst the number of GPUs in each NodeManager,
