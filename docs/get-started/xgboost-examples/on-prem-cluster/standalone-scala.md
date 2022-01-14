@@ -76,7 +76,7 @@ Launch a Standalone Spark Cluster
     Note the hostname or ip address of the Master host, so that it can be given to each Worker process,
     in this example the Master and Worker will run on the same host.
 
-3. Start a Spark slave process:
+3. Start a Spark slave process.
 
     ``` bash
     export SPARK_MASTER=spark://`hostname -f`:7077
