@@ -14,7 +14,7 @@ which is used in the Mortgage example below for quick download.
 
 ## 2. Spark-ETL+XGBoost getting started guides
 We have three examples to demonstrate the Spark ETL + XGBoost process: Mortgage, Taxi and Agaricus(Agaricus demo has 
-very simple ETL part as just a filter process, so we combined the ETL part into XGBoost process).
+a very simple ETL part which is just a filter, so we combined the ETL part into XGBoost part).
 Here are 2 ways to get started:
 - Running Spark jobs
 - Notebooks
