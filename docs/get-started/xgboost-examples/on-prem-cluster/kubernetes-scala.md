@@ -28,7 +28,7 @@ Build a GPU Docker image with Spark resources in it, this Docker image must be a
 
 1. Locate your Spark installations. If you don't have one, you can [download](https://spark.apache.org/downloads.html) from Apache and unzip it.
 2. `export SPARK_HOME=<path to spark>`
-3. [Download the Dockerfile](/dockerfile/Dockerfile) into `${SPARK_HOME}` (Here CUDA 11.0 is used as an example in the Dockerfile,
+3. [Download the Dockerfile](/dockerfile/Dockerfile) into `${SPARK_HOME}`. (Here CUDA 11.0 is used as an example in the Dockerfile,
    you may need to update it for other CUDA versions.)
 4. __(OPTIONAL)__ install any additional library jars into the `${SPARK_HOME}/jars` directory
     * Most public cloud file systems are not natively supported -- pulling data and jar files from S3, GCS, etc. require installing additional libraries
