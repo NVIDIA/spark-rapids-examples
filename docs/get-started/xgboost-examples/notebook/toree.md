@@ -27,7 +27,7 @@ and the home directory for Apache Spark respectively.
 
     Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
 
-4. Install a new kernel with gpu enabled and lunch the notebook
+4. Install a new kernel with gpu enabled and launch the notebook
 
     ``` bash
     jupyter toree install                                \
