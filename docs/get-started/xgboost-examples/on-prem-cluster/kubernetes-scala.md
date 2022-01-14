@@ -31,7 +31,7 @@ Build a GPU Docker image with Spark resources in it, this Docker image must be a
 3. [Download the Dockerfile](/dockerfile/Dockerfile) into `${SPARK_HOME}`. (Here CUDA 11.0 is used as an example in the Dockerfile,
    you may need to update it for other CUDA versions.)
 4. __(OPTIONAL)__ install any additional library jars into the `${SPARK_HOME}/jars` directory.
-    * Most public cloud file systems are not natively supported -- pulling data and jar files from S3, GCS, etc. require installing additional libraries
+    * Most public cloud file systems are not natively supported -- pulling data and jar files from S3, GCS, etc. require installing additional libraries.
 5. Build and push the docker image
 
 ``` bash
