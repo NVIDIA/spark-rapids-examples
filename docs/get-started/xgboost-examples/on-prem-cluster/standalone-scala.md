@@ -30,7 +30,7 @@ Please see https://spark.apache.org/docs/latest/spark-standalone.html for more d
 We use `SPARK_HOME` environment variable to point to the Apache Spark cluster.
 And here are steps to enable the GPU resources discovery for Spark 3.0+.
 
-1. Copy the spark configure file from template
+1. Copy the spark configure file from template.
 
     ``` bash
     cd ${SPARK_HOME}/conf/
