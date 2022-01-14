@@ -21,6 +21,8 @@ Here are 2 ways to get started:
 
 ### 1. Getting Started by running Spark jobs
 
+
+Below are source codes for the example Spark jobs:
 - Mortgage: [Scala](../../examples/Spark-ETL+XGBoost/mortgage/scala/src/com/nvidia/spark/examples/mortgage), [Python](../../examples/Spark-ETL+XGBoost/mortgage/python/com/nvidia/spark/examples/mortgage)
 - Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](../../examples/Spark-ETL+XGBoost/taxi/python/com/nvidia/spark/examples/taxi)
 - Agaricus: [Scala](../../examples/Spark-ETL+XGBoost/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](../../examples/Spark-ETL+XGBoost/agaricus/python/com/nvidia/spark/examples/agaricus)
