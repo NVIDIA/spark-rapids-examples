@@ -26,7 +26,6 @@ You can debug from webUI http://your_ip:your_port with your password.
     ``` bash
     export JUPYTER_CONFIG_FILE=~/.jupyter/jupyter_notebook_config.py
     
-    # Let's make the default password as '123456'
     rm -rf `dirname $JUPYTER_CONFIG_FILE` && mkdir -p `dirname $JUPYTER_CONFIG_FILE` && echo """
     c.NotebookApp.ip='*'
     c.NotebookApp.password = your_hashed_password
