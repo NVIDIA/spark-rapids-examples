@@ -48,6 +48,7 @@ Below are the example notebooks:
 - Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/taxi/notebooks/python)
 - Agaricus: [Scala](../../examples/Spark-ETL+XGBoost/agaricus/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/agaricus/notebooks/python)
 
+Please follow below steps to run the example notebooks in different notebook environments:
 - Getting started for Jupyter Notebook applications
     - [Apache Toree Notebook for Scala](../../docs/get-started/xgboost-examples/notebook/toree.md)
     - [Jupyter Notebook with spylon kernel](../../docs/get-started/xgboost-examples/notebook/spylon.md)
