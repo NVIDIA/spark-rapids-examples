@@ -85,7 +85,7 @@ You can debug from webUI http://your_ip:your_port with your password.
     export PYSPARK_DRIVER_PYTHON_OPTS="notebook --allow-root --notebook-dir=$WORKSPACE --config=$JUPYTER_CONFIG_FILE"
     pyspark &
      
-    # Suppose your python file is $WORKSPACE/mortgage-py-train-gpu.ipynb
+    # Suppose your python file is $WORKSPACE/mortgage-gpu.ipynb
     jupyter nbconvert --to notebook--stdout --execute $WORKSPACE/mortgage-gpu.ipynb
     ```
    
