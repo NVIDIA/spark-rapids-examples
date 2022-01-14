@@ -56,14 +56,14 @@ Make sure you have prepared the necessary packages and dataset by following this
 Launch a Standalone Spark Cluster
 ---------------------------------
 
-1. Copy required jars to `$SPARK_HOME/jars` folder
+1. Copy required jars to `$SPARK_HOME/jars` folder.
 
     ``` bash
     cp ${RAPIDS_JAR} $SPARK_HOME/jars/
     cp ${CUDF_JAR} $SPARK_HOME/jars/
     ```
 
-2. Start the Spark Master process:
+2. Start the Spark Master process.
 
     ``` bash
     ${SPARK_HOME}/sbin/start-master.sh
@@ -71,7 +71,7 @@ Launch a Standalone Spark Cluster
 
     Note the hostname or ip address of the Master host, so that it can be given to each Worker process, in this example the Master and Worker will run on the same host.
 
-3. Start a spark slave process:
+3. Start a spark slave process.
 
     ``` bash
     export SPARK_MASTER=spark://`hostname -f`:7077

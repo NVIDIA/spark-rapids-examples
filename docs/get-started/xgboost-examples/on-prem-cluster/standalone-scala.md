@@ -60,14 +60,14 @@ Taxi ETL job is the same. But Agaricus does not have ETL process, it is combined
 Launch a Standalone Spark Cluster
 ---------------------------------
 
-1. Copy required jars to `$SPARK_HOME/jars` folder
+1. Copy required jars to `$SPARK_HOME/jars` folder.
 
     ``` bash
     cp $CUDF_JAR $SPARK_HOME/jars/
     cp $RAPIDS_JAR $SPARK_HOME/jars/
     ```
 
-2. Start the Spark Master process:
+2. Start the Spark Master process.
 
     ``` bash
     ${SPARK_HOME}/sbin/start-master.sh
