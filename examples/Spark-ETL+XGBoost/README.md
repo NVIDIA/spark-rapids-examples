@@ -2,7 +2,7 @@
 
 ## 1. Prepare the dataset Spark-ETL+XGBoost examples codes
 
-You can get a small size datasets for each example in the [datasets](../../datasets) folder. 
+You can get a small size dataset for each example in the [datasets](../../datasets) folder. 
 These datasets are only provided for convenience. In order to test for performance, 
 please prepare packages and download a larger dataset by following links:
 - Prepare packages and datasets
