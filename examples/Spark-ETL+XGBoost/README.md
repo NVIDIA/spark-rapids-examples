@@ -13,7 +13,7 @@ We provided a [Morgage Dataset (1 GB uncompressed)](https://rapidsai-data.s3.us-
 which is used in the Mortgage example below for quick download.
 
 ## 2. Spark-ETL+XGBoost getting started guides
-We have three examples to demonstrate the Spark ETL + XGBoost process: Mortgage, Taxi and Agaricus(Agaricus demo has 
+We have three examples to demonstrate the Spark ETL + XGBoost process: Mortgage, Taxi and Agaricus(Note: Agaricus example has 
 a very simple ETL part which is just a filter, so we combined the ETL part into XGBoost part).
 Here are 2 ways to get started:
 - Running Spark jobs
