@@ -7,7 +7,7 @@ At the end of this guide, you will be able to run a sample notebook that runs on
 Before you begin, please ensure that you have setup a Spark Cluster(Standalone or YARN).
 You should change `--master` config according to your cluster architecture. For example, set `--master yarn` for spark on YARN.
 
-It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are defined and point to the master spark URL (e.g. `spark://localhost:7077`),
+It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are defined and point to the Spark Master URL (e.g. `spark://localhost:7077`),
 and the home directory for Apache Spark respectively.
 
 1. Make sure you have [Jupyter notebook installed](https://jupyter.org/install.html).
