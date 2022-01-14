@@ -27,6 +27,8 @@ Below are source codes for the example Spark jobs:
 - Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](../../examples/Spark-ETL+XGBoost/taxi/python/com/nvidia/spark/examples/taxi)
 - Agaricus: [Scala](../../examples/Spark-ETL+XGBoost/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](../../examples/Spark-ETL+XGBoost/agaricus/python/com/nvidia/spark/examples/agaricus)
 
+
+Please follow below steps to run the example Spark jobs in different Spark environments:
 - Getting started on on-premises clusters
     - [Standalone cluster for Scala](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md)
     - [Standalone cluster for Python](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md)
