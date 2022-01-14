@@ -52,7 +52,7 @@ popd
 Get Jars and Dataset
 -------------------------------
 
-Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
+Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md).
 
 Make sure that data and jars are accessible by each node of the Kubernetes cluster 
 via [Kubernetes volumes](https://spark.apache.org/docs/latest/running-on-kubernetes.html#using-kubernetes-volumes), 
