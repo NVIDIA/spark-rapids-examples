@@ -42,6 +42,8 @@ Please follow below steps to run the example Spark jobs in different Spark envir
   
 ### 2. Getting Started by using Notebooks
 
+
+Below are the example notebooks:
 - Mortgage: [Scala](../../examples/Spark-ETL+XGBoost/mortgage/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/mortgage/notebooks/python)
 - Taxi: [Scala](../../examples/Spark-ETL+XGBoost/taxi/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/taxi/notebooks/python)
 - Agaricus: [Scala](../../examples/Spark-ETL+XGBoost/agaricus/notebooks/scala), [Python](../../examples/Spark-ETL+XGBoost/agaricus/notebooks/python)
