@@ -1,15 +1,18 @@
 Get Started with XGBoost4J-Spark with Jupyter Notebook
 ===================================================================
 
-This is a getting started guide to XGBoost4J-Spark using an [Jupyter notebook](https://jupyter.org/). At the end of this guide, the reader will be able to run a sample notebook that runs on NVIDIA GPUs.
+This is a getting started guide to XGBoost4J-Spark using an [Jupyter notebook](https://jupyter.org/). 
+At the end of this guide, you will be able to run a sample notebook that runs on NVIDIA GPUs.
 
-Before you begin, please ensure that you have setup a [Spark Standalone Cluster](/docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md).
+Before you begin, please ensure that you have setup a Spark Cluster(Standalone or YARN).
+You should change `--master` config according to your cluster architecture. For example, set `--master yarn` for spark on YARN.
 
-It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are defined and point to the master spark URL (e.g. `spark://localhost:7077`), and the home directory for Apache Spark respectively.
+It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are defined and point to the Spark Master URL (e.g. `spark://localhost:7077`),
+and the home directory for Apache Spark respectively.
 
 1. Make sure you have [Jupyter notebook installed](https://jupyter.org/install.html).
 
-   If you install it with conda, please makes sure your Python version is consistent.
+   If you install it with conda, please make sure your Python version is consistent.
 
 2. Prepare packages and dataset.
 
@@ -33,4 +36,12 @@ It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are
     --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh
     ```
 
-    Then you start your notebook and open [`mortgage-gpu.ipynb`](/examples/mortgage/notebooks/scala/mortgage-gpu.ipynb) to explore.
+4. Launch ETL Part 
+- Mortgage ETL Notebook: [Python](/examples/Spark-ETL+XGBoost/mortgage/notebooks/python/MortgageETL.ipynb)
+- Taxi ETL Notebook: [Python](/examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-ETL.ipynb)
+- Note: Agaricus does not have ETL part.
+   
+5. Launch XGBoost Part
+- Mortgage XGBoost Notebook: [Python](/examples/Spark-ETL+XGBoost/mortgage/notebooks/python/mortgage-gpu.ipynb)
+- Taxi XGBoost Notebook: [Python](/examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-gpu.ipynb)
+- Agaricus XGBoost Notebook: [Python](/examples/Spark-ETL+XGBoost/agaricus/notebooks/python/agaricus-gpu.ipynb)

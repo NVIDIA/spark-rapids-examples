@@ -1,6 +1,7 @@
 Get Started with XGBoost4J-Spark on Apache Hadoop YARN
 ======================================================
-This is a getting started guide to XGBoost4J-Spark on Apache Hadoop YARN supporting GPU scheduling. At the end of this guide, the reader will be able to run a sample Apache Spark Python application that runs on NVIDIA GPUs.
+This is a getting started guide to XGBoost4J-Spark on Apache Hadoop YARN supporting GPU scheduling.
+At the end of this guide, the reader will be able to run a sample Apache Spark Python application that runs on NVIDIA GPUs.
 
 Prerequisites
 -------------
@@ -11,19 +12,25 @@ Prerequisites
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
   * Ubuntu 18.04, 20.04/CentOS7, CentOS8
-  * CUDA 11.0-11.4
+  * CUDA 11.0+
   * NVIDIA driver compatible with your CUDA
-  * NCCL 2.7.8
+  * NCCL 2.7.8+
   * Python 3.6+
   * NumPy
 
-The number of GPUs per NodeManager dictates the number of Spark executors that can run in that NodeManager. Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
+The number of GPUs per NodeManager dictates the number of Spark executors that can run in that NodeManager. 
+Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
 
-For example: if each NodeManager has 4 GPUs, there should be 4 or less executors running on each NodeManager, and each executor should run 1 task (e.g.: A total of 4 tasks running on 4 GPUs). In order to achieve this, you may need to adjust `spark.task.cpus` and `spark.executor.cores` to match (both set to 1 by default).
+For example: if each NodeManager has 4 GPUs, there should be 4 or fewer executors running on each NodeManager, 
+and each executor should run 1 task (e.g.: A total of 4 tasks running on 4 GPUs). In order to achieve this, 
+you may need to adjust `spark.task.cpus` and `spark.executor.cores` to match (both set to 1 by default).
 
-Additionally, we recommend adjusting `executor-memory` to divide host memory evenly amongst the number of GPUs in each NodeManager, such that Spark will schedule as many executors as there are GPUs in each NodeManager.
+Additionally, we recommend adjusting `executor-memory` to divide host memory evenly amongst the number of GPUs in each NodeManager,
+such that Spark will schedule as many executors as there are GPUs in each NodeManager.
 
-We use `SPARK_HOME` environment variable to point to the cluster's Apache Spark cluster. And as to how to enable GPU scheduling and isolation for Yarn, please refer to [here](https://hadoop.apache.org/docs/r3.1.0/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
+We use `SPARK_HOME` environment variable to point to the Apache Spark cluster. 
+And as to how to enable GPU scheduling and isolation for Yarn,
+please refer to [here](https://hadoop.apache.org/docs/r3.1.0/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
 
 Get Application Files, Jar and Dataset
 -------------------------------
@@ -37,7 +44,7 @@ Then create a directory in HDFS, and run below commands,
 [xgboost4j_spark_python]$ hadoop fs -copyFromLocal ${SPARK_XGBOOST_DIR}/mortgage/* /tmp/xgboost4j_spark_python
 ```
 
-Launch Mortgage ETL Example
+Launch Mortgage or Taxi ETL Part
 ---------------------------
 
 Run spark-submit:
@@ -65,7 +72,7 @@ ${SPARK_HOME}/bin/spark-submit \
 # -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
 ```
 
-Launch GPU Mortgage Example
+Launch XGBoost Part on GPU
 ---------------------------
 
 Variables required to run spark-submit command:
@@ -143,7 +150,7 @@ Transformation takes 4.38 seconds
 Accuracy is 0.997544753891
 ```
 
-Launch CPU Mortgage Example
+Launch XGBoost Part on CPU
 ---------------------------
 
 If you are running this example after running the GPU example above, please set these variables, to set both training and testing to run on the CPU exclusively:
@@ -211,4 +218,5 @@ Transformation takes 1.25 seconds
 Accuracy is 0.998526852335
 ```
 
-<sup>*</sup> The timings in this Getting Started guide are only illustrative. Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.
+<sup>*</sup> The timings in this Getting Started guide are only for illustrative purpose.
+Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.

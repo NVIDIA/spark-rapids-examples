@@ -1,6 +1,7 @@
 Get Started with XGBoost4J-Spark on an Apache Spark Standalone Cluster
 ======================================================================
-This is a getting started guide to XGBoost4J-Spark on an Apache Spark 3.0+ Standalone Cluster. At the end of this guide, the user can run a sample Apache Spark Python application that runs on NVIDIA GPUs.
+This is a getting started guide to XGBoost4J-Spark on an Apache Spark 3.0+ Standalone Cluster.
+At the end of this guide, the user can run a sample Apache Spark Python application that runs on NVIDIA GPUs.
 
 Prerequisites
 -------------
@@ -11,19 +12,24 @@ Prerequisites
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
   * Ubuntu 18.04, 20.04/CentOS7, CentOS8
-  * CUDA 11.0-11.4
+  * CUDA 11.0+
   * NVIDIA driver compatible with your CUDA
-  * NCCL 2.7.8
+  * NCCL 2.7.8+
   * Python 3.6+
   * NumPy
 
-The number of GPUs in each host dictates the number of Spark executors that can run there. Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
+The number of GPUs in each host dictates the number of Spark executors that can run there.
+Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
 
-For example, if each host has 4 GPUs, there should be 4 or less executors running on each host, and each executor should run at most 1 task (e.g.: a total of 4 tasks running on 4 GPUs).
+For example, if each host has 4 GPUs, there should be 4 or fewer executors running on each host,
+and each executor should run at most 1 task (e.g.: a total of 4 tasks running on 4 GPUs).
 
-In Spark Standalone mode, the default configuration is for an executor to take up all the cores assigned to each Spark Worker. In this example, we will limit the number of cores to 1, to match our dataset. Please see https://spark.apache.org/docs/latest/spark-standalone.html for more documentation regarding Standalone configuration.
+In Spark Standalone mode, the default configuration is for an executor to take up all the cores assigned to each Spark Worker.
+In this example, we will limit the number of cores to 1, to match our dataset.
+Please see https://spark.apache.org/docs/latest/spark-standalone.html for more documentation regarding Standalone configuration.
 
-We use `SPARK_HOME` environment variable to point to the cluster's Apache Spark cluster. And here are the steps to enable the GPU resources discovery for Spark 3.0+.
+We use `SPARK_HOME` environment variable to point to the Apache Spark cluster.
+And here are the steps to enable the GPU resources discovery for Spark 3.0+.
 
 1. Copy the spark config file from template
 
@@ -34,7 +40,8 @@ We use `SPARK_HOME` environment variable to point to the cluster's Apache Spark 
 
 2. Add the following configs to the file `spark-defaults.conf`.
 
-   The number in the first config should **NOT** be larger than the actual number of the GPUs on current host. This example uses 1 as below for one GPU on the host.
+   The number in the first config should **NOT** be larger than the actual number of the GPUs on current host.
+   This example uses 1 as below for one GPU on the host.
 
     ```bash
     spark.worker.resource.gpu.amount 1
@@ -49,14 +56,14 @@ Make sure you have prepared the necessary packages and dataset by following this
 Launch a Standalone Spark Cluster
 ---------------------------------
 
-1. Copy required jars to `$SPARK_HOME/jars` folder
+1. Copy required jars to `$SPARK_HOME/jars` folder.
 
     ``` bash
     cp ${RAPIDS_JAR} $SPARK_HOME/jars/
     cp ${CUDF_JAR} $SPARK_HOME/jars/
     ```
 
-2. Start the Spark Master process:
+2. Start the Spark Master process.
 
     ``` bash
     ${SPARK_HOME}/sbin/start-master.sh
@@ -64,7 +71,7 @@ Launch a Standalone Spark Cluster
 
     Note the hostname or ip address of the Master host, so that it can be given to each Worker process, in this example the Master and Worker will run on the same host.
 
-3. Start a spark slave process:
+3. Start a spark slave process.
 
     ``` bash
     export SPARK_MASTER=spark://`hostname -f`:7077
@@ -75,7 +82,7 @@ Launch a Standalone Spark Cluster
 
     Note that in this example the Master and Worker processes are both running on the same host. This is not a requirement, as long as all hosts that are used to run the Spark app have access to the dataset.
 
-Launch Mortgage ETL Example
+Launch Mortgage or Taxi ETL Part
 ---------------------------
 
 Run spark-submit
@@ -109,7 +116,7 @@ ${SPARK_HOME}/bin/spark-submit \
 # -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
 ```
 
-Launch GPU Mortgage Example
+Launch XGBoost Part on GPU
 ---------------------------
 
 Variables required to run spark-submit command:
@@ -187,10 +194,11 @@ Transformation takes 12.21 seconds
 Accuracy is 0.9873692247091792
 ```
 
-Launch CPU Mortgage Example
+Launch XGBoost Part on CPU
 ---------------------------
 
-If you are running this example after running the GPU example above, please set these variables, to set both training and testing to run on the CPU exclusively:
+If you are running this example after running the GPU example above, please set these variables,
+to set both training and testing to run on the CPU exclusively:
 
 ``` bash
 # this is the same master host we defined while launching the cluster
@@ -261,4 +269,5 @@ Transformation takes 36.26 seconds
 Accuracy is 0.9873709530950067
 ```
 
-<sup>*</sup> The timings in this Getting Started guide are only illustrative. Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.
+<sup>*</sup> The timings in this Getting Started guide are only illustrative.
+Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.

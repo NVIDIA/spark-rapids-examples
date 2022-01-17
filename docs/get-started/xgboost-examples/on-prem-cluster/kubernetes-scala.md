@@ -1,6 +1,7 @@
 Get Started with XGBoost4J-Spark on Kubernetes
 ==============================================
-This is a getting started guide to deploy XGBoost4J-Spark package on a Kubernetes cluster. At the end of this guide, the reader will be able to run a sample Apache Spark  XGBoost application on NVIDIA GPU Kubernetes cluster.
+This is a getting started guide to deploy XGBoost4J-Spark package on a Kubernetes cluster. At the end of this guide,
+the reader will be able to run a sample Apache Spark XGBoost application on NVIDIA GPU Kubernetes cluster.
 
 Prerequisites
 -------------
@@ -11,11 +12,12 @@ Prerequisites
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
   * Ubuntu 18.04, 20.04/CentOS7, CentOS8
-  * CUDA 11.0-11.4
+  * CUDA 11.0+
   * NVIDIA driver compatible with your CUDA
-  * NCCL 2.7.8
+  * NCCL 2.7.8+
 * [Kubernetes 1.6+ cluster with NVIDIA GPUs](https://docs.nvidia.com/datacenter/kubernetes/index.html)
-  * See official [Spark on Kubernetes](https://spark.apache.org/docs/latest/running-on-kubernetes.html#prerequisites) instructions for detailed spark-specific cluster requirements
+  * See official [Spark on Kubernetes](https://spark.apache.org/docs/latest/running-on-kubernetes.html#prerequisites) 
+    instructions for detailed spark-specific cluster requirements
 * kubectl installed and configured in the job submission environment
   * Required for managing jobs and retrieving logs
 
@@ -26,10 +28,11 @@ Build a GPU Docker image with Spark resources in it, this Docker image must be a
 
 1. Locate your Spark installations. If you don't have one, you can [download](https://spark.apache.org/downloads.html) from Apache and unzip it.
 2. `export SPARK_HOME=<path to spark>`
-3. [Download the Dockerfile](/dockerfile/Dockerfile) into `${SPARK_HOME}` (Here CUDA 11.0 is used as an example in the Dockerfile, you may need to update it for other CUDA versions.)
-4. __(OPTIONAL)__ install any additional library jars into the `${SPARK_HOME}/jars` directory
-    * Most public cloud file systems are not natively supported -- pulling data and jar files from S3, GCS, etc. require installing additional libraries
-5. Build and push the docker image
+3. [Download the Dockerfile](/dockerfile/Dockerfile) into `${SPARK_HOME}`. (Here CUDA 11.0 is used as an example in the Dockerfile,
+   you may need to update it for other CUDA versions.)
+4. __(OPTIONAL)__ install any additional library jars into the `${SPARK_HOME}/jars` directory.
+    * Most public cloud file systems are not natively supported -- pulling data and jar files from S3, GCS, etc. require installing additional libraries.
+5. Build and push the docker image.
 
 ``` bash
 export SPARK_HOME=<path to spark>
@@ -37,7 +40,7 @@ export SPARK_DOCKER_IMAGE=<gpu spark docker image repo and name>
 export SPARK_DOCKER_TAG=<spark docker image tag>
 
 pushd ${SPARK_HOME}
-wget https://github.com/NVIDIA/spark-rapids-examples/raw/branch-21.10/dockerfile/Dockerfile
+wget https://github.com/NVIDIA/spark-rapids-examples/raw/branch-21.12/dockerfile/Dockerfile
 
 # Optionally install additional jars into ${SPARK_HOME}/jars/
 
@@ -49,14 +52,23 @@ popd
 Get Jars and Dataset
 -------------------------------
 
-Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
+Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md).
 
-Make sure that data and jars are accessible by each node of the Kubernetes cluster via [Kubernetes volumes](https://spark.apache.org/docs/latest/running-on-kubernetes.html#using-kubernetes-volumes), on cluster filesystems like HDFS, or in [object stores like S3 and GCS](https://spark.apache.org/docs/2.3.0/cloud-integration.html). Note that using [application dependencies](https://spark.apache.org/docs/latest/running-on-kubernetes.html#dependency-management) from the submission client’s local file system is currently not yet supported.
+Make sure that data and jars are accessible by each node of the Kubernetes cluster 
+via [Kubernetes volumes](https://spark.apache.org/docs/latest/running-on-kubernetes.html#using-kubernetes-volumes), 
+on cluster filesystems like HDFS, or in [object stores like S3 and GCS](https://spark.apache.org/docs/2.3.0/cloud-integration.html). 
+Note that using [application dependencies](https://spark.apache.org/docs/latest/running-on-kubernetes.html#dependency-management) from 
+the submission client’s local file system is currently not yet supported.
+
+Note: the `mortgage_eval_merged.csv` and `mortgage_train_merged.csv` are not Mortgage raw data,
+they are the data produced by Mortgage ETL job. If user wants to use a larger size Mortgage data, please refer to [Launch ETL job](#etl).
+Taxi ETL job is the same. But Agaricus does not have ETL process, it is combined with XGBoost as there is just a filter operation.
 
 Save Kubernetes Template Resources
 ----------------------------------
 
-When using Spark on Kubernetes the driver and executor pods can be launched with pod templates. In the XGBoost4J-Spark use case, these template yaml files are used to allocate and isolate specific GPUs to each pod. The following is a barebones template file to allocate 1 GPU per pod.
+When using Spark on Kubernetes the driver and executor pods can be launched with pod templates. In the XGBoost4J-Spark use case,
+these template yaml files are used to allocate and isolate specific GPUs to each pod. The following is a barebones template file to allocate 1 GPU per pod.
 
 ```
 apiVersion: v1
@@ -69,12 +81,14 @@ spec:
           nvidia.com/gpu: 1
 ```
 
-This 1 GPU template file should be sufficient for all XGBoost jobs because each executor should only run 1 task on a single GPU. Save this yaml file to the local environment of the machine you are submitting jobs from, you will need to provide a path to it as an argument in your spark-submit command. Without the template file a pod will see every GPU on the cluster node it is allocated on and can attempt to execute using a GPU that is already in use -- causing undefined behavior and errors.
+This 1 GPU template file should be sufficient for all XGBoost jobs because each executor should only run 1 task on a single GPU.
+Save this yaml file to the local environment of the machine you are submitting jobs from, 
+you will need to provide a path to it as an argument in your spark-submit command. 
+Without the template file a pod will see every GPU on the cluster node it is allocated on and can attempt
+to execute using a GPU which is already in use -- causing undefined behavior and errors.
 
-<span id="etl">Launch Mortgage ETL</span>
+<span id="etl">Launch Mortgage or Taxi ETL Part</span>
 ---------------------------
-
-If user wants to use a larger size dataset other than the default one, we provide an ETL app to process raw Mortgage data.
 
 Run spark-submit
 
@@ -110,7 +124,7 @@ ${SPARK_HOME}/bin/spark-submit \
 # -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
 ```
 
-Launch GPU Mortgage Example
+Launch XGBoost Part on GPU
 ---------------------------
 
 Variables required to run spark-submit command:
@@ -196,7 +210,7 @@ export POD_NAME=<kubernetes pod name>
 kubectl logs -f ${POD_NAME}
 ```
 
-In the driver log, you should see timings* (in seconds), and the accuracy metric:
+In the driver log, you should see timings* (in seconds), and the accuracy metric(take Mortgage as example):
 ```
 --------------
 ==> Benchmark: Elapsed time for [Mortgage GPU train csv stub Unknown Unknown Unknown]: 30.132s
@@ -211,6 +225,7 @@ In the driver log, you should see timings* (in seconds), and the accuracy metric
 --------------
 ```
 
-\* Kubernetes logs may not be nicely formatted since `stdout` and `stderr` are not kept separately
+\* Kubernetes logs may not be nicely formatted since `stdout` and `stderr` are not kept separately.
 
-\* The timings in this Getting Started guide are only illustrative. Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.
+\* The timings in this Getting Started guide are only for illustrative purpose. 
+Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.

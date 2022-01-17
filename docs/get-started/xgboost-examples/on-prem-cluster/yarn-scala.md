@@ -1,7 +1,8 @@
 Get Started with XGBoost4J-Spark on Apache Hadoop YARN
 ======================================================
 
-This is a getting started guide to XGBoost4J-Spark on Apache Hadoop YARN supporting GPU scheduling. At the end of this guide, the reader will be able to run a sample Apache Spark application that runs on NVIDIA GPUs.
+This is a getting started guide to XGBoost4J-Spark on Apache Hadoop YARN supporting GPU scheduling. 
+At the end of this guide, the reader will be able to run a sample Apache Spark application that runs on NVIDIA GPUs.
 
 Prerequisites
 -------------
@@ -12,15 +13,22 @@ Prerequisites
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
   * Ubuntu 18.04, 20.04/CentOS7, CentOS8
-  * CUDA 11.0-11.4
+  * CUDA 11.0+
   * NVIDIA driver compatible with your CUDA
-  * NCCL 2.7.8
+  * NCCL 2.7.8+
 
-The number of GPUs per NodeManager dictates the number of Spark executors that can run in that NodeManager. Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
+The number of GPUs per NodeManager dictates the number of Spark executors that can run in that NodeManager. 
+Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
 
-For example: if each NodeManager has 4 GPUs, there should be 4 or less executors running on each NodeManager, and each executor should run 1 task (e.g.: A total of 4 tasks running on 4 GPUs). In order to achieve this, you may need to adjust `spark.task.cpus` and `spark.executor.cores` to match (both set to 1 by default). Additionally, we recommend adjusting `executor-memory` to divide host memory evenly amongst the number of GPUs in each NodeManager, such that Spark will schedule as many executors as there are GPUs in each NodeManager.
+For example: if each NodeManager has 4 GPUs, there should be 4 or fewer executors running on each NodeManager, 
+and each executor should run 1 task (e.g.: A total of 4 tasks running on 4 GPUs). In order to achieve this, 
+you may need to adjust `spark.task.cpus` and `spark.executor.cores` to match (both set to 1 by default).
+Additionally, we recommend adjusting `executor-memory` to divide host memory evenly amongst the number of GPUs in each NodeManager,
+such that Spark will schedule as many executors as there are GPUs in each NodeManager.
 
-We use `SPARK_HOME` to point to the cluster's Apache Spark installation. And as to how to enable GPU scheduling and isolation for Yarn, please refer to [here](https://hadoop.apache.org/docs/r3.1.0/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
+We use `SPARK_HOME` environment variable to point to the Apache Spark cluster.
+And as to how to enable GPU scheduling and isolation for Yarn, 
+please refer to [here](https://hadoop.apache.org/docs/r3.1.0/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
 
 Get Jars and Dataset
 -------------------------------
@@ -34,10 +42,12 @@ Create a directory in HDFS, and copy:
 [xgboost4j_spark]$ hadoop fs -copyFromLocal ${SPARK_XGBOOST_DIR}/mortgage/* /tmp/xgboost4j_spark
 ```
 
-<span id="etl">Launch Mortgage ETL</span>
+<span id="etl">Launch Mortgage or Taxi ETL Part</span>
 ---------------------------
 
-If user wants to use a larger size dataset other than the default one, we provide an ETL app to process raw Mortgage data.
+Note: the `mortgage_eval_merged.csv` and `mortgage_train_merged.csv` are not Mortgage raw data,
+they are the data produced by Mortgage ETL job. If user wants to use a larger size Mortgage data, please refer to [Launch ETL job](#etl).
+Taxi ETL job is the same. But Agaricus does not have ETL process, it is combined with XGBoost as there is just a filter operation.
 
 Run spark-submit
 
@@ -73,7 +83,7 @@ ${SPARK_HOME}/bin/spark-submit \
 # -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
 ```
 
-Launch GPU Mortgage Example
+Launch XGBoost Part on GPU
 ---------------------------
 
 Variables required to run spark-submit command:
@@ -132,7 +142,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
   # Please make sure to change the class and data path while running Taxi or Agaricus benchmark   
 ```
 
-In the `stdout` driver log, you should see timings<sup>*</sup> (in seconds), and the accuracy metric:
+In the `stdout` driver log, you should see timings<sup>*</sup> (in seconds), and the accuracy metric(take Mortgage as example):
 
 ```
 --------------
@@ -148,7 +158,7 @@ In the `stdout` driver log, you should see timings<sup>*</sup> (in seconds), and
 --------------
 ```
 
-Launch CPU Mortgage Example
+Launch XGBoost Part on CPU
 ---------------------------
 
 If you are running this example after running the GPU example above, please set these variables, to set both training and testing to run on the CPU exclusively:
@@ -201,7 +211,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
                                       
 ```
 
-In the `stdout` driver log, you should see timings<sup>*</sup> (in seconds), and the accuracy metric:
+In the `stdout` driver log, you should see timings<sup>*</sup> (in seconds), and the accuracy metric(take Mortgage as example):
 
 ```
 --------------
@@ -217,4 +227,5 @@ In the `stdout` driver log, you should see timings<sup>*</sup> (in seconds), and
 --------------
 ```
 
-<sup>*</sup> The timings in this Getting Started guide are only illustrative. Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.
+<sup>*</sup> The timings in this Getting Started guide are only for illustrative purpose.
+Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.
