@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ RUN echo $PATH
 RUN echo $CONDA_PREFIX
 RUN conda --version
 
-RUN conda install openjdk=8 maven=3.8.1 -y
+RUN conda install -c conda-forge openjdk=8 maven=3.8.1 -y
 
 # install cuDF dependency.
 RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=21.12 python=3.8 cudatoolkit=11.2 -y
