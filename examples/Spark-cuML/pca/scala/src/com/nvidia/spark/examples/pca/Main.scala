@@ -19,7 +19,7 @@ package com.nvidia.spark.examples.pca
 
 import org.apache.spark.ml.linalg._
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions.{col, udf}
+import org.apache.spark.sql.functions._
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -29,8 +29,25 @@ object Main {
     val r = new scala.util.Random(0)
 
     // generate dummy data
-    val dataDf = spark.createDataFrame(
-      (0 until rows).map(_ => Tuple1(Array.fill(dim)(r.nextDouble)))).withColumnRenamed("_1", "feature")
+    var prepareDf = spark.createDataFrame(
+      (0 until rows).map(_ => Tuple1(Array.fill(dim)(r.nextDouble))))
+      .withColumnRenamed("_1", "array_feature")
+      .select((0 until dim).map(i => col("array_feature").getItem(i)): _*)
+    // save to parquet files
+    prepareDf.write.option("overwrite","true").parquet("PCA_raw_parquet")
+
+    // load the parquet files
+    val df = spark.read.parquet("PCA_raw_parquet")
+
+    // mean centering via ETL
+    val avgValue = df.select(
+      (0 until dim).map("array_feature[" + _ + "]").map(col).map(avg): _*).first()
+    val inputCols = (0 until dim).map(i =>
+      (col("array_feature[" + i + "]") - avgValue.getDouble(i)).alias("feature_"+i)
+    )
+    val meanCenterDf = df.select(inputCols:_*)
+
+    val dataDf = meanCenterDf.withColumn("feature",array(meanCenterDf.columns.map(col):_*))
 
     val pcaGpu = new com.nvidia.spark.ml.feature.PCA().setInputCol("feature").setOutputCol("pca_features").setK(3)
     // GPU train
