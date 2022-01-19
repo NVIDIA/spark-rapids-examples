@@ -27,6 +27,7 @@ the original outputs untouched if the environment variable `MIG_AS_GPU_ENABLED` 
 ### YARN Configuration
 
 Add `export MIG_AS_GPU_ENABLED=1` to `$YARN_CONF_DIR/yarn-env.sh`.
+Customize `REAL_NVIDIA_SMI_PATH` if not at the default location `/usr/bin/nvidia-smi`.
 
 Modify the following config `$YARN_CONF_DIR/yarn-site.xml`:
 ```xml
@@ -49,10 +50,8 @@ MIG_AS_GPU_ENABLED=1 /usr/local/yarn-mig-scripts -q -x
 Modify section `[nvidia-container-cli]` in `/etc/nvidia-container-runtime/config.toml`:
 ```toml
 path = "/usr/local/yarn-mig-scripts/nvidia-container-cli-wrapper.sh"
-environment = [ "MIG_AS_GPU_ENABLED=1" ]
+environment = [ "MIG_AS_GPU_ENABLED=1",  "REAL_NVIDIA_SMI_PATH=/if/non-default/path/nvidia-smi" ]
 ```
-
-
 
 
 
