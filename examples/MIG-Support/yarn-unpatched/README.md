@@ -1,4 +1,4 @@
-# MIG Support for Spark on YARN using unmodified versions of Apache Hadoop 3.1.2 to 3.3.0
+# MIG Support for Spark on YARN using unmodified versions of Apache Hadoop 3.1.2+
 
 This document describes a solution for utilizing MIG with YARN when upgrading to a recent 3.3+
 version or patching older versions of Apache Hadoop is not feasible. Please refer to the corresponding
@@ -34,6 +34,14 @@ Modify the following config `$YARN_CONF_DIR/yarn-site.xml`:
   <name>yarn.nodemanager.resource-plugins.gpu.path-to-discovery-executables</name>
   <value>/usr/local/yarn-mig-scripts</value>
 </property>
+```
+
+If you disabled the default automatic GPU discovery set
+`yarn.nodemanager.resource-plugins.gpu.allowed-gpu-devices` to the 0-based index of the GPU element
+in the XML output of the manual invocation:
+
+```bash
+MIG_AS_GPU_ENABLED=1 /usr/local/yarn-mig-scripts -q -x
 ```
 
 ### NVIDIA Docker Runtime Configuration
