@@ -25,7 +25,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     val spark = SparkSession.builder().appName("PCA Example").getOrCreate()
     val dim = 2048
-    val rows = 100000
+    val rows = 50000
     val r = new scala.util.Random(0)
 
     // generate dummy data
