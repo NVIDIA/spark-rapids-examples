@@ -14,6 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# This script is designed as a drop-in replacement for YARN node manager's automatic
+# MIG-aware GPU discovery. YARN config
+# yarn.nodemanager.resource-plugins.gpu.path-to-discovery-executables
+# should point to this script on NM host, e.g
+# <property>
+#   <name>yarn.nodemanager.resource-plugins.gpu.path-to-discovery-executables</name>
+#   <value>/usr/local/yarn-mig-scripts/nvidia-smi-wrapper.sh</value>
+# </property>
+
 # customize in yarn-env.sh
 REAL_NVIDIA_SMI_PATH=${REAL_NVIDIA_SMI_PATH:-"/usr/bin/nvidia-smi"}
 MIG_AS_GPU_ENABLED=${MIG_AS_GPU_ENABLED:-"0"}

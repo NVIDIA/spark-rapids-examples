@@ -14,6 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# This script is executed by the `nvidia` Docker runtime on the host before creating the container.
+# It intercepts the device assigned by YARN, a 0-based index and converts it to a pair
+# GPU device index:MIG device index that is stored in _mig2gpu_device_is elememnt
+# by mig2gpu.sh in the nvidia-smi-wrapper.sh which limits all the processes withing the container
+# to the corresponding MIG Compute Instance https://github.com/NVIDIA/nvidia-container-runtime#nvidia_visible_devices.
 
 # customize in /etc/nvidia-container-runtime/config.toml
 # [nvidia-container-cli]
@@ -36,6 +41,8 @@ if [[ "$MIG_AS_GPU_ENABLED" == "1" ]]; then
                 while read -r line; do
                     case "$line" in
 
+                        # found the device id constructed in mig2gpu.sh with the original nvidia-smi enumeration
+                        # gpu index, mig index
                         *"<_mig2gpu_device_id>"*)
                             current_gpu_idx=$(($current_gpu_idx+1))
                             if [[ "$current_gpu_idx" == "$target_gpu_idx" && "$line" =~ '<_mig2gpu_device_id>'(.*)'</_mig2gpu_device_id>' ]]; then
