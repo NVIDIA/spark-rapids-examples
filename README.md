@@ -54,6 +54,11 @@ patching and rebuilding YARN code base to support MIG devices.
 relying on installing nvidia CLI wrappers written in `bash`, but unlike the solutions above without
 any Java code changes.
 
+### 6. Spark Rapids UDF examples
+This is examples of the GPU accelerated UDF.
+refer to this
+[guide](/examples/Spark-Rapids/udf-examples/README.md).
+
 ## API
 ### 1. Xgboost examples API
 
