@@ -66,8 +66,3 @@ Modify section `[nvidia-container-cli]` in `/etc/nvidia-container-runtime/config
 path = "/usr/local/yarn-mig-scripts/nvidia-container-cli-wrapper.sh"
 environment = [ "MIG_AS_GPU_ENABLED=1",  "REAL_NVIDIA_SMI_PATH=/if/non-default/path/nvidia-smi" ]
 ```
-
-## Limitations and Caveats
-Some metrics are not and cannot be broken down by MIG device. For example, `utilization` is the
-aggregate utilization of the parent GPU, and there is no attribution of `temperature` to a
-particular MIG device.
