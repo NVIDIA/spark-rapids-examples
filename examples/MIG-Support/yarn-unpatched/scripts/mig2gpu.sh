@@ -155,6 +155,8 @@ function processParentGpuGlobals {
             $'\t'*'<current_mig>'*'</current_mig>')
                 if [[ "$line" =~ '<current_mig>Enabled</current_mig>' ]]; then
                     mig2gpu_migEnabled=1
+                else
+                    mig2gpu_migEnabled=0
                 fi
                 ;;
 
@@ -292,12 +294,12 @@ function processGpuElement {
 
 function mig2gpuMain {
     local line
-    local lineNumber=-1
+    local lineNumber
 
     # simplified regex-free parser relying on the fact
     # that nvidia-smi output is pretty-printed with tabs
     while IFS= read -r line; do
-        lineNumber=$((lineNumber+1))
+        lineNumber=${#mig2gpu_inputLines[@]}
         mig2gpu_inputLines+=("$line")
 
         case "$line" in
@@ -307,7 +309,7 @@ function mig2gpuMain {
                 mig2gpu_out+=("$line")
                 ;;
 
-            $'\t<gpu'*)
+            $'\t<gpu '*)
                 # start of a new GPU element
                 mig2gpu_gpu_lineNumberStart="$lineNumber"
                 ;;
