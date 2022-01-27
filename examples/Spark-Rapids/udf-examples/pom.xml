@@ -24,7 +24,7 @@
     <parent>
         <groupId>com.nvidia</groupId>
         <artifactId>rapids-4-spark-parent</artifactId>
-        <!-- Depends on its release version 21.12.0 -->
+        <!-- Depends on release version, Snapshot version is not published -->
         <version>21.12.0</version>
     </parent>
     <artifactId>rapids-4-spark-udf-examples_2.12</artifactId>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>com.nvidia</groupId>
             <artifactId>rapids-4-spark_${scala.binary.version}</artifactId>
-            <!-- Depends on its release version 21.12.0 -->
+            <!-- Depends on release version, Snapshot version is not published -->
             <version>21.12.0</version>
             <scope>provided</scope>
         </dependency>

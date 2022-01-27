@@ -45,9 +45,6 @@ examples do not build by default. The `udf-native-examples` Maven profile
 can be used to include the native UDF examples in the build, i.e.: specify
  `-Pudf-native-examples` on the `mvn` command-line.
 
-```bash
-mvn clean package -Pudf-native-examples
-```
 ### Creating a libcudf Build Environment
 
 The `Dockerfile` in this directory can be used to setup a Docker image that
@@ -56,16 +53,24 @@ cloned or mounted into a container using that Docker image.
 The `Dockerfile` contains build arguments to control the Linux version,
 CUDA version, and other settings. See the top of the `Dockerfile` for details.
 
+Run the following commands to build and start a docker
 ```bash
 cd spark-rapids-examples/examples/Spark-Rapids/udf-examples
 docker build -t my-local:my-udf-example-ubuntu .
 docker run -it my-local:my-udf-example-ubuntu
+```
+
+### Build the udf-example jar
+In the docker, clone the code and compile.
+
+```bash
 git clone https://github.com/NVIDIA/spark-rapids-examples.git
 cd spark-rapids-examples/examples/Spark-Rapids/udf-examples
 mvn clean package -Pudf-native-examples
 ```
+Then the udf-example*.jar is generated under udf-examples/target directory.
 
-## How to run the test cases on local mode
+## How to run the Native UDF on Spark local mode
 After built the Native Code Examples, do the following
 
 ### Prerequisites
@@ -73,10 +78,10 @@ Download Spark and set SPARK_HOME environment variable.
 Refer to [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)
 
 ### Get jars from Maven Central
-[cudf-21.12.0-cuda11.jar](https://repo1.maven.org/maven2/ai/rapids/cudf/21.12.0/cudf-21.12.0-cuda11.jar)
+[cudf-21.12.0-cuda11.jar](https://repo1.maven.org/maven2/ai/rapids/cudf/21.12.0/cudf-21.12.0-cuda11.jar)   
 [rapids-4-spark_2.12-21.12.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/21.12.0/rapids-4-spark_2.12-21.12.0.jar)
 
-### Launch a Spark local terminal
+### Launch a local mode Spark
 
 ```bash
 export SPARK_CUDF_JAR=path-to-cudf-jar
@@ -92,8 +97,9 @@ $SPARK_HOME/bin/pyspark --master local[*] \
 --jars ${SPARK_CUDF_JAR},${SPARK_RAPIDS_PLUGIN_JAR},${SPARK_RAPIDS_UDF_EXAMPLES_JAR} \
 --conf spark.plugins=com.nvidia.spark.SQLPlugin \
 --conf spark.rapids.sql.enabled=true
-
 ```
+
+### Test native based UDF
 
 Input the following commands to test wordcount JIN UDF
 
@@ -120,4 +126,4 @@ spark.sql("select wordcount(c1) from tab group by c1").show()
 spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
 
-Refer to [more Spark mode](../../../docs/get-started/xgboost-examples/on-prem-cluster) to test against more Spark running modes.
+Refer to [more Spark modes](../../../docs/get-started/xgboost-examples/on-prem-cluster) to test against more Spark modes.
