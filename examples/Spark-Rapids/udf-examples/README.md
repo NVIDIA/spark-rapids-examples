@@ -131,12 +131,12 @@ Refer to [more Spark modes](../../../docs/get-started/xgboost-examples/on-prem-c
 ## Run IT
 Download Spark.  
 Set SPARK_HOME environment variable.  
-Create a libcudf Build Environment.
+Create a libcudf Build Environment.  
+Install python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda.
 
 ```bash
 mvn clean verify -Pudf-native-examples
 ```
-
 This command will compile the project with the native function code, and then launch run_pyspark_from_build.sh to test all the functions.
 
 Or can split the command into 2 steps:
@@ -148,6 +148,7 @@ mvn clean package -Pudf-native-examples
 ## Run IT without native code
 Download Spark.  
 Set SPARK_HOME environment variable.  
+Install python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda.  
 
 ```bash
 mvn clean package
