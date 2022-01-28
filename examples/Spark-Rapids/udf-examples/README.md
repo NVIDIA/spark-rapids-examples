@@ -127,3 +127,29 @@ spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
 
 Refer to [more Spark modes](../../../docs/get-started/xgboost-examples/on-prem-cluster) to test against more Spark modes.
+
+## Run IT
+Download Spark.  
+Set SPARK_HOME environment variable.  
+Create a libcudf Build Environment.
+
+```bash
+mvn clean verify -Pudf-native-examples
+```
+
+This command will compile the project with the native function code, and then launch run_pyspark_from_build.sh to test all the functions.
+
+Or can split the command into 2 steps:
+```bash
+mvn clean package -Pudf-native-examples
+./run_pyspark_from_build.sh
+```
+
+## Run IT without native code
+Download Spark.  
+Set SPARK_HOME environment variable.  
+
+```bash
+mvn clean package
+./run_pyspark_from_build.sh -m "not rapids_udf_example_native"
+```
