@@ -15,6 +15,19 @@ any Java code changes.
 
 Note that are some common caveats for the solutions above.
 
+### Single MIG GPU per Container
+
+Please see the [MIG Application Considerations](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/#app-considerations)
+and [CUDA Device Enumeration](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html#cuda-visible-devices).
+
+It is important to note that CUDA 11 only supports enumeration of a single MIG instance.
+It is recommended that you configure YARN to only allow a single GPU be requested. See
+the YARN config `yarn.resource-types.nvidia/miggpu.maximum-allocation` for the [Pluggable Device Framework]
+(/examples/MIG-Support/device-plugins/gpu-mig) solution and
+`yarn.resource-types.yarn.io/gpu.maximum-allocation` for the remainder of MIG Support options above, respectively.
+
+
+
 ### Metrics
 Some metrics are not and cannot be broken down by MIG device. For example, `utilization` is the
 aggregate utilization of the parent GPU, and there is no attribution of `temperature` to a
