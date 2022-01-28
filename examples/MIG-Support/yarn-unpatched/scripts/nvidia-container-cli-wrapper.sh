@@ -39,9 +39,9 @@ if [[ "$MIG_AS_GPU_ENABLED" == "1" ]]; then
                 nvcli_migDeviceIds=()
                 # map CSV of indexes 0,3,10 to ,0,3,10,
                 # so we can do an easy "contains" test
-                # the device N is included if deviceArgWithLeadingTralingComma
+                # the device N is included if deviceArgWithLeadingTrailingComma
                 # matches =~ ",N,"
-                deviceArgWithLeadingTralingComma=",${arg#*=},"
+                deviceArgWithLeadingTrailingComma=",${arg#*=},"
                 current_gpu_idx=-1
                 while read -r line; do
                     case "$line" in
@@ -50,7 +50,7 @@ if [[ "$MIG_AS_GPU_ENABLED" == "1" ]]; then
                         # gpu index, mig index
                         *"<_mig2gpu_device_id>"*)
                             current_gpu_idx=$(($current_gpu_idx+1))
-                            if [[ "$deviceArgWithLeadingTralingComma" =~ ",${current_gpu_idx}," && "$line" =~ '<_mig2gpu_device_id>'(.*)'</_mig2gpu_device_id>' ]]; then
+                            if [[ "$deviceArgWithLeadingTrailingComma" =~ ",${current_gpu_idx}," && "$line" =~ '<_mig2gpu_device_id>'(.*)'</_mig2gpu_device_id>' ]]; then
                                 nvcli_migDeviceIds+=("${BASH_REMATCH[1]}")
                             fi
                             ;;
