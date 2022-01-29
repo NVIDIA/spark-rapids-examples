@@ -38,9 +38,8 @@ In `$YARN_CONF_DIR/yarn-env.sh`
 of of MIG devices as if they are physical GPU.
 - Customize `REAL_NVIDIA_SMI_PATH` value if nvidia-smi is not at the default location
 `/usr/bin/nvidia-smi`.
-- Add `ENABLE_NON_MIG_GPUS=1` if you want physical GPUs that are not subdivided in MIGs to be
-listed along with MIG sub-devices
-
+- Add `ENABLE_NON_MIG_GPUS=0` if you want to prevent discovery of physical GPUs that are not subdivided in MIGs.
+Default is ENABLE_NON_MIG_GPUS=1 and physical GPUs in the MIG-Disabled state are listed along with MIG sub-devices on the node.
 
 Modify the following config `$YARN_CONF_DIR/yarn-site.xml`:
 ```xml
@@ -74,7 +73,7 @@ path = "/usr/local/yarn-mig-scripts/nvidia-container-cli-wrapper.sh"
 environment = [ "MIG_AS_GPU_ENABLED=1",  "REAL_NVIDIA_SMI_PATH=/if/non-default/path/nvidia-smi" ]
 ```
 
-The values for `MIG_AS_GPU_ENABLED`, `REAL_NVIDIA_SMI_PATH`, `ENABLE_NON_MIG_GPUS` should be
+Note, the values for `MIG_AS_GPU_ENABLED`, `REAL_NVIDIA_SMI_PATH`, `ENABLE_NON_MIG_GPUS` should be
 identical to the ones specified in `yarn-env.sh`.
 
 ## Limitations and Caveats
