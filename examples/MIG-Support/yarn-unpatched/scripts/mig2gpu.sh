@@ -29,7 +29,9 @@ set -e
 # NOTE: this is not a real XML parser, but it is sufficient to handle XML without nested
 # tags mixed on the same line. When making changes try to avoid non-bash dependencies.
 
-ENABLE_NON_MIG_GPUS=${ENABLE_NON_MIG_GPUS:-0}
+# Include both MIG and non-MIG devices by default
+# Set ENABLE_NON_MIG_GPUS=0 to discover only GPU devices with the current MIG mode Disabled
+ENABLE_NON_MIG_GPUS=${ENABLE_NON_MIG_GPUS:-1}
 
 # For stored input test: NVIDIA_SMI_QX=./src/resources/tom-nvidia-smi-xq.xml
 # For live input test: NVIDIA_SMI_QX=/dev/stdin
