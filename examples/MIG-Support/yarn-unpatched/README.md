@@ -31,9 +31,15 @@ are executable by the docker daemon user (i.e., `root`), and YARN NM service use
 leave the original outputs untouched if the environment variable `MIG_AS_GPU_ENABLED` is not 1.
 
 ### YARN Configuration
+#### Customizing yarn-env.sh
 
-Add `export MIG_AS_GPU_ENABLED=1` to `$YARN_CONF_DIR/yarn-env.sh`.
-Customize `REAL_NVIDIA_SMI_PATH` if not at the default location `/usr/bin/nvidia-smi`.
+In `$YARN_CONF_DIR/yarn-env.sh`
+- Add `export MIG_AS_GPU_ENABLED=1` to enable replacing of MIG-enabled GPUs with a list
+of of MIG devices as if they are physical GPU.
+- Customize `REAL_NVIDIA_SMI_PATH` value if nvidia-smi is not at the default location
+`/usr/bin/nvidia-smi`.
+- Add `ENABLE_NON_MIG_GPUS=0` if you want to prevent discovery of physical GPUs that are not subdivided in MIGs.
+Default is ENABLE_NON_MIG_GPUS=1 and physical GPUs in the MIG-Disabled state are listed along with MIG sub-devices on the node.
 
 Modify the following config `$YARN_CONF_DIR/yarn-site.xml`:
 ```xml
@@ -66,3 +72,7 @@ Modify section `[nvidia-container-cli]` in `/etc/nvidia-container-runtime/config
 path = "/usr/local/yarn-mig-scripts/nvidia-container-cli-wrapper.sh"
 environment = [ "MIG_AS_GPU_ENABLED=1",  "REAL_NVIDIA_SMI_PATH=/if/non-default/path/nvidia-smi" ]
 ```
+
+Note, the values for `MIG_AS_GPU_ENABLED`, `REAL_NVIDIA_SMI_PATH`, `ENABLE_NON_MIG_GPUS` should be
+identical to the ones specified in `yarn-env.sh`.
+
