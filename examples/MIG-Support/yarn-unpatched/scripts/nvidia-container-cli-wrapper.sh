@@ -36,7 +36,12 @@ if [[ "$MIG_AS_GPU_ENABLED" == "1" ]]; then
         case "$arg" in
 
             "--device="*)
-                target_gpu_idx="${arg#*=}"
+                nvcli_migDeviceIds=()
+                # map CSV of indexes 0,3,10 to ,0,3,10,
+                # so we can do an easy "contains" test
+                # the device N is included if deviceArgWithLeadingTrailingComma
+                # matches =~ ",N,"
+                deviceArgWithLeadingTrailingComma=",${arg#*=},"
                 current_gpu_idx=-1
                 while read -r line; do
                     case "$line" in
@@ -45,17 +50,17 @@ if [[ "$MIG_AS_GPU_ENABLED" == "1" ]]; then
                         # gpu index, mig index
                         *"<_mig2gpu_device_id>"*)
                             current_gpu_idx=$(($current_gpu_idx+1))
-                            if [[ "$current_gpu_idx" == "$target_gpu_idx" && "$line" =~ '<_mig2gpu_device_id>'(.*)'</_mig2gpu_device_id>' ]]; then
-                                nvcli_migDeviceId="${BASH_REMATCH[1]}"
-                                break
+                            if [[ "$deviceArgWithLeadingTrailingComma" =~ ",${current_gpu_idx}," && "$line" =~ '<_mig2gpu_device_id>'(.*)'</_mig2gpu_device_id>' ]]; then
+                                nvcli_migDeviceIds+=("${BASH_REMATCH[1]}")
                             fi
                             ;;
 
                     esac
                 done <<< $("$REAL_NVIDIA_SMI_PATH" -q -x | "$THIS_DIR/mig2gpu.sh")
 
-                if [[ "$nvcli_migDeviceId" != "" ]]; then
-                    realArgs+=("--device=$nvcli_migDeviceId")
+                if (( ${#nvcli_migDeviceIds[@]} )); then
+                    migDeviceIdsCsv=$(IFS=','; echo "${nvcli_migDeviceIds[*]}")
+                    realArgs+=("--device=$migDeviceIdsCsv")
                 else
                     realArgs+=("$arg")
                 fi
