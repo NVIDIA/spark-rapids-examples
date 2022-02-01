@@ -20,7 +20,8 @@ to discover GPUs. It replaces MIG-enabled GPUs with the list of `<gpu>` elements
 ## Installation
 
 These instructions assume NVIDIA Container Toolkit (nvidia-docker2) and YARN is already installed
-and configured with [CGroups enabled](https://hadoop.apache.org/docs/r3.1.2/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
+and configured with GPU Scheduling and
+[CGroups enabled](https://hadoop.apache.org/docs/r3.1.2/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
 
 Enable and configure your [GPUs with MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html) on all of the nodes
 it applies to.
@@ -76,7 +77,3 @@ environment = [ "MIG_AS_GPU_ENABLED=1",  "REAL_NVIDIA_SMI_PATH=/if/non-default/p
 Note, the values for `MIG_AS_GPU_ENABLED`, `REAL_NVIDIA_SMI_PATH`, `ENABLE_NON_MIG_GPUS` should be
 identical to the ones specified in `yarn-env.sh`.
 
-## Limitations and Caveats
-Some metrics are not and cannot be broken down by MIG device. For example, `utilization` is the
-aggregate utilization of the parent GPU, and there is no attribution of `temperature` to a
-particular MIG device.

@@ -45,14 +45,8 @@ This is an example of the GPU accelerated PCA algorithm running on Spark. For de
 [guide](/examples/Spark-cuML/pca/README.md).
 
 ### 5. MIG support
-We provide some guides about the Multi-Instance GPU (MIG) feature based on the NVIDIA Ampere architecture (such as NVIDIA A100 and A30) GPU.
-- [YARN 3.3.0+ MIG GPU Plugin](/examples/MIG-Support/device-plugins/gpu-mig) for adding a Java-based plugin for MIG
-on top of the Pluggable Device Framework
-- [YARN 3.1.2 until YARN 3.3.0 MIG GPU Support](/examples/MIG-Support/resource-types/gpu-mig) for
-patching and rebuilding YARN code base to support MIG devices.
-- [YARN 3.1.2+ MIG GPU Support without modifying YARN / Device Plugin Code](/examples/MIG-Support/yarn-unpatched)
-relying on installing nvidia CLI wrappers written in `bash`, but unlike the solutions above without
-any Java code changes.
+We provide some [guides](/examples/MIG-Support/README.md) about the Multi-Instance GPU (MIG) feature based on
+the NVIDIA Ampere architecture (such as NVIDIA A100 and A30) GPU.
 
 ## API
 ### 1. Xgboost examples API
