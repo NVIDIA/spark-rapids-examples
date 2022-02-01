@@ -26,8 +26,6 @@ the YARN config `yarn.resource-types.nvidia/miggpu.maximum-allocation` for the [
 (/examples/MIG-Support/device-plugins/gpu-mig) solution and
 `yarn.resource-types.yarn.io/gpu.maximum-allocation` for the remainder of MIG Support options above, respectively.
 
-
-
 ### Metrics
 Some metrics are not and cannot be broken down by MIG device. For example, `utilization` is the
 aggregate utilization of the parent GPU, and there is no attribution of `temperature` to a
@@ -35,9 +33,9 @@ particular MIG device.
 
 ### GPU index / address as reported by Apache Spark in logs and UI
 
-Current GPU addressing in Spark RAPIDS plugin uses a single numeric index into the list of visible
-devices. Thus, with YARN isolation using NVIDIA Container Runtime ensuring a single visible device
-per Docker container running a Spark Executor, each Executor will see a disjoint list of one device.
+With YARN isolation using NVIDIA Container Runtime ensuring a single visible device
+per Docker container running a Spark Executor, each Executor will see a disjoint list comprising
+a single device.
 Therefore, the user will end up observing index 0 being used by all executors. However, they refer
 to different GPU/MIG instances. You can verify this by running something like the following on a
 YARN worker node host OS:

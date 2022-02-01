@@ -20,7 +20,8 @@ to discover GPUs. It replaces MIG-enabled GPUs with the list of `<gpu>` elements
 ## Installation
 
 These instructions assume NVIDIA Container Toolkit (nvidia-docker2) and YARN is already installed
-and configured with [CGroups enabled](https://hadoop.apache.org/docs/r3.1.2/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
+and configured with GPU Scheduling and
+[CGroups enabled](https://hadoop.apache.org/docs/r3.1.2/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
 
 Enable and configure your [GPUs with MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html) on all of the nodes
 it applies to.
