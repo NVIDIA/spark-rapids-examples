@@ -5,19 +5,19 @@ This project contains sample implementations of RAPIDS accelerated user-defined 
 
 - [URLDecode](./src/main/scala/com/nvidia/spark/rapids/udf/scala/URLDecode.scala)
   decodes URL-encoded strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 - [URLEncode](./src/main/scala/com/nvidia/spark/rapids/udf/scala/URLEncode.scala)
   URL-encodes strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 
 ## Spark Java UDF Examples
 
 - [URLDecode](./src/main/java/com/nvidia/spark/rapids/udf/java/URLDecode.java)
   decodes URL-encoded strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 - [URLEncode](./src/main/java/com/nvidia/spark/rapids/udf/java/URLEncode.java)
   URL-encodes strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 - [CosineSimilarity](./src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java)
   computes the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity)
   between two float vectors using [native code](./src/main/cpp/src)
@@ -26,11 +26,11 @@ This project contains sample implementations of RAPIDS accelerated user-defined 
 
 - [URLDecode](./src/main/java/com/nvidia/spark/rapids/udf/hive/URLDecode.java)
   implements a Hive simple UDF using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
   to decode URL-encoded strings
 - [URLEncode](./src/main/java/com/nvidia/spark/rapids/udf/hive/URLEncode.java)
   implements a Hive generic UDF using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
   to URL-encode strings
 - [StringWordCount](./src/main/java/com/nvidia/spark/rapids/udf/hive/StringWordCount.java)
   implements a Hive simple UDF using
@@ -55,27 +55,27 @@ CUDA version, and other settings. See the top of the `Dockerfile` for details.
 
 Run the following commands to build and start a docker
 ```bash
-cd spark-rapids-examples/examples/Spark-Rapids/udf-examples
+cd spark-rapids-examples/examples/RAPIDS-accelerated-UDFs
 docker build -t my-local:my-udf-example-ubuntu .
 docker run -it my-local:my-udf-example-ubuntu
 ```
 
-### Build the udf-example jar
+### Build the RAPIDS-accelerated-UDFs jar
 In the docker, clone the code and compile.
 
 ```bash
 git clone https://github.com/NVIDIA/spark-rapids-examples.git
-cd spark-rapids-examples/examples/Spark-Rapids/udf-examples
+cd spark-rapids-examples/examples/RAPIDS-accelerated-UDFs
 mvn clean package -Pudf-native-examples
 ```
-Then the udf-example*.jar is generated under udf-examples/target directory.
+Then the RAPIDS-accelerated-UDFs*.jar is generated under RAPIDS-accelerated-UDFs/target directory.
 
 ## How to run the Native UDF on Spark local mode
 After built the Native Code Examples, do the following
 
 ### Prerequisites
 Download Spark and set SPARK_HOME environment variable.
-Refer to [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)
+Refer to [Prerequisites](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)
 
 ### Get jars from Maven Central
 [cudf-21.12.0-cuda11.jar](https://repo1.maven.org/maven2/ai/rapids/cudf/21.12.0/cudf-21.12.0-cuda11.jar)   
@@ -86,7 +86,7 @@ Refer to [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-clus
 ```bash
 export SPARK_CUDF_JAR=path-to-cudf-jar
 export SPARK_RAPIDS_PLUGIN_JAR=path-to-rapids-4-spark-jar
-export SPARK_RAPIDS_UDF_EXAMPLES_JAR=path-to-udf-example-jar
+export SPARK_RAPIDS_UDF_EXAMPLES_JAR=path-to-RAPIDS-accelerated-UDFs-jar
 
 $SPARK_HOME/bin/pyspark --master local[*] \
 --conf spark.executor.cores=6 \
@@ -126,13 +126,21 @@ spark.sql("select wordcount(c1) from tab group by c1").show()
 spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
 
-Refer to [more Spark modes](../../../docs/get-started/xgboost-examples/on-prem-cluster) to test against more Spark modes.
+Refer to [more Spark modes](../../docs/get-started/xgboost-examples/on-prem-cluster) to test against more Spark modes.
 
-## Run IT
+## Run the integration tests
 Download Spark.  
 Set SPARK_HOME environment variable.  
 Create a libcudf Build Environment.  
 Install python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda.
+
+For example:  
+```
+pip install pytest
+pip install pyspark
+pip install sre_yield
+pip install findspark
+```
 
 ```bash
 mvn clean verify -Pudf-native-examples
@@ -145,7 +153,7 @@ mvn clean package -Pudf-native-examples
 ./run_pyspark_from_build.sh
 ```
 
-## Run IT without native code
+## Run the integration tests without native code
 Download Spark.  
 Set SPARK_HOME environment variable.  
 Install python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda.  
