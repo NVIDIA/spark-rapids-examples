@@ -41,7 +41,7 @@ else
 
     CUDF_JARS=$(echo "$SCRIPTPATH"/target/dependency/cudf*.jar)
     PLUGIN_JARS=$(echo "$SCRIPTPATH"/target/dependency/rapids-4-spark*.jar)
-    UDF_EXAMPLE_JARS=$(echo "$SCRIPTPATH"/target/RAPIDS-accelerated-UDFs*.jar)
+    UDF_EXAMPLE_JARS=$(echo "$SCRIPTPATH"/target/rapids-4-spark-udf-examples*.jar)
     ALL_JARS="$CUDF_JARS $PLUGIN_JARS $UDF_EXAMPLE_JARS"
     echo "AND PLUGIN JARS: $ALL_JARS"
 

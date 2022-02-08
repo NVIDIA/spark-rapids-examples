@@ -60,7 +60,7 @@ docker build -t my-local:my-udf-example-ubuntu .
 docker run -it my-local:my-udf-example-ubuntu
 ```
 
-### Build the RAPIDS-accelerated-UDFs jar
+### Build the udf-example jar
 In the docker, clone the code and compile.
 
 ```bash
@@ -68,7 +68,7 @@ git clone https://github.com/NVIDIA/spark-rapids-examples.git
 cd spark-rapids-examples/examples/RAPIDS-accelerated-UDFs
 mvn clean package -Pudf-native-examples
 ```
-Then the RAPIDS-accelerated-UDFs*.jar is generated under RAPIDS-accelerated-UDFs/target directory.
+Then the rapids-4-spark-udf-examples*.jar is generated under RAPIDS-accelerated-UDFs/target directory.
 
 ## How to run the Native UDF on Spark local mode
 After built the Native Code Examples, do the following
@@ -86,7 +86,7 @@ Refer to [Prerequisites](../../docs/get-started/xgboost-examples/on-prem-cluster
 ```bash
 export SPARK_CUDF_JAR=path-to-cudf-jar
 export SPARK_RAPIDS_PLUGIN_JAR=path-to-rapids-4-spark-jar
-export SPARK_RAPIDS_UDF_EXAMPLES_JAR=path-to-RAPIDS-accelerated-UDFs-jar
+export SPARK_RAPIDS_UDF_EXAMPLES_JAR=path-to-udf-examples-jar
 
 $SPARK_HOME/bin/pyspark --master local[*] \
 --conf spark.executor.cores=6 \
