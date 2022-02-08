@@ -15,9 +15,9 @@
 # limitations under the License.
 #
 
-ARG CUDA_VER=11.2.2
+ARG CUDA_VER=11.5.1
 FROM nvidia/cuda:${CUDA_VER}-devel-ubuntu20.04
-ARG BRANCH=branch-21.12
+ARG BRANCH=branch-22.02
 
 RUN apt-get update
 RUN apt-get install -y wget ninja-build git
@@ -39,7 +39,7 @@ RUN conda --version
 RUN conda install -c conda-forge openjdk=8 maven=3.8.1 -y
 
 # install cuDF dependency.
-RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=21.12 python=3.8 cudatoolkit=11.2 -y
+RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=22.02 python=3.8 cudatoolkit=11.2 -y
 
 RUN wget --quiet \
     https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-linux-x86_64.tar.gz \
@@ -51,6 +51,8 @@ ENV PATH="/cmake-3.21.3-linux-x86_64/bin:${PATH}"
 RUN git clone -b ${BRANCH} https://github.com/rapidsai/raft.git
 
 ENV RAFT_PATH=/raft
+
+ADD settings.xml /root/.m2/
 
 RUN git clone -b ${BRANCH} https://github.com/NVIDIA/spark-rapids-ml.git \
     && cd spark-rapids-ml \

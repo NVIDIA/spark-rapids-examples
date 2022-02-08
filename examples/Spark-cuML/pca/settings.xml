@@ -1,0 +1,52 @@
+<settings>
+  <profiles>
+    <profile>
+      <id>sonatype-stage</id>
+      <repositories>
+        <repository>
+          <id>sonatype-staging-repo</id>
+          <name>Sonatype staging repo</name>
+          <url>https://oss.sonatype.org/content/repositories/staging</url>
+        </repository>
+      </repositories>
+    </profile>
+    <profile>
+      <id>m2-mirror-apache0-to-urm</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <name>sw-spark-maven</name>
+          <url>https://urm.nvidia.com/artifactory/sw-spark-maven</url>
+        </repository>
+      </repositories>
+    </profile>
+    <profile>
+      <id>m2-mirror-apache2-to-urm</id>
+      <repositories>
+        <repository>
+          <id>apache-snapshots-repo</id>
+          <name>sw-spark-maven</name>
+          <url>https://urm.nvidia.com/artifactory/sw-spark-maven</url>
+        </repository>
+      </repositories>
+    </profile>
+    <profile>
+      <id>m2-mirror-apache3-to-urm</id>
+      <repositories>
+        <repository>
+          <id>apache-snapshots</id>
+          <name>sw-spark-maven</name>
+          <url>https://urm.nvidia.com/artifactory/sw-spark-maven</url>
+        </repository>
+      </repositories>
+    </profile>
+
+
+  </profiles>
+  <activeProfiles>
+    <activeProfile>m2-mirror-apache-to-urm</activeProfile>
+    <activeProfile>m2-mirror-apache2-to-urm</activeProfile>
+    <activeProfile>m2-mirror-apache3-to-urm</activeProfile>
+    <activeProfile>sonatype-stage</activeProfile>
+  </activeProfiles>
+</settings>
