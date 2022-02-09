@@ -52,9 +52,7 @@ RUN git clone -b ${BRANCH} https://github.com/rapidsai/raft.git
 
 ENV RAFT_PATH=/raft
 
-ADD settings.xml /root/.m2/
-
-RUN git clone -b ${BRANCH} https://github.com/NVIDIA/spark-rapids-ml.git \
+RUN git clone -b staging https://github.com/wjxiz1992/spark-rapids-ml.git \
     && cd spark-rapids-ml \
     && mvn clean
 RUN cd /spark-rapids-ml \
