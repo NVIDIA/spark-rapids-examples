@@ -22,8 +22,8 @@ and [CUDA Device Enumeration](https://docs.nvidia.com/datacenter/tesla/mig-user-
 
 It is important to note that CUDA 11 only supports enumeration of a single MIG instance.
 It is recommended that you configure YARN to only allow a single GPU be requested. See
-the YARN config `yarn.resource-types.nvidia/miggpu.maximum-allocation` for the [Pluggable Device Framework]
-(/examples/MIG-Support/device-plugins/gpu-mig) solution and
+the YARN config `yarn.resource-types.nvidia/miggpu.maximum-allocation` for the
+[Pluggable Device Framework](/examples/MIG-Support/device-plugins/gpu-mig) solution and
 `yarn.resource-types.yarn.io/gpu.maximum-allocation` for the remainder of MIG Support options above, respectively.
 
 ### Metrics
