@@ -77,3 +77,4 @@ ENV DEFAULT_DATABRICKS_ROOT_CONDA_ENV=base
 ENV DATABRICKS_ROOT_CONDA_ENV=base
 # required by DB
 RUN pip install virtualenv
+RUN pip install adlfs
