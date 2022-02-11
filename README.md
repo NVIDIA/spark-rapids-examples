@@ -48,6 +48,11 @@ This is an example of the GPU accelerated PCA algorithm running on Spark. For de
 We provide some [guides](/examples/MIG-Support/README.md) about the Multi-Instance GPU (MIG) feature based on
 the NVIDIA Ampere architecture (such as NVIDIA A100 and A30) GPU.
 
+### 6. Spark Rapids UDF examples
+This is examples of the GPU accelerated UDF.
+refer to this
+[guide](/examples/RAPIDS-accelerated-UDFs/README.md).
+
 ## API
 ### 1. Xgboost examples API
 
