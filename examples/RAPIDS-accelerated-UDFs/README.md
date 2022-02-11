@@ -36,46 +36,76 @@ This project contains sample implementations of RAPIDS accelerated user-defined 
   implements a Hive simple UDF using
   [native code](./src/main/cpp/src) to count words in strings
 
-
-## Building the Native Code Examples
-
-Some of the UDF examples use native code in their implementation.
+## Building and run the tests without Native Code Examples
+Some UDF examples use native code in their implementation.
 Building the native code requires a libcudf build environment, so these
-examples do not build by default. The `udf-native-examples` Maven profile
+examples do not build by default.
+
+### Prerequisites
+Download Spark and set SPARK_HOME environment variable.
+Refer to [Prerequisites](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)  
+Install python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda.
+For example:
+```
+pip install pytest
+pip install pyspark
+pip install sre_yield
+pip install findspark
+```
+
+Run the following command to build and run tests
+```bash
+mvn clean package
+./run_pyspark_from_build.sh -m "not rapids_udf_example_native"
+```
+
+## Building with Native Code Examples and run test cases
+The `udf-native-examples` Maven profile
 can be used to include the native UDF examples in the build, i.e.: specify
  `-Pudf-native-examples` on the `mvn` command-line.
 
 ### Creating a libcudf Build Environment
-
+Building the native code requires a libcudf build environment.  
 The `Dockerfile` in this directory can be used to setup a Docker image that
 provides a libcudf build environment. This repository will either need to be
 cloned or mounted into a container using that Docker image.
 The `Dockerfile` contains build arguments to control the Linux version,
 CUDA version, and other settings. See the top of the `Dockerfile` for details.
 
+First install docker and [nvidia-docker](https://github.com/NVIDIA/nvidia-docker)
+
 Run the following commands to build and start a docker
 ```bash
 cd spark-rapids-examples/examples/RAPIDS-accelerated-UDFs
 docker build -t my-local:my-udf-example-ubuntu .
-docker run -it my-local:my-udf-example-ubuntu
+nvidia-docker run -it my-local:my-udf-example-ubuntu
 ```
 
-### Build the udf-example jar
+### Build the udf-examples jar
 In the docker, clone the code and compile.
-
 ```bash
 git clone https://github.com/NVIDIA/spark-rapids-examples.git
 cd spark-rapids-examples/examples/RAPIDS-accelerated-UDFs
 mvn clean package -Pudf-native-examples
 ```
+The building will spend some time like 1.5 hours.
 Then the rapids-4-spark-udf-examples*.jar is generated under RAPIDS-accelerated-UDFs/target directory.
 
-## How to run the Native UDF on Spark local mode
-After built the Native Code Examples, do the following
-
-### Prerequisites
+### Run all the examples including native examples in the docker
 Download Spark and set SPARK_HOME environment variable.
-Refer to [Prerequisites](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)
+Refer to [Prerequisites](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)   
+Set SPARK_HOME environment variable. 
+```
+export SPARK_HOME=path-to-spark
+```
+Install python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda.
+See above Prerequisites section
+```
+./run_pyspark_from_build.sh
+```
+
+## How to run the Native UDFs on Spark local mode
+First finish the steps in "Building with Native Code Examples and run test cases" section, then do the following in the docker.
 
 ### Get jars from Maven Central
 [cudf-21.12.0-cuda11.jar](https://repo1.maven.org/maven2/ai/rapids/cudf/21.12.0/cudf-21.12.0-cuda11.jar)   
@@ -127,38 +157,3 @@ spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
 
 Refer to [more Spark modes](../../docs/get-started/xgboost-examples/on-prem-cluster) to test against more Spark modes.
-
-## Run the integration tests
-Download Spark.  
-Set SPARK_HOME environment variable.  
-Create a libcudf Build Environment.  
-Install python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda.
-
-For example:  
-```
-pip install pytest
-pip install pyspark
-pip install sre_yield
-pip install findspark
-```
-
-```bash
-mvn clean verify -Pudf-native-examples
-```
-This command will compile the project with the native function code, and then launch run_pyspark_from_build.sh to test all the functions.
-
-Or can split the command into 2 steps:
-```bash
-mvn clean package -Pudf-native-examples
-./run_pyspark_from_build.sh
-```
-
-## Run the integration tests without native code
-Download Spark.  
-Set SPARK_HOME environment variable.  
-Install python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda.  
-
-```bash
-mvn clean package
-./run_pyspark_from_build.sh -m "not rapids_udf_example_native"
-```
