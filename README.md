@@ -57,7 +57,7 @@ any Java code changes.
 ### 6. Spark Rapids UDF examples
 This is examples of the GPU accelerated UDF.
 refer to this
-[guide](/examples/Spark-Rapids/udf-examples/README.md).
+[guide](/examples/RAPIDS-accelerated-UDFs/README.md).
 
 ## API
 ### 1. Xgboost examples API
