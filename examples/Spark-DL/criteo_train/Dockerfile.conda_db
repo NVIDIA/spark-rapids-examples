@@ -75,4 +75,5 @@ ENV PYSPARK_PYTHON=/databricks/conda/bin/python
 ENV USER root
 ENV DEFAULT_DATABRICKS_ROOT_CONDA_ENV=base
 ENV DATABRICKS_ROOT_CONDA_ENV=base
+# required by DB
 RUN pip install virtualenv
