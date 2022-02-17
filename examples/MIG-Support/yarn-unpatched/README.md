@@ -17,6 +17,13 @@ to discover GPUs. It replaces MIG-enabled GPUs with the list of `<gpu>` elements
 `nvidia-container-cli`. This reverse mapping is performed by  modified `nvidia` Docker runtime using
 `nvidia-container-cli-wrapper.sh`.
 
+## Requirements
+
+Please see the [MIG Application Considerations](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/#app-considerations)
+and [CUDA Device Enumeration](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html#cuda-visible-devices).
+
+Special note, that this method only works with drivers >= R470 (470.42.01+).
+
 ## Installation
 
 These instructions assume NVIDIA Container Toolkit (nvidia-docker2) and YARN is already installed
@@ -31,6 +38,9 @@ to some location, for example: `/usr/local/yarn-mig-scripts`. Make sure that the
 are executable by the docker daemon user (i.e., `root`), and YARN NM service user (typically `yarn`). Note that the scripts
 leave the original outputs untouched if the environment variable `MIG_AS_GPU_ENABLED` is not 1.
 
+Please note that the name of the `nvidia-smi-wrapper.sh` script may need to be changed to be `nvidia-smi` if the Hadoop
+version you are using has the fix [YARN-10593](https://issues.apache.org/jira/browse/YARN-10593).
+
 ### YARN Configuration
 #### Customizing yarn-env.sh
 
@@ -42,7 +52,8 @@ of of MIG devices as if they are physical GPU.
 - Add `ENABLE_NON_MIG_GPUS=0` if you want to prevent discovery of physical GPUs that are not subdivided in MIGs.
 Default is ENABLE_NON_MIG_GPUS=1 and physical GPUs in the MIG-Disabled state are listed along with MIG sub-devices on the node.
 
-Modify the following config `$YARN_CONF_DIR/yarn-site.xml`:
+Modify the following config `$YARN_CONF_DIR/yarn-site.xml`. Name the scirpt according to what
+it was copied as above:
 ```xml
 <property>
   <name>yarn.nodemanager.resource-plugins.gpu.path-to-discovery-executables</name>
