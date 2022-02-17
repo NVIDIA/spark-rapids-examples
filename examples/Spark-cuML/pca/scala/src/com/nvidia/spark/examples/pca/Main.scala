@@ -34,7 +34,7 @@ object Main {
       .withColumnRenamed("_1", "array_feature")
       .select((0 until dim).map(i => col("array_feature").getItem(i)): _*)
     // save to parquet files
-    prepareDf.write.option("overwrite","true").parquet("PCA_raw_parquet")
+    prepareDf.write.mode("overwrite").parquet("PCA_raw_parquet")
 
     // load the parquet files
     val df = spark.read.parquet("PCA_raw_parquet")
