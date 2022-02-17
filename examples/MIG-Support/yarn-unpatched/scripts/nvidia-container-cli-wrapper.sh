@@ -56,7 +56,7 @@ if [[ "$MIG_AS_GPU_ENABLED" == "1" ]]; then
                             ;;
 
                     esac
-                done <<< $("$REAL_NVIDIA_SMI_PATH" -q -x | "$THIS_DIR/mig2gpu.sh")
+                done < <("$REAL_NVIDIA_SMI_PATH" -q -x | "$THIS_DIR/mig2gpu.sh")
 
                 if (( ${#nvcli_migDeviceIds[@]} )); then
                     migDeviceIdsCsv=$(IFS=','; echo "${nvcli_migDeviceIds[*]}")
