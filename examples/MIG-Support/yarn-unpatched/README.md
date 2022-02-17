@@ -11,7 +11,7 @@ alternatives for more information:
 We provide a set of scripts that wrap the original `nvidia-smi` from the NVIDIA GPU Driver and `nvidia-container-cli`
 included in [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker).
 
-`nvidia-smi-wrapper.sh` is a wrapper script that parses the XML output of `nvidia-smi -q -x` used by YARN
+`nvidia-smi` is a wrapper script that parses the XML output of `nvidia-smi -q -x` used by YARN
 to discover GPUs. It replaces MIG-enabled GPUs with the list of `<gpu>` elements corresponding to every
 `<mig_device>` element of the GPU with additional annotation to construct the MIG identifier for
 `nvidia-container-cli`. This reverse mapping is performed by  modified `nvidia` Docker runtime using
@@ -38,10 +38,6 @@ to some location, for example: `/usr/local/yarn-mig-scripts`. Make sure that the
 are executable by the docker daemon user (i.e., `root`), and YARN NM service user (typically `yarn`). Note that the scripts
 leave the original outputs untouched if the environment variable `MIG_AS_GPU_ENABLED` is not 1.
 
-Please note, if using a version of YARN that includes [YARN-10593](https://issues.apache.org/jira/browse/YARN-10593),
-create a symlink to `nvidia-smi-wrapper.sh` named `nvidia-smi` in the same directory as `nvidia-smi-wrapper.sh` and
-use `nvidia-smi` in the configuration settings below.
-
 ### YARN Configuration
 #### Customizing yarn-env.sh
 
@@ -53,17 +49,16 @@ of of MIG devices as if they are physical GPU.
 - Add `ENABLE_NON_MIG_GPUS=0` if you want to prevent discovery of physical GPUs that are not subdivided in MIGs.
 Default is ENABLE_NON_MIG_GPUS=1 and physical GPUs in the MIG-Disabled state are listed along with MIG sub-devices on the node.
 
-Modify the following config `$YARN_CONF_DIR/yarn-site.xml`. The name of the script used should be `nvidia-smi` is using a
-version of YARN with [YARN-10593](https://issues.apache.org/jira/browse/YARN-10593), otherwise `nvidia-smi-wrapper.sh`.
+Modify the following config `$YARN_CONF_DIR/yarn-site.xml`.
 ```xml
 <property>
   <name>yarn.nodemanager.resource-plugins.gpu.path-to-discovery-executables</name>
-  <value>/usr/local/yarn-mig-scripts/nvidia-smi-wrapper.sh</value>
+  <value>/usr/local/yarn-mig-scripts/</value>
 </property>
 ```
 
 By default, `yarn.nodemanager.resource-plugins.gpu.allowed-gpu-devices` is set to `auto` and
-and `/usr/local/yarn-mig-scripts/nvidia-smi-wrapper.sh` will be called by YARN to discover GPUs.
+and `/usr/local/yarn-mig-scripts/nvidia-smi` will be called by YARN to discover GPUs.
 
 If you disable the default automatic GPU discovery, you can manually
 specify the list of MIG instances to use by setting
@@ -71,7 +66,7 @@ specify the list of MIG instances to use by setting
 0-based indices corresponding to the desired `<gpu>` elements in the output of
 
 ```bash
-MIG_AS_GPU_ENABLED=1 /usr/local/yarn-mig-scripts/nvidia-smi-wrapper.sh -q -x
+MIG_AS_GPU_ENABLED=1 /usr/local/yarn-mig-scripts/nvidia-smi -q -x
 ```
 
 In other words, if you want to allow MIG 1:2 and 2:0 and they are listed as 3rd and 5th `<gpu>`
