@@ -38,8 +38,9 @@ to some location, for example: `/usr/local/yarn-mig-scripts`. Make sure that the
 are executable by the docker daemon user (i.e., `root`), and YARN NM service user (typically `yarn`). Note that the scripts
 leave the original outputs untouched if the environment variable `MIG_AS_GPU_ENABLED` is not 1.
 
-Please note that the name of the `nvidia-smi-wrapper.sh` script may need to be changed to be `nvidia-smi` if the Hadoop
-version you are using has the fix [YARN-10593](https://issues.apache.org/jira/browse/YARN-10593).
+Please note, if using a version of YARN that includes [YARN-10593](https://issues.apache.org/jira/browse/YARN-10593),
+create a symlink to `nvidia-smi-wrapper.sh` named `nvidia-smi` in the same directory as `nvidia-smi-wrapper.sh` and
+use `nvidia-smi` in the configuration settings below.
 
 ### YARN Configuration
 #### Customizing yarn-env.sh
@@ -52,8 +53,8 @@ of of MIG devices as if they are physical GPU.
 - Add `ENABLE_NON_MIG_GPUS=0` if you want to prevent discovery of physical GPUs that are not subdivided in MIGs.
 Default is ENABLE_NON_MIG_GPUS=1 and physical GPUs in the MIG-Disabled state are listed along with MIG sub-devices on the node.
 
-Modify the following config `$YARN_CONF_DIR/yarn-site.xml`. Name the script according to what
-it was copied as above:
+Modify the following config `$YARN_CONF_DIR/yarn-site.xml`. The name of the script used should be `nvidia-smi` is using a
+version of YARN with [YARN-10593](https://issues.apache.org/jira/browse/YARN-10593), otherwise `nvidia-smi-wrapper.sh`.
 ```xml
 <property>
   <name>yarn.nodemanager.resource-plugins.gpu.path-to-discovery-executables</name>
