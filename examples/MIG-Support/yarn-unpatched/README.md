@@ -52,7 +52,7 @@ of of MIG devices as if they are physical GPU.
 - Add `ENABLE_NON_MIG_GPUS=0` if you want to prevent discovery of physical GPUs that are not subdivided in MIGs.
 Default is ENABLE_NON_MIG_GPUS=1 and physical GPUs in the MIG-Disabled state are listed along with MIG sub-devices on the node.
 
-Modify the following config `$YARN_CONF_DIR/yarn-site.xml`. Name the scirpt according to what
+Modify the following config `$YARN_CONF_DIR/yarn-site.xml`. Name the script according to what
 it was copied as above:
 ```xml
 <property>
