@@ -56,7 +56,10 @@ if [[ "$MIG_AS_GPU_ENABLED" == "1" ]]; then
                             ;;
 
                     esac
-                done <<< $("$REAL_NVIDIA_SMI_PATH" -q -x | "$THIS_DIR/mig2gpu.sh")
+                done < <("$REAL_NVIDIA_SMI_PATH" -q -x | "$THIS_DIR/mig2gpu.sh")
+                # make sure the above redirect into the while read loop does not use the here-string (<<<) method because different
+                # versions of bash materialize newlines differently in the string. Older versions treat it as a single
+                # line and newer versions leave it as a multiline string. Here it needs to be a multiline.
 
                 if (( ${#nvcli_migDeviceIds[@]} )); then
                     migDeviceIdsCsv=$(IFS=','; echo "${nvcli_migDeviceIds[*]}")
