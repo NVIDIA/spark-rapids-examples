@@ -18,7 +18,7 @@ Besides `cudf` and `cuspatial`, the `gdal` library that is compatible with the i
 
 Install it by running the command below.
 ```
-conda install -c conda-forge libgdal
+conda install -c conda-forge libgdal=3.3.1
 ```
 Set up a standalone cluster of Spark.
 
