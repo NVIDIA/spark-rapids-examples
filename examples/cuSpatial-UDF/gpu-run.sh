@@ -34,7 +34,6 @@ spark-submit --master spark://$HOSTNAME:7077 \
 --conf spark.executor.resource.gpu.amount=1 \
 --conf spark.executor.extraClassPath=$JARS_CLASS_PATH \
 --conf spark.driver.extraClassPath=$JARS_CLASS_PATH \
---conf spark.executorEnv.SHAPE_FILENAME=$SHAPE_FILE_NAME.shp \
 --jars $JARS_PATH \
 --files $SHAPE_FILE_DIR/$SHAPE_FILE_NAME.shp,$SHAPE_FILE_DIR/$SHAPE_FILE_NAME.shx \
 spatial_join.py $DATA_IN_PATH $DATA_OUT_PATH

@@ -26,8 +26,9 @@ if __name__ == '__main__':
     outputPath = sys.argv[2]
 
     spark = SparkSession.builder.getOrCreate()
-    # register the udf
+    # register the udf and set its parameters via SQL config for runtime updating
     spark.udf.registerJavaFunction("point_in_polygon", "com.nvidia.spark.rapids.udf.PointInPolygon", None)
+    spark.conf.set("spark.cuspatial.sql.udf.shapeFileName", "taxi_zones.shp")
 
     # read the points data
     df = spark.read.parquet(inputPath)

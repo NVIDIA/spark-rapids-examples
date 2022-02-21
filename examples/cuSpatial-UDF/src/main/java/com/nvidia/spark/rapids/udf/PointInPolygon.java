@@ -20,6 +20,7 @@ import ai.rapids.cudf.ColumnVector;
 import com.nvidia.spark.RapidsUDF;
 import org.apache.spark.SparkFiles;
 import org.apache.spark.sql.api.java.UDF2;
+import org.apache.spark.sql.internal.SQLConf;
 
 import java.io.File;
 import java.util.List;
@@ -51,14 +52,17 @@ public class PointInPolygon implements UDF2<Integer, Integer, List<Integer>>, Ra
   private static int refCount;
 
   private void ensureShapeFile() {
+    // Read the config from SQLConf to support runtime updating
+    String newShapeName = SQLConf.get().getConfString("spark.cuspatial.sql.udf.shapeFileName", null);
+    boolean validNewName = newShapeName != null && !newShapeName.equals(shapeFile);
     // Each task has a different UDF instance so no need to sync when operating object members.
-    if (!localPathParsed) {
-      if (shapeFile == null) {
-        shapeFile = System.getenv("SHAPE_FILENAME");
-        if (shapeFile == null) {
-          throw new RuntimeException(
-              "Shape file should be specified via env 'SHAPE_FILENAME' or constructor");
-        }
+    if (!localPathParsed || validNewName) {
+      if (validNewName) {
+        // update to the latest
+        shapeFile = newShapeName;
+      }
+      if (shapeFile == null || shapeFile.isEmpty()) {
+        throw new RuntimeException("Shape file name is missing");
       }
       // Get the local path of the downloaded file on each work node.
       shapeFile = SparkFiles.get(new File(shapeFile).getName());
