@@ -20,7 +20,7 @@
 # should point to this script on NM host, e.g
 # <property>
 #   <name>yarn.nodemanager.resource-plugins.gpu.path-to-discovery-executables</name>
-#   <value>/usr/local/yarn-mig-scripts/nvidia-smi-wrapper.sh</value>
+#   <value>/usr/local/yarn-mig-scripts/</value>
 # </property>
 
 # customize in yarn-env.sh

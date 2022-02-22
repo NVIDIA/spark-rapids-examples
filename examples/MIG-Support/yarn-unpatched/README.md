@@ -11,11 +11,18 @@ alternatives for more information:
 We provide a set of scripts that wrap the original `nvidia-smi` from the NVIDIA GPU Driver and `nvidia-container-cli`
 included in [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker).
 
-`nvidia-smi-wrapper.sh` is a wrapper script that parses the XML output of `nvidia-smi -q -x` used by YARN
+`nvidia-smi` is a wrapper script that parses the XML output of `nvidia-smi -q -x` used by YARN
 to discover GPUs. It replaces MIG-enabled GPUs with the list of `<gpu>` elements corresponding to every
 `<mig_device>` element of the GPU with additional annotation to construct the MIG identifier for
 `nvidia-container-cli`. This reverse mapping is performed by  modified `nvidia` Docker runtime using
 `nvidia-container-cli-wrapper.sh`.
+
+## Requirements
+
+Please see the [MIG Application Considerations](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/#app-considerations)
+and [CUDA Device Enumeration](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html#cuda-visible-devices).
+
+Special note, that this method only works with drivers >= R470 (470.42.01+).
 
 ## Installation
 
@@ -46,12 +53,12 @@ Modify the following config `$YARN_CONF_DIR/yarn-site.xml`:
 ```xml
 <property>
   <name>yarn.nodemanager.resource-plugins.gpu.path-to-discovery-executables</name>
-  <value>/usr/local/yarn-mig-scripts/nvidia-smi-wrapper.sh</value>
+  <value>/usr/local/yarn-mig-scripts/</value>
 </property>
 ```
 
 By default, `yarn.nodemanager.resource-plugins.gpu.allowed-gpu-devices` is set to `auto` and
-and `/usr/local/yarn-mig-scripts/nvidia-smi-wrapper.sh` will be called by YARN to discover GPUs.
+and `/usr/local/yarn-mig-scripts/nvidia-smi` will be called by YARN to discover GPUs.
 
 If you disable the default automatic GPU discovery, you can manually
 specify the list of MIG instances to use by setting
@@ -59,7 +66,7 @@ specify the list of MIG instances to use by setting
 0-based indices corresponding to the desired `<gpu>` elements in the output of
 
 ```bash
-MIG_AS_GPU_ENABLED=1 /usr/local/yarn-mig-scripts/nvidia-smi-wrapper.sh -q -x
+MIG_AS_GPU_ENABLED=1 /usr/local/yarn-mig-scripts/nvidia-smi -q -x
 ```
 
 In other words, if you want to allow MIG 1:2 and 2:0 and they are listed as 3rd and 5th `<gpu>`
