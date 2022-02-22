@@ -16,7 +16,7 @@
 
 cmake_minimum_required(VERSION 3.20.1 FATAL_ERROR)
 
-project(SPATIALUDJNI VERSION 22.02 LANGUAGES C CXX CUDA)
+project(SPATIALUDJNI VERSION 22.04 LANGUAGES C CXX CUDA)
 
 ###################################################################################################
 # - build type ------------------------------------------------------------------------------------
@@ -61,6 +61,8 @@ find_library(
           "${CUDF_ROOT}/lib"
     REQUIRED)
 
+set(CUDACXX_INCLUDE "$ENV{CONDA_PREFIX}/include/rapids/libcudacxx")
+
 ####################################################################################################
 # - find cuspatial --------------------------------------------------------------------------------------
 
@@ -102,8 +104,9 @@ set_target_properties(spatialudfjni PROPERTIES BUILD_RPATH "\$ORIGIN")
 target_include_directories(
     spatialudfjni
     PUBLIC "${JNI_INCLUDE_DIRS}"
-           "${CUDAToolkit_INCLUDE_DIRS}"
            "${CUDF_INCLUDE}"
+           "${CUDACXX_INCLUDE}"
+           "${CUDAToolkit_INCLUDE_DIRS}"
            "${CUSPATIAL_INCLUDE}")
 
 ###################################################################################################
