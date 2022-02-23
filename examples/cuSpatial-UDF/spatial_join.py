@@ -25,10 +25,10 @@ if __name__ == '__main__':
     inputPath = sys.argv[1]
     outputPath = sys.argv[2]
 
+    # You should set correct shapefile name by "--conf spark.cuspatial.sql.udf.shapeFileName"
     spark = SparkSession.builder.getOrCreate()
     # register the udf and set its parameters via the runtime config
     spark.udf.registerJavaFunction("point_in_polygon", "com.nvidia.spark.rapids.udf.PointInPolygon", None)
-    spark.conf.set("spark.cuspatial.sql.udf.shapeFileName", "taxi_zones.shp")
 
     # read the points data
     df = spark.read.parquet(inputPath)

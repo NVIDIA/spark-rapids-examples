@@ -1,42 +1,48 @@
 #!/bin/bash
+# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
-CASE_PATH=taxi_zones
-SHAPE_FILE_NAME=$CASE_PATH
-SHAPE_FILE_DIR=/data/cuspatial/$CASE_PATH/shape/
-DATA_IN_PATH=/data/cuspatial/$CASE_PATH/pt/
-DATA_OUT_PATH=/data/cuspatial/out/gpu/
+# change to your spark folder
+SPARK_HOME=/data/spark-3.2.0-bin-hadoop3.2
+
+# change this path to your root path for the dataset
+ROOT_PATH=/data/cuspatial_data
+# Extract the sample dataset in ../../datasets/cuspatial_data.tar.gz
+# Copy the polygons and points data into the root path or change the root path to where they are
+SHAPE_FILE_DIR=$ROOT_PATH/polygons
+SHAPE_FILE_NAME="polygons"
+DATA_IN_PATH=$ROOT_PATH/points
+DATA_OUT_PATH=$ROOT_PATH/output
 
 rm -rf $DATA_OUT_PATH
-JARS=$HOME/work/files/jars
 
-JARS_PATH=$JARS/cudf.jar,$JARS/rapids.jar,./target/cuspatial-udf-22.02.jar
-JARS_CLASS_PATH=$JARS/cudf.jar:$JARS/rapids.jar:./target/cuspatial-udf-22.02.jar
+# the path to keep the jars of cudf, spark-rapids & cuspatial-udf
+JARS=$ROOT_PATH/jars
 
-#spark-submit \
-spark-submit --master spark://$HOSTNAME:7077 \
+JARS_PATH=$JARS/cudf-22.02.0-cuda11.jar,$JARS/rapids-4-spark_2.12-22.02.0.jar,$JARS/cuspatial-udf-22.04-SNAPSHOT.jar
+
+$SPARK_HOME/bin/spark-submit --master spark://$HOSTNAME:7077 \
 --name "Gpu Spatial Join UDF" \
---executor-memory 50G \
+--executor-memory 20G \
 --executor-cores 10 \
 --conf spark.task.cpus=1 \
---conf spark.default.parallelism=3 \
 --conf spark.sql.adaptive.enabled=false \
---conf spark.sql.shuffle.partitions=100 \
---conf spark.sql.files.maxPartitionBytes=2GB \
---conf spark.driver.extraJavaOptions="-Duser.timezone=UTC" \
---conf spark.executor.extraJavaOptions="-Duser.timezone=UTC" \
 --conf spark.plugins=com.nvidia.spark.SQLPlugin \
---conf spark.rapids.memory.pinnedPool.size=16G \
---conf spark.rapids.sql.batchSizeBytes=1GB \
---conf spark.rapids.sql.concurrentGpuTasks=1 \
---conf spark.rapids.sql.enabled=true \
 --conf spark.rapids.sql.explain=all \
---conf spark.rapids.sql.format.orc.write.enabled=true \
 --conf spark.executor.resource.gpu.amount=1 \
---conf spark.executor.extraClassPath=$JARS_CLASS_PATH \
---conf spark.driver.extraClassPath=$JARS_CLASS_PATH \
+--conf spark.cuspatial.sql.udf.shapeFileName="$SHAPE_FILE_NAME.shp" \
 --jars $JARS_PATH \
 --files $SHAPE_FILE_DIR/$SHAPE_FILE_NAME.shp,$SHAPE_FILE_DIR/$SHAPE_FILE_NAME.shx \
 spatial_join.py $DATA_IN_PATH $DATA_OUT_PATH
-
-#--conf spark.rapids.sql.metrics.level=DEBUG \
-#--conf spark.rapids.memory.gpu.pool=NONE \
