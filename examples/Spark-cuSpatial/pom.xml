@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.nvidia</groupId>
-  <artifactId>cuspatial-udf</artifactId>
+  <artifactId>spark-cuspatial</artifactId>
   <name>UDF of the cuSpatial case for the RAPIDS Accelerator</name>
   <description>The RAPIDS accelerated user defined function of the cuSpatial case
     for use with the RAPIDS Accelerator for Apache Spark</description>
