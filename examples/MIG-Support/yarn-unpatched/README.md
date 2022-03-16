@@ -26,9 +26,10 @@ Special note, that this method only works with drivers >= R470 (470.42.01+).
 
 ## Installation
 
-These instructions assume NVIDIA Container Toolkit (nvidia-docker2) and YARN is already installed
-and configured with GPU Scheduling and
-[CGroups enabled](https://hadoop.apache.org/docs/r3.1.2/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
+These instructions assume YARN is already installed and configured with GPU Scheduling enabled
+using Docker and the NVIDIA Container Toolkit (nvidia-docker2).
+See [Using GPU on YARN](https://hadoop.apache.org/docs/r3.1.2/hadoop-yarn/hadoop-yarn-site/UsingGpus.html) if
+you need more information.
 
 Enable and configure your [GPUs with MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html) on all of the nodes
 it applies to.
