@@ -72,7 +72,7 @@ We got the end-2-end time as below table when running with 2009 NYC Taxi trip pi
     * Databricks Runtime Version
   You should choose a Standard version of the Runtime version like "Runtime: 9.1 LTS(Scala 2.12, Spark 3.1.2)" and choose GPU instance type like "g4dn.xlarge". Because when I choose a ML version, it says "Support for Databricks container services requires runtime version 5.3+" and I can't click "Confirm" button.
     * Use your own Docker container
-  Input "Docker Image URL" as "<your-dockerhub-repo>:<your-tag>"
+  Input "Docker Image URL" as "your-dockerhub-repo:your-tag"
     * For the other configurations, you can follow the get-started document.
 
 3. Copy the sample [cuspatial_data.tar.gz](../../datasets/cuspatial_data.tar.gz) or your data to DBFS by using Databricks CLI.

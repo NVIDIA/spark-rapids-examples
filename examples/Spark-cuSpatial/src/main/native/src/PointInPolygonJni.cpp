@@ -132,7 +132,7 @@ inline bool is_invalid_column(cudf::column_view const& col) {
  * double type, and have at least one valid row. Otherwise, the behavior is undefined.
  */
 inline double reduce_as_double(cudf::column_view const& col,
-                               std::unique_ptr<cudf::aggregation> const& agg) {
+                               std::unique_ptr<cudf::reduce_aggregation> const& agg) {
   auto s = cudf::reduce(col, agg, col.type());
   // s is always valid
   auto p_num_scalar = reinterpret_cast<cudf::numeric_scalar<double>*>(s.get());
@@ -277,8 +277,8 @@ Java_com_nvidia_spark_rapids_udf_PointInPolygon_pointInPolygon(JNIEnv* env, jcla
       return reinterpret_cast<jlong>(nulls_list.release());
     }
 
-    auto min_agg = cudf::make_min_aggregation();
-    auto max_agg = cudf::make_max_aggregation();
+    auto min_agg = cudf::make_min_aggregation<cudf::reduce_aggregation>();
+    auto max_agg = cudf::make_max_aggregation<cudf::reduce_aggregation>();
     auto x_min = reduce_as_double(*ply_x, min_agg);
     auto x_max = reduce_as_double(*ply_x, max_agg);
     auto y_min = reduce_as_double(*ply_y, min_agg);
