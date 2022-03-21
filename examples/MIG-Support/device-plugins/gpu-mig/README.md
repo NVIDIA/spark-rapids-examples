@@ -6,7 +6,7 @@ there may be some MIG enabled GPUs and some without MIG. If you are not using MI
 
 ## Compatibility
 
-It works with Apache YARN 3.3.0+ versions that support the [Pluggable Device Framework](https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/PluggableDeviceFramework.html). This plugin requires YARN to be configured with cgroups and NVIDIA Docker runtime v2.
+It works with Apache YARN 3.3.0+ versions that support the [Pluggable Device Framework](https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/PluggableDeviceFramework.html). This plugin requires YARN to be configured with Docker using the NVIDIA Container Toolkit (nvidia-docker2).
 
 ## Limitations
 
@@ -34,7 +34,7 @@ This will create a jar `target/yarn-gpu-mig-plugin-1.0.0.jar`. This jar can be i
 
 ## Installation
 
-These instructions assume YARN is already installed and configured with cgroups enabled and NVIDIA Docker runtime v2.
+These instructions assume YARN is already installed and configured with Docker enabled using the NVIDIA Container Toolkit (nvidia-docker2).
 Enable and configure your [GPUs with MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html) on all of the nodes it applies to.
 
 Install the jar into your Hadoop Cluster, see the [Test and Use Your Own Plugin](https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/DevelopYourOwnDevicePlugin.html)
