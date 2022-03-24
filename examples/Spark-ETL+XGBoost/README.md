@@ -53,7 +53,11 @@ Please follow below steps to run the example notebooks in different notebook env
     - [Apache Toree Notebook for Scala](../../docs/get-started/xgboost-examples/notebook/toree.md)
     - [Jupyter Notebook with spylon kernel](../../docs/get-started/xgboost-examples/notebook/spylon.md)
     - [Jupyter Notebook for Python](../../docs/get-started/xgboost-examples/notebook/python-notebook.md)
+  
+For the CrossValidator job, we need to set `spark.task.resource.gpu.amount=1` to submit xgboost training jobs sequentially,
+because if not the customized cross-validator will submit multi xgboost training jobs and spark may schedule the different 
+xgboost training tasks into one executor simultaneously which will cause issues.
 
-These examples use default parameters for demo purposes. For a full list please see "Supported Parameters" 
+These examples use default parameters for demo purposes. For a full list please see "Supported Parameters"
 for [Scala](../Spark-ETL+XGBoost/app-parameters/supported_xgboost_parameters_scala.md) 
 or [Python](../Spark-ETL+XGBoost/app-parameters/supported_xgboost_parameters_python.md).
