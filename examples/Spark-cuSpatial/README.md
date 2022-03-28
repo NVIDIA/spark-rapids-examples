@@ -49,7 +49,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
      cd spark-rapids-examples/examples/Spark-cuSpatial/
      mvn package
      ```
-6. You'll get "spark-cuspatial-22.04-SNAPSHOT.jar" in the target folder.      
+6. You'll get "spark-cuspatial-<version>.jar" in the target folder.      
 
 
 ## Run
