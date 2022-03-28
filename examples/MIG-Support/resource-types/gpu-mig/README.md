@@ -9,7 +9,7 @@ environments where there may be some MIG enabled GPUs and some without MIG. This
 ## Compatibility
 
 Requires YARN 3.1.2 or newer that supports GPU scheduling. See the [supported versions](#supported-versions) section below for specific versions supported.
-MIG support requires YARN to be configured with cgroups and NVIDIA Docker runtime v2.
+MIG support requires YARN to be configured with Docker and using the NVIDIA Container Toolkit (nvidia-docker2)
 
 ## Limitations
 
@@ -51,7 +51,7 @@ mvn test -Pdist -Dtar -Dtest=TestNvidiaDockerV2CommandPlugin
 
 ## Installation
 
-This assumes YARN was already installed and configured with GPU scheduling and cgroups enabled and NVIDIA Docker runtime v2.
+These instructions assume YARN is already installed and configured with GPU Scheduling enabled using Docker and the NVIDIA Container Toolkit (nvidia-docker2).
 See [Using GPU on YARN](https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/UsingGpus.html) if you need more information. 
 
 Enable and configure your [GPUs with MIG](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/index.html) on all of the nodes it applies to.
