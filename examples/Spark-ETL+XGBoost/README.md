@@ -55,7 +55,7 @@ Please follow below steps to run the example notebooks in different notebook env
     - [Jupyter Notebook for Python](../../docs/get-started/xgboost-examples/notebook/python-notebook.md)
   
 For the CrossValidator job, we need to set `spark.task.resource.gpu.amount=1` to submit xgboost training jobs sequentially,
-otherwise the customized cross-validator will submit multiple xgboost training jobs and spark may schedule the different 
+otherwise the customized CrossValidator may schedule more than 1 
 xgboost training tasks into one executor simultaneously and trigger 
 [issue-131](https://github.com/NVIDIA/spark-rapids-examples/issues/131).
 
