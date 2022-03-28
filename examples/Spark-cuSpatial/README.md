@@ -12,7 +12,24 @@ We got the end-2-end time as below table when running with 2009 NYC Taxi trip pi
 | 2 GPU(T4) on Databricks | 9.1 seconds | 10.0 seconds | 12.1 seconds |
 
 ## Build
-### Prerequisites:
+You can build the jar file [in Docker](#build-in-docker) with the provided [Dockerfile](./Dockerfile)
+or you can build it [in local](#build-in-local) machine after some prerequisites.
+
+### Build in Docker
+1. Build the docker image [Dockerfile](./Dockerfile), then run the container.
+     ```Bash
+     docker build -f Dockerfile . -t build-spark-cuspatial
+     docker run -it build-spark-cuspatial bash
+     ```
+2. Get the code, then run "mvn package".
+     ```Bash
+     git clone https://github.com/NVIDIA/spark-rapids-examples.git
+     cd spark-rapids-examples/examples/Spark-cuSpatial/
+     mvn package
+     ```
+3. You'll get the jar named like "spark-cuspatial-<version>.jar" in the target folder.
+
+### Build in Local:
 1. essential build tools:
     - [cmake(>=3.20)](https://cmake.org/download/),
     - [ninja(>=1.10)](https://github.com/ninja-build/ninja/releases),
@@ -26,19 +43,14 @@ We got the end-2-end time as below table when running with 2009 NYC Taxi trip pi
     # or below command for the nightly (aka SNAPSHOT) version.
     conda install -c rapidsai-nightly -c nvidia -c conda-forge  -c defaults libcuspatial=22.04
     ```
-## Build in Docker
-1. Build the docker image [Dockerfile](./Dockerfile), then run the container.
-     ```Bash
-     docker build -f Dockerfile . -t build-spark-cuspatial
-     docker run -it build-spark-cuspatial bash
-     ```
- 2. Get the code, then run "mvn package".
+5. Get the code, then run "mvn package".
      ```Bash
      git clone https://github.com/NVIDIA/spark-rapids-examples.git
      cd spark-rapids-examples/examples/Spark-cuSpatial/
      mvn package
      ```
- 3. You'll get "spark-cuspatial-22.04-SNAPSHOT.jar" in the target folder.
+6. You'll get "spark-cuspatial-<version>.jar" in the target folder.      
+
 
 ## Run
 ### Run on Standalone
