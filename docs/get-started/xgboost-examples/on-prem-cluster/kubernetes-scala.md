@@ -6,7 +6,7 @@ the reader will be able to run a sample Apache Spark XGBoost application on NVID
 Prerequisites
 -------------
 
-* Apache Spark 3.0.1+ (e.g.: Spark 3.0.1)
+* Apache Spark 3.1.1+ (e.g.: Spark 3.1.1)
 * Hardware Requirements
   * NVIDIA Pascal™ GPU architecture or better
   * Multi-node clusters with homogenous GPU configuration

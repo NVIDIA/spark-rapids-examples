@@ -40,7 +40,7 @@
         <cudf.version>22.02.0</cudf.version>
         <!-- Depends on release version, Snapshot version is not published to the Maven Central -->
         <rapids4spark.version>22.02.0</rapids4spark.version>
-        <spark.version>3.0.1</spark.version>
+        <spark.version>3.1.1</spark.version>
         <scala.version>2.12.15</scala.version>
         <udf.native.build.path>${project.build.directory}/cpp-build</udf.native.build.path>
         <BUILD_UDF_BENCHMARKS>OFF</BUILD_UDF_BENCHMARKS>
