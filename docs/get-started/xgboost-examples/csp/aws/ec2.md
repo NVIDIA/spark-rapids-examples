@@ -1,6 +1,6 @@
 # Get Started with XGBoost4J-Spark 3.0 on AWS EC2
 
-This is a getting started guide to Spark 3.0 on AWS EC2. At the end of this guide, the reader will be able to run a sample Apache Spark application that runs on NVIDIA GPUs on AWS EC2.
+This is a getting started guide to Spark 3.2+ on AWS EC2. At the end of this guide, the reader will be able to run a sample Apache Spark application that runs on NVIDIA GPUs on AWS EC2.
 
 For more details of AWS EC2 and get started, please check the [AWS document](https://aws.amazon.com/ec2/getting-started/).
 
@@ -64,7 +64,7 @@ Return "instances | EC2 Managemnt Console", you can find your instance running. 
 
 ![Step 2.7: Review Instance Launch](pics/ec2_step2-7.png)
 
-## Launch EC2 and Configure Spark 3.0
+## Launch EC2 and Configure Spark 3.2+
 
 ### Step 1:  Launch EC2
 
@@ -81,9 +81,9 @@ Download spark package and set environment variable.
 
 ``` bash
 # download the spark
-wget https://downloads.apache.org/spark/spark-3.0.0/spark-3.0.0-bin-hadoop3.2.tgz
-tar zxf spark-3.0.0-bin-hadoop3.2.tgz
-export SPARK_HOME=/your/spark/spark-3.0.0-bin-hadoop3.2
+wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop3.2.tgz
+tar zxf spark-3.2.1-bin-hadoop3.2.tgz
+export SPARK_HOME=/your/spark/spark-3.2.1-bin-hadoop3.2
 ```
 
 ### Step 3: Download jars for S3A (optional)
@@ -126,7 +126,7 @@ $SPARK_HOME/sbin/start-master.sh
 $SPARK_HOME/sbin/start-slave.sh <master-spark-URL>
 ```
 
-## Launch XGBoost-Spark examples on Spark 3.0
+## Launch XGBoost-Spark examples on Spark 3.2+
 
 ### Step 1: Download Jars
 
@@ -145,7 +145,7 @@ Create running run.sh script with below content, make sure change the paths in i
 
 ``` bash
 #!/bin/bash
-export SPARK_HOME=/your/path/to/spark-3.0.0-bin-hadoop3.2
+export SPARK_HOME=/your/path/to/spark-3.2.1-bin-hadoop3.2
 
 export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
 

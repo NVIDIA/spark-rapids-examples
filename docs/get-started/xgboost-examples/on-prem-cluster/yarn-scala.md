@@ -7,7 +7,7 @@ At the end of this guide, the reader will be able to run a sample Apache Spark a
 Prerequisites
 -------------
 
-* Apache Spark 3.0.1+ running on YARN supporting GPU scheduling. (e.g.: Spark 3.0.1, Hadoop-Yarn 3.1.0)
+* Apache Spark 3.1.1+ running on YARN supporting GPU scheduling. (e.g.: Spark 3.1.1, Hadoop-Yarn 3.3.0)
 * Hardware Requirements
   * NVIDIA Pascal™ GPU architecture or better
   * Multi-node clusters with homogenous GPU configuration

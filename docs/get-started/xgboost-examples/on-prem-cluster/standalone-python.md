@@ -1,12 +1,12 @@
 Get Started with XGBoost4J-Spark on an Apache Spark Standalone Cluster
 ======================================================================
-This is a getting started guide to XGBoost4J-Spark on an Apache Spark 3.0+ Standalone Cluster.
+This is a getting started guide to XGBoost4J-Spark on an Apache Spark 3.1+ Standalone Cluster.
 At the end of this guide, the user can run a sample Apache Spark Python application that runs on NVIDIA GPUs.
 
 Prerequisites
 -------------
 
-* Apache Spark 3.0.1+ Standalone Cluster (e.g.: Spark 3.0.1)
+* Apache Spark 3.1.1+ Standalone Cluster (e.g.: Spark 3.1.1)
 * Hardware Requirements
   * NVIDIA Pascal™ GPU architecture or better
   * Multi-node clusters with homogenous GPU configuration
@@ -29,7 +29,7 @@ In this example, we will limit the number of cores to 1, to match our dataset.
 Please see https://spark.apache.org/docs/latest/spark-standalone.html for more documentation regarding Standalone configuration.
 
 We use `SPARK_HOME` environment variable to point to the Apache Spark cluster.
-And here are the steps to enable the GPU resources discovery for Spark 3.0+.
+And here are the steps to enable the GPU resources discovery for Spark 3.1+.
 
 1. Copy the spark config file from template
 
