@@ -26,7 +26,7 @@ Spark versions and requirements. It is recommended to set up Spark Cluster with 
 The microbenchmark on [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) is to identify,
 test and analyze the best queries which can be accelerated on the GPU. Rapids Accelerator for Apache Spark reaps 
 the significant benefit of GPU performance for some specific operations like Expand, Aggregate, Windowing, Crossjoin, etc.
-![microbenchmark-speedup](docs/img/guides/microbenchmark-speedup.png)
+![microbenchmark-speedup](docs/img/guides/microbenchmark-speedups.png)
 
 For detail information please refer to this
 [guide](/examples/micro-benchmarks).
