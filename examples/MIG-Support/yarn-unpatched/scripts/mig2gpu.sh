@@ -59,6 +59,10 @@ mig2gpu_mig_lineNumberStart=-1
 mig2gpu_mig_lineNumberEnd=-1
 mig2gpu_migIndex=-1
 
+minor_values=()
+mig2gpu_numMigInstances=${#minor_values[@]}
+mig2gpu_minorIdx=0
+
 # Parent GPU context for MIG
 mig2gpu_gpuIdx=-1
 mig2gpu_migGpuInstanceId=-1
@@ -70,6 +74,19 @@ mig2gpu_gpu_utilization_lineNumberStart=-1
 mig2gpu_gpu_utilization_lineNumberEnd=-1
 mig2gpu_gpu_temperature_lineNumberStart=-1
 mig2gpu_gpu_temperature_lineNumberEnd=-1
+
+function get_mig_minor_values() {
+  # todo add check mig enabled vs pending
+  # nvidia-smi --query-gpu=mig.mode.current --format=csv,noheader
+  major_ids=(`/usr/bin/nvidia-smi --query-gpu=index --format=csv,noheader | sed -e ':a' -e 'N' -e'$!ba' -e 's/\n/ /g'`)
+  for key in "${!major_ids[@]}"; do
+      gpunum="${major_ids[$key]}"
+      # TODO change the gi0/gi1 to be configurable
+      minor0=`cat /proc/driver/nvidia-caps/mig-minors | grep gpu$gpunum/gi0/access | cut -d ' ' -f 2`
+      minor1=`cat /proc/driver/nvidia-caps/mig-minors | grep gpu$gpunum/gi1/access | cut -d ' ' -f 2`
+      minor_values+=($minor0 $minor1)
+  done
+}
 
 
 # The function to replace a MIG-enabled GPU with the "fake" GPU device elements
@@ -263,6 +280,15 @@ function replaceParentGpuWithMigs {
                 local migDeviceId="$mig2gpu_gpuIdx:$mig2gpu_migIndex"
                 mig2gpu_migGpu_out+=($'\t\t'"<_mig2gpu_device_id>$migDeviceId</_mig2gpu_device_id>")
 
+                idx=${minor_values[$mig2gpu_minorIdx]}
+                mig2gpu_migGpu_out+=($'\t\t'"<minor_number>$idx</minor_number>")
+                mig2gpu_minorIdx=$((mig2gpu_minorIdx+1))
+                if [[ "$mig2gpu_minorIdx" == "$mig2gpu_numMigInstances" ]]; then
+                    mig2gpu_minorIdx=0
+                fi
+
+                mig2gpu_migGpu_out+=("${migFbMemoryUsage[@]}")
+
                 mig2gpu_migGpu_out+=("$mig2gpu_gpuMinorNumber")
                 mig2gpu_migGpu_out+=("${migFbMemoryUsage[@]}")
 
@@ -297,6 +323,8 @@ function processGpuElement {
 function mig2gpuMain {
     local line
     local lineNumber
+
+    get_mig_minor_values
 
     # simplified regex-free parser relying on the fact
     # that nvidia-smi output is pretty-printed with tabs
