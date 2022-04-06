@@ -37,6 +37,10 @@ We provide three similar Xgboost benchmarks, Mortgage, Taxi and Agaricus.
 Try one of the ["Getting Started Guides"](/examples/Spark-ETL+XGBoost).
 Please note that they target the Mortgage dataset as written with a few changes
 to `EXAMPLE_CLASS` and `dataPath`, they can be easily adapted with each other with different datasets.
+Below is the performance benefit with 680 GB input data size on an 8 nodes Spark standalone cluster 
+which with 128 CPU cores and 1 A100 GPU on each node.
+![mortgage-speedup](docs/img/guides/mortgage-speedups.png)
+
 
 ### 3. TensorFlow training on Horovod Spark example guide
 
