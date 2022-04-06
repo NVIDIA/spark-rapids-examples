@@ -29,7 +29,7 @@ import java.util.List;
  * A Spark Java UDF that computes what the `spatial_join` test does here.
  * https://github.com/zhangjianting/cuspatial_benchmark_nyctaxi/blob/main/python/spatial_join.py
  */
-public class PointInPolygon implements UDF2<Integer, Integer, List<Integer>>, RapidsUDF {
+public class PointInPolygon implements UDF2<Double, Double, List<Integer>>, RapidsUDF {
 
   private String shapeFile;
   private boolean localPathParsed;
@@ -42,7 +42,7 @@ public class PointInPolygon implements UDF2<Integer, Integer, List<Integer>>, Ra
 
   /** Row-by-row implementation that executes on the CPU */
   @Override
-  public List<Integer> call(Integer x, Integer y) {
+  public List<Integer> call(Double x, Double y) {
     // not supported yet
     throw new UnsupportedOperationException();
   }
