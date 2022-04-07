@@ -39,9 +39,9 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
 4. [cuspatial](https://github.com/rapidsai/cuspatial): install libcuspatial
     ```Bash
     # get libcuspatial from conda
-    conda install -c rapidsai -c nvidia -c conda-forge  -c defaults libcuspatial=22.02
+    conda install -c rapidsai -c nvidia -c conda-forge  -c defaults libcuspatial=22.04
     # or below command for the nightly (aka SNAPSHOT) version.
-    conda install -c rapidsai-nightly -c nvidia -c conda-forge  -c defaults libcuspatial=22.04
+    conda install -c rapidsai-nightly -c nvidia -c conda-forge  -c defaults libcuspatial=22.06
     ```
 5. Get the code, then run "mvn package".
      ```Bash
@@ -65,7 +65,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
    * [cuDF v22.02.0](https://repo1.maven.org/maven2/ai/rapids/cudf/22.02.0/cudf-22.02.0-cuda11.jar) or above
    * [spark-rapids v22.02.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.02.0/rapids-4-spark_2.12-22.02.0.jar) or above
 4. Prepare the dataset & jars. Copy the sample dataset from [cuspatial_data](../../datasets/cuspatial_data.tar.gz) to "/data/cuspatial_data".
-    Copy cuDF, spark-rapids & spark-cuspatial-22.04-SNAPSHOT.jar to "/data/cuspatial_data/jars".
+    Copy cuDF, spark-rapids & spark-cuspatial-22.06.0-SNAPSHOT.jar to "/data/cuspatial_data/jars".
     You can use your own path, but remember to update the paths in "gpu-run.sh" accordingly.
 5. Run "gpu-run.sh"
     ```Bash
@@ -97,5 +97,5 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
         points
         polygons
     ```
-4. Import the Library "spark-cuspatial-22.04-SNAPSHOT.jar" to the Databricks, then install it to your cluster.
+4. Import the Library "spark-cuspatial-22.06.0-SNAPSHOT.jar" to the Databricks, then install it to your cluster.
 5. Import [cuspatial_sample.ipynb](./notebooks/cuspatial_sample_db.ipynb) to your workspace in Databricks. Attach to your cluster, then run it.

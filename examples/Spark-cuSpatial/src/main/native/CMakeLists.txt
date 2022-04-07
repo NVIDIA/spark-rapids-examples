@@ -16,7 +16,7 @@
 
 cmake_minimum_required(VERSION 3.20.1 FATAL_ERROR)
 
-project(SPATIALUDJNI VERSION 22.04 LANGUAGES C CXX CUDA)
+project(SPATIALUDJNI VERSION 22.06.0 LANGUAGES C CXX CUDA)
 
 ###################################################################################################
 # - build type ------------------------------------------------------------------------------------
