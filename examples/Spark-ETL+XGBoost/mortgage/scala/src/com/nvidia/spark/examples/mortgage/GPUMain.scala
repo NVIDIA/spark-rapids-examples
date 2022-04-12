@@ -21,7 +21,6 @@ import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassif
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.sql.SparkSession
 
-// Only 2 differences between CPU and GPU. Please refer to '=== diff ==='
 object GPUMain extends Mortgage {
 
   def main(args: Array[String]): Unit = {
@@ -62,8 +61,7 @@ object GPUMain extends Mortgage {
         )
         val xgbClassifier = new XGBoostClassifier(xgbParamFinal)
           .setLabelCol(labelColName)
-          // === diff ===
-          .setFeaturesCols(featureNames)
+          .setFeaturesCol(featureNames)
 
         // Start training
         println("\n------ Training ------")

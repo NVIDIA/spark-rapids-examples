@@ -24,7 +24,7 @@ import org.apache.spark.sql.types.{FloatType, StructField, StructType}
 private[taxi] trait Taxi {
   val appName = "Taxi"
   lazy val labelColName = "fare_amount"
-  lazy val featureNames = etledSchema.filter(_.name != labelColName).map(_.name)
+  lazy val featureNames = etledSchema.filter(_.name != labelColName).map(_.name).toArray
 
   lazy val commParamMap = Map(
     "learning_rate" -> 0.05,

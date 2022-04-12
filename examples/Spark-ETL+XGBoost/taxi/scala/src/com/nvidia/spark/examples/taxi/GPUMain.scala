@@ -68,8 +68,7 @@ object GPUMain extends Taxi {
       )
       val xgbRegressor = new XGBoostRegressor(xgbParamFinal)
         .setLabelCol(labelColName)
-        // === diff ===
-        .setFeaturesCols(featureNames)
+        .setFeaturesCol(featureNames)
 
       println("\n------ Training ------")
       // Shall we not log the time if it is abnormal, which is usually caused by training failure

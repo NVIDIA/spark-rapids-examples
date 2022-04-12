@@ -57,7 +57,7 @@ private[mortgage] trait Mortgage {
   )
 
   lazy val schema = StructType((categaryCols ++ numericCols).map(col => StructField(col._1, col._2)))
-  lazy val featureNames = schema.filter(_.name != labelColName).map(_.name)
+  lazy val featureNames = schema.filter(_.name != labelColName).map(_.name).toArray
 
   val commParamMap = Map(
     "eta" -> 0.1,
