@@ -59,7 +59,7 @@ object GPUMain {
       } else None
     }
 
-    val featureCols = dataSchema.filter(_.name != labelName).map(_.name)
+    val featureCols = dataSchema.filter(_.name != labelName).map(_.name).toArray
 
     // === diff ===
     // No need to vectorize data since GPU support multiple feature columns via API 'setFeaturesCols'
@@ -75,8 +75,7 @@ object GPUMain {
       ))
       val xgbClassifier = new XGBoostClassifier(paramMap)
         .setLabelCol(labelName)
-        // === diff ===
-        .setFeaturesCols(featureCols)
+        .setFeaturesCol(featureCols)
 
       println("\n------ Training ------")
       val (model, _) = benchmark.time("train") {
