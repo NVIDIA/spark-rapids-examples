@@ -287,9 +287,7 @@ function replaceParentGpuWithMigs {
                     mig2gpu_minorIdx=0
                 fi
 
-                mig2gpu_migGpu_out+=("${migFbMemoryUsage[@]}")
-
-                mig2gpu_migGpu_out+=("$mig2gpu_gpuMinorNumber")
+                #mig2gpu_migGpu_out+=("$mig2gpu_gpuMinorNumber")
                 mig2gpu_migGpu_out+=("${migFbMemoryUsage[@]}")
 
                 local gpuUtilizationLength=$((mig2gpu_gpu_utilization_lineNumberEnd - mig2gpu_gpu_utilization_lineNumberStart))
