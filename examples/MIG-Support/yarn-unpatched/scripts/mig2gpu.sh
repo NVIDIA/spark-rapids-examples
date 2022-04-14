@@ -33,6 +33,12 @@ set -e
 # Set ENABLE_NON_MIG_GPUS=0 to discover only GPU devices with the current MIG mode Disabled
 ENABLE_NON_MIG_GPUS=${ENABLE_NON_MIG_GPUS:-1}
 
+# If setting YARN up to use Cgroups without official YARN support,
+# enable this tells the script to use the nvidia capabilities access
+# device number for the minor number so that the YARN cgroup code
+# denies access to MIG devices properly.
+ENABLE_MIG_GPUS_FOR_CGROUPS=${ENABLE_MIG_GPUS_FOR_CGROUPS:-0}
+
 # For stored input test: NVIDIA_SMI_QX=./src/resources/tom-nvidia-smi-xq.xml
 # For live input test: NVIDIA_SMI_QX=/dev/stdin
 NVIDIA_SMI_QX="${NVIDIA_SMI_QX:-"/dev/stdin"}"
@@ -59,10 +65,6 @@ mig2gpu_mig_lineNumberStart=-1
 mig2gpu_mig_lineNumberEnd=-1
 mig2gpu_migIndex=-1
 
-minor_values=()
-mig2gpu_numMigInstances=${#minor_values[@]}
-mig2gpu_minorIdx=0
-
 # Parent GPU context for MIG
 mig2gpu_gpuIdx=-1
 mig2gpu_migGpuInstanceId=-1
@@ -74,20 +76,6 @@ mig2gpu_gpu_utilization_lineNumberStart=-1
 mig2gpu_gpu_utilization_lineNumberEnd=-1
 mig2gpu_gpu_temperature_lineNumberStart=-1
 mig2gpu_gpu_temperature_lineNumberEnd=-1
-
-function get_mig_minor_values() {
-  # todo add check mig enabled vs pending
-  # nvidia-smi --query-gpu=mig.mode.current --format=csv,noheader
-  major_ids=(`/usr/bin/nvidia-smi --query-gpu=index --format=csv,noheader | sed -e ':a' -e 'N' -e'$!ba' -e 's/\n/ /g'`)
-  for key in "${!major_ids[@]}"; do
-      gpunum="${major_ids[$key]}"
-      # TODO change the gi0/gi1 to be configurable
-      minor0=`cat /proc/driver/nvidia-caps/mig-minors | grep gpu$gpunum/gi0/access | cut -d ' ' -f 2`
-      minor1=`cat /proc/driver/nvidia-caps/mig-minors | grep gpu$gpunum/gi1/access | cut -d ' ' -f 2`
-      minor_values+=($minor0 $minor1)
-  done
-}
-
 
 # The function to replace a MIG-enabled GPU with the "fake" GPU device elements
 # corresponding to MIG devices contained within the given GPU element
@@ -280,14 +268,13 @@ function replaceParentGpuWithMigs {
                 local migDeviceId="$mig2gpu_gpuIdx:$mig2gpu_migIndex"
                 mig2gpu_migGpu_out+=($'\t\t'"<_mig2gpu_device_id>$migDeviceId</_mig2gpu_device_id>")
 
-                idx=${minor_values[$mig2gpu_minorIdx]}
-                mig2gpu_migGpu_out+=($'\t\t'"<minor_number>$idx</minor_number>")
-                mig2gpu_minorIdx=$((mig2gpu_minorIdx+1))
-                if [[ "$mig2gpu_minorIdx" == "$mig2gpu_numMigInstances" ]]; then
-                    mig2gpu_minorIdx=0
+                # if using this with CGROUP workaround we need the minor number to  be from nvidia-caps access
+                if [[ "$ENABLE_MIG_GPUS_FOR_CGROUPS" == "1" ]]; then
+                    mig_minor_dev_num=`cat /proc/driver/nvidia-caps/mig-minors | grep gpu$mig2gpu_gpuIdx/gi$mig2gpu_migIndex/access | cut -d ' ' -f 2`
+                    mig2gpu_migGpu_out+=($'\t\t'"<minor_number>$mig_minor_dev_num</minor_number>")
+                else
+                    mig2gpu_migGpu_out+=("$mig2gpu_gpuMinorNumber")
                 fi
-
-                #mig2gpu_migGpu_out+=("$mig2gpu_gpuMinorNumber")
                 mig2gpu_migGpu_out+=("${migFbMemoryUsage[@]}")
 
                 local gpuUtilizationLength=$((mig2gpu_gpu_utilization_lineNumberEnd - mig2gpu_gpu_utilization_lineNumberStart))
@@ -321,8 +308,6 @@ function processGpuElement {
 function mig2gpuMain {
     local line
     local lineNumber
-
-    get_mig_minor_values
 
     # simplified regex-free parser relying on the fact
     # that nvidia-smi output is pretty-printed with tabs
