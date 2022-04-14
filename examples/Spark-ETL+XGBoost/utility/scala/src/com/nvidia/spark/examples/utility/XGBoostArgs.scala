@@ -18,9 +18,10 @@
 package com.nvidia.spark.examples.utility
 
 import com.google.common.base.CaseFormat
-
 import scala.collection.mutable
 import scala.util.Try
+
+import ml.dmlc.xgboost4j.scala.spark.TrackerConf
 
 private case class XGBoostArg(
   required: Boolean = false,
@@ -187,11 +188,16 @@ class XGBoostArgs private[utility] (
   def numFold: Int = appArgsMap.get("numFold").asInstanceOf[Option[Int]].getOrElse(3)
 
   def xgboostParams(otherParams: Map[String, Any] = Map.empty): Map[String, Any] = {
-    otherParams ++ xgbArgsMap.map{
+    val params = otherParams ++ xgbArgsMap.map{
         case (name, value) if !name.contains('_') =>
           (CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name), value)
         case (name, value) => (name, value)
     }
+
+    val hostIp = params.getOrElse("rabit_tracker_host", "").toString
+    if (!hostIp.isEmpty) {
+      params ++ Map("tracker_conf" -> TrackerConf(0l, "python", hostIp))
+    } else params
   }
 
   /**
