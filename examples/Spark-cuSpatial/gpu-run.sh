@@ -25,13 +25,14 @@ SHAPE_FILE_DIR=$ROOT_PATH/polygons
 SHAPE_FILE_NAME="polygons"
 DATA_IN_PATH=$ROOT_PATH/points
 DATA_OUT_PATH=$ROOT_PATH/output
+PLUGIN_VERSION=22.04.0
 
 rm -rf $DATA_OUT_PATH
 
 # the path to keep the jars of cudf, spark-rapids & spark-cuspatial
 JARS=$ROOT_PATH/jars
 
-JARS_PATH=$JARS/cudf-22.02.0-cuda11.jar,$JARS/rapids-4-spark_2.12-22.02.0.jar,$JARS/spark-cuspatial-22.04-SNAPSHOT.jar
+JARS_PATH=$JARS/cudf-$PLUGIN_VERSION-cuda11.jar,$JARS/rapids-4-spark_2.12-$PLUGIN_VERSION.jar,$JARS/spark-cuspatial-22.04-SNAPSHOT.jar
 
 $SPARK_HOME/bin/spark-submit --master spark://$HOSTNAME:7077 \
 --name "Gpu Spatial Join UDF" \
