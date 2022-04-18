@@ -34,8 +34,8 @@ set -e
 ENABLE_NON_MIG_GPUS=${ENABLE_NON_MIG_GPUS:-1}
 
 # If setting YARN up to use Cgroups without official YARN support,
-# enable this tells the script to use the nvidia capabilities access
-# device number for the minor number so that the YARN cgroup code
+# enabling this tells the script to use the NVIDIA capabilities access
+# device number for the minor number so that the YARN Cgroup code
 # denies access to MIG devices properly.
 ENABLE_MIG_GPUS_FOR_CGROUPS=${ENABLE_MIG_GPUS_FOR_CGROUPS:-0}
 
@@ -269,7 +269,7 @@ function replaceParentGpuWithMigs {
                 mig2gpu_migGpu_out+=($'\t\t'"<_mig2gpu_device_id>$migDeviceId</_mig2gpu_device_id>")
 
                 # if using this with CGROUP workaround we need the minor number to  be from nvidia-caps access
-                if [[ "$ENABLE_MIG_GPUS_FOR_CGROUPS" == "1" ]]; then
+                if [[ "$ENABLE_MIG_GPUS_FOR_CGROUPS" == 1 ]]; then
                     mig_minor_dev_num=`cat /proc/driver/nvidia-caps/mig-minors | grep gpu$mig2gpu_gpuIdx/gi$mig2gpu_migIndex/access | cut -d ' ' -f 2`
                     mig2gpu_migGpu_out+=($'\t\t'"<minor_number>$mig_minor_dev_num</minor_number>")
                 else
