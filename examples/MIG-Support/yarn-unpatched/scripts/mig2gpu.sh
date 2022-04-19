@@ -268,7 +268,7 @@ function replaceParentGpuWithMigs {
                 local migDeviceId="$mig2gpu_gpuIdx:$mig2gpu_migIndex"
                 mig2gpu_migGpu_out+=($'\t\t'"<_mig2gpu_device_id>$migDeviceId</_mig2gpu_device_id>")
 
-                # if using this with CGROUP workaround we need the minor number to  be from nvidia-caps access
+                # if using this with CGROUP workaround we need the minor number to be from nvidia-caps access
                 if [[ "$ENABLE_MIG_GPUS_FOR_CGROUPS" == 1 ]]; then
                     mig_minor_dev_num=`cat /proc/driver/nvidia-caps/mig-minors | grep gpu$mig2gpu_gpuIdx/gi$mig2gpu_migIndex/access | cut -d ' ' -f 2`
                     mig2gpu_migGpu_out+=($'\t\t'"<minor_number>$mig_minor_dev_num</minor_number>")
