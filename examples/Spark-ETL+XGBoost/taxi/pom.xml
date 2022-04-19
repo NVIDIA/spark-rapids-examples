@@ -21,7 +21,7 @@
     <parent>
         <artifactId>sample_xgboost_examples</artifactId>
         <groupId>com.nvidia</groupId>
-        <version>0.2.2</version>
+        <version>0.2.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
