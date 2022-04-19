@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,10 @@ import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassif
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.sql.SparkSession
 
-object GPUMain extends Mortgage {
+/**
+ * There is no code change for CPU and GPU pipeline.
+ */
+object Main extends Mortgage {
 
   def main(args: Array[String]): Unit = {
     val appArgs = XGBoostArgs(args)
@@ -49,9 +52,6 @@ object GPUMain extends Mortgage {
           None
         }
       }
-
-      // === diff ===
-      // No need to vectorize data since GPU support multiple feature columns via API 'setFeaturesCols'
 
       val xgbClassificationModel = if (appArgs.isToTrain) {
         // build XGBoost classifier
