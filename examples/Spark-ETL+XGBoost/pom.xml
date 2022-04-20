@@ -38,7 +38,7 @@
 
     <properties>
         <encoding>UTF-8</encoding>
-        <xgboost.version>1.6.0-RC1</xgboost.version>
+        <xgboost.version>1.6.0</xgboost.version>
         <spark.version>3.1.1</spark.version>
         <scala.version>2.12.8</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
@@ -47,12 +47,12 @@
     <dependencies>
         <dependency>
             <groupId>ml.dmlc</groupId>
-            <artifactId>xgboost4j_2.12</artifactId>
+            <artifactId>xgboost4j-gpu_2.12</artifactId>
             <version>${xgboost.version}</version>
         </dependency>
         <dependency>
             <groupId>ml.dmlc</groupId>
-            <artifactId>xgboost4j-spark_2.12</artifactId>
+            <artifactId>xgboost4j-spark-gpu_2.12</artifactId>
             <version>${xgboost.version}</version>
         </dependency>
         <dependency>
@@ -144,11 +144,4 @@
             </repositories>
         </profile>
     </profiles>
-    <repositories>
-        <repository>
-            <id>XGBoost4J Release Repo</id>
-            <name>XGBoost4J Release Repo</name>
-            <url>https://s3-us-west-2.amazonaws.com/xgboost-maven-repo/release/</url>
-        </repository>
-    </repositories>
 </project>
