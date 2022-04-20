@@ -33,6 +33,12 @@ set -e
 # Set ENABLE_NON_MIG_GPUS=0 to discover only GPU devices with the current MIG mode Disabled
 ENABLE_NON_MIG_GPUS=${ENABLE_NON_MIG_GPUS:-1}
 
+# If setting YARN up to use Cgroups without official YARN support,
+# enabling this tells the script to use the NVIDIA capabilities access
+# device number for the minor number so that the YARN Cgroup code
+# denies access to MIG devices properly.
+ENABLE_MIG_GPUS_FOR_CGROUPS=${ENABLE_MIG_GPUS_FOR_CGROUPS:-0}
+
 # For stored input test: NVIDIA_SMI_QX=./src/resources/tom-nvidia-smi-xq.xml
 # For live input test: NVIDIA_SMI_QX=/dev/stdin
 NVIDIA_SMI_QX="${NVIDIA_SMI_QX:-"/dev/stdin"}"
@@ -70,7 +76,6 @@ mig2gpu_gpu_utilization_lineNumberStart=-1
 mig2gpu_gpu_utilization_lineNumberEnd=-1
 mig2gpu_gpu_temperature_lineNumberStart=-1
 mig2gpu_gpu_temperature_lineNumberEnd=-1
-
 
 # The function to replace a MIG-enabled GPU with the "fake" GPU device elements
 # corresponding to MIG devices contained within the given GPU element
@@ -263,7 +268,13 @@ function replaceParentGpuWithMigs {
                 local migDeviceId="$mig2gpu_gpuIdx:$mig2gpu_migIndex"
                 mig2gpu_migGpu_out+=($'\t\t'"<_mig2gpu_device_id>$migDeviceId</_mig2gpu_device_id>")
 
-                mig2gpu_migGpu_out+=("$mig2gpu_gpuMinorNumber")
+                # if using this with CGROUP workaround we need the minor number to be from nvidia-caps access
+                if [[ "$ENABLE_MIG_GPUS_FOR_CGROUPS" == 1 ]]; then
+                    mig_minor_dev_num=`cat /proc/driver/nvidia-caps/mig-minors | grep gpu$mig2gpu_gpuIdx/gi$mig2gpu_migGpuInstanceId/access | cut -d ' ' -f 2`
+                    mig2gpu_migGpu_out+=($'\t\t'"<minor_number>$mig_minor_dev_num</minor_number>")
+                else
+                    mig2gpu_migGpu_out+=("$mig2gpu_gpuMinorNumber")
+                fi
                 mig2gpu_migGpu_out+=("${migFbMemoryUsage[@]}")
 
                 local gpuUtilizationLength=$((mig2gpu_gpu_utilization_lineNumberEnd - mig2gpu_gpu_utilization_lineNumberStart))
