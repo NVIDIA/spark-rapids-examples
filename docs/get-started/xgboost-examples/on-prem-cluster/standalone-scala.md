@@ -104,8 +104,6 @@ ${SPARK_HOME}/bin/spark-submit \
     --conf spark.task.resource.gpu.amount=1 \
     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
     --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
-    --conf spark.rapids.sql.csv.read.integer.enabled=true \
-    --conf spark.rapids.sql.csv.read.long.enabled=true \
     --conf spark.rapids.sql.csv.read.double.enabled=true \
     --class com.nvidia.spark.examples.mortgage.ETLMain  \
     $SAMPLE_JAR \

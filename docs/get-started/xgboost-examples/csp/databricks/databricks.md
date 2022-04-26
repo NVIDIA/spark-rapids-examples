@@ -43,7 +43,7 @@ cluster.
    
     - [Databricks 9.1 LTS
     ML](https://docs.databricks.com/release-notes/runtime/9.1ml.html#system-environment) has CUDA 11
-    installed.  Users will need to use 22.02.0 or later on Databricks 9.1 LTS ML. In this case use
+    installed.  Users will need to use 21.12.0 or later on Databricks 9.1 LTS ML. In this case use
     [generate-init-script.ipynb](generate-init-script.ipynb) which will install
     the RAPIDS Spark plugin.
       
