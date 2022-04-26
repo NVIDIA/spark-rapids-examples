@@ -16,8 +16,6 @@ User can also download the release jar from Maven central:
 
 [rapids-4-spark_2.12-22.04.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.04.0/rapids-4-spark_2.12-22.04.0.jar)
 
-Note: before preceeding to the running section, make sure you have conda with cuDF installed by
-```
 
 ## Sample code
 
