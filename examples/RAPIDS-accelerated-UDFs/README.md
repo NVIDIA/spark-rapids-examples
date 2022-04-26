@@ -108,8 +108,8 @@ See above Prerequisites section
 First finish the steps in "Building with Native Code Examples and run test cases" section, then do the following in the docker.
 
 ### Get jars from Maven Central
-[cudf-22.02.0-cuda11.jar](https://repo1.maven.org/maven2/ai/rapids/cudf/22.02.0/cudf-22.02.0-cuda11.jar)
-[rapids-4-spark_2.12-22.02.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.02.0/rapids-4-spark_2.12-22.02.0.jar)
+[cudf-22.04.0-cuda11.jar](https://repo1.maven.org/maven2/ai/rapids/cudf/22.04.0/cudf-22.04.0-cuda11.jar)
+[rapids-4-spark_2.12-22.04.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.04.0/rapids-4-spark_2.12-22.04.0.jar)
 
 ### Launch a local mode Spark
 

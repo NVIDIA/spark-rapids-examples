@@ -34,13 +34,13 @@
     <dependency>
       <groupId>com.nvidia</groupId>
       <artifactId>xgboost4j_3.0</artifactId>
-      <version>1.4.2-0.2.0</version>
+      <version>1.4.2-0.3.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.nvidia</groupId>
       <artifactId>xgboost4j-spark_3.0</artifactId>
-      <version>1.4.2-0.2.0</version>
+      <version>1.4.2-0.3.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
