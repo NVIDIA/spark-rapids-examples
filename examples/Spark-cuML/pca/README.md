@@ -19,7 +19,6 @@ User can also download the release jar from Maven central:
 Note: before preceeding to the running section, make sure you have conda with cuDF installed by
 ```
 conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=22.04 python=3.8 -y
-```
 
 ## Sample code
 
