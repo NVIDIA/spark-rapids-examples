@@ -10,7 +10,7 @@ Please refer to [README](https://github.com/NVIDIA/spark-rapids-ml#readme) in th
 
 User can also download the release jar from Maven central:
 
-[rapids-4-spark-ml_2.12-22.04.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/22.04.0/rapids-4-spark-ml_2.12-22.04.0-cuda11.jar)
+[rapids-4-spark-ml_2.12-22.02.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/22.02.0/rapids-4-spark-ml_2.12-22.02.0-cuda11.jar)
 
 [cudf-22.04.0-cuda11.jar](https://repo1.maven.org/maven2/ai/rapids/cudf/22.04.0/cudf-22.04.0-cuda11.jar)
 
@@ -53,7 +53,7 @@ It is assumed that a Standalone Spark cluster has been set up, the `SPARK_MASTER
 3. Install a new kernel with the jar(use $RAPIDS_ML_JAR for reference) built from section [Build](#build) and launch
 
     ``` bash
-    RAPIDS_ML_JAR=PATH_TO_rapids-4-spark-ml_2.12-22.04.0-cuda11.jar
+    RAPIDS_ML_JAR=PATH_TO_rapids-4-spark-ml_2.12-22.02.0-cuda11.jar
     CUDF_JAR=PATH_TO_cudf-22.04.0-cuda11.jar
     PLUGIN_JAR=PATH_TO_rapids-4-spark_2.12-22.04.0.jar
 
