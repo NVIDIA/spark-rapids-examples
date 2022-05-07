@@ -25,24 +25,24 @@ Spark versions and requirements. It is recommended to set up Spark Cluster with 
 
 The microbenchmark on [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) is to identify,
 test and analyze the best queries which can be accelerated on the GPU. For detail information please refer to this
-[guide](/examples/micro-benchmarks).
+[guide](/examples/SQL+DF-Examples/micro-benchmarks).
 
 ### 2. Xgboost examples guide
 
 We provide three similar Xgboost benchmarks, Mortgage, Taxi and Agaricus.
-Try one of the ["Getting Started Guides"](/examples/Spark-ETL+XGBoost).
+Try one of the ["Getting Started Guides"](/examples/ETL+XGBoost-Examples).
 Please note that they target the Mortgage dataset as written with a few changes
 to `EXAMPLE_CLASS` and `dataPath`, they can be easily adapted with each other with different datasets.
 
 ### 3. TensorFlow training on Horovod Spark example guide
 
 We provide a Criteo Benchmark to demo ETL and deep learning training on Horovod Spark, please refer to
-this [guide](/examples/Spark-DL/criteo_train).
+this [guide](/examples/ML+DL-Examples/Spark-DL/criteo_train).
 
 ### 4. PCA example guide
 
 This is an example of the GPU accelerated PCA algorithm running on Spark. For detail information please refer to this
-[guide](/examples/Spark-cuML/pca).
+[guide](/examples/ML+DL-Examples/Spark-cuML/pca).
 
 ### 5. MIG support
 We provide some [guides](/examples/MIG-Support) about the Multi-Instance GPU (MIG) feature based on
@@ -51,10 +51,10 @@ the NVIDIA Ampere architecture (such as NVIDIA A100 and A30) GPU.
 ### 6. Spark Rapids UDF examples
 This is examples of the GPU accelerated UDF.
 refer to this
-[guide](/examples/RAPIDS-accelerated-UDFs).
+[guide](/examples/RAPIDS-UDF-Examples/RAPIDS-accelerated-UDFs).
 
 ### 7. Spark cuSpatial
-This is a RapidsUDF examples to use [cuSpatial](https://github.com/rapidsai/cuspatial) library to solve the point-in-polygon problem. For detail information please refer to this [guide](/examples/Spark-cuSpatial).
+This is a RapidsUDF examples to use [cuSpatial](https://github.com/rapidsai/cuspatial) library to solve the point-in-polygon problem. For detail information please refer to this [guide](/examples/RAPIDS-UDF-Examples/Spark-cuSpatial).
 
 ## API
 ### 1. Xgboost examples API

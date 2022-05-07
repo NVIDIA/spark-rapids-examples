@@ -3,38 +3,38 @@ This project contains sample implementations of RAPIDS accelerated user-defined 
 
 ## Spark Scala UDF Examples
 
-- [URLDecode](./src/main/scala/com/nvidia/spark/rapids/udf/scala/URLDecode.scala)
+- [URLDecode](src/main/scala/com/nvidia/spark/rapids/udf/scala/URLDecode.scala)
   decodes URL-encoded strings using the
   [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
-- [URLEncode](./src/main/scala/com/nvidia/spark/rapids/udf/scala/URLEncode.scala)
+- [URLEncode](src/main/scala/com/nvidia/spark/rapids/udf/scala/URLEncode.scala)
   URL-encodes strings using the
   [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
 
 ## Spark Java UDF Examples
 
-- [URLDecode](./src/main/java/com/nvidia/spark/rapids/udf/java/URLDecode.java)
+- [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/java/URLDecode.java)
   decodes URL-encoded strings using the
   [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
-- [URLEncode](./src/main/java/com/nvidia/spark/rapids/udf/java/URLEncode.java)
+- [URLEncode](src/main/java/com/nvidia/spark/rapids/udf/java/URLEncode.java)
   URL-encodes strings using the
   [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
-- [CosineSimilarity](./src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java)
+- [CosineSimilarity](src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java)
   computes the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity)
-  between two float vectors using [native code](./src/main/cpp/src)
+  between two float vectors using [native code](src/main/cpp/src)
 
 ## Hive UDF Examples
 
-- [URLDecode](./src/main/java/com/nvidia/spark/rapids/udf/hive/URLDecode.java)
+- [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/hive/URLDecode.java)
   implements a Hive simple UDF using the
   [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
   to decode URL-encoded strings
-- [URLEncode](./src/main/java/com/nvidia/spark/rapids/udf/hive/URLEncode.java)
+- [URLEncode](src/main/java/com/nvidia/spark/rapids/udf/hive/URLEncode.java)
   implements a Hive generic UDF using the
   [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
   to URL-encode strings
-- [StringWordCount](./src/main/java/com/nvidia/spark/rapids/udf/hive/StringWordCount.java)
+- [StringWordCount](src/main/java/com/nvidia/spark/rapids/udf/hive/StringWordCount.java)
   implements a Hive simple UDF using
-  [native code](./src/main/cpp/src) to count words in strings
+  [native code](src/main/cpp/src) to count words in strings
 
 ## Building and run the tests without Native Code Examples
 Some UDF examples use native code in their implementation.
@@ -43,7 +43,7 @@ examples do not build by default.
 
 ### Prerequisites
 Download Spark and set SPARK_HOME environment variable.
-Refer to [Prerequisites](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)  
+Refer to [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)  
 Install python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda.
 For example:
 ```
@@ -93,7 +93,7 @@ Then the rapids-4-spark-udf-examples*.jar is generated under RAPIDS-accelerated-
 
 ### Run all the examples including native examples in the docker
 Download Spark and set SPARK_HOME environment variable.
-Refer to [Prerequisites](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)   
+Refer to [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)   
 Set SPARK_HOME environment variable. 
 ```
 export SPARK_HOME=path-to-spark
@@ -156,4 +156,4 @@ spark.sql("select wordcount(c1) from tab group by c1").show()
 spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
 
-Refer to [more Spark modes](../../docs/get-started/xgboost-examples/on-prem-cluster) to test against more Spark modes.
+Refer to [more Spark modes](../../../docs/get-started/xgboost-examples/on-prem-cluster) to test against more Spark modes.
