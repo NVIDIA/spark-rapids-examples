@@ -24,8 +24,12 @@ Spark versions and requirements. It is recommended to set up Spark Cluster with 
 ### 1. Microbenchmark guide
 
 The microbenchmark on [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) is to identify,
-test and analyze the best queries which can be accelerated on the GPU. For detail information please refer to this
-[guide](/examples/SQL+DF-Examples/micro-benchmarks).
+test and analyze the best queries which can be accelerated on the GPU. Rapids Accelerator for Apache Spark reaps 
+the significant benefit of GPU performance for some specific operations like Expand, Aggregate, Windowing, Crossjoin, etc.
+![microbenchmark-speedup](docs/img/guides/microbenchmark-speedups.png)
+
+For detail information please refer to this
+[guide](/examples/micro-benchmarks).
 
 ### 2. Xgboost examples guide
 
@@ -33,6 +37,10 @@ We provide three similar Xgboost benchmarks, Mortgage, Taxi and Agaricus.
 Try one of the ["Getting Started Guides"](/examples/ETL+XGBoost-Examples).
 Please note that they target the Mortgage dataset as written with a few changes
 to `EXAMPLE_CLASS` and `dataPath`, they can be easily adapted with each other with different datasets.
+Below is the performance benefit with 680 GB input data size on an 8 nodes Spark standalone cluster 
+which with 128 CPU cores and 1 A100 GPU on each node.
+![mortgage-speedup](docs/img/guides/mortgage-speedups.png)
+
 
 ### 3. TensorFlow training on Horovod Spark example guide
 
