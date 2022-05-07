@@ -47,7 +47,7 @@ Below are the example notebooks:
 - Mortgage: [Scala](/mortgage/notebooks/scala), [Python](/mortgage/notebooks/python)
 - Taxi: [Scala](/taxi/notebooks/scala), [Python](/taxi/notebooks/python)
 - Agaricus: [Scala](/agaricus/notebooks/scala), [Python](/agaricus/notebooks/python)
-- Churn: [Python](../SQL+DF-Examples/churn/notebooks/python)
+- Churn: [Python](../SQL+DF-Examples/customer-churn/notebooks/python)
 
 Please follow below steps to run the example notebooks in different notebook environments:
 - Getting started for Jupyter Notebook applications
