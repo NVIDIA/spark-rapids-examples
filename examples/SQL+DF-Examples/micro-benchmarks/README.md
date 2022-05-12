@@ -3,7 +3,7 @@
 ## Introduction
 The microbenchmark on [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) is to identify, 
 test and analyze the best queries which can be accelerated on the GPU. 
-The queries are based on several tables in [TPC-DS](http://www.tpc.org/tpcds/) parquet format,
+The queries are based on several tables in Parquet format derived from the [TPC-DS](http://www.tpc.org/tpcds/) benchmark,
 so that similar speedups can be reproducible by others.
 The microbenchmark includes commonly used Spark SQL operations such as expand, hash aggregate, windowing, and cross joins,
 and runs the same queries in CPU mode and GPU mode. Some queries will involve data skew.
