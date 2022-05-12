@@ -1,5 +1,5 @@
 BENCH_JAR="/home/rjafri/spark-rapids-examples/examples/pcbs-benchmark/target/pcbs-benchmark-1.0-SNAPSHOT.jar"
-PLUGIN_JAR="lib/rapids-4-spark_2.12-22.06.0-SNAPSHOT-cuda11.jar"
+PLUGIN_JAR="lib/rapids-4-spark_2.12-22.06.0-20220512.134355-33-cuda11.jar"
 SPARK_HOME="/home/rjafri/spark-3.1.1-bin-hadoop3.2"
 
 DRIVE_MEMORY=32 # GB

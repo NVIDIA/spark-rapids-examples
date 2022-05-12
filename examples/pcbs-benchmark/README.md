@@ -35,8 +35,16 @@ The benchmark can be run by running the script file and passing the name of parq
 ```
 
 The above statement will run this benchmark on the parquet files in `/media/rjafri/data/data/mortgage_parquet/20m`
-folder. The results of the run will be written to `cache-perf.txt` in the project root.
+folder. 
 
+The benchmark can also be run on multiple files by modifying the `benchmark-multiple-files.sh` and adding files to the 
+`FILE_NAMES` variable and then simply running the benchmarks by 
+
+```
+./benchmark-multiple-files.sh
+```
+
+The results of the run will be written to `cache-perf.txt` in the project root.
 A sample of the file is listed below and should be self-explanatory
 
 ```
@@ -80,6 +88,7 @@ Average read (without first read): 619
 
 ### Note
 
-The `cache-perf.txt` will need to be manually deleted if the old results are no longer needed. The benchmark
-purposefully appends to the file to keep the older results. This enables us to run the benchmark for
-multiple files and seeing all the results in the same place. 
+If running benchmark for a single file the `cache-perf.txt` will need to be manually deleted if the old results are no 
+longer needed. The benchmark purposefully appends to the file to keep the older results. This enables us to run the 
+benchmark for multiple files and seeing all the results in the same place. 
+
