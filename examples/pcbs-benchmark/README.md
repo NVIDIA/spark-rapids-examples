@@ -28,14 +28,13 @@ sbin/start-slave.sh <master-url>
 
 ## Run the benchmark
 
-The benchmark can be run by running the script file and passing the name of parquet file to be read and cached e.g.
+The benchmark can be run by running the script file and passing the name of Parquet file to be read and cached e.g.
 
 ```
-./pcbs-benchmark.sh /media/rjafri/data/data/mortgage_parquet/20m
+./pcbs-benchmark.sh <path to Parquet file>
 ```
 
-The above statement will run this benchmark on the parquet files in `/media/rjafri/data/data/mortgage_parquet/20m`
-folder. 
+The above statement will run this benchmark on the Parquet files in the given path folder. 
 
 The benchmark can also be run on multiple files by modifying the `benchmark-multiple-files.sh` and adding files to the 
 `FILE_NAMES` variable and then simply running the benchmarks by 
@@ -48,7 +47,7 @@ The results of the run will be written to `cache-perf.txt` in the project root.
 A sample of the file is listed below and should be self-explanatory
 
 ```
-Reading file: /media/rjafri/data/data/mortgage_parquet/20m/
+Reading file: /media/data/mortgage_parquet/20m/
 Writing cache 5 times
 Time taken for writes: Vector(2011, 1231, 1198, 1137, 1154)
 Reading cache 10 times
@@ -66,7 +65,7 @@ acc: false
 Average write: 8560
 Time taken for frst read: 9436
 Average read (without first read): 3397
-Reading file: /media/rjafri/data/data/mortgage_parquet/20m/
+Reading file: /media/data/mortgage_parquet/20m/
 Writing cache 5 times
 Time taken for writes: Vector(9130, 7830, 7780, 7797, 7717)
 Reading cache 10 times

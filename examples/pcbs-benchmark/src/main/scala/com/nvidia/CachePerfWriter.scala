@@ -17,9 +17,6 @@ package com.nvidia
 
 import java.io.{BufferedWriter, File, FileWriter, IOException}
 
-/**
- * @author Raza Jafri
- */
 object CachePerfWriter {
   val file = new File("cache-perf.txt")
   lazy val bw = new BufferedWriter(new FileWriter(file, true))

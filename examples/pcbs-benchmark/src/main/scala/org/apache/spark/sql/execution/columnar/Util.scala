@@ -36,9 +36,6 @@ import org.apache.spark.sql.vectorized.ColumnarBatch
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.storage.StorageLevel.MEMORY_ONLY
 
-/**
- * @author Raza Jafri
- */
 class TestCachedBatchSerializer(
     useCompression: Boolean,
     batchSize: Int) extends DefaultCachedBatchSerializer {
@@ -51,9 +48,6 @@ class TestCachedBatchSerializer(
   }
 }
 
-/**
- * @author Raza Jafri
- */
 private case class CloseableColumnBatchIterator(iter: Iterator[ColumnarBatch]) extends
     Iterator[ColumnarBatch] {
   var cb: ColumnarBatch = _
@@ -78,9 +72,6 @@ private case class CloseableColumnBatchIterator(iter: Iterator[ColumnarBatch]) e
   }
 }
 
-/**
- * @author Raza Jafri
- */
 object Util {
   def createSparkSession(): SparkSession = {
     // Timezone is fixed to UTC to allow timestamps to work by default
