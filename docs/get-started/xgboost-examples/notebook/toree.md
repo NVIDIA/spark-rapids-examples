@@ -53,11 +53,11 @@ and the home directory for Apache Spark respectively.
     ```
 
 4. Launch ETL Part 
-- Mortgage ETL Notebook: [Scala](/examples/ETL+XGBoost-Examples/mortgage/notebooks/scala/mortgage-ETL.ipynb)
-- Taxi ETL Notebook: [Scala](/examples/ETL+XGBoost-Examples/taxi/notebooks/scala/taxi-ETL.ipynb)
+- Mortgage ETL Notebook: [Scala](/examples/XGBoost-Examples/mortgage/notebooks/scala/mortgage-ETL.ipynb)
+- Taxi ETL Notebook: [Scala](/examples/XGBoost-Examples/taxi/notebooks/scala/taxi-ETL.ipynb)
 - Note: Agaricus does not have ETL part.
    
 5. Launch XGBoost Part
-- Mortgage XGBoost Notebook: [Scala](/examples/ETL+XGBoost-Examples/mortgage/notebooks/scala/mortgage-gpu.ipynb)
-- Taxi XGBoost Notebook: [Scala](/examples/ETL+XGBoost-Examples/taxi/notebooks/scala/taxi-gpu.ipynb)
-- Agaricus XGBoost Notebook: [Scala](/examples/ETL+XGBoost-Examples/agaricus/notebooks/scala/agaricus-gpu.ipynb)
+- Mortgage XGBoost Notebook: [Scala](/examples/XGBoost-Examples/mortgage/notebooks/scala/mortgage-gpu.ipynb)
+- Taxi XGBoost Notebook: [Scala](/examples/XGBoost-Examples/taxi/notebooks/scala/taxi-gpu.ipynb)
+- Agaricus XGBoost Notebook: [Scala](/examples/XGBoost-Examples/agaricus/notebooks/scala/agaricus-gpu.ipynb)

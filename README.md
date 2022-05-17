@@ -40,7 +40,7 @@ For detail information please refer to this
 ### 2. Xgboost examples
 
 We provide three similar Xgboost benchmarks, Mortgage, Taxi and Agaricus.
-Try one of the ["Getting Started Guides"](/examples/ETL+XGBoost-Examples).
+Try one of the ["Getting Started Guides"](/examples/XGBoost-Examples).
 Please note that they target the Mortgage dataset as written with a few changes
 to `EXAMPLE_CLASS` and `dataPath`, they can be easily adapted with each other with different datasets.
 Below is the performance benefit with 680 GB input data size on an 8 nodes Spark standalone cluster 
