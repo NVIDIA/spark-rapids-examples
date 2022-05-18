@@ -78,8 +78,9 @@ object Util {
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
     // Add Locale setting
     Locale.setDefault(Locale.US)
+    val sparkMasterUrl = System.getenv("SPARK_MASTER_URL")
     val builder = SparkSession.builder()
-        .master("spark://raza-linux-2:7077")
+        .master(sparkMasterUrl)
         .appName("pcbs perf (scala)")
     builder.getOrCreate()
   }

@@ -17,9 +17,6 @@ package com.nvidia
 
 import org.apache.spark.sql.execution.columnar.Util
 
-/**
- * @author Raza Jafri
- */
 object BenchmarkPcbs {
   def main(args: Array[String]) {
     val path = args(0)
