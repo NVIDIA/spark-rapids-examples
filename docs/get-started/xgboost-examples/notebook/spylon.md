@@ -20,9 +20,9 @@ and the home directory for Apache Spark respectively.
    RUN pip3 install ipykernel==5.1.1
    ```
 2. Start Jupyter Notebook. 
-
+<!-- markdown-link-check-disable -->
 You can debug from webUI http://your_ip:your_port with your password.
-    
+<!-- markdown-link-check-enable -->    
     ``` bash
     export JUPYTER_CONFIG_FILE=~/.jupyter/jupyter_notebook_config.py
     
