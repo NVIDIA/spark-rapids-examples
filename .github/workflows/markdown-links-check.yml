@@ -33,5 +33,3 @@ jobs:
         check-modified-files-only: 'yes'
         config-file: '.github/workflows/markdown-links-check/markdown-links-check-config.json'
         base-branch: 'main'
-        
-        
