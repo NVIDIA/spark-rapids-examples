@@ -108,13 +108,13 @@ Import the GPU Mortgage Example Notebook
 ---------------------------
 
 1. See [Managing Notebooks](https://docs.databricks.com/user-guide/notebooks/notebook-manage.html) on how to import a notebook.
-2. Import the example notebook: [XGBoost4j-Spark mortgage notebook](/examples/XGBoost-Examples/mortgage/notebooks/scala/mortgage-gpu.ipynb)
+2. Import the example notebook: [XGBoost4j-Spark mortgage notebook](../../../../../examples/XGBoost-Examples/mortgage/notebooks/scala/mortgage-gpu.ipynb)
 3. Inside the mortgage example notebook, update the data paths from 
 "/data/datasets/mortgage-small/train" to "dbfs:/FileStore/tables/mortgage/csv/train/mortgage_train_merged.csv"
 "/data/datasets/mortgage-small/eval" to "dbfs:/FileStore/tables/mortgage/csv/test/mortgage_eval_merged.csv"
 
 The example notebook comes with the following configuration, you can adjust this according to your setup.
-See supported configuration options here: [xgboost parameters](/examples/XGBoost-Examples/app-parameters/supported_xgboost_parameters_python.md)
+See supported configuration options here: [xgboost parameters](../../../../../examples/XGBoost-Examples/app-parameters/supported_xgboost_parameters_python.md)
 
 ``` bash
 params = { 

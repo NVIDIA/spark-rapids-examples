@@ -92,4 +92,4 @@ Please see the [RAPIDS](https://rapids.ai/community.html) website for contact in
 
 ## License
 
-This content is licensed under the [Apache License 2.0](/LICENSE)
+This content is licensed under the [Apache License 2.0](LICENSE)
