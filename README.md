@@ -62,11 +62,11 @@ This is an example of the GPU accelerated PCA algorithm running on Spark. For de
 #### 4.1 Spark Rapids UDF examples
 This is examples of the GPU accelerated UDF.
 refer to this
-[guide](/examples/RAPIDS-UDF-Examples/RAPIDS-accelerated-UDFs).
+[guide](/examples/UDF-Examples/RAPIDS-accelerated-UDFs).
 
 #### 4.2 Spark cuSpatial
 This is a RapidsUDF examples to use [cuSpatial](https://github.com/rapidsai/cuspatial) library to
-solve the point-in-polygon problem. For detail information please refer to this [guide](/examples/RAPIDS-UDF-Examples/Spark-cuSpatial).
+solve the point-in-polygon problem. For detail information please refer to this [guide](/examples/UDF-Examples/Spark-cuSpatial).
 
 ### 5. MIG support
 We provide some [guides](/examples/MIG-Support) about the Multi-Instance GPU (MIG) feature based on
