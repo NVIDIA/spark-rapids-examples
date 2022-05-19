@@ -44,7 +44,7 @@ Please follow below steps to run the example Spark jobs in different Spark envir
 
 
 Below are the example notebooks:
-- Mortgage: [Scala](/mortgage/notebooks/scala), [Python](/mortgage/notebooks/python)
+- Mortgage: [Scala](../../examples/XGBoost-Examples/mortgage/notebooks/scala), [Python](../../examples/XGBoost-Examples/mortgage/notebooks/python)
 - Taxi: [Scala](/taxi/notebooks/scala), [Python](/taxi/notebooks/python)
 - Agaricus: [Scala](/agaricus/notebooks/scala), [Python](/agaricus/notebooks/python)
 - Churn: [Python](../SQL+DF-Examples/customer-churn/notebooks/python)
