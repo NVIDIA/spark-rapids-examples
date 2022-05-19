@@ -23,9 +23,9 @@ Here are 2 ways to get started:
 
 
 Below are source codes for the example Spark jobs:
-- Mortgage: [Scala](/mortgage/scala/src/com/nvidia/spark/examples/mortgage), [Python](/mortgage/python/com/nvidia/spark/examples/mortgage)
-- Taxi: [Scala](/taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](/taxi/python/com/nvidia/spark/examples/taxi)
-- Agaricus: [Scala](/agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](/agaricus/python/com/nvidia/spark/examples/agaricus)
+- Mortgage: [Scala](mortgage/scala/src/com/nvidia/spark/examples/mortgage), [Python](mortgage/python/com/nvidia/spark/examples/mortgage)
+- Taxi: [Scala](taxi/scala/src/com/nvidia/spark/examples/taxi), [Python](taxi/python/com/nvidia/spark/examples/taxi)
+- Agaricus: [Scala](agaricus/scala/src/com/nvidia/spark/examples/agaricus), [Python](agaricus/python/com/nvidia/spark/examples/agaricus)
 
 
 Please follow below steps to run the example Spark jobs in different Spark environments:
@@ -44,9 +44,9 @@ Please follow below steps to run the example Spark jobs in different Spark envir
 
 
 Below are the example notebooks:
-- Mortgage: [Scala](/mortgage/notebooks/scala), [Python](/mortgage/notebooks/python)
-- Taxi: [Scala](/taxi/notebooks/scala), [Python](/taxi/notebooks/python)
-- Agaricus: [Scala](/agaricus/notebooks/scala), [Python](/agaricus/notebooks/python)
+- Mortgage: [Scala](mortgage/notebooks/scala), [Python](mortgage/notebooks/python)
+- Taxi: [Scala](taxi/notebooks/scala), [Python](taxi/notebooks/python)
+- Agaricus: [Scala](agaricus/notebooks/scala), [Python](agaricus/notebooks/python)
 - Churn: [Python](../SQL+DF-Examples/customer-churn/notebooks/python)
 
 Please follow below steps to run the example notebooks in different notebook environments:
@@ -61,5 +61,5 @@ xgboost training tasks into one executor simultaneously and trigger
 [issue-131](https://github.com/NVIDIA/spark-rapids-examples/issues/131).
 
 These examples use default parameters for demo purposes. For a full list please see "Supported Parameters"
-for [Scala](/app-parameters/supported_xgboost_parameters_scala.md) 
-or [Python](/app-parameters/supported_xgboost_parameters_python.md).
+for [Scala](app-parameters/supported_xgboost_parameters_scala.md) 
+or [Python](app-parameters/supported_xgboost_parameters_python.md).
