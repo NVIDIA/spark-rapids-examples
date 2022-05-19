@@ -16,7 +16,7 @@ and the home directory for Apache Spark respectively.
 
 2. Prepare packages and dataset.
 
-    Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
+    Make sure you have prepared the necessary packages and dataset by following this [guide](../../../../docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
 
 3. Launch the notebook:
 
@@ -37,11 +37,11 @@ and the home directory for Apache Spark respectively.
     ```
 
 4. Launch ETL Part 
-- Mortgage ETL Notebook: [Python](/examples/Spark-ETL+XGBoost/mortgage/notebooks/python/MortgageETL.ipynb)
-- Taxi ETL Notebook: [Python](/examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-ETL.ipynb)
+- Mortgage ETL Notebook: [Python](../../../../examples/XGBoost-Examples/mortgage/notebooks/python/MortgageETL.ipynb)
+- Taxi ETL Notebook: [Python](../../../../examples/XGBoost-Examples/taxi/notebooks/python/taxi-ETL.ipynb)
 - Note: Agaricus does not have ETL part.
    
 5. Launch XGBoost Part
-- Mortgage XGBoost Notebook: [Python](/examples/Spark-ETL+XGBoost/mortgage/notebooks/python/mortgage-gpu.ipynb)
-- Taxi XGBoost Notebook: [Python](/examples/Spark-ETL+XGBoost/taxi/notebooks/python/taxi-gpu.ipynb)
-- Agaricus XGBoost Notebook: [Python](/examples/Spark-ETL+XGBoost/agaricus/notebooks/python/agaricus-gpu.ipynb)
+- Mortgage XGBoost Notebook: [Python](../../../../examples/XGBoost-Examples/mortgage/notebooks/python/mortgage-gpu.ipynb)
+- Taxi XGBoost Notebook: [Python](../../../../examples/XGBoost-Examples/taxi/notebooks/python/taxi-gpu.ipynb)
+- Agaricus XGBoost Notebook: [Python](../../../../examples/XGBoost-Examples/agaricus/notebooks/python/agaricus-gpu.ipynb)

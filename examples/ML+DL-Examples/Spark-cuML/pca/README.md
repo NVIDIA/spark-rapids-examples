@@ -19,7 +19,7 @@ User can also download the release jar from Maven central:
 
 ## Sample code
 
-User can find sample scala code in [`main.scala`](./main.scala). In the sample code, we will generate random data with 2048 feature dimensions. Then we use PCA to reduce number of features to 3.
+User can find sample scala code in [`main.scala`](main.scala). In the sample code, we will generate random data with 2048 feature dimensions. Then we use PCA to reduce number of features to 3.
 
 Just copy the sample code into the spark-shell laucnhed according to [this section](https://github.com/NVIDIA/spark-rapids-ml#how-to-use) and REPL will give out the algorithm results.
 

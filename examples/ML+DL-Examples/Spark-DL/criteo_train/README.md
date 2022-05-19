@@ -6,7 +6,10 @@ _Please note: The following demo is dedicated for DGX-2 machine(with V100 GPUs).
 
 ## Dataset
 
-We are using the preprocessed data from DLRM. All 40 columns(1 label + 39 features) are already numeric.
+The dataset used here is from Criteo clicklog dataset. 
+It's preprocessed by [DLRM](https://github.com/NVIDIA/DeepLearningExamples/tree/master/TensorFlow2/Recommendation/DLRM/preproc) 
+ETL job on Spark. We also provide a small size sample data in sample_data folder.
+All 40 columns(1 label + 39 features) are already numeric.
 
 In the following parts, we assume that the data are mounted as docker volumn at `/data/parquet`
 
@@ -87,7 +90,7 @@ If you want to try in a node with only 1 GPU, please modify the GPU number per w
 `/workspace/`
 
 ## Run in Databricks Runtime
-Some extra packages are required to run the example, we provide a Dockerfile [Dockerfile.conda_db](./Dockerfile.conda_db)
+Some extra packages are required to run the example, we provide a Dockerfile [Dockerfile.conda_db](Dockerfile.conda_db)
 to use [Customize containers with Databricks Container Services](https://docs.databricks.com/clusters/custom-containers.html)
 in Databricks cloud environment.
 

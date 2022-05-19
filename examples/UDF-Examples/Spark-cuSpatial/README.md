@@ -12,11 +12,11 @@ We got the end-2-end time as below table when running with 2009 NYC Taxi trip pi
 | 2 GPU(T4) on Databricks | 9.1 seconds | 10.0 seconds | 12.1 seconds |
 
 ## Build
-You can build the jar file [in Docker](#build-in-docker) with the provided [Dockerfile](./Dockerfile)
+You can build the jar file [in Docker](#build-in-docker) with the provided [Dockerfile](Dockerfile)
 or you can build it [in local](#build-in-local) machine after some prerequisites.
 
 ### Build in Docker
-1. Build the docker image [Dockerfile](./Dockerfile), then run the container.
+1. Build the docker image [Dockerfile](Dockerfile), then run the container.
      ```Bash
      docker build -f Dockerfile . -t build-spark-cuspatial
      docker run -it build-spark-cuspatial bash
@@ -64,7 +64,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
 3. Download cuDF & spark-rapids jars
    * [cuDF v22.04.0](https://repo1.maven.org/maven2/ai/rapids/cudf/22.04.0/cudf-22.04.0-cuda11.jar) or above
    * [spark-rapids v22.04.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.04.0/rapids-4-spark_2.12-22.04.0.jar) or above
-4. Prepare the dataset & jars. Copy the sample dataset from [cuspatial_data](../../datasets/cuspatial_data.tar.gz) to "/data/cuspatial_data".
+4. Prepare the dataset & jars. Copy the sample dataset from [cuspatial_data](../../../datasets/cuspatial_data.tar.gz) to "/data/cuspatial_data".
     Copy cuDF, spark-rapids & spark-cuspatial-22.06.0-SNAPSHOT.jar to "/data/cuspatial_data/jars".
     You can use your own path, but remember to update the paths in "gpu-run.sh" accordingly.
 5. Run "gpu-run.sh"
@@ -72,7 +72,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
     ./gpu-run.sh
     ```
 ### Run on AWS Databricks
-1. Build the customized docker image [Dockerfile.awsdb](./Dockerfile.awsdb) and push to dockerhub so that it can be accessible by AWS Databricks.
+1. Build the customized docker image [Dockerfile.awsdb](Dockerfile.awsdb) and push to dockerhub so that it can be accessible by AWS Databricks.
      ```Bash
      # replace your dockerhub repo, your tag or any other repo AWS DB can access
      docker build -f Dockerfile.awsdb . -t <your-dockerhub-repo>:<your-tag>
@@ -87,7 +87,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
   Input "Docker Image URL" as "your-dockerhub-repo:your-tag"
     * For the other configurations, you can follow the get-started document.
 
-3. Copy the sample [cuspatial_data.tar.gz](../../datasets/cuspatial_data.tar.gz) or your data to DBFS by using Databricks CLI.
+3. Copy the sample [cuspatial_data.tar.gz](../../../datasets/cuspatial_data.tar.gz) or your data to DBFS by using Databricks CLI.
     ```Bash
     # extract the data
     tar zxf cuspatial_data.tar.gz
@@ -98,4 +98,4 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
         polygons
     ```
 4. Import the Library "spark-cuspatial-22.06.0-SNAPSHOT.jar" to the Databricks, then install it to your cluster.
-5. Import [cuspatial_sample.ipynb](./notebooks/cuspatial_sample_db.ipynb) to your workspace in Databricks. Attach to your cluster, then run it.
+5. Import [cuspatial_sample.ipynb](notebooks/cuspatial_sample_db.ipynb) to your workspace in Databricks. Attach to your cluster, then run it.
