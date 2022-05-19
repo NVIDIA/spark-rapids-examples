@@ -28,7 +28,8 @@ sbin/start-slave.sh <master-url>
 
 ## Run the benchmark
 
-The benchmark can be run by running the script file and passing the name of Parquet file to be read and cached e.g.
+Set `SPARK_HOME` and `SPARK_MASTER_URL` and then the benchmark can be run by running the script file 
+and passing the name of Parquet file to be read and cached e.g.
 
 ```
 ./pcbs-benchmark.sh <path to Parquet file>
@@ -59,11 +60,11 @@ Time taken for reads: Vector(9436, 3495, 3398, 3375, 3416, 3389, 3520, 3353, 331
 PCBS
 acc: true
 Average write: 1346
-Time taken for frst read: 505
+Time taken for first read: 505
 Average read (without first read): 216
 acc: false
 Average write: 8560
-Time taken for frst read: 9436
+Time taken for first read: 9436
 Average read (without first read): 3397
 Reading file: /media/data/mortgage_parquet/20m/
 Writing cache 5 times
@@ -77,11 +78,11 @@ Time taken for reads: Vector(6288, 613, 609, 601, 692, 614, 617, 628, 602, 599)
 DefaultSerializer
 acc: true
 Average write: 8050
-Time taken for frst read: 6550
+Time taken for first read: 6550
 Average read (without first read): 750
 acc: false
 Average write: 7900
-Time taken for frst read: 6288
+Time taken for first read: 6288
 Average read (without first read): 619
 ```
 
