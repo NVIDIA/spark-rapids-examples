@@ -1,3 +1,6 @@
+# Please read https://nvidia.github.io/spark-rapids/docs/tuning-guide.html for details about 
+# the conf variables represent and also what values to set. 
+
 BENCH_JAR="target/pcbs-benchmark-1.0-SNAPSHOT.jar"
 PLUGIN_JAR="lib/rapids-4-spark_2.12-22.06.0-20220512.134355-33-cuda11.jar"
 
