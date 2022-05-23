@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.nvidia.spark.examples.mortgage
 
-import com.nvidia.spark.examples.utility.{XGBoostArgs, Benchmark, Vectorize}
+import com.nvidia.spark.examples.utility.{XGBoostArgs, Benchmark}
 import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassifier}
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
 import org.apache.spark.sql.SparkSession
 
-// Only 2 differences between CPU and GPU. Please refer to '=== diff ==='
-object CPUCrossValidationMain extends Mortgage {
+object CrossValidationMain extends Mortgage {
 
   def main(args: Array[String]): Unit = {
     val appArgs = XGBoostArgs(args)
@@ -38,7 +38,7 @@ object CPUCrossValidationMain extends Mortgage {
       // loaded XGBoost ETLed data
       val pathsArray = appArgs.getDataPaths
       // 0: train 1: eval 2:transform
-      var datasets = pathsArray.map { paths =>
+      val datasets = pathsArray.map { paths =>
         if (paths.nonEmpty) {
           appArgs.format match {
             case "csv" => Some(dataReader.option("header", appArgs.hasHeader).schema(schema).csv(paths: _*))
@@ -51,22 +51,16 @@ object CPUCrossValidationMain extends Mortgage {
         }
       }
 
-      // === diff ===
-      datasets = datasets.map(_.map(Vectorize(_, featureNames, labelColName)))
-
       val xgbClassificationModel = if (appArgs.isToTrain) {
         // build XGBoost classifier
         val xgbParamFinal = appArgs.xgboostParams(commParamMap)
         val xgbClassifier = new XGBoostClassifier(xgbParamFinal)
           .setLabelCol(labelColName)
-          // === diff ===
-          .setFeaturesCol("features")
+          .setFeaturesCol(featureNames)
 
-        // Start training
-        println("\n------ Training ------")
         // Tune model using cross validation
         val paramGrid = new ParamGridBuilder()
-          .addGrid(xgbClassifier.maxDepth, Array(3, 8))
+          .addGrid(xgbClassifier.maxDepth, Array(3, 10))
           .addGrid(xgbClassifier.eta, Array(0.2, 0.6))
           .build()
         val evaluator = new MulticlassClassificationEvaluator().setLabelCol(labelColName)
@@ -77,7 +71,10 @@ object CPUCrossValidationMain extends Mortgage {
           .setEstimatorParamMaps(paramGrid)
           .setNumFolds(appArgs.numFold)
 
-        val (model, _) = benchmark.time("train") {
+        // Start training
+        println("\n------ CrossValidation ------")
+        // Shall we not log the time if it is abnormal, which is usually caused by training failure
+        val (model, _) = benchmark.time("CrossValidation") {
           cv.fit(datasets(0).get).bestModel.asInstanceOf[XGBoostClassificationModel]
         }
         // Save model if modelPath exists

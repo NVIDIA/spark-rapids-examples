@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ package com.nvidia.spark.examples.taxi
 import com.nvidia.spark.examples.utility.{XGBoostArgs, Benchmark}
 import ml.dmlc.xgboost4j.scala.spark.{XGBoostRegressionModel, XGBoostRegressor}
 import org.apache.spark.ml.evaluation.RegressionEvaluator
+import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
 import org.apache.spark.sql.SparkSession
 
-// Only 2 differences between CPU and GPU. Please refer to '=== diff ==='
-object GPUMain extends Taxi {
+object CrossValidationMain extends Taxi {
 
   def main(args: Array[String]): Unit = {
     val xgboostArgs = XGBoostArgs.parse(args)
@@ -57,24 +57,31 @@ object GPUMain extends Taxi {
 
     if (needEtl) datasets = datasets.map(_.map(preProcess(_)))
 
-    // === diff ===
-    // No need to vectorize data since GPU support multiple feature columns via API 'setFeaturesCols'
-
     val xgbRegressionModel = if (xgboostArgs.isToTrain) {
       // build XGBoost XGBoostRegressor
-      val xgbParamFinal = xgboostArgs.xgboostParams(commParamMap +
-        // Add train-eval dataset if specified
-        ("eval_sets" -> datasets(1).map(ds => Map("test" -> ds)).getOrElse(Map.empty))
-      )
+      val xgbParamFinal = xgboostArgs.xgboostParams(commParamMap)
       val xgbRegressor = new XGBoostRegressor(xgbParamFinal)
         .setLabelCol(labelColName)
-        // === diff ===
-        .setFeaturesCols(featureNames)
+        .setFeaturesCol(featureNames)
+
+      // Tune model using cross validation
+      val paramGrid = new ParamGridBuilder()
+        .addGrid(xgbRegressor.maxDepth, Array(3, 10))
+        .addGrid(xgbRegressor.eta, Array(0.2, 0.6))
+        .build()
+
+      val evaluator = new RegressionEvaluator().setLabelCol(labelColName)
+
+      val cv = new CrossValidator()
+        .setEstimator(xgbRegressor)
+        .setEvaluator(evaluator)
+        .setEstimatorParamMaps(paramGrid)
+        .setNumFolds(xgboostArgs.numFold)
 
       println("\n------ Training ------")
       // Shall we not log the time if it is abnormal, which is usually caused by training failure
-      val (model, _) = benchmark.time("train") {
-        xgbRegressor.fit(datasets(0).get)
+      val (model, _) = benchmark.time("CrossValidator") {
+        cv.fit(datasets(0).get).bestModel.asInstanceOf[XGBoostRegressionModel]
       }
       // Save model if modelPath exists
       xgboostArgs.modelPath.foreach(path =>

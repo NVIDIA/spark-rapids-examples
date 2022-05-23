@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ private[mortgage] trait Mortgage {
   )
 
   lazy val schema = StructType((categaryCols ++ numericCols).map(col => StructField(col._1, col._2)))
-  lazy val featureNames = schema.filter(_.name != labelColName).map(_.name)
+  lazy val featureNames = schema.filter(_.name != labelColName).map(_.name).toArray
 
   val commParamMap = Map(
     "eta" -> 0.1,
