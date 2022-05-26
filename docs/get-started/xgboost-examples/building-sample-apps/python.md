@@ -21,4 +21,4 @@ Two files are required by PySpark:
 
 + *main.py*
   
-  entrypoint for PySpark, you can find it in 'spark-rapids-examples/Spark-ETL+XGBoost/examples' folder
+  entrypoint for PySpark, you can find it in 'spark-rapids-examples/XGBoost-Examples/examples' folder
