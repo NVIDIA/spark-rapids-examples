@@ -1,6 +1,6 @@
-# Spark-ETL+XGBoost examples
+# XGBoost-Examples examples
 
-## 1. Prepare the dataset Spark-ETL+XGBoost examples codes
+## 1. Prepare the dataset XGBoost-Examples examples codes
 
 You can get a small size dataset for each example in the [datasets](../../datasets) folder. 
 These datasets are only provided for convenience. In order to test for performance, 
@@ -12,7 +12,7 @@ please prepare packages and download a larger dataset by following links:
 We provided a [Morgage Dataset (1 GB uncompressed)](https://rapidsai-data.s3.us-east-2.amazonaws.com/spark/mortgage.zip), 
 which is used in the Mortgage example below for quick download.
 
-## 2. Spark-ETL+XGBoost getting started guides
+## 2. XGBoost-Examples getting started guides
 We have three examples to demonstrate the Spark ETL + XGBoost process: Mortgage, Taxi and Agaricus(Note: Agaricus example has 
 a very simple ETL part which is just a filter, so we combined the ETL part into XGBoost part).
 Here are 2 ways to get started:
