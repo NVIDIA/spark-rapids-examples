@@ -33,9 +33,9 @@ and the home directory for Apache Spark respectively.
     jupyter toree install                                \
     --spark_home=${SPARK_HOME}                             \
     --user                                          \
-    --toree_opts='--nosparkcontext'                         \
+    --toree_opts="--nosparkcontext"                         \
     --kernel_name="XGBoost4j-Spark"                         \
-    --spark_opts='--master ${SPARK_MASTER} \
+    --spark_opts="--master ${SPARK_MASTER} \
       --jars ${CUDF_JAR},${RAPIDS_JAR},${SAMPLE_JAR}       \
       --conf spark.plugins=com.nvidia.spark.SQLPlugin  \
       --conf spark.executor.extraClassPath=${CUDF_JAR}:${RAPIDS_JAR} \
@@ -43,7 +43,7 @@ and the home directory for Apache Spark respectively.
       --conf spark.executor.resource.gpu.amount=1 \
       --conf spark.task.resource.gpu.amount=1 \
       --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
-      --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh'
+      --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
     ```
 
     Launch the notebook:
