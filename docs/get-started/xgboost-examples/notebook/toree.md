@@ -15,10 +15,10 @@ and the home directory for Apache Spark respectively.
 
     ``` bash
     # Download toree
-    wget https://github.com/apache/incubator-toree/archive/refs/tags/v0.5.0-incubating-rc4.tar.gz
-    tar -xvzf v0.5.0-incubating-rc4.tar.gz
+    wget https://github.com/apache/incubator-toree/archive/refs/tags/v0.5.0-incubating-rc5.tar.gz
+    tar -xvzf v0.5.0-incubating-rc5.tar.gz
     # Build the Toree pip package.
-    cd incubator-toree-0.5.0-incubating-rc4
+    cd incubator-toree-0.5.0-incubating-rc5
     make pip-release
     # Install Toree
     pip install dist/toree-pip/toree-0.5.0.tar.gz
