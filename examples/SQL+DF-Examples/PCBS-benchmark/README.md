@@ -58,8 +58,13 @@ jupyter toree install                                \
   --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
 ```
 ### Run Benchmark
-Then you can run jupyter notebook and changed the kernel to `pcbs-scala`.
+
 ``` 
 jupyter notebook
 ``` 
+after you type the above command, a web page will be open, click the `PCBS-benchmark.ipynb` file and
+changed the kernel to `pcbs-scala`, then run the notebook:
+![run-pcbs-benchmark](/docs/img/guides/pcbs-benchmark.gif)
 
+the performance can be different as the cache data size changes, below is some results for reference:
+![run-pcbs-benchmark](/docs/img/guides/pcbs-perf.png)
