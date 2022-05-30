@@ -11,7 +11,6 @@ ParquetCachedBatchSerializer to DefaultCachedBatchSerializer.
 ### Build Conventional Dist Rapids Plugin jar
 
 Clone the repo and build the jar with following commands:
-Note : the benchmark is specific to spark 3.1.x, the guide is based on spark3.1.2
 ``` 
 git clone https://github.com/NVIDIA/spark-rapids
 cd spark-rapids
