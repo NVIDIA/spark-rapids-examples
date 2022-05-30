@@ -18,7 +18,7 @@ cd spark-rapids
 mvn clean install -DskipTests -DallowConventionalDistJar -Dbuildver=312
 ```
 find the jar file `rapids-4-spark_2.12-version-cuda11.jar` under path spark-rapids/dist/target
-
+Note : the benchmark is specific to spark 3.1.x, the guide is based on spark3.1.2
 ### Build Toree kernel
 
 Refer to the [doc](/docs/get-started/xgboost-examples/notebook/toree.md) to Build the 
