@@ -20,7 +20,7 @@ find the jar file `rapids-4-spark_2.12-version-cuda11.jar` under path spark-rapi
 Note : the benchmark is specific to spark 3.1.x, the guide is based on spark3.1.2
 ### Build Toree kernel
 
-Refer to the [doc](/docs/get-started/xgboost-examples/notebook/toree.md) to Build the 
+Refer to the [doc](/docs/get-started/xgboost-examples/notebook/toree.md) to build the 
 'toree' locally to support scala 2.12, and install it.
 Install a new kernel with the jar you build.
 ```
