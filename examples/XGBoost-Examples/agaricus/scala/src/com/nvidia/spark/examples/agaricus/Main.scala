@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassif
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.sql.types.{FloatType, StructField, StructType}
 
-// Only 2 differences between CPU and GPU. Please refer to '=== diff ==='
-object GPUMain {
+object Main {
   def main(args: Array[String]): Unit = {
 
     val labelName = "label"
@@ -59,10 +58,7 @@ object GPUMain {
       } else None
     }
 
-    val featureCols = dataSchema.filter(_.name != labelName).map(_.name)
-
-    // === diff ===
-    // No need to vectorize data since GPU support multiple feature columns via API 'setFeaturesCols'
+    val featureCols = dataSchema.filter(_.name != labelName).map(_.name).toArray
 
     val xgbClassificationModel = if (xgboostArgs.isToTrain) {
       // build XGBoost classifier
@@ -76,7 +72,7 @@ object GPUMain {
       val xgbClassifier = new XGBoostClassifier(paramMap)
         .setLabelCol(labelName)
         // === diff ===
-        .setFeaturesCols(featureCols)
+        .setFeaturesCol(featureCols)
 
       println("\n------ Training ------")
       val (model, _) = benchmark.time("train") {

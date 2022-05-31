@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package com.nvidia.spark.examples.taxi
 
-import com.nvidia.spark.examples.utility.{XGBoostArgs, Benchmark, Vectorize}
+import com.nvidia.spark.examples.utility.{XGBoostArgs, Benchmark}
 import ml.dmlc.xgboost4j.scala.spark.{XGBoostRegressionModel, XGBoostRegressor}
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 import org.apache.spark.sql.SparkSession
 
-// Only 2 differences between CPU and GPU. Please refer to '=== diff ==='
-object CPUMain extends Taxi {
+object Main extends Taxi {
 
   def main(args: Array[String]): Unit = {
     val xgboostArgs = XGBoostArgs.parse(args)
@@ -40,6 +39,7 @@ object CPUMain extends Taxi {
     val dataReader = spark.read
 
     val (pathsArray, dataReadSchema, needEtl) = getDataPaths(xgboostArgs.dataPaths, xgboostArgs.isToTrain, xgboostArgs.isToTransform)
+
     // 0: train 1: eval 2:transform
     var datasets = pathsArray.map { paths =>
       if (paths.nonEmpty) {
@@ -56,9 +56,6 @@ object CPUMain extends Taxi {
 
     if (needEtl) datasets = datasets.map(_.map(preProcess(_)))
 
-    // === diff ===
-    datasets = datasets.map(_.map(Vectorize(_, featureNames, labelColName)))
-
     val xgbRegressionModel = if (xgboostArgs.isToTrain) {
       // build XGBoost XGBoostRegressor
       val xgbParamFinal = xgboostArgs.xgboostParams(commParamMap +
@@ -67,8 +64,7 @@ object CPUMain extends Taxi {
       )
       val xgbRegressor = new XGBoostRegressor(xgbParamFinal)
         .setLabelCol(labelColName)
-        // === diff ===
-        .setFeaturesCol("features")
+        .setFeaturesCol(featureNames)
 
       println("\n------ Training ------")
       // Shall we not log the time if it is abnormal, which is usually caused by training failure
