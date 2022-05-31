@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,9 @@ package com.nvidia.spark.examples.mortgage
 import com.nvidia.spark.examples.utility.{XGBoostArgs, Benchmark}
 import ml.dmlc.xgboost4j.scala.spark.{XGBoostClassificationModel, XGBoostClassifier}
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
-import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
 import org.apache.spark.sql.SparkSession
 
-// Only 2 differences between CPU and GPU. Please refer to '=== diff ==='
-object GPURawCrossValidationMain extends Mortgage {
+object Main extends Mortgage {
 
   def main(args: Array[String]): Unit = {
     val appArgs = XGBoostArgs(args)
@@ -52,35 +50,21 @@ object GPURawCrossValidationMain extends Mortgage {
         }
       }
 
-      // === diff ===
-      // No need to vectorize data since GPU support multiple feature columns via API 'setFeaturesCols'
-
       val xgbClassificationModel = if (appArgs.isToTrain) {
         // build XGBoost classifier
-        val xgbParamFinal = appArgs.xgboostParams(commParamMap)
+        val xgbParamFinal = appArgs.xgboostParams(commParamMap +
+          // Add train-eval dataset if specified
+          ("eval_sets" -> datasets(1).map(ds => Map("eval" -> ds)).getOrElse(Map.empty))
+        )
         val xgbClassifier = new XGBoostClassifier(xgbParamFinal)
           .setLabelCol(labelColName)
-          // === diff ===
-          .setFeaturesCols(featureNames)
-
-        // Tune model using cross validation
-        val paramGrid = new ParamGridBuilder()
-          .addGrid(xgbClassifier.maxDepth, Array(3, 10))
-          .addGrid(xgbClassifier.eta, Array(0.2, 0.6))
-          .build()
-        val evaluator = new MulticlassClassificationEvaluator().setLabelCol(labelColName)
-
-        val cv = new CrossValidator()
-          .setEstimator(xgbClassifier)
-          .setEvaluator(evaluator)
-          .setEstimatorParamMaps(paramGrid)
-          .setNumFolds(appArgs.numFold)
+          .setFeaturesCol(featureNames)
 
         // Start training
-        println("\n------ CrossValidation ------")
+        println("\n------ Training ------")
         // Shall we not log the time if it is abnormal, which is usually caused by training failure
-        val (model, _) = benchmark.time("CrossValidation") {
-          cv.fit(datasets(0).get).bestModel.asInstanceOf[XGBoostClassificationModel]
+        val (model, _) = benchmark.time("train") {
+          xgbClassifier.fit(datasets(0).get)
         }
         // Save model if modelPath exists
         appArgs.modelPath.foreach(path =>

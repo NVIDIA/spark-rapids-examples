@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.apache.spark.sql.types.{FloatType, StructField, StructType}
 private[taxi] trait Taxi {
   val appName = "Taxi"
   lazy val labelColName = "fare_amount"
-  lazy val featureNames = etledSchema.filter(_.name != labelColName).map(_.name)
+  lazy val featureNames = etledSchema.filter(_.name != labelColName).map(_.name).toArray
 
   lazy val commParamMap = Map(
     "learning_rate" -> 0.05,
