@@ -97,9 +97,6 @@ You can debug from webUI http://your_ip:your_port with your password.
 - Note: Agaricus does not have ETL part.
    
 6. Launch XGBoost Part
-- Mortgage XGBoost Notebook: [Scala](../../../../examples/XGBoost-Examples/mortgage/notebooks/scala/mortgage-gpu.ipynb) or
-  [Python](../../../../examples/XGBoost-Examples/mortgage/notebooks/python/mortgage-gpu.ipynb)
-- Taxi XGBoost Notebook: [Scala](../../../../examples/XGBoost-Examples/taxi/notebooks/scala/taxi-gpu.ipynb) or 
-  [Python](../../../../examples/XGBoost-Examples/taxi/notebooks/python/taxi-gpu.ipynb)
-- Agaricus XGBoost Notebook: [Scala](../../../../examples/XGBoost-Examples/agaricus/notebooks/scala/agaricus-gpu.ipynb) or
-  [Python](../../../../examples/XGBoost-Examples/agaricus/notebooks/python/agaricus-gpu.ipynb)
+- Mortgage XGBoost Notebook: [Scala](../../../../examples/XGBoost-Examples/mortgage/notebooks/scala/mortgage-gpu.ipynb) 
+- Taxi XGBoost Notebook: [Scala](../../../../examples/XGBoost-Examples/taxi/notebooks/scala/taxi-gpu.ipynb)
+- Agaricus XGBoost Notebook: [Scala](../../../../examples/XGBoost-Examples/agaricus/notebooks/scala/agaricus-gpu.ipynb) 

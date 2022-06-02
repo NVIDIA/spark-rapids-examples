@@ -9,7 +9,7 @@ For simplicity export the location to these jars. All examples assume the packag
 
 ### Build XGBoost Scala Examples
 
-Following this [guide](/docs/get-started/xgboost-examples/building-sample-apps/scala.md), you can get *sample_xgboost_apps-0.2.2-jar-with-dependencies.jar* and copy it to `/opt/xgboost`
+Following this [guide](../../../../docs/get-started/xgboost-examples/building-sample-apps/scala.md), you can get *sample_xgboost_apps-0.2.2-jar-with-dependencies.jar* and copy it to `/opt/xgboost`
 
 ### Download dataset
 
