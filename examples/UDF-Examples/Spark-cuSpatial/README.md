@@ -61,9 +61,8 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
     ```
 2. Set up a standalone cluster of Spark. Make sure the conda/lib is included in LD_LIBRARY_PATH, so that spark executors can load libcuspatial.so.
 
-3. Download cuDF & spark-rapids jars
-   * [cuDF v22.04.0](https://repo1.maven.org/maven2/ai/rapids/cudf/22.04.0/cudf-22.04.0-cuda11.jar) or above
-   * [spark-rapids v22.04.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.04.0/rapids-4-spark_2.12-22.04.0.jar) or above
+3. Download spark-rapids jars
+   * [spark-rapids v22.06.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.06.0/rapids-4-spark_2.12-22.06.0.jar) or above
 4. Prepare the dataset & jars. Copy the sample dataset from [cuspatial_data](../../../datasets/cuspatial_data.tar.gz) to "/data/cuspatial_data".
     Copy cuDF, spark-rapids & spark-cuspatial-22.06.0-SNAPSHOT.jar to "/data/cuspatial_data/jars".
     You can use your own path, but remember to update the paths in "gpu-run.sh" accordingly.

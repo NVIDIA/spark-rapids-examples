@@ -36,10 +36,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <cuda.version>cuda11</cuda.version>
         <scala.binary.version>2.12</scala.binary.version>
-        <!-- Update when releasing new version -->
-        <cudf.version>22.04.0</cudf.version>
         <!-- Depends on release version, Snapshot version is not published to the Maven Central -->
-        <rapids4spark.version>22.04.0</rapids4spark.version>
+        <rapids4spark.version>22.06.0</rapids4spark.version>
         <spark.version>3.1.1</spark.version>
         <scala.version>2.12.15</scala.version>
         <udf.native.build.path>${project.build.directory}/cpp-build</udf.native.build.path>
@@ -53,12 +51,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>ai.rapids</groupId>
-            <artifactId>cudf</artifactId>
-            <classifier>${cuda.version}</classifier>
-            <version>${cudf.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-hive_${scala.binary.version}</artifactId>
