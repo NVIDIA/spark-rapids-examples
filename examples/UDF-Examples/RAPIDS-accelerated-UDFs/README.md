@@ -108,13 +108,11 @@ See above Prerequisites section
 First finish the steps in "Building with Native Code Examples and run test cases" section, then do the following in the docker.
 
 ### Get jars from Maven Central
-[cudf-22.04.0-cuda11.jar](https://repo1.maven.org/maven2/ai/rapids/cudf/22.04.0/cudf-22.04.0-cuda11.jar)
-[rapids-4-spark_2.12-22.04.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.04.0/rapids-4-spark_2.12-22.04.0.jar)
+[rapids-4-spark_2.12-22.06.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.06.0/rapids-4-spark_2.12-22.06.0.jar)
 
 ### Launch a local mode Spark
 
 ```bash
-export SPARK_CUDF_JAR=path-to-cudf-jar
 export SPARK_RAPIDS_PLUGIN_JAR=path-to-rapids-4-spark-jar
 export SPARK_RAPIDS_UDF_EXAMPLES_JAR=path-to-udf-examples-jar
 
@@ -122,9 +120,9 @@ $SPARK_HOME/bin/pyspark --master local[*] \
 --conf spark.executor.cores=6 \
 --driver-memory 5G  \
 --executor-memory 5G  \
---conf spark.executor.extraClassPath=${SPARK_CUDF_JAR}:${SPARK_RAPIDS_PLUGIN_JAR}:${SPARK_RAPIDS_UDF_EXAMPLES_JAR} \
---conf spark.driver.extraClassPath=${SPARK_CUDF_JAR}:${SPARK_RAPIDS_PLUGIN_JAR}:${SPARK_RAPIDS_UDF_EXAMPLES_JAR} \
---jars ${SPARK_CUDF_JAR},${SPARK_RAPIDS_PLUGIN_JAR},${SPARK_RAPIDS_UDF_EXAMPLES_JAR} \
+--conf spark.executor.extraClassPath=${SPARK_RAPIDS_PLUGIN_JAR}:${SPARK_RAPIDS_UDF_EXAMPLES_JAR} \
+--conf spark.driver.extraClassPath=${SPARK_RAPIDS_PLUGIN_JAR}:${SPARK_RAPIDS_UDF_EXAMPLES_JAR} \
+--jars ${SPARK_RAPIDS_PLUGIN_JAR},${SPARK_RAPIDS_UDF_EXAMPLES_JAR} \
 --conf spark.plugins=com.nvidia.spark.SQLPlugin \
 --conf spark.rapids.sql.enabled=true
 ```
