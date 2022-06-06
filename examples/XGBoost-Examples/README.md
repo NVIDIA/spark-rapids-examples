@@ -10,6 +10,8 @@ As you can see below, XGBoost training on GPUs can be upto 7X and data processin
 RAPIDS Accelerator can also be accelerated with an end-to-end speed-up of 7X on GPU compared to CPU.
 In the public cloud, better performance can lead to significantly lower costs as demonstrated in this [blog](https://developer.nvidia.com/blog/gpu-accelerated-spark-xgboost/).
 
+![mortgage-speedup](../../docs/img/guides/mortgage-perf.png)
+
 In this folder, there are three blue prints for users to learn about using 
 Spark XGBoost and RAPIDS Accelerator on GPUs :
 

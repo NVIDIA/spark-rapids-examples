@@ -12,8 +12,8 @@ The microbenchmark notebook in this repo uses four such queries in the chart sho
 - **Intersect**: an operator used to remove duplicates in a dataframes.
 - **Cross-join**: A common use for a cross join is to obtain all combinations of items.
 
-These queries were run on a standard CPU server machine with xx CPU (xx cores),
-XXXGB memory and  2xA100 GPUs. The dataset used was of size 3TB with multiple different data types.
+These queries were run on a standard eight-nodes CPU cluster with 2 CPU (128 cores),
+512GB memory and 1xA100 GPUs per node. The dataset used was of size 3TB with multiple different data types.
 The queries are based on several tables in NDS parquet format with Decimal. 
 These four queries show not only performance and cost benefits but also the range of
 speed-up (27x to 1.5x) varies depending on compute intensity. 
