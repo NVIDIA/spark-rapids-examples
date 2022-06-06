@@ -1,4 +1,4 @@
-# telco-churn-augmentation
+# Customer Churn
 
 This demo is derived from [data-science-blueprints](https://github.com/NVIDIA/data-science-blueprints) repository.
 The repository shows a realistic ETL workflow based on synthetic normalized data.  It consists of two pieces:
@@ -7,11 +7,4 @@ The repository shows a realistic ETL workflow based on synthetic normalized data
     optionally augmenting it by duplicating records, and
 2. _an ETL notebook_, which performs joins and aggregations in order to generate wide-form data from the synthetic long-form data.
 
-From a performance evaluation perspective, the latter is the interesting workload; the former is just a data generator for the latter.
-
-## Running as notebooks
-
-The notebooks ([`augment.ipynb`](./notebooks/python/augment.ipynb) and [`etl.ipynb`](./notebooks/python/etl.ipynb)) are the best
-resource to understand the code and can be run interactively or with Papermill.  
-The published Papermill parameters are near the top of each notebook.
-
+To learn more about the customer churn use case, you can read our [ebook](https://www.nvidia.com/en-us/ai-data-science/resources/churn-prediction-blueprint/). 

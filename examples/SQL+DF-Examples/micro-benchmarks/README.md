@@ -1,18 +1,26 @@
-# Microbenchmark 
+# Microbenchmark
 
-## Introduction
-The microbenchmark on [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) is to identify, 
-test and analyze the best queries which can be accelerated on the GPU. 
-The queries are based on several tables in Parquet format derived from the [TPC-DS](http://www.tpc.org/tpcds/) benchmark,
-so that similar speedups can be reproducible by others.
-The microbenchmark includes commonly used Spark SQL operations such as expand, hash aggregate, windowing, and cross joins,
-and runs the same queries in CPU mode and GPU mode. Some queries will involve data skew.
-Each of them is highly [tuned](https://nvidia.github.io/spark-rapids/docs/tuning-guide.html) and works with the optimal configuration
-on an 8 nodes Spark standalone cluster which with 128 CPU cores and 1 A100 GPU on each node. 
+Standard industry benchmarks are a great way to measure performance over 
+a period of time but another barometer to measure performance is to measure
+performance of common operators that are used in the data preprocessing stage or in data analytics.
+The microbenchmark notebook in this repo uses four such queries in the chart shown below:
 
-## Dataset
-You can generate the parquet format dataset using this [Databricks Tool](https://github.com/databricks/spark-sql-perf).
-All the queries are running on the SF3000(Scale Factors 3TB) dataset. You can generate it with the following command:
+- **Count Distinct**: a function used to estimate the number of unique page views or 
+  unique customers visiting an e-commerce site.
+- **Window**: a critical operator necessary for preprocessing components in analyzing
+  timestamped event data in marketing or financial industry.
+- **Intersect**: an operator used to remove duplicates in a dataframes.
+- **Cross-join**: A common use for a cross join is to obtain all combinations of items.
+
+These queries were run on a standard CPU server machine with xx CPU (xx cores),
+XXXGB memory and  2xA100 GPUs. The dataset used was of size 3TB with multiple different data types.
+The queries are based on several tables in NDS parquet format with Decimal. 
+These four queries show not only performance and cost benefits but also the range of
+speed-up (27x to 1.5x) varies depending on compute intensity. 
+These queries vary in compute and network utilization similar to a practical use case in
+data preprocessing.To test these queries, you can generate the parquet format dataset using
+this NDS dataset generator tool. All the queries are running on the SF3000(Scale Factors 3TB) dataset.
+You can generate it with the following command:
 ```
 # Assuming your platform is Linux
 # Install sbt
@@ -36,10 +44,4 @@ make OS=LINUX
 sbt "test:runMain com.databricks.spark.sql.perf.tpcds.GenTPCDSData -d /databricks-tpcds-kit-path -s 3000G -l /your-dataset-path -f parquet"
 ```
 
-## Note
-You will see the [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) can give speedups of up to 10x over the CPU, and in some cases up to 80x.
-It is easy to compare the [microbenchmarks on CPU](/examples/SQL+DF-Examples/micro-benchmarks/notebooks/micro-benchmarks-cpu.ipynb) and [GPU](/examples/SQL+DF-Examples/micro-benchmarks/notebooks/micro-benchmarks-gpu.ipynb) side by side.
-You can see some queries are faster in the second time, it can be caused by many reasons such as JVM JIT or initialization overhead or caching input data in the OS page cache, etc.
-You can get a clear and visual impression of the improved performance with or without the benefits of post-running.
-The improved performance is influenced by many conditions, including the dataset's scale factors or the GPU card.
-If the application ran for too long or even failed, you can run the queries on a smaller dataset.
+![microbenchmark-speedup](../../../docs/img/guides/microbm.png)
