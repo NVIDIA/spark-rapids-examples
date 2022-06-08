@@ -13,7 +13,7 @@ For simplicity export the location to these jars. All examples assume the packag
 
 ### Build XGBoost Python Examples
 
-Following this [guide](../../../../docs/get-started/xgboost-examples/building-sample-apps/python.md), you can get *samples.zip* and *main.py* and copy them to `/opt/xgboost`
+Following this [guide](/docs/get-started/xgboost-examples/building-sample-apps/python.md), you can get *samples.zip* and *main.py* and copy them to `/opt/xgboost`
 
 ### Download dataset
 

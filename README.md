@@ -26,9 +26,8 @@ Here is the list of notebooks in this repo:
 | 7 | ML/DL | PCA End-to-End | Spark MLlib based PCA example to train and transform with a synthetic dataset
 | 8 | UDF | cuSpatial - Point in Polygon | Spark cuSpatial example for Point in Polygon function using NYC Taxi pickup location dataset
 
-Here is the list of Apache Spark applications (Scala and PySpark) that can be built for running on GPU with RAPIDS Accelerator in this repo:
-
-Here is the list of notebooks in this repo:
+Here is the list of Apache Spark applications (Scala and PySpark) that 
+can be built for running on GPU with RAPIDS Accelerator in this repo:
 
 |   | Category  | Notebook Name | Description
 | ------------- | ------------- | ------------- | -------------
@@ -39,5 +38,5 @@ Here is the list of notebooks in this repo:
 | 5 | UDF | cuSpatial - Point in Polygon | Spark cuSpatial example for Point in Polygon function using NYC Taxi pickup location dataset
 | 6 | UDF | URL Decode | Decodes URL-encoded strings using the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable/)
 | 7 | UDF | URL Encode | URL-encodes strings using the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable/)
-| 8 | UDF | [CosineSimilarity](https://github.com/NVIDIA/spark-rapids-examples/blob/branch-22.06/examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java) | Computes the cosine similarity between two float vectors using [native code](https://github.com/NVIDIA/spark-rapids-examples/tree/branch-22.06/examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/cpp/src)
-| 9 | UDF | [StringWordCount](https://github.com/NVIDIA/spark-rapids-examples/blob/branch-22.06/examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/java/com/nvidia/spark/rapids/udf/hive/StringWordCount.java)  | Implements a Hive simple UDF using [native code](https://github.com/NVIDIA/spark-rapids-examples/tree/branch-22.06/examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/cpp/src) to count words in strings
+| 8 | UDF | [CosineSimilarity](./examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java) | Computes the cosine similarity between two float vectors using [native code](./examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/cpp/src)
+| 9 | UDF | [StringWordCount](./examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/java/com/nvidia/spark/rapids/udf/hive/StringWordCount.java)  | Implements a Hive simple UDF using [native code](./examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/cpp/src) to count words in strings
