@@ -38,14 +38,20 @@ Stand Alone or Kubernetes.
 
 1. Mortgage Notebooks
    - Python
-     - [Mortgage ETL](mortgage/notebooks/python/MortgageETL.ipynb)   
+     - [Mortgage ETL](mortgage/notebooks/python/MortgageETL.ipynb)
+     - [Mortgage Training Prediction](mortgage/notebooks/python/mortgage-gpu.ipynb)
+     - [Mortgage ETL + XGBoost Training](mortgage/notebooks/python/MortgageETL+XGBoost.ipynb)
    - Scala
      - [Mortgage ETL](mortgage/notebooks/scala/mortgage-ETL.ipynb)
      - [Mortgage Training Prediction](mortgage/notebooks/scala/mortgage-gpu.ipynb)
 2. Agaricus Notebooks    
+   - Python
+     - [Agaricus Training Classification](agaricus/notebooks/python/agaricus-gpu.ipynb)
    - Scala
      - [Agaricus Training Classification](agaricus/notebooks/scala/agaricus-gpu.ipynb)
 3. Taxi Notebook    
+   - Python
+     - [Taxi Training Classification](taxi/notebooks/python/taxi-gpu.ipynb)
    - Scala    
      - [Taxi Training Classification](taxi/notebooks/scala/taxi-gpu.ipynb)
     
