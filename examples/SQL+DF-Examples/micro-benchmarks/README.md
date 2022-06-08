@@ -9,7 +9,7 @@ The microbenchmark notebook in this repo uses four such queries in the chart sho
   unique customers visiting an e-commerce site.
 - **Window**: a critical operator necessary for preprocessing components in analyzing
   timestamped event data in marketing or financial industry.
-- **Intersect**: an operator used to remove duplicates in a dataframes.
+- **Intersect**: an operator used to remove duplicates in a dataframe.
 - **Cross-join**: A common use for a cross join is to obtain all combinations of items.
 
 These queries were run on a standard eight-nodes CPU cluster with 2 CPU (128 cores),
@@ -19,7 +19,7 @@ These four queries show not only performance and cost benefits but also the rang
 speed-up (27x to 1.5x) varies depending on compute intensity. 
 These queries vary in compute and network utilization similar to a practical use case in
 data preprocessing.To test these queries, you can generate the parquet format dataset using
-this NDS dataset generator tool. All the queries are running on the SF3000(Scale Factors 3TB) dataset.
+this NDS dataset generator tool. All the queries are running on the SF3000(Scale Factor 3000) dataset.
 You can generate it with the following command:
 ```
 # Assuming your platform is Linux
@@ -44,4 +44,4 @@ make OS=LINUX
 sbt "test:runMain com.databricks.spark.sql.perf.tpcds.GenTPCDSData -d /databricks-tpcds-kit-path -s 3000G -l /your-dataset-path -f parquet"
 ```
 
-![microbenchmark-speedup](../../../docs/img/guides/microbm.png)
+![microbenchmark-speedup](/docs/img/guides/microbm.png)

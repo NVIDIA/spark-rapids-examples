@@ -120,8 +120,6 @@ $SPARK_HOME/bin/pyspark --master local[*] \
 --conf spark.executor.cores=6 \
 --driver-memory 5G  \
 --executor-memory 5G  \
---conf spark.executor.extraClassPath=${SPARK_RAPIDS_PLUGIN_JAR}:${SPARK_RAPIDS_UDF_EXAMPLES_JAR} \
---conf spark.driver.extraClassPath=${SPARK_RAPIDS_PLUGIN_JAR}:${SPARK_RAPIDS_UDF_EXAMPLES_JAR} \
 --jars ${SPARK_RAPIDS_PLUGIN_JAR},${SPARK_RAPIDS_UDF_EXAMPLES_JAR} \
 --conf spark.plugins=com.nvidia.spark.SQLPlugin \
 --conf spark.rapids.sql.enabled=true

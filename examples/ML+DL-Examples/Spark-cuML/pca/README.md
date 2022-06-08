@@ -60,8 +60,6 @@ It is assumed that a Standalone Spark cluster has been set up, the `SPARK_MASTER
       --conf spark.driver.memory=10G \
       --conf spark.executor.memory=10G \
       --conf spark.executor.heartbeatInterval=20s \
-      --conf spark.driver.extraClassPath=${RAPIDS_ML_JAR}:${PLUGIN_JAR} \
-      --conf spark.executor.extraClassPath=${RAPIDS_ML_JAR}:${PLUGIN_JAR} \
       --conf spark.rapids.sql.enabled=true \
       --conf spark.plugins=com.nvidia.spark.SQLPlugin \
       --conf spark.rapids.memory.gpu.allocFraction=0.35 \

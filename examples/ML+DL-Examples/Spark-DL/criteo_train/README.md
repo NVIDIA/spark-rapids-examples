@@ -98,4 +98,4 @@ To use it:
 2. push the image to a DB supported Docker hub.
 3. set the image url in DB cluster setup page.
 
-![microbenchmark-speedup](../../../../docs/img/guides/criteo-perf.png)
+![microbenchmark-speedup](/docs/img/guides/criteo-perf.png)

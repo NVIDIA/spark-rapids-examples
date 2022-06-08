@@ -10,7 +10,7 @@ As you can see below, XGBoost training on GPUs can be upto 7X and data processin
 RAPIDS Accelerator can also be accelerated with an end-to-end speed-up of 7X on GPU compared to CPU.
 In the public cloud, better performance can lead to significantly lower costs as demonstrated in this [blog](https://developer.nvidia.com/blog/gpu-accelerated-spark-xgboost/).
 
-![mortgage-speedup](../../docs/img/guides/mortgage-perf.png)
+![mortgage-speedup](/docs/img/guides/mortgage-perf.png)
 
 In this folder, there are three blue prints for users to learn about using 
 Spark XGBoost and RAPIDS Accelerator on GPUs :
@@ -19,7 +19,7 @@ Spark XGBoost and RAPIDS Accelerator on GPUs :
 2. Agaricus Classification
 3. Taxi Fare Prediction
 
-For each of these examples we have prepared a [sample dataset](https://github.com/NVIDIA/spark-rapids-examples/tree/branch-22.06/datasets) 
+For each of these examples we have prepared a [sample dataset](/datasets) 
 in this folder for testing. These datasets are only provided for convenience. In order to test for performance,
 please download the larger dataset from their respectives sources.
 
@@ -32,7 +32,7 @@ and run this as a Scala or a PySpark Spark-XGBoost application.
 
 In the last section, we provide basic “Getting Started Guides” for setting up GPU
 Spark-XGBoost on different environments based on the Apache Spark scheduler such as YARN,
-Stand Alone or Kubernetes.
+Standalone or Kubernetes.
 
 ## SECTION 1: SPARK-XGBOOST EXAMPLE NOTEBOOKS
 
@@ -59,8 +59,8 @@ Stand Alone or Kubernetes.
 The first step to build a Spark application is preparing packages and datasets
 needed to build the jars. Please use the instructions below for building the
 
-- [Scala](../../docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
-- [Python](../../docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
+- [Scala](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
+- [Python](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
 
 In addition, we have the source code for building reference applications. 
 Below are source codes for the example Spark jobs:
@@ -72,19 +72,19 @@ Below are source codes for the example Spark jobs:
 ## SECTION 3: SETTING UP THE ENVIRONMENT
 Please follow below steps to run the example Spark jobs in different Spark environments:
 - Getting started on on-premises clusters
-    - [Standalone cluster for Scala](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md)
-    - [Standalone cluster for Python](../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md)
-    - [YARN for Scala](../../docs/get-started/xgboost-examples/on-prem-cluster/yarn-scala.md)
-    - [YARN for Python](../../docs/get-started/xgboost-examples/on-prem-cluster/yarn-python.md)
-    - [Kubernetes](../../docs/get-started/xgboost-examples/on-prem-cluster/kubernetes-scala.md)
+    - [Standalone cluster for Scala](/docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md)
+    - [Standalone cluster for Python](/docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md)
+    - [YARN for Scala](/docs/get-started/xgboost-examples/on-prem-cluster/yarn-scala.md)
+    - [YARN for Python](/docs/get-started/xgboost-examples/on-prem-cluster/yarn-python.md)
+    - [Kubernetes](/docs/get-started/xgboost-examples/on-prem-cluster/kubernetes-scala.md)
 - Getting started on cloud service providers    
   - Amazon AWS
-    - [EC2](../../docs/get-started/xgboost-examples/csp/aws/ec2.md)
-  - [Databricks](../../docs/get-started/xgboost-examples/csp/databricks/databricks.md)
+    - [EC2](/docs/get-started/xgboost-examples/csp/aws/ec2.md)
+  - [Databricks](/docs/get-started/xgboost-examples/csp/databricks/databricks.md)
 
 Please follow below steps to run the example notebooks in different notebook environments:
 
 - Getting started for Jupyter Notebook applications
-    - [Apache Toree Notebook for Scala](../../docs/get-started/xgboost-examples/notebook/toree.md)
-    - [Jupyter Notebook with spylon kernel](../../docs/get-started/xgboost-examples/notebook/spylon.md)
-    - [Jupyter Notebook for Python](../../docs/get-started/xgboost-examples/notebook/python-notebook.md)
+    - [Apache Toree Notebook for Scala](/docs/get-started/xgboost-examples/notebook/toree.md)
+    - [Jupyter Notebook with spylon kernel](/docs/get-started/xgboost-examples/notebook/spylon.md)
+    - [Jupyter Notebook for Python](/docs/get-started/xgboost-examples/notebook/python-notebook.md)
