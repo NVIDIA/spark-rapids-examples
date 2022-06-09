@@ -62,7 +62,8 @@ jupyter toree install                                \
 jupyter notebook
 ``` 
 after you type the above command, a web page will be open, click the `PCBS-benchmark.ipynb` file and
-changed the kernel to `pcbs-scala`, then run the notebook
+changed the kernel to `pcbs-scala`, then run the notebook.
 
-the performance can be different as the cache data size changes, below are some results for reference:
+You can find the output and get the time cost information in the last output cell.
+The performance can be different as the cache data size changes, below are some results for reference:
 ![run-pcbs-benchmark](/docs/img/guides/pcbs-perf.png)
