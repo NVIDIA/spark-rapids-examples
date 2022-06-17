@@ -100,7 +100,7 @@ ${SPARK_HOME}/bin/spark-submit \
    --conf spark.task.resource.gpu.amount=1 \
    --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
    --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh \
-   --jars ${CUDF_JAR},${RAPIDS_JAR}                                           \
+   --jars ${RAPIDS_JAR}                                           \
    --master <k8s://ip:port or k8s://URL>                                                                  \
    --deploy-mode ${SPARK_DEPLOY_MODE}                                             \
    --num-executors ${SPARK_NUM_EXECUTORS}                                         \
@@ -181,7 +181,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
   --conf spark.task.resource.gpu.amount=1 \
   --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
   --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh \
-  --jars ${CUDF_JAR},${RAPIDS_JAR}                           \
+  --jars ${RAPIDS_JAR}                           \
   --master ${SPARK_MASTER}                                                              \
   --deploy-mode ${SPARK_DEPLOY_MODE}                                                    \
   --class ${EXAMPLE_CLASS}                                                              \

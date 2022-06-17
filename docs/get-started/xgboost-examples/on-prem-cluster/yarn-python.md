@@ -56,7 +56,7 @@ export DATA_PATH=hdfs:/tmp/xgboost4j_spark_python/
 ${SPARK_HOME}/bin/spark-submit \
     --master yarn 
     --deploy-mode cluster
-    --jars ${RAPIDS_JAR},${CUDF_JAR} \
+    --jars ${RAPIDS_JAR}\
     ${MAIN_PY} \
     --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \
     --format=csv \
@@ -121,7 +121,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --num-executors ${SPARK_NUM_EXECUTORS}                                         \
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
- --jars ${CUDF_JAR},${RAPIDS_JAR},${XGBOOST4J_JAR}        \
+ --jars ${RAPIDS_JAR},${XGBOOST4J_JAR}        \
  --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}                   \
  ${MAIN_PY}                                                     \
  --mainClass=${EXAMPLE_CLASS}                                                   \

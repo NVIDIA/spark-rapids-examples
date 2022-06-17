@@ -39,10 +39,9 @@ else
 
     echo "Detected Spark version $VERSION_STRING (shim version: $SPARK_SHIM_VER)"
 
-    CUDF_JARS=$(echo "$SCRIPTPATH"/target/dependency/cudf*.jar)
     PLUGIN_JARS=$(echo "$SCRIPTPATH"/target/dependency/rapids-4-spark*.jar)
     UDF_EXAMPLE_JARS=$(echo "$SCRIPTPATH"/target/rapids-4-spark-udf-examples*.jar)
-    ALL_JARS="$CUDF_JARS $PLUGIN_JARS $UDF_EXAMPLE_JARS"
+    ALL_JARS="$PLUGIN_JARS $UDF_EXAMPLE_JARS"
     echo "AND PLUGIN JARS: $ALL_JARS"
 
     RUN_TESTS_COMMAND=("$SCRIPTPATH"/runtests.py

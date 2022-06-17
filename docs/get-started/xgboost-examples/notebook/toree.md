@@ -25,7 +25,7 @@ and the home directory for Apache Spark respectively.
     ```
 3. Prepare packages and dataset.
 
-    Make sure you have prepared the necessary packages and dataset by following this [guide](../../../../docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
+    Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
 
 4. Install a new kernel with gpu enabled and launch the notebook
 
@@ -36,9 +36,9 @@ and the home directory for Apache Spark respectively.
     --toree_opts='--nosparkcontext'                         \
     --kernel_name="XGBoost4j-Spark"                         \
     --spark_opts='--master ${SPARK_MASTER} \
-      --jars ${CUDF_JAR},${RAPIDS_JAR},${SAMPLE_JAR}       \
+      --jars ${RAPIDS_JAR},${SAMPLE_JAR}       \
       --conf spark.plugins=com.nvidia.spark.SQLPlugin  \
-      --conf spark.executor.extraClassPath=${CUDF_JAR}:${RAPIDS_JAR} \
+      --conf spark.executor.extraClassPath=${RAPIDS_JAR} \
       --conf spark.rapids.memory.gpu.pooling.enabled=false \
       --conf spark.executor.resource.gpu.amount=1 \
       --conf spark.task.resource.gpu.amount=1 \

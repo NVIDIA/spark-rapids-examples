@@ -5,7 +5,7 @@ This is a getting started guide to XGBoost4J-Spark using a [Spylon Kernel](https
 At the end of this guide, the reader will be able to run a sample notebook that runs on NVIDIA GPUs.
 
 Before you begin, please ensure that you have setup 
-a [Spark Standalone Cluster](../../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md).
+a [Spark Standalone Cluster](/docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md).
 
 It is assumed that the `SPARK_MASTER` and `SPARK_HOME` environment variables are defined and point to the Spark Master URL, 
 and the home directory for Apache Spark respectively.
@@ -38,7 +38,7 @@ You can debug from webUI http://your_ip:your_port with your password.
     ```
 3. Prepare packages and dataset.
 
-    Make sure you have prepared the necessary packages and dataset by following this [guide](../../../../docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
+    Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
 
 4. Run scala notebook (e.g. [mortgage-gpu.ipynb](../../../../examples/XGBoost-Examples/mortgage/notebooks/scala/mortgage-gpu.ipynb))
 

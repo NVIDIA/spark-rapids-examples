@@ -16,7 +16,7 @@ and the home directory for Apache Spark respectively.
 
 2. Prepare packages and dataset.
 
-    Make sure you have prepared the necessary packages and dataset by following this [guide](../../../../docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
+    Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
 
 3. Launch the notebook:
 
@@ -25,8 +25,7 @@ and the home directory for Apache Spark respectively.
     PYSPARK_DRIVER_PYTHON_OPTS=notebook \
     pyspark                             \
     --master ${SPARK_MASTER}            \
-    --conf spark.executor.extraClassPath=${CUDF_JAR}:${RAPIDS_JAR} \
-    --jars ${CUDF_JAR},${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}\
+    --jars ${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}\
     --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}      \
     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
     --conf spark.rapids.memory.gpu.pooling.enabled=false \
