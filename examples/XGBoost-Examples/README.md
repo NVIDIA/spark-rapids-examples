@@ -88,3 +88,11 @@ Please follow below steps to run the example notebooks in different notebook env
     - [Apache Toree Notebook for Scala](/docs/get-started/xgboost-examples/notebook/toree.md)
     - [Jupyter Notebook with spylon kernel](/docs/get-started/xgboost-examples/notebook/spylon.md)
     - [Jupyter Notebook for Python](/docs/get-started/xgboost-examples/notebook/python-notebook.md)
+    
+Note: 
+For the CrossValidator job, we need to set `spark.task.resource.gpu.amount=1` to allow only 1 training task running on 1 GPU(executor),
+otherwise the customized CrossValidator may schedule more than 1 xgboost training tasks into one executor simultaneously and trigger 
+[issue-131](https://github.com/NVIDIA/spark-rapids-examples/issues/131).
+For XGBoost job, if the number of shuffle stage tasks before training is less than the num_worker, 
+the training tasks will be scheduled to run on part of nodes instead of all nodes due to Spark Data Locality feature.
+The workaround is to increase the partitions of the shuffle stage by setting `spark.sql.files.maxPartitionBytes=RightNum`.
