@@ -57,7 +57,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
 
 
 ## Run
-### Run on Standalone
+### Run in Local
 1. Install necessary libraries. Besides `cudf` and `cuspatial`, the `gdal` library that is compatible with the installed `cuspatial` may also be needed.
     Install it by running the command below.
     ```
