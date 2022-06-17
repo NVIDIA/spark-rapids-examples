@@ -64,6 +64,7 @@ object XGBoostArgs {
     "overwrite" -> XGBoostArg(parse = stringToBool, message = booleanMessage),
     "hasHeader" -> XGBoostArg(parse = stringToBool, message = booleanMessage),
     "saveDict"  -> XGBoostArg(parse = stringToBool, message = booleanMessage),
+    "rabitTrackerHost"  -> XGBoostArg(),
   )
 
   private def help: Unit = {
@@ -95,6 +96,11 @@ object XGBoostArgs {
       "        Whether to include the features columns when showing results of transformation. Default is true.\n")
     println("    -saveDict=value: Boolean\n" +
       "        Whether to save the dictionary table for Mortgage ETL. It is saved under '<out>/.dict'. Default is true.\n")
+    println("    -rabitTrackerHost=value: String\n" +
+      "        Specify rabit tracker host IP address. In some environments XGBoost might fail to resolve
+               the IP address of the rabit tracker, a symptom is user receiving ``OSError: [Errno 99]
+               Cannot assign requested address`` error during training.  A quick workaround is to
+               specify the address explicitly.\n")
     println("For XGBoost arguments:")
     println("    Now we pass all XGBoost parameters transparently to XGBoost, no longer to verify them.")
     println("    Both of the formats are supported, such as 'numWorkers'. You can pass as either one below:")
