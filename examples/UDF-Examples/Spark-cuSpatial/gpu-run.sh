@@ -43,6 +43,8 @@ $SPARK_HOME/bin/spark-submit --master spark://$HOSTNAME:7077 \
 --conf spark.rapids.sql.explain=all \
 --conf spark.executor.resource.gpu.amount=1 \
 --conf spark.cuspatial.sql.udf.shapeFileName="$SHAPE_FILE_NAME.shp" \
+--conf spark.driver.extraLibraryPath=YOUR_LD_LIBRARY_PATH \
+--conf spark.executor.extraLibraryPath=YOUR_LD_LIBRARY_PATH \
 --jars $JARS_PATH \
 --files $SHAPE_FILE_DIR/$SHAPE_FILE_NAME.shp,$SHAPE_FILE_DIR/$SHAPE_FILE_NAME.shx \
 spatial_join.py $DATA_IN_PATH $DATA_OUT_PATH
