@@ -40,13 +40,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>ai.rapids</groupId>
-      <artifactId>cudf</artifactId>
-      <version>${rapids.version}</version>
-      <classifier>cuda11</classifier>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
         <groupId>com.nvidia</groupId>
         <artifactId>rapids-4-spark_${scala.binary.version}</artifactId>
         <version>${rapids.version}</version>

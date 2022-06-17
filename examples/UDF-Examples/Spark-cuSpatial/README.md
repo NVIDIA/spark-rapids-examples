@@ -1,10 +1,14 @@
 # Spark-cuSpatial
 
 This is a Spark RapidsUDF application to illustrate how to use [cuSpatial](https://github.com/rapidsai/cuspatial) to solve a point-in-polygon problem.
-It implements a [RapidsUDF](https://nvidia.github.io/spark-rapids/docs/additional-functionality/rapids-udfs.html#adding-gpu-implementations-to-udfs) interface to call the cuSpatial functions through JNI. And it can be ran on a distributed Spark cluster with scalability.
+It implements a [RapidsUDF](https://nvidia.github.io/spark-rapids/docs/additional-functionality/rapids-udfs.html#adding-gpu-implementations-to-udfs) 
+interface to call the cuSpatial functions through JNI. It can be run on a distributed Spark cluster with scalability.
 
 ## Performance
-We got the end-2-end time as below table when running with 2009 NYC Taxi trip pickup location, which includes 168,898,952 points, and 3 sets of polygons(taxi_zone, nyct2000, nycd). The data can be downloaded from [TLC Trip Record Data](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page) and [NYC Open data](https://www1.nyc.gov/site/planning/data-maps/open-data.page#district_political).
+We got the end-2-end time as below table when running with 2009 NYC Taxi trip pickup location,
+which includes 168,898,952 points, and 3 sets of polygons(taxi_zone, nyct2000, nycd).
+The data can be downloaded from [TLC Trip Record Data](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page) 
+and [NYC Open data](https://www1.nyc.gov/site/planning/data-maps/open-data.page#district_political).
 | Environment | Taxi_zones (263 Polygons) | Nyct2000 (2216 Polygons) | Nycd (71 Complex Polygons)|
 | ----------- | :---------: | :---------: | :---------: |
 | 4-core CPU | 1122.9 seconds | 5525.4 seconds| 6642.7 seconds |
@@ -24,7 +28,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
 2. Get the code, then run "mvn package".
      ```Bash
      git clone https://github.com/NVIDIA/spark-rapids-examples.git
-     cd spark-rapids-examples/examples/Spark-cuSpatial/
+     cd spark-rapids-examples/examples/UDF-Examples/Spark-cuSpatial/
      mvn package
      ```
 3. You'll get the jar named like "spark-cuspatial-<version>.jar" in the target folder.
@@ -64,7 +68,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
 3. Download spark-rapids jars
    * [spark-rapids v22.06.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.06.0/rapids-4-spark_2.12-22.06.0.jar) or above
 4. Prepare the dataset & jars. Copy the sample dataset from [cuspatial_data](../../../datasets/cuspatial_data.tar.gz) to "/data/cuspatial_data".
-    Copy cuDF, spark-rapids & spark-cuspatial-22.06.0-SNAPSHOT.jar to "/data/cuspatial_data/jars".
+    Copy spark-rapids & spark-cuspatial-22.06.0-SNAPSHOT.jar to "/data/cuspatial_data/jars".
     You can use your own path, but remember to update the paths in "gpu-run.sh" accordingly.
 5. Run "gpu-run.sh"
     ```Bash
@@ -81,7 +85,10 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
 2. Follow the [Spark-rapids get-started document](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-databricks.html#start-a-databricks-cluster) to create a GPU cluster on AWS Databricks.
  Something different from the document.
     * Databricks Runtime Version
-  You should choose a Standard version of the Runtime version like "Runtime: 9.1 LTS(Scala 2.12, Spark 3.1.2)" and choose GPU instance type like "g4dn.xlarge". Because when I choose a ML version, it says "Support for Databricks container services requires runtime version 5.3+" and I can't click "Confirm" button.
+  You should choose a Standard version of the Runtime version like "Runtime: 9.1 LTS(Scala 2.12, Spark 3.1.2)" and
+  choose GPU instance type like "g4dn.xlarge". Note that ML runtime does not support customized docker container.
+  If you choose a ML version, it says "Support for Databricks container services requires runtime version 5.3+" 
+  and the "Confirm" button is disabled.
     * Use your own Docker container
   Input "Docker Image URL" as "your-dockerhub-repo:your-tag"
     * For the other configurations, you can follow the get-started document.
