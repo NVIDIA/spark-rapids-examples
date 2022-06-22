@@ -16,7 +16,7 @@ and the home directory for Apache Spark respectively.
 
 2. Prepare packages and dataset.
 
-    Make sure you have prepared the necessary packages and dataset by following this [guide](../../../../docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
+    Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
 
 3. Launch the notebook:
 
@@ -25,8 +25,7 @@ and the home directory for Apache Spark respectively.
     PYSPARK_DRIVER_PYTHON_OPTS=notebook \
     pyspark                             \
     --master ${SPARK_MASTER}            \
-    --conf spark.executor.extraClassPath=${CUDF_JAR}:${RAPIDS_JAR} \
-    --jars ${CUDF_JAR},${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}\
+    --jars ${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}\
     --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}      \
     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
     --conf spark.rapids.memory.gpu.pooling.enabled=false \
@@ -41,7 +40,6 @@ and the home directory for Apache Spark respectively.
 - Taxi ETL Notebook: [Python](../../../../examples/XGBoost-Examples/taxi/notebooks/python/taxi-ETL.ipynb)
 - Note: Agaricus does not have ETL part.
    
-5. Launch XGBoost Part
-- Mortgage XGBoost Notebook: [Python](../../../../examples/XGBoost-Examples/mortgage/notebooks/python/mortgage-gpu.ipynb)
-- Taxi XGBoost Notebook: [Python](../../../../examples/XGBoost-Examples/taxi/notebooks/python/taxi-gpu.ipynb)
-- Agaricus XGBoost Notebook: [Python](../../../../examples/XGBoost-Examples/agaricus/notebooks/python/agaricus-gpu.ipynb)
+For PySpark based XGBoost, please refer to the
+[Spark-RAPIDS-examples 22.04 branch](https://github.com/NVIDIA/spark-rapids-examples/blob/branch-22.04/docs/get-started/xgboost-examples/notebook/python-notebook.md) 
+that uses [NVIDIA’s Spark XGBoost version](https://repo1.maven.org/maven2/com/nvidia/xgboost4j-spark_3.0/). 

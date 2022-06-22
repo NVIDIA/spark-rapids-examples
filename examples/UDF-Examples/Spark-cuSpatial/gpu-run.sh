@@ -28,10 +28,10 @@ DATA_OUT_PATH=$ROOT_PATH/output
 
 rm -rf $DATA_OUT_PATH
 
-# the path to keep the jars of cudf, spark-rapids & spark-cuspatial
+# the path to keep the jars of spark-rapids & spark-cuspatial
 JARS=$ROOT_PATH/jars
 
-JARS_PATH=$JARS/cudf-22.04.0-cuda11.jar,$JARS/rapids-4-spark_2.12-22.04.0.jar,$JARS/spark-cuspatial-22.06.0-SNAPSHOT.jar
+JARS_PATH=$JARS/rapids-4-spark_2.12-22.06.0.jar,$JARS/spark-cuspatial-22.06.0-SNAPSHOT.jar
 
 $SPARK_HOME/bin/spark-submit --master spark://$HOSTNAME:7077 \
 --name "Gpu Spatial Join UDF" \
@@ -43,6 +43,8 @@ $SPARK_HOME/bin/spark-submit --master spark://$HOSTNAME:7077 \
 --conf spark.rapids.sql.explain=all \
 --conf spark.executor.resource.gpu.amount=1 \
 --conf spark.cuspatial.sql.udf.shapeFileName="$SHAPE_FILE_NAME.shp" \
+--conf spark.driver.extraLibraryPath=YOUR_LD_LIBRARY_PATH \
+--conf spark.executor.extraLibraryPath=YOUR_LD_LIBRARY_PATH \
 --jars $JARS_PATH \
 --files $SHAPE_FILE_DIR/$SHAPE_FILE_NAME.shp,$SHAPE_FILE_DIR/$SHAPE_FILE_NAME.shx \
 spatial_join.py $DATA_IN_PATH $DATA_OUT_PATH
