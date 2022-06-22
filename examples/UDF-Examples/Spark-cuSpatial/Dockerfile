@@ -18,6 +18,7 @@
 ARG CUDA_VER=11.2.2
 FROM nvidia/cuda:${CUDA_VER}-devel-ubuntu18.04
 
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.cn/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
 RUN apt-get update
 RUN apt-get install -y wget ninja-build git
 
