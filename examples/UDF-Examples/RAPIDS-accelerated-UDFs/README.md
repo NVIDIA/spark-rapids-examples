@@ -76,7 +76,7 @@ First install docker and [nvidia-docker](https://github.com/NVIDIA/nvidia-docker
 
 Run the following commands to build and start a docker
 ```bash
-cd spark-rapids-examples/examples/RAPIDS-accelerated-UDFs
+cd spark-rapids-examples/examples/UDF-Examples/RAPIDS-accelerated-UDFs
 docker build -t my-local:my-udf-example-ubuntu .
 nvidia-docker run -it my-local:my-udf-example-ubuntu
 ```
@@ -85,7 +85,7 @@ nvidia-docker run -it my-local:my-udf-example-ubuntu
 In the docker, clone the code and compile.
 ```bash
 git clone https://github.com/NVIDIA/spark-rapids-examples.git
-cd spark-rapids-examples/examples/RAPIDS-accelerated-UDFs
+cd spark-rapids-examples/examples/UDF-Examples/RAPIDS-accelerated-UDFs
 mvn clean package -Pudf-native-examples
 ```
 The building will spend some time like 1.5 hours.
