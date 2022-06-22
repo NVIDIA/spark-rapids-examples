@@ -49,7 +49,7 @@ cluster.
       
     - [Databricks 10.4 LTS
     ML](https://docs.databricks.com/release-notes/runtime/9.1ml.html#system-environment) has CUDA 11
-    installed.  Users will need to use 22.04.0 or later on Databricks 10.4 LTS ML. In this case use
+    installed.  Users will need to use 22.06.0 or later on Databricks 10.4 LTS ML. In this case use
     [generate-init-script-10.4.ipynb](generate-init-script-10.4.ipynb) which will install
     the RAPIDS Spark plugin.
       
@@ -108,13 +108,13 @@ Import the GPU Mortgage Example Notebook
 ---------------------------
 
 1. See [Managing Notebooks](https://docs.databricks.com/user-guide/notebooks/notebook-manage.html) on how to import a notebook.
-2. Import the example notebook: [XGBoost4j-Spark mortgage notebook](/examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-gpu.ipynb)
+2. Import the example notebook: [XGBoost4j-Spark mortgage notebook](../../../../../examples/XGBoost-Examples/mortgage/notebooks/scala/mortgage-gpu.ipynb)
 3. Inside the mortgage example notebook, update the data paths from 
 "/data/datasets/mortgage-small/train" to "dbfs:/FileStore/tables/mortgage/csv/train/mortgage_train_merged.csv"
 "/data/datasets/mortgage-small/eval" to "dbfs:/FileStore/tables/mortgage/csv/test/mortgage_eval_merged.csv"
 
 The example notebook comes with the following configuration, you can adjust this according to your setup.
-See supported configuration options here: [xgboost parameters](/examples/Spark-ETL+XGBoost/app-parameters/supported_xgboost_parameters_python.md)
+See supported configuration options here: [xgboost parameters](../../../../../examples/XGBoost-Examples/app-parameters/supported_xgboost_parameters_python.md)
 
 ``` bash
 params = { 

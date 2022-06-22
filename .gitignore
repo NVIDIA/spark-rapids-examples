@@ -21,3 +21,4 @@
 .scala_dependencies
 .settings
 hs_err*.log
+target

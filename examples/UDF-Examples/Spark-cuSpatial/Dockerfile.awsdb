@@ -1,0 +1,64 @@
+#
+# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+FROM nvidia/cuda:11.2.2-devel-ubuntu18.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# See https://github.com/databricks/containers/blob/master/ubuntu/minimal/Dockerfile
+RUN apt-get update && \
+    apt-get install --yes --no-install-recommends \
+      openjdk-8-jdk \
+      openjdk-8-jre \
+      lsb-release \
+      iproute2 \
+      bash \
+      sudo \
+      coreutils \
+      procps \
+      wget && \
+    /var/lib/dpkg/info/ca-certificates-java.postinst configure && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV PATH /databricks/conda/bin:$PATH
+
+RUN wget -q https://repo.continuum.io/miniconda/Miniconda3-py38_4.9.2-Linux-x86_64.sh -O miniconda.sh && \
+    bash miniconda.sh -b -p /databricks/conda && \
+    rm miniconda.sh && \
+    # Source conda.sh for all login and interactive shells.
+    ln -s /databricks/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /etc/profile.d/conda.sh" >> ~/.bashrc && \
+    # Set always_yes for non-interactive shells.
+    conda config --system --set always_yes True && \
+    conda clean --all
+
+RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge  -c defaults libcuspatial=22.06
+RUN conda install -c conda-forge libgdal==3.3.1
+RUN pip install jupyter
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
+ENV PATH $PATH:/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre/bin:/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin
+
+RUN apt-get update && apt-get install wget openssh-client openssh-server \
+    -y --allow-downgrades --allow-change-held-packages --no-install-recommends
+RUN useradd --create-home --shell /bin/bash --groups sudo ubuntu
+
+ENV PYSPARK_PYTHON=/databricks/conda/bin/python
+ENV USER root
+ENV DEFAULT_DATABRICKS_ROOT_CONDA_ENV=base
+ENV DATABRICKS_ROOT_CONDA_ENV=base
+ENV LD_LIBRARY_PATH=/databricks/conda/lib:$LD_LIBRARY_PATH
+# required by DB
+RUN pip install virtualenv

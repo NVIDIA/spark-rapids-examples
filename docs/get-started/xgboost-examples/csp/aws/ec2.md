@@ -132,10 +132,9 @@ $SPARK_HOME/sbin/start-slave.sh <master-spark-URL>
 
 Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
 
-Copy cudf and rapids jars to `$SPARK_HOME/jars`
+Copy rapids jars to `$SPARK_HOME/jars`
 
 ``` bash
-cp $CUDF_JAR $SPARK_HOME/jars/
 cp $RAPIDS_JAR $SPARK_HOME/jars/
 ```
 

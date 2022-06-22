@@ -1,79 +1,42 @@
 # spark-rapids-examples
 
-A repo for Spark related utilities and examples using the Rapids Accelerator,including ETL, ML/DL, etc.
+This is the [RAPIDS Accelerator for Apache Spark](https://nvidia.github.io/spark-rapids/) examples repo.
+RAPIDS Accelerator for Apache Spark accelerates Spark applications with no code changes.
+You can download the latest version of RAPIDS Accelerator [here](https://nvidia.github.io/spark-rapids/docs/download.html).
+This repo contains examples and applications that showcases the performance and benefits of using 
+RAPIDS Accelerator in data processing and machine learning pipelines. 
+There are broadly four categories of examples in this repo: 
+1. [SQL/Dataframe](./examples/SQL+DF-Examples) 
+2. [Spark XGBoost](./examples/XGBoost-Examples) 
+3. [Deep Learning/Machine Learning](./examples/ML+DL-Examples) 
+4. [RAPIDS UDF](./examples/UDF-Examples)
 
-Enterprise AI is built on ETL pipelines and relies on AI infrastructure to effectively integrate and
-process large amounts of data. One of the fundamental purposes of
-[RAPIDS Accelerator](https://nvidia.github.io/spark-rapids/Getting-Started/)
-is to effectively integrate large ETL and ML/DL pipelines. Rapids Accelerator for [Apache Spark](https://spark.apache.org/)
-offers seamless integration with Machine learning frameworks such XGBoost, PCA. Users can leverage the Apache Spark cluster
-with NVIDIA GPUs to accelerate the ETL pipelines and then use the same infrastructure to load the data frame
-into single or multiple GPUs across multiple nodes to train with GPU accelerated XGBoost or a PCA.
-In addition, if you are using a Deep learning framework to train your tabular data with the same Apache Spark cluster,
-we have leveraged NVIDIA’s NVTabular library to load and train the data across multiple nodes with GPUs.
-NVTabular is a feature engineering and preprocessing library for tabular data designed to quickly and
-easily manipulate terabyte scale datasets used to train deep learning based recommender systems.
-We also add MIG support to YARN to allow CSPs to split an A100/A30 into multiple MIG
-devices and have them appear like a normal GPU.
+For more information on each of the examples please look into respective categories.
 
-Please see the [Rapids Accelerator for Spark documentation](https://nvidia.github.io/spark-rapids/Getting-Started/) for supported
-Spark versions and requirements. It is recommended to set up Spark Cluster with JDK8.
+Here is the list of notebooks in this repo:
 
-## Getting Started Guides
+|   | Category  | Notebook Name | Description
+| ------------- | ------------- | ------------- | -------------
+| 1 | SQL/DF | Microbenchmark | Spark SQL operations such as expand, hash aggregate, windowing, and cross joins with up to 20x performance benefits
+| 2 | SQL/DF | Customer Churn | Data federation for modeling customer Churn with a sample telco customer data
+| 3 | XGBoost | Agaricus (Scala) | Uses XGBoost classifier function to create model that can accurately differentiate between edible and poisonous mushrooms with the [agaricus dataset](https://archive.ics.uci.edu/ml/datasets/mushroom)
+| 4 | XGBoost | Mortgage (Scala) | End-to-end ETL + XGBoost example to predict mortgage default with [Fannie Mae Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
+| 5 | XGBoost | Taxi (Scala) | End-to-end ETL + XGBoost example to predict taxi trip fare amount with [NYC taxi trips data set](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
+| 6 | ML/DL | Criteo Training | ETL and deep learning training of the Criteo 1TB Click Logs dataset
+| 7 | ML/DL | PCA End-to-End | Spark MLlib based PCA example to train and transform with a synthetic dataset
+| 8 | UDF | cuSpatial - Point in Polygon | Spark cuSpatial example for Point in Polygon function using NYC Taxi pickup location dataset
 
-### 1. Microbenchmark guide
+Here is the list of Apache Spark applications (Scala and PySpark) that 
+can be built for running on GPU with RAPIDS Accelerator in this repo:
 
-The microbenchmark on [RAPIDS Accelerator For Apache Spark](https://nvidia.github.io/spark-rapids/) is to identify,
-test and analyze the best queries which can be accelerated on the GPU. For detail information please refer to this
-[guide](/examples/micro-benchmarks).
-
-### 2. Xgboost examples guide
-
-We provide three similar Xgboost benchmarks, Mortgage, Taxi and Agaricus.
-Try one of the ["Getting Started Guides"](/examples/Spark-ETL+XGBoost).
-Please note that they target the Mortgage dataset as written with a few changes
-to `EXAMPLE_CLASS` and `dataPath`, they can be easily adapted with each other with different datasets.
-
-### 3. TensorFlow training on Horovod Spark example guide
-
-We provide a Criteo Benchmark to demo ETL and deep learning training on Horovod Spark, please refer to
-this [guide](/examples/Spark-DL/criteo_train).
-
-### 4. PCA example guide
-
-This is an example of the GPU accelerated PCA algorithm running on Spark. For detail information please refer to this
-[guide](/examples/Spark-cuML/pca).
-
-### 5. MIG support
-We provide some [guides](/examples/MIG-Support) about the Multi-Instance GPU (MIG) feature based on
-the NVIDIA Ampere architecture (such as NVIDIA A100 and A30) GPU.
-
-### 6. Spark Rapids UDF examples
-This is examples of the GPU accelerated UDF.
-refer to this
-[guide](/examples/RAPIDS-accelerated-UDFs).
-
-### 7. Spark cuSpatial
-This is a RapidsUDF examples to use [cuSpatial](https://github.com/rapidsai/cuspatial) library to solve the point-in-polygon problem. For detail information please refer to this [guide](/examples/Spark-cuSpatial).
-
-## API
-### 1. Xgboost examples API
-
-These guides focus on GPU related Scala and python API interfaces.
-- [Scala API](/docs/api-docs/xgboost-examples-api-docs/scala.md)
-- [Python API](/docs/api-docs/xgboost-examples-api-docs/python.md)
-
-## Troubleshooting
-You can trouble-shooting issues according to following guides.
-- [Trouble Shooting XGBoost](/docs/trouble-shooting/xgboost-examples-trouble-shooting.md)
-
-## Contributing
-See the [Contributing guide](CONTRIBUTING.md).
-
-## Contact Us
-
-Please see the [RAPIDS](https://rapids.ai/community.html) website for contact information.
-
-## License
-
-This content is licensed under the [Apache License 2.0](/LICENSE)
+|   | Category  | Notebook Name | Description
+| ------------- | ------------- | ------------- | -------------
+| 1 | XGBoost | Agaricus (Scala) | Uses XGBoost classifier function to create model that can accurately differentiate between edible and poisonous mushrooms with the [agaricus dataset](https://archive.ics.uci.edu/ml/datasets/mushroom)
+| 2 | XGBoost | Mortgage (Scala) | End-to-end ETL + XGBoost example to predict mortgage default with [Fannie Mae Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
+| 3 | XGBoost | Taxi (Scala) | End-to-end ETL + XGBoost example to predict taxi trip fare amount with [NYC taxi trips data set](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
+| 4 | ML/DL | PCA End-to-End | Spark MLlib based PCA example to train and transform with a synthetic dataset
+| 5 | UDF | cuSpatial - Point in Polygon | Spark cuSpatial example for Point in Polygon function using NYC Taxi pickup location dataset
+| 6 | UDF | URL Decode | Decodes URL-encoded strings using the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable/)
+| 7 | UDF | URL Encode | URL-encodes strings using the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable/)
+| 8 | UDF | [CosineSimilarity](./examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java) | Computes the cosine similarity between two float vectors using [native code](./examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/cpp/src)
+| 9 | UDF | [StringWordCount](./examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/java/com/nvidia/spark/rapids/udf/hive/StringWordCount.java)  | Implements a Hive simple UDF using [native code](./examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/cpp/src) to count words in strings

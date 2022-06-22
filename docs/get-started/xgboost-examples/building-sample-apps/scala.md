@@ -8,13 +8,13 @@ Follow these steps to build the Scala jars:
 
 ``` bash
 git clone https://github.com/NVIDIA/spark-rapids-examples.git
-cd spark-rapids-examples/examples/Spark-ETL+XGBoost
+cd spark-rapids-examples/examples/XGBoost-Examples
 mvn package
 ```
 
 ## The generated Jars
 
-Let's assume LATEST_VERSION is **0.2.2**. The build process will generate two jars as belows,
+Let's assume LATEST_VERSION is **0.2.3**. The build process will generate two jars as belows,
 
 + *aggregator/target/sample_xgboost_apps-${LATEST_VERSION}.jar*
   

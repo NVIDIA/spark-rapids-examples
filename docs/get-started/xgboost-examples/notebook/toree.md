@@ -36,9 +36,9 @@ and the home directory for Apache Spark respectively.
     --toree_opts='--nosparkcontext'                         \
     --kernel_name="XGBoost4j-Spark"                         \
     --spark_opts='--master ${SPARK_MASTER} \
-      --jars ${CUDF_JAR},${RAPIDS_JAR},${SAMPLE_JAR}       \
+      --jars ${RAPIDS_JAR},${SAMPLE_JAR}       \
       --conf spark.plugins=com.nvidia.spark.SQLPlugin  \
-      --conf spark.executor.extraClassPath=${CUDF_JAR}:${RAPIDS_JAR} \
+      --conf spark.executor.extraClassPath=${RAPIDS_JAR} \
       --conf spark.rapids.memory.gpu.pooling.enabled=false \
       --conf spark.executor.resource.gpu.amount=1 \
       --conf spark.task.resource.gpu.amount=1 \
@@ -53,11 +53,11 @@ and the home directory for Apache Spark respectively.
     ```
 
 4. Launch ETL Part 
-- Mortgage ETL Notebook: [Scala](/examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-ETL.ipynb)
-- Taxi ETL Notebook: [Scala](/examples/Spark-ETL+XGBoost/taxi/notebooks/scala/taxi-ETL.ipynb)
+- Mortgage ETL Notebook: [Scala](../../../../examples/XGBoost-Examples/mortgage/notebooks/scala/mortgage-ETL.ipynb)
+- Taxi ETL Notebook: [Scala](../../../../examples/XGBoost-Examples/taxi/notebooks/scala/taxi-ETL.ipynb)
 - Note: Agaricus does not have ETL part.
    
 5. Launch XGBoost Part
-- Mortgage XGBoost Notebook: [Scala](/examples/Spark-ETL+XGBoost/mortgage/notebooks/scala/mortgage-gpu.ipynb)
-- Taxi XGBoost Notebook: [Scala](/examples/Spark-ETL+XGBoost/taxi/notebooks/scala/taxi-gpu.ipynb)
-- Agaricus XGBoost Notebook: [Scala](/examples/Spark-ETL+XGBoost/agaricus/notebooks/scala/agaricus-gpu.ipynb)
+- Mortgage XGBoost Notebook: [Scala](../../../../examples/XGBoost-Examples/mortgage/notebooks/scala/mortgage-gpu.ipynb)
+- Taxi XGBoost Notebook: [Scala](../../../../examples/XGBoost-Examples/taxi/notebooks/scala/taxi-gpu.ipynb)
+- Agaricus XGBoost Notebook: [Scala](../../../../examples/XGBoost-Examples/agaricus/notebooks/scala/agaricus-gpu.ipynb)

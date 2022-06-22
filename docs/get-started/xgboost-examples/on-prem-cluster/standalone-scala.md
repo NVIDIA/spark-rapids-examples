@@ -63,7 +63,6 @@ Launch a Standalone Spark Cluster
 1. Copy required jars to `$SPARK_HOME/jars` folder.
 
     ``` bash
-    cp $CUDF_JAR $SPARK_HOME/jars/
     cp $RAPIDS_JAR $SPARK_HOME/jars/
     ```
 
@@ -167,7 +166,6 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --conf spark.rapids.memory.gpu.pooling.enabled=false                     \
  --conf spark.executor.resource.gpu.amount=1                           \
  --conf spark.task.resource.gpu.amount=1                              \
- --jars ${CUDF_JAR},${RAPIDS_JAR}                                           \
  --master ${SPARK_MASTER}                                                       \
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
