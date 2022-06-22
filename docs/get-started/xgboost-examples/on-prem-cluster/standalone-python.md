@@ -60,7 +60,6 @@ Launch a Standalone Spark Cluster
 
     ``` bash
     cp ${RAPIDS_JAR} $SPARK_HOME/jars/
-    cp ${CUDF_JAR} $SPARK_HOME/jars/
     ```
 
 2. Start the Spark Master process.
@@ -163,7 +162,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
  --conf spark.cores.max=${TOTAL_CORES}                                          \
- --jars ${CUDF_JAR},${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}     \
+ --jars ${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}     \
  --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}                   \
  ${MAIN_PY}                                                     \
  --mainClass=${EXAMPLE_CLASS}                                                   \

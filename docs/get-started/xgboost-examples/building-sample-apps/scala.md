@@ -14,7 +14,7 @@ mvn package
 
 ## The generated Jars
 
-Let's assume LATEST_VERSION is **0.2.2**. The build process will generate two jars as belows,
+Let's assume LATEST_VERSION is **0.2.3**. The build process will generate two jars as belows,
 
 + *aggregator/target/sample_xgboost_apps-${LATEST_VERSION}.jar*
   

@@ -30,7 +30,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <java.major.version>8</java.major.version>
-    <rapids.version>22.04.0</rapids.version>
+    <rapids.version>22.06.0</rapids.version>
     <scala.binary.version>2.12</scala.binary.version>
     <spark.version>3.2.0</spark.version>
     <udf.native.build.path>${project.build.directory}/cpp-build</udf.native.build.path>
@@ -39,13 +39,6 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>ai.rapids</groupId>
-      <artifactId>cudf</artifactId>
-      <version>${rapids.version}</version>
-      <classifier>cuda11</classifier>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
         <groupId>com.nvidia</groupId>
         <artifactId>rapids-4-spark_${scala.binary.version}</artifactId>

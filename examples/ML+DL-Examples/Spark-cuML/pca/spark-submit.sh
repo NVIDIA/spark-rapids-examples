@@ -16,7 +16,6 @@
 #
 
 ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/22.06.0-SNAPSHOT/rapids-4-spark-ml_2.12-22.06.0-SNAPSHOT.jar
-CUDF_JAR=/root/.m2/repository/ai/rapids/cudf/22.06.0-SNAPSHOT/cudf-22.06.0-SNAPSHOT-cuda11.jar
 PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/22.06.0-SNAPSHOT/rapids-4-spark_2.12-22.06.0-SNAPSHOT.jar
 
 $SPARK_HOME/bin/spark-submit \
@@ -31,12 +30,12 @@ $SPARK_HOME/bin/spark-submit \
 --conf spark.rapids.memory.gpu.allocFraction=0.35 \
 --conf spark.rapids.memory.gpu.maxAllocFraction=0.6 \
 --conf spark.task.resource.gpu.amount=0.08 \
---conf spark.executor.extraClassPath=$ML_JAR:$CUDF_JAR:$PLUGIN_JAR \
---conf spark.driver.extraClassPath=$ML_JAR:$CUDF_JAR:$PLUGIN_JAR \
+--conf spark.executor.extraClassPath=$ML_JAR:$PLUGIN_JAR \
+--conf spark.driver.extraClassPath=$ML_JAR:$PLUGIN_JAR \
 --conf spark.executor.resource.gpu.amount=1  \
 --conf spark.rpc.message.maxSize=2046 \
 --conf spark.executor.heartbeatInterval=500s \
 --conf spark.network.timeout=1000s \
---jars $ML_JAR,$CUDF_JAR,$PLUGIN_JAR \
+--jars $ML_JAR,$PLUGIN_JAR \
 --class com.nvidia.spark.examples.pca.Main \
 /workspace/target/PCAExample-22.06.0-SNAPSHOT.jar

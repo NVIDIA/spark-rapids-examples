@@ -49,7 +49,7 @@ cluster.
       
     - [Databricks 10.4 LTS
     ML](https://docs.databricks.com/release-notes/runtime/9.1ml.html#system-environment) has CUDA 11
-    installed.  Users will need to use 22.04.0 or later on Databricks 10.4 LTS ML. In this case use
+    installed.  Users will need to use 22.06.0 or later on Databricks 10.4 LTS ML. In this case use
     [generate-init-script-10.4.ipynb](generate-init-script-10.4.ipynb) which will install
     the RAPIDS Spark plugin.
       
