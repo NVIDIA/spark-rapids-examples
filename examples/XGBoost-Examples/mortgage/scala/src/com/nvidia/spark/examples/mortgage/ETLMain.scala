@@ -31,14 +31,14 @@ object ETLMain extends Mortgage {
     val spark = SparkSession.builder().appName(appInfo.mkString("-")).getOrCreate()
 
     try {
-      val (perfPaths, acqPaths, outPath) = checkAndGetPaths(xgbArgs.dataPaths)
+      val (dataPaths, outPath) = checkAndGetPaths(xgbArgs.dataPaths)
       println("\n------ Start ETL ------")
       benchmark.time("ETL") {
         // ETL the raw data
         val rawDF = xgbArgs.format match {
-          case "csv" => XGBoostETL.csv(spark, perfPaths, acqPaths, xgbArgs.hasHeader)
-          case "orc" => XGBoostETL.orc(spark, perfPaths, acqPaths)
-          case "parquet" => XGBoostETL.parquet(spark, perfPaths, acqPaths)
+          case "csv" => XGBoostETL.csv(spark, dataPaths, xgbArgs.hasHeader)
+          case "orc" => XGBoostETL.orc(spark, dataPaths)
+          case "parquet" => XGBoostETL.parquet(spark, dataPaths)
           case _ => throw new IllegalArgumentException("Unsupported data file format!")
         }
         rawDF.write.mode("overwrite").parquet(new Path(outPath, "data").toString)
@@ -52,32 +52,26 @@ object ETLMain extends Mortgage {
     }
   }
 
-  private def checkAndGetPaths(paths: Seq[String]): (Seq[String], Seq[String], String) = {
-    val prefixes = Array("perf::", "acq::", "out::")
+  private def checkAndGetPaths(paths: Seq[String]): (Seq[String], String) = {
+    val prefixes = Array("data::", "out::")
     val validPaths = paths.filter(_.nonEmpty).map(_.trim)
 
     // get and check perf data paths
-    val perfPaths = validPaths.filter(_.startsWith(prefixes.head))
-    require(perfPaths.nonEmpty, s"$appName ETL requires at least one path for performance data file." +
-      s" Please specify it by '-dataPath=perf::your_perf_path'")
-
-    // get and check acq data paths
-    val acqPaths = validPaths.filter(_.startsWith(prefixes(1)))
-    require(acqPaths.nonEmpty, s"$appName ETL requires at least one path for acquisition data file." +
-      s" Please specify it by '-dataPath=acq::your_acq_path'")
+    val dataPaths = validPaths.filter(_.startsWith(prefixes.head))
+    require(dataPaths.nonEmpty, s"$appName ETL requires at least one path for data file." +
+      s" Please specify it by '-dataPath=data::your_data_path'")
 
     // get and check out path
-    val outPath = validPaths.filter(_.startsWith(prefixes(2)))
+    val outPath = validPaths.filter(_.startsWith(prefixes(1)))
     require(outPath.nonEmpty, s"$appName ETL requires a path to save the ETLed data file. Please specify it" +
       " by '-dataPath=out::your_out_path', only the first path is used if multiple paths are found.")
 
     // check data paths not specified type
     val unknownPaths = validPaths.filterNot(p => prefixes.exists(p.contains(_)))
     require(unknownPaths.isEmpty, s"Unknown type for data path: ${unknownPaths.head}, $appName requires to specify" +
-      " the type for each data path by adding the prefix 'perf::' or 'acq::' or 'out::'.")
+      " the type for each data path by adding the prefix 'data::' or 'out::'.")
 
-    (perfPaths.map(_.stripPrefix(prefixes.head)),
-     acqPaths.map(_.stripPrefix(prefixes(1))),
-     outPath.head.stripPrefix(prefixes(2)))
+    (dataPaths.map(_.stripPrefix(prefixes.head)),
+     outPath.head.stripPrefix(prefixes(1)))
   }
 }
