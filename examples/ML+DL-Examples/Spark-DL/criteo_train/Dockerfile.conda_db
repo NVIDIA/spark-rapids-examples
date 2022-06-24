@@ -14,14 +14,13 @@
 # limitations under the License.
 #
 
-FROM nvidia/cuda:11.2.1-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04
 
 
 ENV DEBIAN_FRONTEND=noninteractive
 # Disable NVIDIA repos to prevent accidental upgrades.
 RUN cd /etc/apt/sources.list.d && \
-    mv cuda.list cuda.list.disabled && \
-    mv nvidia-ml.list nvidia-ml.list.disabled
+    mv cuda.list cuda.list.disabled
 
 # See https://github.com/databricks/containers/blob/master/ubuntu/minimal/Dockerfile
 RUN apt-get update && \
@@ -52,21 +51,22 @@ RUN wget -q https://repo.continuum.io/miniconda/Miniconda3-py38_4.9.2-Linux-x86_
     conda clean --all
 
 # install openjdk8, cmake, openmpi openmpi-mpicc
-RUN conda install cmake openmpi openmpi-mpicc -y 
-RUN pip install jupyter
+RUN conda install cmake openmpi openmpi-mpicc -y
 ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
 ENV PATH $PATH:/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre/bin:/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin
 
-RUN pip uninstall tensorflow -y; pip install tensorflow
+RUN conda install -y -c nvidia -c rapidsai -c numba -c conda-forge nvtabular=1.2.2 python=3.8 cudatoolkit=11.4 scikit-learn
+#RUN conda install -c conda-forge ipython==7.19.0 matplotlib==3.4.2 jinja2==2.11.3
+#RUN pip uninstall pandas -y; pip install pandas==1.1.5
 
-RUN HOROVOD_WITH_MPI=1 HOROVOD_GPU_OPERATIONS=NCCL HOROVOD_WITH_TENSORFLOW=1 \
+RUN pip uninstall tensorflow -y; pip install tensorflow-gpu==2.8
+RUN pip install torch==1.11.0+cu115 torchvision==0.12.0+cu115 torchaudio===0.11.0+cu115 -f https://download.pytorch.org/whl/cu115/torch_stable.html
+RUN rm -rf /databricks/conda/include/google
+RUN HOROVOD_WITH_MPI=1 HOROVOD_GPU_OPERATIONS=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=1 \
     pip install horovod[spark] --no-cache-dir
+RUN pip install pynvml jupyter matplotlib
 
-RUN conda install -c nvidia -c rapidsai -c numba -c conda-forge nvtabular=0.9.0 python=3.8 cudatoolkit=11.2
-RUN pip install pynvml
 
-RUN conda install -c conda-forge ipython==7.19.0 matplotlib==3.4.2 jinja2==2.11.3
-RUN pip uninstall pandas -y; pip install pandas==1.1.5
 RUN apt-get update && apt-get install wget openssh-client openssh-server \
     -y --allow-downgrades --allow-change-held-packages --no-install-recommends
 RUN useradd --create-home --shell /bin/bash --groups sudo ubuntu
