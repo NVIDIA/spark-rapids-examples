@@ -56,8 +56,6 @@ ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
 ENV PATH $PATH:/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre/bin:/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin
 
 RUN conda install -y -c nvidia -c rapidsai -c numba -c conda-forge nvtabular=1.2.2 python=3.8 cudatoolkit=11.4 scikit-learn
-#RUN conda install -c conda-forge ipython==7.19.0 matplotlib==3.4.2 jinja2==2.11.3
-#RUN pip uninstall pandas -y; pip install pandas==1.1.5
 
 RUN pip uninstall tensorflow -y; pip install tensorflow-gpu==2.8
 RUN pip install torch==1.11.0+cu115 torchvision==0.12.0+cu115 torchaudio===0.11.0+cu115 -f https://download.pytorch.org/whl/cu115/torch_stable.html
@@ -75,6 +73,8 @@ ENV PYSPARK_PYTHON=/databricks/conda/bin/python
 ENV USER root
 ENV DEFAULT_DATABRICKS_ROOT_CONDA_ENV=base
 ENV DATABRICKS_ROOT_CONDA_ENV=base
+# disable gds due to errors
+ENV LIBCUDF_CUFILE_POLICY=OFF
 # required by DB
 RUN pip install virtualenv
 RUN pip install adlfs
