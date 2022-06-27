@@ -16,7 +16,6 @@
 from com.nvidia.spark.examples.mortgage.consts import *
 from com.nvidia.spark.examples.mortgage.etl import etl, extract_paths
 from com.nvidia.spark.examples.utility.utils import *
-from ml.dmlc.xgboost4j.scala.spark import *
 from pyspark.sql import SparkSession
 
 def main(args, xgboost_args):

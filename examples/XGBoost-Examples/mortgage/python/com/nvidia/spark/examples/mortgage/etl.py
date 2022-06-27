@@ -16,6 +16,7 @@
 from com.nvidia.spark.examples.mortgage.consts import *
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+from pyspark.sql.window import Window
 from sys import exit
 
 get_quarter = udf(lambda path: path.split(r'.')[0].split('_')[-1], StringType())
@@ -36,13 +37,53 @@ def load_data(spark, paths, schema, args, extra_csv_opts={}):
             reader.option(k, v)
     return reader.load(paths)
 
-def prepare_performance(spark, args):
+def prepare_rawDf(spark, args):
     extra_csv_options = {
         'nullValue': '',
         'parserLib': 'univocity',
     }
-    paths = extract_paths(args.dataPaths, 'perf::')
-    performance = (load_data(spark, paths, performance_schema, args, extra_csv_options)
+    paths = extract_paths(args.dataPaths, 'data::')
+    rawDf = load_data(spark, paths, rawSchema, args, extra_csv_options)
+
+    return rawDf
+
+def extract_perf_columns(rawDf):
+    return rawDf.select(
+      col("loan_id"),
+      date_format(to_date(col("monthly_reporting_period"),"MMyyyy"), "MM/dd/yyyy").alias("monthly_reporting_period"),
+      upper(col("servicer")).alias("servicer"),
+      col("interest_rate"),
+      col("current_actual_upb"),
+      col("loan_age"),
+      col("remaining_months_to_legal_maturity"),
+      col("adj_remaining_months_to_maturity"),
+      date_format(to_date(col("maturity_date"),"MMyyyy"), "MM/yyyy").alias("maturity_date"),
+      col("msa"),
+      col("current_loan_delinquency_status"),
+      col("mod_flag"),
+      col("zero_balance_code"),
+      date_format(to_date(col("zero_balance_effective_date"),"MMyyyy"), "MM/yyyy").alias("zero_balance_effective_date"),
+      date_format(to_date(col("last_paid_installment_date"),"MMyyyy"), "MM/dd/yyyy").alias("last_paid_installment_date"),
+      date_format(to_date(col("foreclosed_after"),"MMyyyy"), "MM/dd/yyyy").alias("foreclosed_after"),
+      date_format(to_date(col("disposition_date"),"MMyyyy"), "MM/dd/yyyy").alias("disposition_date"),
+      col("foreclosure_costs"),
+      col("prop_preservation_and_repair_costs"),
+      col("asset_recovery_costs"),
+      col("misc_holding_expenses"),
+      col("holding_taxes"),
+      col("net_sale_proceeds"),
+      col("credit_enhancement_proceeds"),
+      col("repurchase_make_whole_proceeds"),
+      col("other_foreclosure_proceeds"),
+      col("non_interest_bearing_upb"),
+      col("principal_forgiveness_upb"),
+      col("repurchase_make_whole_proceeds_flag"),
+      col("foreclosure_principal_write_off_amount"),
+      col("servicing_activity_indicator")
+    )
+
+def prepare_performance(spark, args, rawDf):
+    performance = (extract_perf_columns(rawDf)
         .withColumn('quarter', get_quarter(input_file_name()))
         .withColumn('timestamp', to_date(col('monthly_reporting_period'), 'MM/dd/yyyy'))
         .withColumn('timestamp_year', year(col('timestamp')))
@@ -133,8 +174,42 @@ def prepare_performance(spark, args):
         .join(to_join, ['quarter', 'loan_id', 'timestamp_year', 'timestamp_month'], 'left')
         .drop('timestamp_year', 'timestamp_month'))
 
-def prepare_acquisition(spark, args):
-    return (load_data(spark, extract_paths(args.dataPaths, 'acq::'), acquisition_schema, args)
+def extract_acq_columns(rawDf):
+    acqDf = rawDf.select(
+      col("loan_id"),
+      col("orig_channel"),
+      upper(col("seller_name")).alias("seller_name"),
+      col("orig_interest_rate"),
+      col("orig_upb"),
+      col("orig_loan_term"),
+      date_format(to_date(col("orig_date"),"MMyyyy"), "MM/yyyy").alias("orig_date"),
+      date_format(to_date(col("first_pay_date"),"MMyyyy"), "MM/yyyy").alias("first_pay_date"),
+      col("orig_ltv"),
+      col("orig_cltv"),
+      col("num_borrowers"),
+      col("dti"),
+      col("borrower_credit_score"),
+      col("first_home_buyer"),
+      col("loan_purpose"),
+      col("property_type"),
+      col("num_units"),
+      col("occupancy_status"),
+      col("property_state"),
+      col("zip"),
+      col("mortgage_insurance_percent"),
+      col("product_type"),
+      col("coborrow_credit_score"),
+      col("mortgage_insurance_type"),
+      col("relocation_mortgage_indicator"),
+      dense_rank().over(Window.partitionBy("loan_id").orderBy(to_date(col("monthly_reporting_period"),"MMyyyy"))).alias("rank")
+      )
+
+    return acqDf.select("*").filter(col("rank")==1)
+
+    
+
+def prepare_acquisition(spark, args, rawDf):
+    return (extract_acq_columns(rawDf)
         .withColumn('quarter', get_quarter(input_file_name()))
         .withColumn('seller_name', standardize_name(col('seller_name'))))
 
@@ -147,8 +222,9 @@ def extract_paths(paths, prefix):
     return results
 
 def etl(spark, args):
-    performance = prepare_performance(spark, args)
-    acquisition = prepare_acquisition(spark, args)
+    rawDf = prepare_rawDf(spark, args)
+    performance = prepare_performance(spark, args, rawDf)
+    acquisition = prepare_acquisition(spark, args, rawDf)
     return (performance
         .join(acquisition, ['loan_id', 'quarter'], 'left_outer')
         .select(
