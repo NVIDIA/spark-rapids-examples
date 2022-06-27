@@ -99,8 +99,7 @@ ${SPARK_HOME}/bin/spark-submit \
     main.py \
     --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \
     --format=csv \
-    --dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-train/" \
-    --dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-train/" \
+    --dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
     --dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/train/"
 
 # if generating eval data, change the data path to eval as well as the corresponding perf-eval and acq-eval data

@@ -60,8 +60,7 @@ ${SPARK_HOME}/bin/spark-submit \
     ${MAIN_PY} \
     --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \
     --format=csv \
-    --dataPath="perf::${DATA_PATH}/mortgage/data/mortgage/perf/" \
-    --dataPath="acq::${DATA_PATH}/mortgage/data/mortgage/acq/" \
+    --dataPath="data::${DATA_PATH}/mortgage/data/mortgage/input/" \
     --dataPath="out::${DATA_PATH}/mortgage/data/mortgage/out/train/"
 
 # if generate eval data, change the data path to eval
