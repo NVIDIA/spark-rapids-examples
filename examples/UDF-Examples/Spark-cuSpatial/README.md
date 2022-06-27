@@ -68,7 +68,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
 3. Download spark-rapids jars
    * [spark-rapids v22.06.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.06.0/rapids-4-spark_2.12-22.06.0.jar) or above
 4. Prepare the dataset & jars. Copy the sample dataset from [cuspatial_data](../../../datasets/cuspatial_data.tar.gz) to "/data/cuspatial_data".
-    Copy spark-rapids & spark-cuspatial-22.06.0-SNAPSHOT.jar to "/data/cuspatial_data/jars".
+    Copy spark-rapids & spark-cuspatial-22.08.0-SNAPSHOT.jar to "/data/cuspatial_data/jars".
     You can use your own path, but remember to update the paths in "gpu-run.sh" accordingly.
 5. Run "gpu-run.sh"
     ```Bash
@@ -103,5 +103,5 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
         points
         polygons
     ```
-4. Import the Library "spark-cuspatial-22.06.0-SNAPSHOT.jar" to the Databricks, then install it to your cluster.
+4. Import the Library "spark-cuspatial-22.08.0-SNAPSHOT.jar" to the Databricks, then install it to your cluster.
 5. Import [cuspatial_sample.ipynb](notebooks/cuspatial_sample_db.ipynb) to your workspace in Databricks. Attach to your cluster, then run it.
