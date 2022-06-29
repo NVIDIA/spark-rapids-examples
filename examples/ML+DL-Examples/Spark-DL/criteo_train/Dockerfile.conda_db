@@ -13,9 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 FROM nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04
-
 
 ENV DEBIAN_FRONTEND=noninteractive
 # Disable NVIDIA repos to prevent accidental upgrades.
