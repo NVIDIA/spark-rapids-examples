@@ -27,7 +27,7 @@ object GetQuarterFromCsvFileName {
   // So we strip off the .txt and everything after it
   // and then take everything after the last remaining _
   def apply(): Column = substring_index(
-    substring_index(input_file_name(), ".", 1), "_", -1)
+    substring_index(input_file_name(), ".", 1), "/", -1)
 }
 
 private object CsvReader {
@@ -44,7 +44,7 @@ private object CsvReader {
       StructField("master_servicer", StringType),
       StructField("orig_interest_rate", DoubleType),
       StructField("interest_rate", DoubleType),
-      StructField("orig_upb", IntegerType),
+      StructField("orig_upb", DoubleType),
       StructField("upb_at_issuance", StringType),
       StructField("current_actual_upb", DoubleType),
       StructField("orig_loan_term", IntegerType),
@@ -150,90 +150,7 @@ private object CsvReader {
       .options(optionsMap)
       .option("nullValue", "")
       .option("delimiter", "|")
-      .option("parserLib", "univocity")
       .schema(rawSchema)
-      .csv(paths: _*)
-      .withColumn("quarter", GetQuarterFromCsvFileName())
-  }
-
-  def readPerformance(spark: SparkSession, paths: Seq[String], optionsMap: Map[String, String]): DataFrame = {
-    val performanceSchema = StructType(Array(
-      StructField("loan_id", LongType),
-      StructField("monthly_reporting_period", StringType),
-      StructField("servicer", StringType),
-      StructField("interest_rate", DoubleType),
-      StructField("current_actual_upb", DoubleType),
-      StructField("loan_age", DoubleType),
-      StructField("remaining_months_to_legal_maturity", DoubleType),
-      StructField("adj_remaining_months_to_maturity", DoubleType),
-      StructField("maturity_date", StringType),
-      StructField("msa", DoubleType),
-      StructField("current_loan_delinquency_status", IntegerType),
-      StructField("mod_flag", StringType),
-      StructField("zero_balance_code", StringType),
-      StructField("zero_balance_effective_date", StringType),
-      StructField("last_paid_installment_date", StringType),
-      StructField("foreclosed_after", StringType),
-      StructField("disposition_date", StringType),
-      StructField("foreclosure_costs", DoubleType),
-      StructField("prop_preservation_and_repair_costs", DoubleType),
-      StructField("asset_recovery_costs", DoubleType),
-      StructField("misc_holding_expenses", DoubleType),
-      StructField("holding_taxes", DoubleType),
-      StructField("net_sale_proceeds", DoubleType),
-      StructField("credit_enhancement_proceeds", DoubleType),
-      StructField("repurchase_make_whole_proceeds", StringType),
-      StructField("other_foreclosure_proceeds", DoubleType),
-      StructField("non_interest_bearing_upb", DoubleType),
-      StructField("principal_forgiveness_upb", StringType),
-      StructField("repurchase_make_whole_proceeds_flag", StringType),
-      StructField("foreclosure_principal_write_off_amount", StringType),
-      StructField("servicing_activity_indicator", StringType))
-    )
-
-    spark.read
-      .options(optionsMap)
-      .option("nullValue", "")
-      .option("delimiter", "|")
-      .option("parserLib", "univocity")
-      .schema(performanceSchema)
-      .csv(paths: _*)
-      .withColumn("quarter", GetQuarterFromCsvFileName())
-  }
-
-  def readAcquisition(spark: SparkSession, paths: Seq[String], optionsMap: Map[String, String]): DataFrame = {
-    val acquisitionSchema = StructType(Array(
-      StructField("loan_id", LongType),
-      StructField("orig_channel", StringType),
-      StructField("seller_name", StringType),
-      StructField("orig_interest_rate", DoubleType),
-      StructField("orig_upb", IntegerType),
-      StructField("orig_loan_term", IntegerType),
-      StructField("orig_date", StringType),
-      StructField("first_pay_date", StringType),
-      StructField("orig_ltv", DoubleType),
-      StructField("orig_cltv", DoubleType),
-      StructField("num_borrowers", DoubleType),
-      StructField("dti", DoubleType),
-      StructField("borrower_credit_score", DoubleType),
-      StructField("first_home_buyer", StringType),
-      StructField("loan_purpose", StringType),
-      StructField("property_type", StringType),
-      StructField("num_units", IntegerType),
-      StructField("occupancy_status", StringType),
-      StructField("property_state", StringType),
-      StructField("zip", IntegerType),
-      StructField("mortgage_insurance_percent", DoubleType),
-      StructField("product_type", StringType),
-      StructField("coborrow_credit_score", DoubleType),
-      StructField("mortgage_insurance_type", DoubleType),
-      StructField("relocation_mortgage_indicator", StringType))
-    )
-
-    spark.read
-      .options(optionsMap)
-      .option("delimiter", "|")
-      .schema(acquisitionSchema)
       .csv(paths: _*)
       .withColumn("quarter", GetQuarterFromCsvFileName())
   }
@@ -241,7 +158,7 @@ private object CsvReader {
 
 object extractPerfColumns{
   def apply(rawDf : DataFrame) : DataFrame = {
-    rawDf.select(
+    val perfDf = rawDf.select(
       col("loan_id"),
       date_format(to_date(col("monthly_reporting_period"),"MMyyyy"), "MM/dd/yyyy").as("monthly_reporting_period"),
       upper(col("servicer")).as("servicer"),
@@ -273,14 +190,16 @@ object extractPerfColumns{
       col("repurchase_make_whole_proceeds_flag"),
       col("foreclosure_principal_write_off_amount"),
       col("servicing_activity_indicator"),
-      substring_index(substring_index(input_file_name(),"/",-1),".",1).as("quarter")
+      col("quarter")
     )
+
+    perfDf.select("*").filter("current_actual_upb != 0.0")
   }
 }
 
 object extractAcqColumns{
   def apply(rawDf : DataFrame) : DataFrame = {
-    val tmpDf = rawDf.select(
+    val acqDf = rawDf.select(
       col("loan_id"),
       col("orig_channel"),
       upper(col("seller_name")).as("seller_name"),
@@ -306,11 +225,11 @@ object extractAcqColumns{
       col("coborrow_credit_score"),
       col("mortgage_insurance_type"),
       col("relocation_mortgage_indicator"),
-      substring_index(substring_index(input_file_name(),"/",-1),".",1).as("quarter"),
+      col("quarter"),
       dense_rank().over(Window.partitionBy("loan_id").orderBy(to_date(col("monthly_reporting_period"),"MMyyyy"))).as("rank")
     )
 
-    tmpDf.select("*").filter(col("rank") === 1)
+    acqDf.select("*").filter(col("rank") === 1).drop("rank")
   }
 
 }

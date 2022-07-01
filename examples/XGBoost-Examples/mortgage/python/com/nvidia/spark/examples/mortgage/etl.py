@@ -19,7 +19,7 @@ from pyspark.sql.types import *
 from pyspark.sql.window import Window
 from sys import exit
 
-get_quarter = udf(lambda path: path.split(r'.')[0].split('_')[-1], StringType())
+get_quarter = udf(lambda path: path.split(r'.')[0].split('/')[-1], StringType())
 standardize_name = udf(lambda name: name_mapping.get(name), StringType())
 
 def load_data(spark, paths, schema, args, extra_csv_opts={}):
@@ -48,7 +48,7 @@ def prepare_rawDf(spark, args):
     return rawDf
 
 def extract_perf_columns(rawDf):
-    return rawDf.select(
+    perfDf = rawDf.select(
       col("loan_id"),
       date_format(to_date(col("monthly_reporting_period"),"MMyyyy"), "MM/dd/yyyy").alias("monthly_reporting_period"),
       upper(col("servicer")).alias("servicer"),
@@ -79,8 +79,10 @@ def extract_perf_columns(rawDf):
       col("principal_forgiveness_upb"),
       col("repurchase_make_whole_proceeds_flag"),
       col("foreclosure_principal_write_off_amount"),
-      col("servicing_activity_indicator")
-    )
+      col("servicing_activity_indicator"))
+
+    return perfDf.select("*").filter("current_actual_upb != 0.0")
+    
 
 def prepare_performance(spark, args, rawDf):
     performance = (extract_perf_columns(rawDf)
