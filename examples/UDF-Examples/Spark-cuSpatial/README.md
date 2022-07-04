@@ -25,7 +25,7 @@ the [notebook](./notebooks/cuspatial_sample_db.ipynb) if you test with the downl
 taxi-zones map:
 
 [comment]: <> (![Taxi-zones]&#40;../../../docs/img/guides/cuspatial/taxi-zones.png&#41; )
-<img src="../../../docs/img/guides/cuspatial/taxi-zones.png" width="300">
+<img src="../../../docs/img/guides/cuspatial/taxi-zones.png" width="600">
 
 nyct2000 map:
 
