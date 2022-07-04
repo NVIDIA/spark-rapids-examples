@@ -25,9 +25,11 @@ the [notebook](./notebooks/cuspatial_sample_db.ipynb) if you test with the downl
 taxi-zones map:
 
 ![taxi-zones](../../../docs/img/guides/cuspatial/taxi-zones.png) 
+
 nyct2000 map:
 
 ![nyct2000](../../../docs/img/guides/cuspatial/Nyct2000.png)
+
 nyct-community-districts map:
 
 ![nyct-community-districts](../../../docs/img/guides/cuspatial/Nycd-Community-Districts.png)
