@@ -17,7 +17,8 @@ Two files are required by PySpark:
 
 + *samples.zip*
   
-  the package including all example code
+  the package including all example code. 
+  Executing the above build commands generates the samples.zip file in 'spark-rapids-examples/examples/XGBoost-Examples' folder
 
 + *main.py*
   
