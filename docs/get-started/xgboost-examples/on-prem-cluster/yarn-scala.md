@@ -35,6 +35,11 @@ Get Jars and Dataset
 
 Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
 
+#### Note: 
+1. Mortgage and Taxi jobs have ETLs to generate the processed data. You can either use this ETLed data to split into training and testing data or run the ETL on different subsets of the dataset to produce training and testing datasets. Please refer [Launch ETL job](#etl). 
+2. For convenience, a subset of [Taxi](/datasets/) dataset is made available in this repo that can be readily used for launching XGBoost job. Use [ETL](#etl) to generate larger datasets for trainig and testing. 
+3. Agaricus does not have an ETL process, it is combined with XGBoost as there is just a filter operation.
+
 Create a directory in HDFS, and copy:
 
 ``` bash
@@ -72,9 +77,8 @@ ${SPARK_HOME}/bin/spark-submit \
    -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
    -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/train/"
 
-# if generating eval data, change the data path to eval as well as the corresponding perf-eval and acq-eval data
-# -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-eval"
-# -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-eval"
+# if generating eval data, change the data path to eval 
+# -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
 # -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/eval/"
 # if running Taxi ETL benchmark, change the class and data path params to
 # -class com.nvidia.spark.examples.taxi.ETLMain  

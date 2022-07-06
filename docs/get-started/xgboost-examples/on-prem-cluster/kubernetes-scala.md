@@ -60,9 +60,10 @@ on cluster filesystems like HDFS, or in [object stores like S3 and GCS](https://
 Note that using [application dependencies](https://spark.apache.org/docs/latest/running-on-kubernetes.html#dependency-management) from 
 the submission client’s local file system is currently not yet supported.
 
-Note: the `mortgage_eval_merged.csv` and `mortgage_train_merged.csv` are not Mortgage raw data,
-they are the data produced by Mortgage ETL job. If user wants to use a larger size Mortgage data, please refer to [Launch ETL job](#etl).
-Taxi ETL job is the same. But Agaricus does not have ETL process, it is combined with XGBoost as there is just a filter operation.
+#### Note: 
+1. Mortgage and Taxi jobs have ETLs to generate the processed data. You can either use this ETLed data to split into training and testing data or run the ETL on different subsets of the dataset to produce training and testing datasets. Please refer [Launch ETL job](#etl). 
+2. For convenience, a subset of [Taxi](/datasets/) dataset is made available in this repo that can be readily used for launching XGBoost job. Use [ETL](#etl) to generate larger datasets for trainig and testing. 
+3. Agaricus does not have an ETL process, it is combined with XGBoost as there is just a filter operation.
 
 Save Kubernetes Template Resources
 ----------------------------------
@@ -110,13 +111,11 @@ ${SPARK_HOME}/bin/spark-submit \
    --class com.nvidia.spark.examples.mortgage.ETLMain  \
    $SAMPLE_JAR \
    -format=csv \
-   -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-train/" \
-   -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-train/" \
+   -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
    -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/train/"
 
 # if generating eval data, change the data path to eval as well as the corresponding perf-eval and acq-eval data
-# -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-eval"
-# -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-eval"
+# -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
 # -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/eval/"
 # if running Taxi ETL benchmark, change the class and data path params to
 # -class com.nvidia.spark.examples.taxi.ETLMain  
