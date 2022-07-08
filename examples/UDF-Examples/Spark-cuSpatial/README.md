@@ -14,7 +14,7 @@ The polygon data can be downloaded from [taxi_zone dataset](https://data.cityofn
 
 | Environment | Taxi_zones (263 Polygons) | Nyct2000 (2216 Polygons) | Nycd Community-Districts (71 Complex Polygons)|
 | ----------- | :---------: | :---------: | :---------: |
-| 4-core CPU | 1122.9 seconds | 5525.4 seconds| 6642.7 seconds |
+| 4-core CPU | 3.9 minutes | 4.0 minutes| 4.1 minutes |
 | 1 GPU(T4) on Databricks | 25 seconds | 27 seconds | 28 seconds|
 | 2 GPU(T4) on Databricks | 15 seconds | 14 seconds | 17 seconds |
 | 4 GPU(T4) on Databricks | 11 seconds | 11 seconds | 12 seconds |
@@ -77,7 +77,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 6. You'll get "spark-cuspatial-<version>.jar" in the target folder.
 
 ## Run
-### Run on-premises clusters: standalone
+### GPU Demo Run on-premises clusters: standalone
 1. Install necessary libraries. Besides `cudf` and `cuspatial`, the `gdal` library that is compatible with the installed `cuspatial` may also be needed.
     Install it by running the command below.
     ```
@@ -98,7 +98,7 @@ Note: The docker env is just for building the jar, not for running the applicati
     ```Bash
     ./gpu-run.sh
     ```
-### Run on AWS Databricks
+### GPU Demo Run on AWS Databricks
 1. Build the customized docker image [Dockerfile.awsdb](Dockerfile.awsdb) and push to dockerhub so that it can be accessible by AWS Databricks.
      ```Bash
      # replace your dockerhub repo, your tag or any other repo AWS DB can access
@@ -138,3 +138,30 @@ Note: The docker env is just for building the jar, not for running the applicati
    <img src="../../../docs/img/guides/cuspatial/install-jar.png" width="600">    
 
 5. Import [cuspatial_sample.ipynb](notebooks/cuspatial_sample_db.ipynb) to your workspace in Databricks. Attach to your cluster, then run it.
+
+### CPU Demo Run on AWS Databricks
+1. Set up a Databricks cluster with Databricks Runtime Version: Standard Runtime 10.3,
+
+2. Install the Sedona jars and Sedona Python on Databricks using Databricks default web UI. 
+   The Sedona version should be 1.1.1-incubating or higher.
+   * From the Libraries tab install from Maven Coordinates
+    ```Bash
+    org.apache.sedona:sedona-python-adapter-3.0_2.12:1.2.0-incubating
+    org.datasyslab:geotools-wrapper:1.1.0-25.2
+    ```
+   * For enabling python support, from the Libraries tab install from PyPI
+    ```Bash
+    apache-sedona
+    ```
+3. From your cluster configuration (Cluster -> Edit -> Configuration -> Advanced options -> Spark) activate the 
+   Sedona functions and the kryo serializer by adding to the Spark Config
+    ```Bash
+    spark.sql.extensions org.apache.sedona.viz.sql.SedonaVizExtensions,org.apache.sedona.sql.SedonaSqlExtensions
+    spark.serializer org.apache.spark.serializer.KryoSerializer
+    spark.kryo.registrator org.apache.sedona.core.serde.SedonaKryoRegistrator
+    ```
+4. Restart the cluster because the libraries installed via UI are installed after the cluster has already started, 
+   and therefore the classes specified by the config `spark.sql.extensions`, `spark.serializer`, and `spark.kryo.registrator` are not available
+   at startup time.
+   
+5. Upload the sample data files to dbfs, attach the [notebook](notebooks/spacial-cpu-apache-sedona_db.ipynb) to the cluster, and run all cells.
