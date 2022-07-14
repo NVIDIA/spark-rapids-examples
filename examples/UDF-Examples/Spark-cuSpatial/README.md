@@ -75,7 +75,7 @@ Note: The docker env is just for building the jar, not for running the applicati
      cd spark-rapids-examples/examples/Spark-cuSpatial/
      mvn package
      ```
-6. You'll get "spark-cuspatial-<version>.jar" in the target folder.
+6. You'll get `spark-cuspatial-<version>.jar` in the target folder.
 
 ## Run
 ### GPU Demo Run on-premises clusters: standalone
