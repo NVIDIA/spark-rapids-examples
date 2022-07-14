@@ -141,7 +141,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 5. Import [cuspatial_sample.ipynb](notebooks/cuspatial_sample_db.ipynb) to your workspace in Databricks. Attach to your cluster, then run it.
 
 ### CPU Demo Run on AWS Databricks
-1. Set up a Databricks cluster with Databricks Runtime Version: Standard Runtime 10.3,
+1. Create a Databricks cluster. For example, Databricks Runtime 10.3.
 
 2. Install the Sedona jars and Sedona Python libs on Databricks using web UI. 
    The Sedona version should be 1.1.1-incubating or higher.
