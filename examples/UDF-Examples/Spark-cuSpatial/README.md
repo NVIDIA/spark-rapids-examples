@@ -145,7 +145,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 
 2. Install the Sedona jars and Sedona Python libs on Databricks using web UI. 
    The Sedona version should be 1.1.1-incubating or higher.
-   * From the Libraries tab install from Maven Coordinates
+   * Install below jars from Maven Coordinates in Libraries tab:
     ```Bash
     org.apache.sedona:sedona-python-adapter-3.0_2.12:1.2.0-incubating
     org.datasyslab:geotools-wrapper:1.1.0-25.2
