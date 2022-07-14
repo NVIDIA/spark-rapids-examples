@@ -54,8 +54,10 @@ Run spark-submit:
 export DATA_PATH=hdfs:/tmp/xgboost4j_spark_python/
 
 ${SPARK_HOME}/bin/spark-submit \
-    --master yarn 
-    --deploy-mode cluster
+    --master yarn \
+    --deploy-mode cluster \
+    --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
+    --conf spark.rapids.sql.hasNans=false \
     --jars ${RAPIDS_JAR}\
     ${MAIN_PY} \
     --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \

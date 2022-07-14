@@ -100,6 +100,8 @@ ${SPARK_HOME}/bin/spark-submit \
    --conf spark.executor.resource.gpu.amount=1 \
    --conf spark.task.resource.gpu.amount=1 \
    --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
+   --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
+   --conf spark.rapids.sql.hasNans=false \
    --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh \
    --jars ${RAPIDS_JAR}                                           \
    --master <k8s://ip:port or k8s://URL>                                                                  \

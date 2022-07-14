@@ -106,6 +106,8 @@ ${SPARK_HOME}/bin/spark-submit \
     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
     --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
     --conf spark.rapids.sql.csv.read.double.enabled=true \
+    --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
+    --conf spark.rapids.sql.hasNans=false \
     --class com.nvidia.spark.examples.mortgage.ETLMain  \
     $SAMPLE_JAR \
     -format=csv \

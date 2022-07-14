@@ -30,6 +30,8 @@ and the home directory for Apache Spark respectively.
     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
     --conf spark.rapids.memory.gpu.pooling.enabled=false \
     --conf spark.executor.resource.gpu.amount=1 \
+    --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
+    --conf spark.rapids.sql.hasNans=false \
     --conf spark.task.resource.gpu.amount=1 \
     --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
     --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh
