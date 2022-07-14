@@ -143,7 +143,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 ### CPU Demo Run on AWS Databricks
 1. Set up a Databricks cluster with Databricks Runtime Version: Standard Runtime 10.3,
 
-2. Install the Sedona jars and Sedona Python on Databricks using Databricks default web UI. 
+2. Install the Sedona jars and Sedona Python libs on Databricks using web UI. 
    The Sedona version should be 1.1.1-incubating or higher.
    * From the Libraries tab install from Maven Coordinates
     ```Bash
