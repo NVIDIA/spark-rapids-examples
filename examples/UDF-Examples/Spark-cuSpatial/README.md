@@ -45,7 +45,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
      docker build -f Dockerfile . -t build-spark-cuspatial
      docker run -it build-spark-cuspatial bash
      ```
-2. Get the code, then run "mvn package".
+2. Get the code, then run `mvn package`.
      ```Bash
      git clone https://github.com/NVIDIA/spark-rapids-examples.git
      cd spark-rapids-examples/examples/UDF-Examples/Spark-cuSpatial/
@@ -69,7 +69,7 @@ Note: The docker env is just for building the jar, not for running the applicati
     # or below command for the nightly (aka SNAPSHOT) version.
     conda install -c rapidsai-nightly -c nvidia -c conda-forge  -c defaults libcuspatial=22.08
     ```
-5. Get the code, then run "mvn package".
+5. Get the code, then run `mvn package`.
      ```Bash
      git clone https://github.com/NVIDIA/spark-rapids-examples.git
      cd spark-rapids-examples/examples/Spark-cuSpatial/
@@ -88,14 +88,14 @@ Note: The docker env is just for building the jar, not for running the applicati
 
 3. Download spark-rapids jars
    * [spark-rapids v22.06.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.06.0/rapids-4-spark_2.12-22.06.0.jar) or above
-4. Prepare the dataset & jars. Copy the sample dataset from [cuspatial_data](../../../datasets/cuspatial_data.tar.gz) to "/data/cuspatial_data".
-    Copy spark-rapids & `spark-cuspatial-<version>.jar` to "/data/cuspatial_data/jars".
+4. Prepare the dataset & jars. Copy the sample dataset from [cuspatial_data](../../../datasets/cuspatial_data.tar.gz) to `/data/cuspatial_data`.
+    Copy spark-rapids & `spark-cuspatial-<version>.jar` to `/data/cuspatial_data/jars`.
     If you build the `spark-cuspatial-22.08.0-SNAPSHOT.jar` in docker, please copy the jar from docker to local:
     ```
     docker cp your-instance:/root/spark-rapids-examples/examples/UDF-Examples/Spark-cuSpatial/target/spark-cuspatial-22.08.0-SNAPSHOT.jar ./your-local-path
     ```
-    You can use your own path, but remember to update the paths in "gpu-run.sh" accordingly.
-5. Run "gpu-run.sh"
+    You can use your own path, but remember to update the paths in `gpu-run.sh` accordingly.
+5. Run `gpu-run.sh`
     ```Bash
     ./gpu-run.sh
     ```
@@ -110,12 +110,12 @@ Note: The docker env is just for building the jar, not for running the applicati
 2. Follow the [Spark-rapids get-started document](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-databricks.html#start-a-databricks-cluster) to create a GPU cluster on AWS Databricks.
  Something different from the document.
     * Databricks Runtime Version
-  You should choose a Standard version of the Runtime version like "Runtime: 9.1 LTS(Scala 2.12, Spark 3.1.2)" and
-  choose GPU instance type like "g4dn.xlarge". Note that ML runtime does not support customized docker container.
-  If you choose a ML version, it says "Support for Databricks container services requires runtime version 5.3+" 
-  and the "Confirm" button is disabled.
+  You should choose a Standard version of the Runtime version like `Runtime: 9.1 LTS(Scala 2.12, Spark 3.1.2)` and
+  choose GPU instance type like `g4dn.xlarge`. Note that ML runtime does not support customized docker container.
+  If you choose a ML version, it says `Support for Databricks container services requires runtime version 5.3+` 
+  and the `Confirm` button is disabled.
     * Use your own Docker container
-  Input "Docker Image URL" as "your-dockerhub-repo:your-tag"
+  Input `Docker Image URL` as `your-dockerhub-repo:your-tag`
     * For the other configurations, you can follow the get-started document.
 
 3. Copy the sample [cuspatial_data.tar.gz](../../../datasets/cuspatial_data.tar.gz) or your data to DBFS by using Databricks CLI.
@@ -161,8 +161,5 @@ Note: The docker env is just for building the jar, not for running the applicati
     spark.serializer org.apache.spark.serializer.KryoSerializer
     spark.kryo.registrator org.apache.sedona.core.serde.SedonaKryoRegistrator
     ```
-4. Restart the cluster because the libraries installed via UI are installed after the cluster has already started, 
-   and therefore the classes specified by the config `spark.sql.extensions`, `spark.serializer`, and `spark.kryo.registrator` are not available
-   at startup time.
    
-5. Upload the sample data files to dbfs, attach the [notebook](notebooks/spacial-cpu-apache-sedona_db.ipynb) to the cluster, and run all cells.
+4. Upload the sample data files to DBFS, start the cluster, attach the [notebook](notebooks/spacial-cpu-apache-sedona_db.ipynb) to the cluster, and run all cells.
