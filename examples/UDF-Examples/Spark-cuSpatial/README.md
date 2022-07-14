@@ -150,7 +150,7 @@ Note: The docker env is just for building the jar, not for running the applicati
     org.apache.sedona:sedona-python-adapter-3.0_2.12:1.2.0-incubating
     org.datasyslab:geotools-wrapper:1.1.0-25.2
     ```
-   * For enabling python support, from the Libraries tab install from PyPI
+   * To enable python support, install below python lib from PyPI in Libraries tab 
     ```Bash
     apache-sedona
     ```
