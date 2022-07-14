@@ -134,7 +134,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 
    <img src="../../../docs/img/guides/cuspatial/sample-polygon.png" width="600">
    
-4. Import the Library "spark-cuspatial-22.08.0-SNAPSHOT.jar" to the Databricks, then install it to your cluster.
+4. Import the Library `spark-cuspatial-22.08.0-SNAPSHOT.jar` to the Databricks, then install it to your cluster.
    
    <img src="../../../docs/img/guides/cuspatial/install-jar.png" width="600">    
 
