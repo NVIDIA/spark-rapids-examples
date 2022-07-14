@@ -51,7 +51,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
      cd spark-rapids-examples/examples/UDF-Examples/Spark-cuSpatial/
      mvn package
      ```
-3. You'll get the jar named like "spark-cuspatial-<version>.jar" in the target folder.
+3. You'll get the jar named `spark-cuspatial-<version>.jar` in the target folder.
 
 Note: The docker env is just for building the jar, not for running the application.
 
