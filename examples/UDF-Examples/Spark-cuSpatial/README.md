@@ -155,7 +155,7 @@ Note: The docker env is just for building the jar, not for running the applicati
     apache-sedona
     ```
 3. From your cluster configuration (Cluster -> Edit -> Configuration -> Advanced options -> Spark) activate the 
-   Sedona functions and the kryo serializer by adding to the Spark Config
+   Sedona functions and the kryo serializer by adding below to the Spark Config
     ```Bash
     spark.sql.extensions org.apache.sedona.viz.sql.SedonaVizExtensions,org.apache.sedona.sql.SedonaSqlExtensions
     spark.serializer org.apache.spark.serializer.KryoSerializer
