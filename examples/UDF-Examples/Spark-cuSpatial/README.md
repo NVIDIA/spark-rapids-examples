@@ -109,7 +109,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 2. Follow the [Spark-rapids get-started document](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-databricks.html#start-a-databricks-cluster) to create a GPU cluster on AWS Databricks.
  Below are some different steps since a custom docker image is used with Databricks:
     * Databricks Runtime Version
-  You should choose a Standard version of the Runtime version like `Runtime: 9.1 LTS(Scala 2.12, Spark 3.1.2)` and
+  Choose a non-ML Databricks Runtime such as `Runtime: 9.1 LTS(Scala 2.12, Spark 3.1.2)` and
   choose GPU instance type like `g4dn.xlarge`. Note that ML runtime does not support customized docker container.
 `Support for Databricks container services requires runtime version 5.3+` 
   and the `Confirm` button is disabled.
