@@ -56,7 +56,7 @@ or you can build it [in local](#build-in-local) machine after some prerequisites
 Note: The docker env is just for building the jar, not for running the application.
 
 ### Build in Local:
-1. essential build tools:
+1. Essential build tools:
     - [cmake(>=3.20)](https://cmake.org/download/),
     - [ninja(>=1.10)](https://github.com/ninja-build/ninja/releases),
     - [gcc(>=9.3)](https://gcc.gnu.org/releases.html)
