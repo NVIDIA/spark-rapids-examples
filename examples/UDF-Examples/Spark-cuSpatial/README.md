@@ -35,7 +35,7 @@ nyct-community-districts map:
 <img src="../../../docs/img/guides/cuspatial/Nycd-Community-Districts.png" width="600">
 
 ## Build
-First you need to build the UDF Jar file from source code before running this demo.
+Firstly build the UDF JAR from source code before running this demo.
 You can do it [in Docker](#build-in-docker) with the provided [Dockerfile](Dockerfile).
 or you can build it [in local](#build-in-local) machine after some prerequisites.
 
