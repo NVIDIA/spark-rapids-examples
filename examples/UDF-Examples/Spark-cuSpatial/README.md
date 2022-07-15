@@ -36,7 +36,7 @@ nyct-community-districts map:
 
 ## Build
 Firstly build the UDF JAR from source code before running this demo.
-You can do it [in Docker](#build-in-docker) with the provided [Dockerfile](Dockerfile).
+You can build the JAR [in Docker](#build-in-docker) with the provided [Dockerfile](Dockerfile), 
 or you can build it [in local](#build-in-local) machine after some prerequisites.
 
 ### Build in Docker
