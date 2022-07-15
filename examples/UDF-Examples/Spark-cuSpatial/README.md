@@ -85,7 +85,7 @@ Note: The docker env is just for building the jar, not for running the applicati
     ```
 2. Set up [a standalone cluster](/docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md) of Spark. Make sure the conda/lib is included in LD_LIBRARY_PATH, so that spark executors can load libcuspatial.so.
 
-3. Download spark-rapids jars
+3. Download Spark RAPIDS JAR
    * [spark-rapids v22.06.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.06.0/rapids-4-spark_2.12-22.06.0.jar) or above
 4. Prepare the dataset & jars. Copy the sample dataset from [cuspatial_data](../../../datasets/cuspatial_data.tar.gz) to `/data/cuspatial_data`.
     Copy spark-rapids & `spark-cuspatial-<version>.jar` to `/data/cuspatial_data/jars`.
