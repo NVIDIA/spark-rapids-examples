@@ -87,7 +87,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 
 3. Download Spark RAPIDS JAR
    * [Spark RAPIDS JAR v22.06.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.06.0/rapids-4-spark_2.12-22.06.0.jar) or above
-4. Prepare the dataset & jars. Copy the sample dataset from [cuspatial_data](../../../datasets/cuspatial_data.tar.gz) to `/data/cuspatial_data`.
+4. Prepare sample dataset and JARs. Copy the [sample dataset](../../../datasets/cuspatial_data.tar.gz) to `/data/cuspatial_data/`.
     Copy Spark RAPIDS JAR and `spark-cuspatial-<version>.jar` to `/data/cuspatial_data/jars/`.
     If you build the `spark-cuspatial-22.08.0-SNAPSHOT.jar` in docker, please copy the jar from docker to local:
     ```
