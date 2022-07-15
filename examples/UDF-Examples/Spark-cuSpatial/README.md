@@ -78,7 +78,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 6. You'll get `spark-cuspatial-<version>.jar` in the target folder.
 
 ## Run
-### GPU Demo Run on-premises clusters: standalone
+### GPU Demo on Spark Standalone on-premises cluster
 1. Install necessary libraries. Besides `cudf` and `cuspatial`, the `gdal` library that is compatible with the installed `cuspatial` may also be needed.
     Install it by running the command below.
     ```
