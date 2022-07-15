@@ -91,7 +91,7 @@ Note: The docker env is just for building the jar, not for running the applicati
     Copy Spark RAPIDS JAR and `spark-cuspatial-<version>.jar` to `/data/cuspatial_data/jars/`.
     If you build the `spark-cuspatial-<version>.jar` in docker, please copy the jar from docker to local:
     ```
-    docker cp your-instance:/root/spark-rapids-examples/examples/UDF-Examples/Spark-cuSpatial/target/spark-cuspatial-22.08.0-SNAPSHOT.jar ./your-local-path
+    docker cp YOUR_DOCKER_CONTAINER:/PATH/TO/spark-cuspatial-<version>.jar ./YOUR_LOCAL_PATH
     ```
     You can use your own path, but remember to update the paths in `gpu-run.sh` accordingly.
 5. Run `gpu-run.sh`
