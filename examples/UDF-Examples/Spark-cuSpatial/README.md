@@ -80,7 +80,6 @@ Note: The docker env is just for building the jar, not for running the applicati
 ## Run
 ### GPU Demo on Spark Standalone on-premises cluster
 1. Install necessary libraries. Besides `cudf` and `cuspatial`, the `gdal` library that is compatible with the installed `cuspatial` may also be needed.
-    Install it by running the command below.
     ```
     conda install -c conda-forge libgdal=3.3.1
     ```
