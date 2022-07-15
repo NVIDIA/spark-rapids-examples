@@ -110,7 +110,7 @@ Note: The docker env is just for building the jar, not for running the applicati
  Below are some different steps since a custom docker image is used with Databricks:
     * Databricks Runtime Version
   Choose a non-ML Databricks Runtime such as `Runtime: 9.1 LTS(Scala 2.12, Spark 3.1.2)` and
-  choose GPU instance type like `g4dn.xlarge`. Note that ML runtime does not support customized docker container.
+  choose GPU AWS instance type such as `g4dn.xlarge`. Note that ML runtime does not support customized docker container with below messages:
 `Support for Databricks container services requires runtime version 5.3+` 
   and the `Confirm` button is disabled.
     * Use your own Docker container
