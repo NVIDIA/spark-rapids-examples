@@ -69,7 +69,7 @@ Note: The docker env is just for building the jar, not for running the applicati
     # or below command for the nightly (aka SNAPSHOT) version.
     conda install -c rapidsai-nightly -c nvidia -c conda-forge  -c defaults libcuspatial=22.08
     ```
-5. Get the code, then run `mvn package`.
+5. Build the JAR using `mvn package`.
      ```Bash
      git clone https://github.com/NVIDIA/spark-rapids-examples.git
      cd spark-rapids-examples/examples/Spark-cuSpatial/
