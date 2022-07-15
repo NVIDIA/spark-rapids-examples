@@ -55,7 +55,7 @@ or [in local machine](#build-in-local-machine) after prerequisites.
 
 Note: The docker env is just for building the jar, not for running the application.
 
-### Build in Local:
+### Build in local machine:
 1. Essential build tools:
     - [cmake(>=3.20)](https://cmake.org/download/),
     - [ninja(>=1.10)](https://github.com/ninja-build/ninja/releases),
