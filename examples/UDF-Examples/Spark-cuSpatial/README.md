@@ -138,7 +138,7 @@ Note: The docker env is just for building the jar, not for running the applicati
    
    <img src="../../../docs/img/guides/cuspatial/install-jar.png" width="600">    
 
-5. Import [cuspatial_sample.ipynb](notebooks/cuspatial_sample_db.ipynb) to your workspace in Databricks. Attach to your cluster, then run it.
+5. Import [cuspatial_sample.ipynb](notebooks/cuspatial_sample_db.ipynb) to Databricks workspace, attach it to Databricks cluster and run it.
 
 ### CPU Demo on AWS Databricks
 1. Create a Databricks cluster. For example, Databricks Runtime 10.3.
