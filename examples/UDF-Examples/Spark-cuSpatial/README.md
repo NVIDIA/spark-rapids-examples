@@ -162,4 +162,4 @@ Note: The docker env is just for building the jar, not for running the applicati
     spark.kryo.registrator org.apache.sedona.core.serde.SedonaKryoRegistrator
     ```
    
-4. Upload the sample data files to DBFS, start the cluster, attach the [notebook](notebooks/spacial-cpu-apache-sedona_db.ipynb) to the cluster, and run all cells.
+4. Upload the sample data files to DBFS, start the cluster, attach the [notebook](notebooks/spacial-cpu-apache-sedona_db.ipynb) to the cluster, and run it.
