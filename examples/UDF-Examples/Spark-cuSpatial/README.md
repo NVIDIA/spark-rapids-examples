@@ -116,7 +116,7 @@ Note: The docker env is just for building the jar, not for running the applicati
   and the `Confirm` button is disabled.
     * Use your own Docker container
   Input `Docker Image URL` as `your-dockerhub-repo:your-tag`
-    * For the other configurations, you can follow the get-started document.
+    * Follow the Databricks get-started document for other steps.
 
 3. Copy the sample [cuspatial_data.tar.gz](../../../datasets/cuspatial_data.tar.gz) or your data to DBFS by using Databricks CLI.
     ```Bash
