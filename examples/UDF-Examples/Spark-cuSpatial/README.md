@@ -99,7 +99,7 @@ Note: The docker env is just for building the jar, not for running the applicati
     ```Bash
     ./gpu-run.sh
     ```
-### GPU Demo Run on AWS Databricks
+### GPU Demo on AWS Databricks
 1. Build a customized docker image using [Dockerfile.awsdb](Dockerfile.awsdb) and push to a Docker registry such as [Docker Hub](https://hub.docker.com/) which can be accessible by AWS Databricks.
      ```Bash
      # replace your dockerhub repo, your tag or any other repo AWS DB can access
