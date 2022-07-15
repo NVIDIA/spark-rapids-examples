@@ -93,7 +93,7 @@ Note: The docker env is just for building the jar, not for running the applicati
     ```
     docker cp YOUR_DOCKER_CONTAINER:/PATH/TO/spark-cuspatial-<version>.jar ./YOUR_LOCAL_PATH
     ```
-    You can use your own path, but remember to update the paths in `gpu-run.sh` accordingly.
+    Note: update the paths in `gpu-run.sh` accordingly.
 5. Run `gpu-run.sh`
     ```Bash
     ./gpu-run.sh
