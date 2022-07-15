@@ -64,7 +64,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 3. conda: use [miniconda](https://docs.conda.io/en/latest/miniconda.html) to maintain header files and cmake dependecies
 4. [cuspatial](https://github.com/rapidsai/cuspatial): install libcuspatial
     ```Bash
-    # get libcuspatial from conda
+    # Install libcuspatial from conda
     conda install -c rapidsai -c nvidia -c conda-forge  -c defaults libcuspatial=22.06
     # or below command for the nightly (aka SNAPSHOT) version.
     conda install -c rapidsai-nightly -c nvidia -c conda-forge  -c defaults libcuspatial=22.08
