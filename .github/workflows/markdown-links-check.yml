@@ -24,10 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: work around permission issue
-      run: git config --global --add safe.directory $(pwd)
+      run: git config --global --add safe.directory /github/workspace
     - uses: actions/checkout@master
-    - uses: gaurav-nelson/github-action-markdown-link-check@1.0.13
-#    - uses: nvliyuan/github-action-markdown-link-check@fix-absolute-links-error  
+    - uses: gaurav-nelson/github-action-markdown-link-check@v1
       with:
         max-depth: -1
         use-verbose-mode: 'yes'
