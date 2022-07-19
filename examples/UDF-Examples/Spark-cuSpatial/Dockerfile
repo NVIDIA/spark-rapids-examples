@@ -39,7 +39,7 @@ RUN conda --version
 RUN conda install -c conda-forge openjdk=8 maven=3.8.1 -y
 
 # install cuDF dependency.
-RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge -c defaults libcuspatial=22.06 python=3.8 -y
+RUN conda install -c rapidsai -c nvidia -c conda-forge -c defaults libcuspatial=22.06 python=3.8 -y
 
 RUN wget --quiet \
     https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-linux-x86_64.tar.gz \
