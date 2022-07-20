@@ -55,7 +55,7 @@ Make sure you have prepared the necessary packages and dataset by following this
 
 
 #### Note: 
-1. Mortgage and Taxi jobs have ETLs to generate the processed data. You can either use this ETLed data to split into training and testing data or run the ETL on different subsets of the dataset to produce training and testing datasets. Please refer [Launch ETL job](#etl). 
+1. Mortgage and Taxi jobs have ETLs to generate the processed data.
 2. For convenience, a subset of [Taxi](/datasets/) dataset is made available in this repo that can be readily used for launching XGBoost job. Use [ETL](#etl) to generate larger datasets for trainig and testing. 
 3. Agaricus does not have an ETL process, it is combined with XGBoost as there is just a filter operation.
 
@@ -90,8 +90,7 @@ Launch a Standalone Spark Cluster
 
 Launch Mortgage or Taxi ETL Part
 ---------------------------
-
-Run spark-submit
+Use the ETL app to process raw Mortgage data. You can either use this ETLed data to split into training and evaluation data or run the ETL on different subsets of the dataset to produce training and evaluation datasets.
 ### ETL on GPU
 ``` bash
 ${SPARK_HOME}/bin/spark-submit \

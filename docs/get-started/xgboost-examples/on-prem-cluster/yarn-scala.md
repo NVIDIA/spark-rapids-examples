@@ -36,7 +36,7 @@ Get Jars and Dataset
 Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
 
 #### Note: 
-1. Mortgage and Taxi jobs have ETLs to generate the processed data. You can either use this ETLed data to split into training and testing data or run the ETL on different subsets of the dataset to produce training and testing datasets. Please refer [Launch ETL job](#etl). 
+1. Mortgage and Taxi jobs have ETLs to generate the processed data.
 2. For convenience, a subset of [Taxi](/datasets/) dataset is made available in this repo that can be readily used for launching XGBoost job. Use [ETL](#etl) to generate larger datasets for trainig and testing. 
 3. Agaricus does not have an ETL process, it is combined with XGBoost as there is just a filter operation.
 
@@ -50,9 +50,7 @@ Create a directory in HDFS, and copy:
 <span id="etl">Launch Mortgage or Taxi ETL Part</span>
 ---------------------------
 
-Note: the `mortgage_eval_merged.csv` and `mortgage_train_merged.csv` are not Mortgage raw data,
-they are the data produced by Mortgage ETL job. If user wants to use a larger size Mortgage data, please refer to [Launch ETL job](#etl).
-Taxi ETL job is the same. But Agaricus does not have ETL process, it is combined with XGBoost as there is just a filter operation.
+Use the ETL app to process raw Mortgage data. You can either use this ETLed data to split into training and evaluation data or run the ETL on different subsets of the dataset to produce training and evaluation datasets.
 
 Run spark-submit
 

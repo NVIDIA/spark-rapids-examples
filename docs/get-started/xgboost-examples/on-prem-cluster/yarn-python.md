@@ -47,8 +47,7 @@ Then create a directory in HDFS, and run below commands,
 Launch Mortgage or Taxi ETL Part
 ---------------------------
 
-Run spark-submit:
-
+Use the ETL app to process raw Mortgage data. You can either use this ETLed data to split into training and evaluation data or run the ETL on different subsets of the dataset to produce training and evaluation datasets.
 ``` bash
 # location where data was downloaded
 export DATA_PATH=hdfs:/tmp/xgboost4j_spark_python/
