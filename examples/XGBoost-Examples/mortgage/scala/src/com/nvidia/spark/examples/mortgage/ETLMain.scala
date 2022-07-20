@@ -36,12 +36,12 @@ object ETLMain extends Mortgage {
       benchmark.time("ETL") {
         // ETL the raw data
         val rawDF = xgbArgs.format match {
-          case "csv" => XGBoostETL.csv(spark, dataPaths, xgbArgs.hasHeader)
+          case "csv" => XGBoostETL.csv(spark, dataPaths, false)
           case "orc" => XGBoostETL.orc(spark, dataPaths)
           case "parquet" => XGBoostETL.parquet(spark, dataPaths)
           case _ => throw new IllegalArgumentException("Unsupported data file format!")
         }
-        rawDF.write.mode("overwrite").parquet(new Path(outPath, "data").toString)
+        rawDF.write.mode("overwrite").parquet(outPath)
       }
       if (xgbArgs.saveDict) {
         XGBoostETL.saveDictTable(new Path(outPath, ".dict").toString)
