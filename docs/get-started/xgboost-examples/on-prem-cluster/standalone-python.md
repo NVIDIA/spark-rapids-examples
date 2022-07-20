@@ -92,7 +92,7 @@ Launch Mortgage or Taxi ETL Part
 ---------------------------
 
 Run spark-submit
-
+### ETL on GPU
 ``` bash
 ${SPARK_HOME}/bin/spark-submit \
     --master spark://$HOSTNAME:7077 \
@@ -104,6 +104,27 @@ ${SPARK_HOME}/bin/spark-submit \
     --conf spark.rapids.sql.csv.read.double.enabled=true \
     --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
     --conf spark.rapids.sql.hasNans=false \
+    --py-files ${SAMPLE_ZIP} \
+    main.py \
+    --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \
+    --format=csv \
+    --dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
+    --dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/"
+
+# if generating eval data, change the data path to eval
+# --dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
+# --dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/eval/"
+# if running Taxi ETL benchmark, change the class and data path params to
+# -class com.nvidia.spark.examples.taxi.ETLMain  
+# -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
+```
+### ETL on CPU
+```bash
+${SPARK_HOME}/bin/spark-submit \
+    --master spark://$HOSTNAME:7077 \
+    --executor-memory 32G \
+    --conf spark.executor.instances=1 \
     --py-files ${SAMPLE_ZIP} \
     main.py \
     --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \

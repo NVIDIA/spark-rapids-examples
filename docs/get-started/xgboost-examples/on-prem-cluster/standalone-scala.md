@@ -96,6 +96,7 @@ If user wants to use a larger size dataset other than the default one, we provid
 
 Run spark-submit
 
+### ETL on GPU 
 ``` bash
 ${SPARK_HOME}/bin/spark-submit \
     --master spark://$HOSTNAME:7077 \
@@ -112,6 +113,29 @@ ${SPARK_HOME}/bin/spark-submit \
     -format=csv \
     -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
     -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/"
+
+# if generating eval data, change the data path to eval 
+# -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/eval/"
+# if running Taxi ETL benchmark, change the class and data path params to
+# -class com.nvidia.spark.examples.taxi.ETLMain  
+# -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
+```
+
+### ETL on CPU
+
+```bash
+${SPARK_HOME}/bin/spark-submit \
+--master spark://$HOSTNAME:7077 \
+--executor-memory 32G \
+--conf spark.executor.instances=1 \
+--conf spark.sql.broadcastTimeout=700 \
+--class com.nvidia.spark.examples.mortgage.ETLMain  \
+$SAMPLE_JAR \
+-format=csv \
+-dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
+-dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/"
 
 # if generating eval data, change the data path to eval 
 # -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
