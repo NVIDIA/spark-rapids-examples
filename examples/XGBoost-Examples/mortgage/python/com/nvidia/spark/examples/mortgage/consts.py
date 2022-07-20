@@ -30,7 +30,7 @@ schema = StructType([
     StructField('seller_name', FloatType()),
     StructField('mod_flag', FloatType()),
     StructField('orig_interest_rate', FloatType()),
-    StructField('orig_upb', IntegerType()),
+    StructField('orig_upb', DoubleType()),
     StructField('orig_loan_term', IntegerType()),
     StructField('orig_ltv', FloatType()),
     StructField('orig_cltv', FloatType()),

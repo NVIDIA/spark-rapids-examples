@@ -56,6 +56,8 @@ export DATA_PATH=hdfs:/tmp/xgboost4j_spark_python/
 ${SPARK_HOME}/bin/spark-submit \
     --master yarn \
     --deploy-mode cluster \
+    --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
+    --conf spark.rapids.sql.csv.read.double.enabled=true \
     --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
     --conf spark.rapids.sql.hasNans=false \
     --jars ${RAPIDS_JAR}\
@@ -63,10 +65,11 @@ ${SPARK_HOME}/bin/spark-submit \
     --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \
     --format=csv \
     --dataPath="data::${DATA_PATH}/mortgage/data/mortgage/input/" \
-    --dataPath="out::${DATA_PATH}/mortgage/data/mortgage/out/train/"
+    --dataPath="out::${DATA_PATH}/mortgage/data/mortgage/output/train/"
 
-# if generate eval data, change the data path to eval
-# --dataPath="out::${DATA_PATH}/mortgage/data/mortgage/out/eval/
+# if generating eval data, change the data path to eval
+# --dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
+# --dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/eval/"
 # if running Taxi ETL benchmark, change the class and data path params to
 # -class com.nvidia.spark.examples.taxi.ETLMain  
 # -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
@@ -195,8 +198,8 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}                                  \
  ${MAIN_PY}                                                     \
  --mainClass=${EXAMPLE_CLASS}                                                   \
- --dataPath=train::${DATA_PATH}/mortgage/out/train/       \
- --dataPath=trans::${DATA_PATH}/mortgage/out/eval/         \
+ --dataPath=train::${DATA_PATH}/mortgage/output/train/       \
+ --dataPath=trans::${DATA_PATH}/mortgage/output/eval/         \
  --format=parquet                                                               \
  --numWorkers=${SPARK_NUM_EXECUTORS}                                            \
  --treeMethod=${TREE_METHOD}                                                    \

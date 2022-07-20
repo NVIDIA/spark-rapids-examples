@@ -32,7 +32,7 @@ def load_data(spark, paths, schema, args, extra_csv_opts={}):
         (reader
             .schema(schema)
             .option('delimiter', '|')
-            .option('header', args.hasHeader))
+            .option('header', False))
         for k, v in extra_csv_opts.items():
             reader.option(k, v)
     return reader.load(paths)

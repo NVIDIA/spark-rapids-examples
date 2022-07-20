@@ -116,9 +116,9 @@ ${SPARK_HOME}/bin/spark-submit \
    -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
    -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/"
 
-# if generating test data, change the data path to test
+# if generating eval data, change the data path to eval
 # -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
-# -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/test/"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/eval/"
 # if running Taxi ETL benchmark, change the class and data path params to
 # -class com.nvidia.spark.examples.taxi.ETLMain  
 # -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
@@ -194,7 +194,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
   --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark                  \
   ${SAMPLE_JAR}                                                                        \
   -dataPath=train::${SPARK_XGBOOST_DIR}/mortgage/output/train/                   \
-  -dataPath=trans::${SPARK_XGBOOST_DIR}/mortgage/output/test/                    \
+  -dataPath=trans::${SPARK_XGBOOST_DIR}/mortgage/output/eval/                    \
   -format=parquet                                                                \
   -numWorkers=${SPARK_NUM_EXECUTORS}                                                    \
   -treeMethod=${TREE_METHOD}                                                            \
