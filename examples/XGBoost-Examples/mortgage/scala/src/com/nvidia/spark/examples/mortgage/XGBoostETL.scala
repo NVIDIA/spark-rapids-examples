@@ -27,27 +27,64 @@ object GetQuarterFromCsvFileName {
   // So we strip off the .txt and everything after it
   // and then take everything after the last remaining _
   def apply(): Column = substring_index(
-    substring_index(input_file_name(), ".", 1), "_", -1)
+    substring_index(input_file_name(), ".", 1), "/", -1)
 }
 
 private object CsvReader {
 
-  def readPerformance(spark: SparkSession, paths: Seq[String], optionsMap: Map[String, String]): DataFrame = {
-    val performanceSchema = StructType(Array(
+  def readRaw(spark: SparkSession, paths: Seq[String], optionsMap: Map[String, String]): DataFrame = {
+
+    val rawSchema = StructType(Array(
+      StructField("reference_pool_id", StringType),
       StructField("loan_id", LongType),
       StructField("monthly_reporting_period", StringType),
+      StructField("orig_channel", StringType),
+      StructField("seller_name", StringType),
       StructField("servicer", StringType),
+      StructField("master_servicer", StringType),
+      StructField("orig_interest_rate", DoubleType),
       StructField("interest_rate", DoubleType),
+      StructField("orig_upb", DoubleType),
+      StructField("upb_at_issuance", StringType),
       StructField("current_actual_upb", DoubleType),
+      StructField("orig_loan_term", IntegerType),
+      StructField("orig_date", StringType),
+      StructField("first_pay_date", StringType),    
       StructField("loan_age", DoubleType),
       StructField("remaining_months_to_legal_maturity", DoubleType),
       StructField("adj_remaining_months_to_maturity", DoubleType),
       StructField("maturity_date", StringType),
+      StructField("orig_ltv", DoubleType),
+      StructField("orig_cltv", DoubleType),
+      StructField("num_borrowers", DoubleType),
+      StructField("dti", DoubleType),
+      StructField("borrower_credit_score", DoubleType),
+      StructField("coborrow_credit_score", DoubleType),
+      StructField("first_home_buyer", StringType),
+      StructField("loan_purpose", StringType),
+      StructField("property_type", StringType),
+      StructField("num_units", IntegerType),
+      StructField("occupancy_status", StringType),
+      StructField("property_state", StringType),
       StructField("msa", DoubleType),
+      StructField("zip", IntegerType),
+      StructField("mortgage_insurance_percent", DoubleType),
+      StructField("product_type", StringType),
+      StructField("prepayment_penalty_indicator", StringType),
+      StructField("interest_only_loan_indicator", StringType),
+      StructField("interest_only_first_principal_and_interest_payment_date", StringType),
+      StructField("months_to_amortization", StringType),
       StructField("current_loan_delinquency_status", IntegerType),
+      StructField("loan_payment_history", StringType),
       StructField("mod_flag", StringType),
+      StructField("mortgage_insurance_cancellation_indicator", StringType),
       StructField("zero_balance_code", StringType),
       StructField("zero_balance_effective_date", StringType),
+      StructField("upb_at_the_time_of_removal", StringType),
+      StructField("repurchase_date", StringType),
+      StructField("scheduled_principal_current", StringType),
+      StructField("total_principal_current", StringType),
+      StructField("unscheduled_principal_current", StringType),
       StructField("last_paid_installment_date", StringType),
       StructField("foreclosed_after", StringType),
       StructField("disposition_date", StringType),
@@ -62,57 +99,139 @@ private object CsvReader {
       StructField("other_foreclosure_proceeds", DoubleType),
       StructField("non_interest_bearing_upb", DoubleType),
       StructField("principal_forgiveness_upb", StringType),
-      StructField("repurchase_make_whole_proceeds_flag", StringType),
+      StructField("original_list_start_date", StringType),
+      StructField("original_list_price", StringType),
+      StructField("current_list_start_date", StringType),
+      StructField("current_list_price", StringType),
+      StructField("borrower_credit_score_at_issuance", StringType),
+      StructField("co-borrower_credit_score_at_issuance", StringType),
+      StructField("borrower_credit_score_current", StringType),
+      StructField("co-Borrower_credit_score_current", StringType),
+      StructField("mortgage_insurance_type", DoubleType),
+      StructField("servicing_activity_indicator", StringType),
+      StructField("current_period_modification_loss_amount", StringType),
+      StructField("cumulative_modification_loss_amount", StringType),
+      StructField("current_period_credit_event_net_gain_or_loss", StringType),
+      StructField("cumulative_credit_event_net_gain_or_loss", StringType),
+      StructField("homeready_program_indicator", StringType),
       StructField("foreclosure_principal_write_off_amount", StringType),
-      StructField("servicing_activity_indicator", StringType))
+      StructField("relocation_mortgage_indicator", StringType),
+      StructField("zero_balance_code_change_date", StringType),
+      StructField("loan_holdback_indicator", StringType),
+      StructField("loan_holdback_effective_date", StringType),
+      StructField("delinquent_accrued_interest", StringType),
+      StructField("property_valuation_method", StringType),
+      StructField("high_balance_loan_indicator", StringType),
+      StructField("arm_initial_fixed-rate_period_lt_5_yr_indicator", StringType),
+      StructField("arm_product_type", StringType),
+      StructField("initial_fixed-rate_period", StringType),
+      StructField("interest_rate_adjustment_frequency", StringType),
+      StructField("next_interest_rate_adjustment_date", StringType),
+      StructField("next_payment_change_date", StringType),
+      StructField("index", StringType),
+      StructField("arm_cap_structure", StringType),
+      StructField("initial_interest_rate_cap_up_percent", StringType),
+      StructField("periodic_interest_rate_cap_up_percent", StringType),
+      StructField("lifetime_interest_rate_cap_up_percent", StringType),
+      StructField("mortgage_margin", StringType),
+      StructField("arm_balloon_indicator", StringType),
+      StructField("arm_plan_number", StringType),
+      StructField("borrower_assistance_plan", StringType),
+      StructField("hltv_refinance_option_indicator", StringType),
+      StructField("deal_name", StringType),
+      StructField("repurchase_make_whole_proceeds_flag", StringType),
+      StructField("alternative_delinquency_resolution", StringType),
+      StructField("alternative_delinquency_resolution_count", StringType),
+      StructField("total_deferral_amount", StringType)
+      )
     )
 
     spark.read
       .options(optionsMap)
       .option("nullValue", "")
       .option("delimiter", "|")
-      .option("parserLib", "univocity")
-      .schema(performanceSchema)
+      .schema(rawSchema)
       .csv(paths: _*)
       .withColumn("quarter", GetQuarterFromCsvFileName())
   }
+}
 
-  def readAcquisition(spark: SparkSession, paths: Seq[String], optionsMap: Map[String, String]): DataFrame = {
-    val acquisitionSchema = StructType(Array(
-      StructField("loan_id", LongType),
-      StructField("orig_channel", StringType),
-      StructField("seller_name", StringType),
-      StructField("orig_interest_rate", DoubleType),
-      StructField("orig_upb", IntegerType),
-      StructField("orig_loan_term", IntegerType),
-      StructField("orig_date", StringType),
-      StructField("first_pay_date", StringType),
-      StructField("orig_ltv", DoubleType),
-      StructField("orig_cltv", DoubleType),
-      StructField("num_borrowers", DoubleType),
-      StructField("dti", DoubleType),
-      StructField("borrower_credit_score", DoubleType),
-      StructField("first_home_buyer", StringType),
-      StructField("loan_purpose", StringType),
-      StructField("property_type", StringType),
-      StructField("num_units", IntegerType),
-      StructField("occupancy_status", StringType),
-      StructField("property_state", StringType),
-      StructField("zip", IntegerType),
-      StructField("mortgage_insurance_percent", DoubleType),
-      StructField("product_type", StringType),
-      StructField("coborrow_credit_score", DoubleType),
-      StructField("mortgage_insurance_type", DoubleType),
-      StructField("relocation_mortgage_indicator", StringType))
+object extractPerfColumns{
+  def apply(rawDf : DataFrame) : DataFrame = {
+    val perfDf = rawDf.select(
+      col("loan_id"),
+      date_format(to_date(col("monthly_reporting_period"),"MMyyyy"), "MM/dd/yyyy").as("monthly_reporting_period"),
+      upper(col("servicer")).as("servicer"),
+      col("interest_rate"),
+      col("current_actual_upb"),
+      col("loan_age"),
+      col("remaining_months_to_legal_maturity"),
+      col("adj_remaining_months_to_maturity"),
+      date_format(to_date(col("maturity_date"),"MMyyyy"), "MM/yyyy").as("maturity_date"),
+      col("msa"),
+      col("current_loan_delinquency_status"),
+      col("mod_flag"),
+      col("zero_balance_code"),
+      date_format(to_date(col("zero_balance_effective_date"),"MMyyyy"), "MM/yyyy").as("zero_balance_effective_date"),
+      date_format(to_date(col("last_paid_installment_date"),"MMyyyy"), "MM/dd/yyyy").as("last_paid_installment_date"),
+      date_format(to_date(col("foreclosed_after"),"MMyyyy"), "MM/dd/yyyy").as("foreclosed_after"),
+      date_format(to_date(col("disposition_date"),"MMyyyy"), "MM/dd/yyyy").as("disposition_date"),
+      col("foreclosure_costs"),
+      col("prop_preservation_and_repair_costs"),
+      col("asset_recovery_costs"),
+      col("misc_holding_expenses"),
+      col("holding_taxes"),
+      col("net_sale_proceeds"),
+      col("credit_enhancement_proceeds"),
+      col("repurchase_make_whole_proceeds"),
+      col("other_foreclosure_proceeds"),
+      col("non_interest_bearing_upb"),
+      col("principal_forgiveness_upb"),
+      col("repurchase_make_whole_proceeds_flag"),
+      col("foreclosure_principal_write_off_amount"),
+      col("servicing_activity_indicator"),
+      col("quarter")
     )
 
-    spark.read
-      .options(optionsMap)
-      .option("delimiter", "|")
-      .schema(acquisitionSchema)
-      .csv(paths: _*)
-      .withColumn("quarter", GetQuarterFromCsvFileName())
+    perfDf.select("*").filter("current_actual_upb != 0.0")
   }
+}
+
+object extractAcqColumns{
+  def apply(rawDf : DataFrame) : DataFrame = {
+    val acqDf = rawDf.select(
+      col("loan_id"),
+      col("orig_channel"),
+      upper(col("seller_name")).as("seller_name"),
+      col("orig_interest_rate"),
+      col("orig_upb"),
+      col("orig_loan_term"),
+      date_format(to_date(col("orig_date"),"MMyyyy"), "MM/yyyy").as("orig_date"),
+      date_format(to_date(col("first_pay_date"),"MMyyyy"), "MM/yyyy").as("first_pay_date"),
+      col("orig_ltv"),
+      col("orig_cltv"),
+      col("num_borrowers"),
+      col("dti"),
+      col("borrower_credit_score"),
+      col("first_home_buyer"),
+      col("loan_purpose"),
+      col("property_type"),
+      col("num_units"),
+      col("occupancy_status"),
+      col("property_state"),
+      col("zip"),
+      col("mortgage_insurance_percent"),
+      col("product_type"),
+      col("coborrow_credit_score"),
+      col("mortgage_insurance_type"),
+      col("relocation_mortgage_indicator"),
+      col("quarter"),
+      dense_rank().over(Window.partitionBy("loan_id").orderBy(to_date(col("monthly_reporting_period"),"MMyyyy"))).as("rank")
+    )
+
+    acqDf.select("*").filter(col("rank") === 1).drop("rank")
+  }
+
 }
 
 object NameMapping {
@@ -414,27 +533,36 @@ object XGBoostETL extends Mortgage {
     }
   }
 
-  def csv(spark: SparkSession, perfPaths: Seq[String], acqPaths: Seq[String], hasHeader: Boolean): DataFrame = {
+  def csv(spark: SparkSession, dataPaths: Seq[String], hasHeader: Boolean): DataFrame = {
     val optionsMap = Map("header" -> hasHeader.toString)
+    val rawDf = CsvReader.readRaw(spark, dataPaths, optionsMap)
+    val perfDf = extractPerfColumns(rawDf)
+    val acqDf = extractAcqColumns(rawDf)
     transform(
-      CsvReader.readPerformance(spark, perfPaths, optionsMap),
-      CsvReader.readAcquisition(spark, acqPaths, optionsMap),
+      perfDf,
+      acqDf,
       spark
     )
   }
 
-  def parquet(spark: SparkSession, perfPaths: Seq[String], acqPaths: Seq[String]): DataFrame = {
+  def parquet(spark: SparkSession, dataPaths: Seq[String]): DataFrame = {
+    val rawDf = spark.read.parquet(dataPaths: _*)
+    val perfDf = extractPerfColumns(rawDf)
+    val acqDf = extractAcqColumns(rawDf)
     transform(
-      spark.read.parquet(perfPaths: _*),
-      spark.read.parquet(acqPaths: _*),
+      perfDf,
+      acqDf,
       spark
     )
   }
 
-  def orc(spark: SparkSession, perfPaths: Seq[String], acqPaths: Seq[String]): DataFrame = {
+  def orc(spark: SparkSession, dataPaths: Seq[String]): DataFrame = {
+    val rawDf = spark.read.orc(dataPaths: _*)
+    val perfDf = extractPerfColumns(rawDf)
+    val acqDf = extractAcqColumns(rawDf)
     transform(
-      spark.read.orc(perfPaths: _*),
-      spark.read.orc(acqPaths: _*),
+      perfDf,
+      acqDf,
       spark
     )
   }

@@ -53,9 +53,11 @@ Get Jars and Dataset
 Make sure you have prepared the necessary packages and dataset 
 by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md)
 
-Note: the `mortgage_eval_merged.csv` and `mortgage_train_merged.csv` are not Mortgage raw data,
-they are the data produced by Mortgage ETL job. If user wants to use a larger size Mortgage data, please refer to [Launch ETL job](#etl).
-Taxi ETL job is the same. But Agaricus does not have ETL process, it is combined with XGBoost as there is just a filter operation.
+#### Note: 
+1. Mortgage and Taxi jobs have ETLs to generate the processed data. 
+2. For convenience, a subset of [Taxi](/datasets/) dataset is made available in this repo that can be readily used for launching XGBoost job. Use [ETL](#etl) to generate larger datasets for trainig and testing. 
+3. Agaricus does not have an ETL process, it is combined with XGBoost as there is just a filter operation.
+
 
 Launch a Standalone Spark Cluster
 ---------------------------------
@@ -90,31 +92,53 @@ Launch a Standalone Spark Cluster
 <span id="etl">Launch Mortgage or Taxi ETL Part</span>
 ---------------------------
 
-If user wants to use a larger size dataset other than the default one, we provide an ETL app to process raw Mortgage data.
-
+Use the ETL app to process raw Mortgage data. You can either use this ETLed data to split into training and evaluation data or run the ETL on different subsets of the dataset to produce training and evaluation datasets.
 Run spark-submit
 
+### ETL on GPU 
 ``` bash
 ${SPARK_HOME}/bin/spark-submit \
     --master spark://$HOSTNAME:7077 \
     --executor-memory 32G \
-    --conf spark.rapids.memory.gpu.pooling.enabled=false \
     --conf spark.executor.resource.gpu.amount=1 \
     --conf spark.task.resource.gpu.amount=1 \
     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
     --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
     --conf spark.rapids.sql.csv.read.double.enabled=true \
+    --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
+    --conf spark.rapids.sql.hasNans=false \
     --class com.nvidia.spark.examples.mortgage.ETLMain  \
     $SAMPLE_JAR \
     -format=csv \
-    -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-train/" \
-    -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-train/" \
-    -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/train/"
+    -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
+    -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/"
 
-# if generating eval data, change the data path to eval as well as the corresponding perf-eval and acq-eval data
-# -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-eval"
-# -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-eval"
-# -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/eval/"
+# if generating eval data, change the data path to eval 
+# -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/eval/"
+# if running Taxi ETL benchmark, change the class and data path params to
+# -class com.nvidia.spark.examples.taxi.ETLMain  
+# -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
+```
+
+### ETL on CPU
+
+```bash
+${SPARK_HOME}/bin/spark-submit \
+--master spark://$HOSTNAME:7077 \
+--executor-memory 32G \
+--conf spark.executor.instances=1 \
+--conf spark.sql.broadcastTimeout=700 \
+--class com.nvidia.spark.examples.mortgage.ETLMain  \
+$SAMPLE_JAR \
+-format=csv \
+-dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
+-dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/"
+
+# if generating eval data, change the data path to eval 
+# -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/eval/"
 # if running Taxi ETL benchmark, change the class and data path params to
 # -class com.nvidia.spark.examples.taxi.ETLMain  
 # -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
@@ -150,7 +174,7 @@ export SPARK_DRIVER_MEMORY=4g
 export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
-export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.GPUMain
+export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.Main
 # or change to com.nvidia.spark.examples.taxi.GPUMain to run Taxi Xgboost benchmark
 # or change to com.nvidia.spark.examples.agaricus.GPUMain to run Agaricus Xgboost benchmark
 
@@ -172,9 +196,9 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --conf spark.cores.max=${TOTAL_CORES}                                          \
  --class ${EXAMPLE_CLASS}                                                       \
  ${SAMPLE_JAR}                                                                 \
- -dataPath=train::${SPARK_XGBOOST_DIR}/mortgage/csv/train/mortgage_train_merged.csv       \
- -dataPath=trans::${SPARK_XGBOOST_DIR}/mortgage/csv/test/mortgage_eval_merged.csv          \
- -format=csv                                                                    \
+ -dataPath=train::${SPARK_XGBOOST_DIR}/mortgage/output/train/      \
+ -dataPath=trans::${SPARK_XGBOOST_DIR}/mortgage/output/eval/          \
+ -format=parquet                                                                    \
  -numWorkers=${SPARK_NUM_EXECUTORS}                                             \
  -treeMethod=${TREE_METHOD}                                                     \
  -numRound=100                                                                  \
@@ -229,7 +253,7 @@ export SPARK_DRIVER_MEMORY=4g
 export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
-export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.CPUMain
+export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.Main
 # Please make sure to change the class while running Taxi or Agaricus benchmark     
 
 # tree construction algorithm
@@ -238,7 +262,7 @@ export TREE_METHOD=hist
 
 This is the same command as for the GPU example, repeated for convenience:
 
-``` bash
+```bash
 ${SPARK_HOME}/bin/spark-submit                                                  \
  --master ${SPARK_MASTER}                                                       \
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
@@ -246,9 +270,9 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --conf spark.cores.max=${TOTAL_CORES}                                          \
  --class ${EXAMPLE_CLASS}                                                       \
  ${SAMPLE_JAR}                                                                 \
- -dataPath=train::${SPARK_XGBOOST_DIR}/mortgage/csv/train/mortgage_train_merged.csv       \
- -dataPath=trans::${SPARK_XGBOOST_DIR}/mortgage/csv/test/mortgage_eval_merged.csv          \
- -format=csv                                                                    \
+ -dataPath=train::${SPARK_XGBOOST_DIR}/mortgage/output/train/      \
+ -dataPath=trans::${SPARK_XGBOOST_DIR}/mortgage/output/eval/          \
+ -format=parquet                                                                    \
  -numWorkers=${SPARK_NUM_EXECUTORS}                                             \
  -treeMethod=${TREE_METHOD}                                                     \
  -numRound=100                                                                  \
