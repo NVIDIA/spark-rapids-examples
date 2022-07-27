@@ -42,7 +42,6 @@ and the home directory for Apache Spark respectively.
       --jars ${RAPIDS_JAR},${SAMPLE_JAR}       \
       --conf spark.plugins=com.nvidia.spark.SQLPlugin  \
       --conf spark.executor.extraClassPath=${RAPIDS_JAR} \
-      --conf spark.executor.resource.gpu.amount=1 \
       --conf spark.executor.cores=10 \
       --conf spark.task.resource.gpu.amount=0.1 \
       --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \

@@ -191,6 +191,7 @@ Run spark-submit:
 ${SPARK_HOME}/bin/spark-submit                                                  \
  --conf spark.plugins=com.nvidia.spark.SQLPlugin                       \
  --conf spark.rapids.memory.gpu.pool=NONE                     \
+ --conf spark.rapids.sql.hasNans=false \
  --conf spark.executor.resource.gpu.amount=1                           \
  --conf spark.task.resource.gpu.amount=1                              \
  --master ${SPARK_MASTER}                                                       \
