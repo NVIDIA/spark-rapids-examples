@@ -48,6 +48,9 @@ Launch Mortgage or Taxi ETL Part
 ---------------------------
 
 Use the ETL app to process raw Mortgage data. You can either use this ETLed data to split into training and evaluation data or run the ETL on different subsets of the dataset to produce training and evaluation datasets.
+
+Note: For ETL jobs, Set `spark.task.resource.gpu.amount` to `1/spark.executor.cores`.
+
 ``` bash
 # location where data was downloaded
 export DATA_PATH=hdfs:/tmp/xgboost4j_spark_python/
@@ -55,6 +58,8 @@ export DATA_PATH=hdfs:/tmp/xgboost4j_spark_python/
 ${SPARK_HOME}/bin/spark-submit \
     --master yarn \
     --deploy-mode cluster \
+    --conf spark.executor.cores=10 \
+    --conf spark.task.resource.gpu.amount=0.1 \
     --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
     --conf spark.rapids.sql.csv.read.double.enabled=true \
     --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
@@ -114,7 +119,7 @@ Run spark-submit:
 ``` bash
 ${SPARK_HOME}/bin/spark-submit                                                  \
  --conf spark.plugins=com.nvidia.spark.SQLPlugin                       \
- --conf spark.rapids.memory.gpu.pooling.enabled=false                     \
+ --conf spark.rapids.memory.gpu.pool=NONE                     \
  --conf spark.executor.resource.gpu.amount=1                           \
  --conf spark.task.resource.gpu.amount=1                              \
  --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh        \
