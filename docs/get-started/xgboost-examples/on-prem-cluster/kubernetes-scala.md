@@ -92,13 +92,16 @@ to execute using a GPU which is already in use -- causing undefined behavior and
 ---------------------------
 Use the ETL app to process raw Mortgage data. You can either use this ETLed data to split into training and evaluation data or run the ETL on different subsets of the dataset to produce training and evaluation datasets. 
 
+Note: For ETL jobs, Set `spark.task.resource.gpu.amount` to `1/spark.executor.cores`.
+
 Run spark-submit
 
 ``` bash
 ${SPARK_HOME}/bin/spark-submit \
    --conf spark.plugins=com.nvidia.spark.SQLPlugin \
    --conf spark.executor.resource.gpu.amount=1 \
-   --conf spark.task.resource.gpu.amount=1 \
+   --conf spark.executor.cores=10 \
+   --conf spark.task.resource.gpu.amount=0.1 \
    --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
    --conf spark.rapids.sql.csv.read.double.enabled=true \
    --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
@@ -178,9 +181,10 @@ Run spark-submit:
 ``` bash
 ${SPARK_HOME}/bin/spark-submit                                                          \
   --conf spark.plugins=com.nvidia.spark.SQLPlugin \
-  --conf spark.rapids.memory.gpu.pooling.enabled=false \
+  --conf spark.rapids.memory.gpu.pool=NONE \
   --conf spark.executor.resource.gpu.amount=1 \
   --conf spark.task.resource.gpu.amount=1 \
+  --conf spark.rapids.sql.hasNans=false \
   --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
   --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh \
   --jars ${RAPIDS_JAR}                           \
