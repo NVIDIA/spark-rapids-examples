@@ -29,18 +29,39 @@ and the home directory for Apache Spark respectively.
 
 4. Install a new kernel with gpu enabled and launch the notebook
 
+    Note: For ETL jobs, Set `spark.task.resource.gpu.amount` to `1/spark.executor.cores`.
+
+    For ETL:
     ``` bash
     jupyter toree install                                \
     --spark_home=${SPARK_HOME}                             \
     --user                                          \
     --toree_opts='--nosparkcontext'                         \
-    --kernel_name="XGBoost4j-Spark"                         \
+    --kernel_name="ETL-Spark"                         \
     --spark_opts='--master ${SPARK_MASTER} \
       --jars ${RAPIDS_JAR},${SAMPLE_JAR}       \
       --conf spark.plugins=com.nvidia.spark.SQLPlugin  \
       --conf spark.executor.extraClassPath=${RAPIDS_JAR} \
-      --conf spark.rapids.memory.gpu.pooling.enabled=false \
+      --conf spark.executor.cores=10 \
+      --conf spark.task.resource.gpu.amount=0.1 \
+      --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
+      --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh'
+    ```
+
+    For XGBoost:
+     ``` bash
+    jupyter toree install                                \
+    --spark_home=${SPARK_HOME}                             \
+    --user                                          \
+    --toree_opts='--nosparkcontext'                         \
+    --kernel_name="XGBoost-Spark"                         \
+    --spark_opts='--master ${SPARK_MASTER} \
+      --jars ${RAPIDS_JAR},${SAMPLE_JAR}       \
+      --conf spark.plugins=com.nvidia.spark.SQLPlugin  \
+      --conf spark.executor.extraClassPath=${RAPIDS_JAR} \
+      --conf spark.rapids.memory.gpu.pool=NONE \
       --conf spark.executor.resource.gpu.amount=1 \
+      --conf spark.executor.cores=10 \
       --conf spark.task.resource.gpu.amount=1 \
       --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
       --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh'
