@@ -36,7 +36,7 @@ object ETLMain extends Mortgage {
       benchmark.time("ETL") {
         // ETL the raw data
         val rawDF = xgbArgs.format match {
-          case "csv" => XGBoostETL.csv(spark, dataPaths, false)
+          case "csv" => XGBoostETL.csv(spark, dataPaths, tmpPath, false)
           case "orc" => XGBoostETL.orc(spark, dataPaths)
           case "parquet" => XGBoostETL.parquet(spark, dataPaths)
           case _ => throw new IllegalArgumentException("Unsupported data file format!")
