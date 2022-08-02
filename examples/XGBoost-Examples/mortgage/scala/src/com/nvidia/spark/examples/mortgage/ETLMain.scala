@@ -52,7 +52,7 @@ object ETLMain extends Mortgage {
     }
   }
 
-  private def checkAndGetPaths(paths: Seq[String]): (Seq[String], String) = {
+  private def checkAndGetPaths(paths: Seq[String]): (Seq[String], String, String) = {
     val prefixes = Array("data::", "out::",  "tmp::")
     val validPaths = paths.filter(_.nonEmpty).map(_.trim)
 

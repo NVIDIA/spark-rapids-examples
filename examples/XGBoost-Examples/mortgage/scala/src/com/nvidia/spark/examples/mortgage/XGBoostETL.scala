@@ -537,7 +537,7 @@ object XGBoostETL extends Mortgage {
     val optionsMap = Map("header" -> hasHeader.toString)
     val rawDf_csv = CsvReader.readRaw(spark, dataPaths, optionsMap)
     
-    val (dataPaths, outPath, tmpPath) = checkAndGetPaths(xgbArgs.dataPaths)
+    val (dataPaths, outPath, tmpPath) = checkAndGetPaths(dataPaths)
     rawDf_csv.write.mode("overwrite").parquet(tmpPath)
     val rawDf = spark.read.parquet(tmpPath: _*)
     
