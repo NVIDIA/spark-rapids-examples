@@ -539,7 +539,7 @@ object XGBoostETL extends Mortgage {
     
     val (dataPaths, outPath, tmpPath) = checkAndGetPaths(xgbArgs.dataPaths)
     rawDf_csv.write.mode("overwrite").parquet(tmpPath)
-    val rawDf = spark.read.parquet(tmpPath)
+    val rawDf = spark.read.parquet(tmpPath: _*)
     
     val perfDf = extractPerfColumns(rawDf)
     val acqDf = extractAcqColumns(rawDf)
