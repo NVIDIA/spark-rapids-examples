@@ -535,7 +535,12 @@ object XGBoostETL extends Mortgage {
 
   def csv(spark: SparkSession, dataPaths: Seq[String], hasHeader: Boolean): DataFrame = {
     val optionsMap = Map("header" -> hasHeader.toString)
-    val rawDf = CsvReader.readRaw(spark, dataPaths, optionsMap)
+    val rawDf_csv = CsvReader.readRaw(spark, dataPaths, optionsMap)
+    
+    val (dataPaths, outPath, tmpPath) = checkAndGetPaths(xgbArgs.dataPaths)
+    rawDf_csv.write.mode("overwrite").parquet(tmpPath)
+    val rawDf = spark.read.parquet(tmpPath)
+    
     val perfDf = extractPerfColumns(rawDf)
     val acqDf = extractAcqColumns(rawDf)
     transform(
