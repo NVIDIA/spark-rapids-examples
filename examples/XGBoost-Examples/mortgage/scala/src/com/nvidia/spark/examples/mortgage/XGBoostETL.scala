@@ -571,4 +571,33 @@ object XGBoostETL extends Mortgage {
       spark
     )
   }
+  
+  def checkAndGetPaths(paths: Seq[String]): (Seq[String], String, String) = {
+    val prefixes = Array("data::", "out::",  "tmp::")
+    val validPaths = paths.filter(_.nonEmpty).map(_.trim)
+
+    // get and check perf data paths
+    val dataPaths = validPaths.filter(_.startsWith(prefixes.head))
+    require(dataPaths.nonEmpty, s"$appName ETL requires at least one path for data file." +
+      s" Please specify it by '-dataPath=data::your_data_path'")
+
+    // get and check out path
+    val outPath = validPaths.filter(_.startsWith(prefixes(1)))
+    require(outPath.nonEmpty, s"$appName ETL requires a path to save the ETLed data file. Please specify it" +
+      " by '-dataPath=out::your_out_path', only the first path is used if multiple paths are found.")
+    
+    // get and check tmp path
+    val tmpPath = validPaths.filter(_.startsWith(prefixes(2)))
+    require(tmpPath.nonEmpty, s"$appName ETL requires a path to save the temp parquet files. Please specify it" +
+      " by '-dataPath=tmp::your_out_path'.")
+
+    // check data paths not specified type
+    val unknownPaths = validPaths.filterNot(p => prefixes.exists(p.contains(_)))
+    require(unknownPaths.isEmpty, s"Unknown type for data path: ${unknownPaths.head}, $appName requires to specify" +
+      " the type for each data path by adding the prefix 'data::' or 'out::'.")
+
+    (dataPaths.map(_.stripPrefix(prefixes.head)),
+     outPath.head.stripPrefix(prefixes(1)),
+     tmpPath.head.stripPrefix(prefixes(2)))
+  }
 }
