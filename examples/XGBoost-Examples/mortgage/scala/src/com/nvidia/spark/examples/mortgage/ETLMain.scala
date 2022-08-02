@@ -78,6 +78,6 @@ object ETLMain extends Mortgage {
 
     (dataPaths.map(_.stripPrefix(prefixes.head)),
      outPath.head.stripPrefix(prefixes(1)),
-     tmpPath.head.stripPrefix(prefixes(2))
+     tmpPath.head.stripPrefix(prefixes(2)))
   }
 }
