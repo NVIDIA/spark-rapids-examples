@@ -225,6 +225,9 @@ def extract_paths(paths, prefix):
 
 def etl(spark, args):
     rawDf = prepare_rawDf(spark, args)
+    rawDf.write.parquet(extract_paths(args.dataPaths, 'tmp::')[0], mode='overwrite')
+    rawDf = spark.read.parquet(extract_paths(args.dataPaths, 'tmp::')[0])
+    
     performance = prepare_performance(spark, args, rawDf)
     acquisition = prepare_acquisition(spark, args, rawDf)
     return (performance

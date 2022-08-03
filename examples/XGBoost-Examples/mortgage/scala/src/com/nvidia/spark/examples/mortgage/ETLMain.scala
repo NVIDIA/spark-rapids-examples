@@ -31,12 +31,12 @@ object ETLMain extends Mortgage {
     val spark = SparkSession.builder().appName(appInfo.mkString("-")).getOrCreate()
 
     try {
-      val (dataPaths, outPath) = checkAndGetPaths(xgbArgs.dataPaths)
+      val (dataPaths, outPath, tmpPath) = checkAndGetPaths(xgbArgs.dataPaths)
       println("\n------ Start ETL ------")
       benchmark.time("ETL") {
         // ETL the raw data
         val rawDF = xgbArgs.format match {
-          case "csv" => XGBoostETL.csv(spark, dataPaths, false)
+          case "csv" => XGBoostETL.csv(spark, dataPaths, tmpPath, false)
           case "orc" => XGBoostETL.orc(spark, dataPaths)
           case "parquet" => XGBoostETL.parquet(spark, dataPaths)
           case _ => throw new IllegalArgumentException("Unsupported data file format!")
@@ -52,8 +52,8 @@ object ETLMain extends Mortgage {
     }
   }
 
-  private def checkAndGetPaths(paths: Seq[String]): (Seq[String], String) = {
-    val prefixes = Array("data::", "out::")
+  def checkAndGetPaths(paths: Seq[String]): (Seq[String], String, String) = {
+    val prefixes = Array("data::", "out::",  "tmp::")
     val validPaths = paths.filter(_.nonEmpty).map(_.trim)
 
     // get and check perf data paths
@@ -65,6 +65,11 @@ object ETLMain extends Mortgage {
     val outPath = validPaths.filter(_.startsWith(prefixes(1)))
     require(outPath.nonEmpty, s"$appName ETL requires a path to save the ETLed data file. Please specify it" +
       " by '-dataPath=out::your_out_path', only the first path is used if multiple paths are found.")
+    
+    // get and check tmp path
+    val tmpPath = validPaths.filter(_.startsWith(prefixes(2)))
+    require(tmpPath.nonEmpty, s"$appName ETL requires a path to save the temp parquet files. Please specify it" +
+      " by '-dataPath=tmp::your_out_path'.")
 
     // check data paths not specified type
     val unknownPaths = validPaths.filterNot(p => prefixes.exists(p.contains(_)))
@@ -72,6 +77,7 @@ object ETLMain extends Mortgage {
       " the type for each data path by adding the prefix 'data::' or 'out::'.")
 
     (dataPaths.map(_.stripPrefix(prefixes.head)),
-     outPath.head.stripPrefix(prefixes(1)))
+     outPath.head.stripPrefix(prefixes(1)),
+     tmpPath.head.stripPrefix(prefixes(2)))
   }
 }
