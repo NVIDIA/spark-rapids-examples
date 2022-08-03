@@ -114,11 +114,13 @@ ${SPARK_HOME}/bin/spark-submit \
     $SAMPLE_JAR \
     -format=csv \
     -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
-    -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/"
+    -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/" \
+    -dataPath="tmp::${SPARK_XGBOOST_DIR}/mortgage/output/tmp/"
 
 # if generating eval data, change the data path to eval 
 # -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
 # -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/eval/"
+# -dataPath="tmp::${SPARK_XGBOOST_DIR}/mortgage/output/tmp/"
 # if running Taxi ETL benchmark, change the class and data path params to
 # -class com.nvidia.spark.examples.taxi.ETLMain  
 # -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
@@ -137,7 +139,8 @@ ${SPARK_HOME}/bin/spark-submit \
 $SAMPLE_JAR \
 -format=csv \
 -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
--dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/"
+-dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/" \
+-dataPath="tmp::${SPARK_XGBOOST_DIR}/mortgage/output/tmp/"
 
 # if generating eval data, change the data path to eval 
 # -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
