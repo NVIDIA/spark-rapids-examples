@@ -181,8 +181,8 @@ export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
 export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.Main
-# or change to com.nvidia.spark.examples.taxi.GPUMain to run Taxi Xgboost benchmark
-# or change to com.nvidia.spark.examples.agaricus.GPUMain to run Agaricus Xgboost benchmark
+# or change to com.nvidia.spark.examples.taxi.Main to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.Main to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=gpu_hist
