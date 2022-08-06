@@ -15,10 +15,10 @@
 #
 
 # change to your spark folder
-SPARK_HOME=/data/spark-3.2.0-bin-hadoop3.2
+SPARK_HOME=${SPARK_HOME:-/data/spark-3.2.0-bin-hadoop3.2}
 
 # change this path to your root path for the dataset
-ROOT_PATH=/data/cuspatial_data
+ROOT_PATH=${ROOT_PATH:-/data/cuspatial_data}
 # Extract the sample dataset in ../../datasets/cuspatial_data.tar.gz
 # Copy the polygons and points data into the root path or change the root path to where they are
 SHAPE_FILE_DIR=$ROOT_PATH/polygons
@@ -31,7 +31,7 @@ rm -rf $DATA_OUT_PATH
 # the path to keep the jars of spark-rapids & spark-cuspatial
 JARS=$ROOT_PATH/jars
 
-JARS_PATH=$JARS/rapids-4-spark_2.12-22.06.0.jar,$JARS/spark-cuspatial-22.08.0-SNAPSHOT.jar
+JARS_PATH=${JARS_PATH:-$JARS/rapids-4-spark_2.12-22.06.0.jar,$JARS/spark-cuspatial-22.08.0-SNAPSHOT.jar}
 
 $SPARK_HOME/bin/spark-submit --master spark://$HOSTNAME:7077 \
 --name "Gpu Spatial Join UDF" \
