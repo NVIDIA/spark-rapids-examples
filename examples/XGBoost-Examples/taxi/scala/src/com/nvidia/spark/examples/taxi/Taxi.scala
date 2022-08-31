@@ -27,10 +27,7 @@ private[taxi] trait Taxi {
   lazy val featureNames = etledSchema.filter(_.name != labelColName).map(_.name).toArray
 
   lazy val commParamMap = Map(
-    "learning_rate" -> 0.05,
-    "max_depth" -> 8,
-    "subsample" -> 0.8,
-    "gamma" -> 1
+    "num_round" -> 100
   )
 
   val rawSchema = StructType(Seq(
