@@ -6,7 +6,7 @@ For PySpark based XGBoost, please refer to the [Spark-RAPIDS-examples 22.04 bran
 uses [NVIDIA’s Spark XGBoost version](https://repo1.maven.org/maven2/com/nvidia/xgboost4j-spark_3.0/1.4.2-0.3.0/).
 Most data scientists spend a lot of time not only on
 Training models but also processing the large amounts of data needed to train these models.
-As you can see below, XGBoost training on GPUs can be upto 7X and data processing using
+As you can see below, XGBoost training on GPUs can be up to 10X and data processing using
 RAPIDS Accelerator can also be accelerated with an end-to-end speed-up of 7X on GPU compared to CPU.
 In the public cloud, better performance can lead to significantly lower costs as demonstrated in this [blog](https://developer.nvidia.com/blog/gpu-accelerated-spark-xgboost/).
 
@@ -96,3 +96,8 @@ otherwise the customized CrossValidator may schedule more than 1 xgboost trainin
 For XGBoost job, if the number of shuffle stage tasks before training is less than the num_worker, 
 the training tasks will be scheduled to run on part of nodes instead of all nodes due to Spark Data Locality feature.
 The workaround is to increase the partitions of the shuffle stage by setting `spark.sql.files.maxPartitionBytes=RightNum`.
+If you are running XGBoost scala notebooks on Dataproc, please make sure to update below configs to avoid job failure:
+```
+spark.dynamicAllocation.enabled=false
+spark.task.resource.gpu.amount=1
+```
