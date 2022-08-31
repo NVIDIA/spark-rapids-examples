@@ -18,6 +18,9 @@ FROM nvidia/cuda:11.2.2-devel-ubuntu18.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# update cuda pub key to avoid GPG error
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+
 # See https://github.com/databricks/containers/blob/master/ubuntu/minimal/Dockerfile
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
@@ -45,7 +48,7 @@ RUN wget -q https://repo.continuum.io/miniconda/Miniconda3-py38_4.9.2-Linux-x86_
     conda config --system --set always_yes True && \
     conda clean --all
 
-RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge  -c defaults libcuspatial=22.06
+RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge  -c defaults libcuspatial=22.08
 RUN conda install -c conda-forge libgdal==3.3.1
 RUN pip install jupyter
 ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64

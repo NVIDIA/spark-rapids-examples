@@ -40,7 +40,7 @@ export SPARK_DOCKER_IMAGE=<gpu spark docker image repo and name>
 export SPARK_DOCKER_TAG=<spark docker image tag>
 
 pushd ${SPARK_HOME}
-wget https://github.com/NVIDIA/spark-rapids-examples/raw/branch-22.06/dockerfile/Dockerfile
+wget https://github.com/NVIDIA/spark-rapids-examples/raw/branch-22.08/dockerfile/Dockerfile
 
 # Optionally install additional jars into ${SPARK_HOME}/jars/
 
@@ -60,9 +60,10 @@ on cluster filesystems like HDFS, or in [object stores like S3 and GCS](https://
 Note that using [application dependencies](https://spark.apache.org/docs/latest/running-on-kubernetes.html#dependency-management) from 
 the submission client’s local file system is currently not yet supported.
 
-Note: the `mortgage_eval_merged.csv` and `mortgage_train_merged.csv` are not Mortgage raw data,
-they are the data produced by Mortgage ETL job. If user wants to use a larger size Mortgage data, please refer to [Launch ETL job](#etl).
-Taxi ETL job is the same. But Agaricus does not have ETL process, it is combined with XGBoost as there is just a filter operation.
+#### Note: 
+1. Mortgage and Taxi jobs have ETLs to generate the processed data. 
+2. For convenience, a subset of [Taxi](/datasets/) dataset is made available in this repo that can be readily used for launching XGBoost job. Use [ETL](#etl) to generate larger datasets for trainig and testing. 
+3. Agaricus does not have an ETL process, it is combined with XGBoost as there is just a filter operation.
 
 Save Kubernetes Template Resources
 ----------------------------------
@@ -89,16 +90,23 @@ to execute using a GPU which is already in use -- causing undefined behavior and
 
 <span id="etl">Launch Mortgage or Taxi ETL Part</span>
 ---------------------------
+Use the ETL app to process raw Mortgage data. You can either use this ETLed data to split into training and evaluation data or run the ETL on different subsets of the dataset to produce training and evaluation datasets. 
+
+Note: For ETL jobs, Set `spark.task.resource.gpu.amount` to `1/spark.executor.cores`.
 
 Run spark-submit
 
 ``` bash
 ${SPARK_HOME}/bin/spark-submit \
    --conf spark.plugins=com.nvidia.spark.SQLPlugin \
-   --conf spark.rapids.memory.gpu.pooling.enabled=false \
    --conf spark.executor.resource.gpu.amount=1 \
-   --conf spark.task.resource.gpu.amount=1 \
+   --conf spark.executor.cores=10 \
+   --conf spark.task.resource.gpu.amount=0.1 \
+   --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
+   --conf spark.rapids.sql.csv.read.double.enabled=true \
    --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
+   --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
+   --conf spark.rapids.sql.hasNans=false \
    --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh \
    --jars ${RAPIDS_JAR}                                           \
    --master <k8s://ip:port or k8s://URL>                                                                  \
@@ -106,18 +114,17 @@ ${SPARK_HOME}/bin/spark-submit \
    --num-executors ${SPARK_NUM_EXECUTORS}                                         \
    --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
    --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
-   --class ${EXAMPLE_CLASS}                                                       \
    --class com.nvidia.spark.examples.mortgage.ETLMain  \
    $SAMPLE_JAR \
    -format=csv \
-   -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-train/" \
-   -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-train/" \
-   -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/train/"
+   -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
+   -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/" \
+   -dataPath="tmp::${SPARK_XGBOOST_DIR}/mortgage/output/tmp/"
 
-# if generating eval data, change the data path to eval as well as the corresponding perf-eval and acq-eval data
-# -dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-eval"
-# -dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-eval"
-# -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/eval/"
+# if generating eval data, change the data path to eval
+# -dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/eval/"
+# -dataPath="tmp::${SPARK_XGBOOST_DIR}/mortgage/output/tmp/"
 # if running Taxi ETL benchmark, change the class and data path params to
 # -class com.nvidia.spark.examples.taxi.ETLMain  
 # -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
@@ -163,9 +170,9 @@ export SPARK_DRIVER_MEMORY=4g
 export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
-export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.GPUMain
-# or change to com.nvidia.spark.examples.taxi.GPUMain to run Taxi Xgboost benchmark
-# or change to com.nvidia.spark.examples.agaricus.GPUMain to run Agaricus Xgboost benchmark
+export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.Main
+# or change to com.nvidia.spark.examples.taxi.Main to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.Main to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=gpu_hist
@@ -176,9 +183,10 @@ Run spark-submit:
 ``` bash
 ${SPARK_HOME}/bin/spark-submit                                                          \
   --conf spark.plugins=com.nvidia.spark.SQLPlugin \
-  --conf spark.rapids.memory.gpu.pooling.enabled=false \
+  --conf spark.rapids.memory.gpu.pool=NONE \
   --conf spark.executor.resource.gpu.amount=1 \
   --conf spark.task.resource.gpu.amount=1 \
+  --conf spark.rapids.sql.hasNans=false \
   --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
   --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh \
   --jars ${RAPIDS_JAR}                           \
@@ -192,9 +200,9 @@ ${SPARK_HOME}/bin/spark-submit                                                  
   --conf spark.kubernetes.executor.podTemplateFile=${TEMPLATE_PATH}                     \
   --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark                  \
   ${SAMPLE_JAR}                                                                        \
-  -dataPath=train::${DATA_PATH}/mortgage/csv/train/mortgage_train_merged.csv              \
-  -dataPath=trans::${DATA_PATH}/mortgage/csv/test/mortgage_eval_merged.csv                 \
-  -format=csv                                                                           \
+  -dataPath=train::${SPARK_XGBOOST_DIR}/mortgage/output/train/                   \
+  -dataPath=trans::${SPARK_XGBOOST_DIR}/mortgage/output/eval/                    \
+  -format=parquet                                                                \
   -numWorkers=${SPARK_NUM_EXECUTORS}                                                    \
   -treeMethod=${TREE_METHOD}                                                            \
   -numRound=100                                                                         \

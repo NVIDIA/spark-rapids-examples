@@ -53,6 +53,13 @@ Get Application Files, Jar and Dataset
 
 Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
 
+
+#### Note: 
+1. Mortgage and Taxi jobs have ETLs to generate the processed data.
+2. For convenience, a subset of [Taxi](/datasets/) dataset is made available in this repo that can be readily used for launching XGBoost job. Use [ETL](#etl) to generate larger datasets for trainig and testing. 
+3. Agaricus does not have an ETL process, it is combined with XGBoost as there is just a filter operation.
+
+
 Launch a Standalone Spark Cluster
 ---------------------------------
 
@@ -83,30 +90,57 @@ Launch a Standalone Spark Cluster
 
 Launch Mortgage or Taxi ETL Part
 ---------------------------
+Use the ETL app to process raw Mortgage data. You can either use this ETLed data to split into training and evaluation data or run the ETL on different subsets of the dataset to produce training and evaluation datasets.
 
-Run spark-submit
-
+Note: For ETL jobs, Set `spark.task.resource.gpu.amount` to `1/spark.executor.cores`.
+### ETL on GPU
 ``` bash
 ${SPARK_HOME}/bin/spark-submit \
     --master spark://$HOSTNAME:7077 \
     --executor-memory 32G \
     --conf spark.executor.resource.gpu.amount=1 \
-    --conf spark.task.resource.gpu.amount=1 \
+    --conf spark.executor.cores=10 \
+    --conf spark.task.resource.gpu.amount=0.1 \
     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
     --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
     --conf spark.rapids.sql.csv.read.double.enabled=true \
+    --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
+    --conf spark.rapids.sql.hasNans=false \
     --py-files ${SAMPLE_ZIP} \
     main.py \
     --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \
     --format=csv \
-    --dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-train/" \
-    --dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-train/" \
-    --dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/train/"
+    --dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
+    --dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/" \
+    --dataPath="tmp::${SPARK_XGBOOST_DIR}/mortgage/output/tmp/"
 
-# if generating eval data, change the data path to eval as well as the corresponding perf-eval and acq-eval data
-# --dataPath="perf::${SPARK_XGBOOST_DIR}/mortgage/perf-eval"
-# --dataPath="acq::${SPARK_XGBOOST_DIR}/mortgage/acq-eval"
-# --dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/out/eval/"
+# if generating eval data, change the data path to eval
+# --dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
+# --dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/eval/"
+# --dataPath="tmp::${SPARK_XGBOOST_DIR}/mortgage/output/tmp/"
+# if running Taxi ETL benchmark, change the class and data path params to
+# -class com.nvidia.spark.examples.taxi.ETLMain  
+# -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
+# -dataPath="out::${SPARK_XGBOOST_DIR}/taxi/your-path"
+```
+### ETL on CPU
+```bash
+${SPARK_HOME}/bin/spark-submit \
+    --master spark://$HOSTNAME:7077 \
+    --executor-memory 32G \
+    --conf spark.executor.instances=1 \
+    --py-files ${SAMPLE_ZIP} \
+    main.py \
+    --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \
+    --format=csv \
+    --dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/" \
+    --dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/train/" \
+    --dataPath="tmp::${SPARK_XGBOOST_DIR}/mortgage/output/tmp/"
+
+# if generating eval data, change the data path to eval
+# --dataPath="data::${SPARK_XGBOOST_DIR}/mortgage/input/"
+# --dataPath="out::${SPARK_XGBOOST_DIR}/mortgage/output/eval/"
+# --dataPath="tmp::${SPARK_XGBOOST_DIR}/mortgage/output/tmp/"
 # if running Taxi ETL benchmark, change the class and data path params to
 # -class com.nvidia.spark.examples.taxi.ETLMain  
 # -dataPath="raw::${SPARK_XGBOOST_DIR}/taxi/your-path"
@@ -155,9 +189,10 @@ Run spark-submit:
 ``` bash
 ${SPARK_HOME}/bin/spark-submit                                                  \
  --conf spark.plugins=com.nvidia.spark.SQLPlugin                       \
- --conf spark.rapids.memory.gpu.pooling.enabled=false                     \
+ --conf spark.rapids.memory.gpu.pool=NONE                     \
  --conf spark.executor.resource.gpu.amount=1                           \
  --conf spark.task.resource.gpu.amount=1                              \
+ --conf spark.rapids.sql.hasNans=false \
  --master ${SPARK_MASTER}                                                       \
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
@@ -166,8 +201,8 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}                   \
  ${MAIN_PY}                                                     \
  --mainClass=${EXAMPLE_CLASS}                                                   \
- --dataPath=train::${SPARK_XGBOOST_DIR}/mortgage/out/train/      \
- --dataPath=trans::${SPARK_XGBOOST_DIR}/mortgage/out/eval/      \
+ --dataPath=train::${SPARK_XGBOOST_DIR}/mortgage/output/train/      \
+ --dataPath=trans::${SPARK_XGBOOST_DIR}/mortgage/output/eval/      \
  --format=parquet                                 \
  --numWorkers=${SPARK_NUM_EXECUTORS}                                            \
  --treeMethod=${TREE_METHOD}                                                    \
@@ -240,8 +275,8 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}                       \
  ${SPARK_PYTHON_ENTRYPOINT}                                                     \
  --mainClass=${EXAMPLE_CLASS}                                                   \
- --dataPath=train::${DATA_PATH}/mortgage/out/train/      \
- --dataPath=trans::${DATA_PATH}/mortgage/out/eval/         \
+ --dataPath=train::${DATA_PATH}/mortgage/output/train/      \
+ --dataPath=trans::${DATA_PATH}/mortgage/output/eval/         \
  --format=parquet                                                               \
  --numWorkers=${SPARK_NUM_EXECUTORS}                                            \
  --treeMethod=${TREE_METHOD}                                                    \

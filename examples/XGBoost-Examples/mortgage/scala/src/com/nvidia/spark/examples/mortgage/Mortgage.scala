@@ -16,7 +16,7 @@
 
 package com.nvidia.spark.examples.mortgage
 
-import org.apache.spark.sql.types.{FloatType, IntegerType, StructField, StructType}
+import org.apache.spark.sql.types.{FloatType, IntegerType, StructField, StructType, DoubleType}
 
 private[mortgage] trait Mortgage {
   val appName = "Mortgage"
@@ -37,7 +37,7 @@ private[mortgage] trait Mortgage {
 
   protected val numericCols = List(
     ("orig_interest_rate", FloatType),
-    ("orig_upb", IntegerType),
+    ("orig_upb", DoubleType),
     ("orig_loan_term", IntegerType),
     ("orig_ltv", FloatType),
     ("orig_cltv", FloatType),

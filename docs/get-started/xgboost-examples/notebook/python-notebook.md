@@ -20,6 +20,10 @@ and the home directory for Apache Spark respectively.
 
 3. Launch the notebook:
 
+   Note: For ETL jobs, Set `spark.task.resource.gpu.amount` to `1/spark.executor.cores`.
+
+    For ETL:
+
     ``` bash
     PYSPARK_DRIVER_PYTHON=jupyter       \
     PYSPARK_DRIVER_PYTHON_OPTS=notebook \
@@ -28,14 +32,38 @@ and the home directory for Apache Spark respectively.
     --jars ${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}\
     --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}      \
     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
-    --conf spark.rapids.memory.gpu.pooling.enabled=false \
     --conf spark.executor.resource.gpu.amount=1 \
-    --conf spark.task.resource.gpu.amount=1 \
+    --conf spark.executor.cores=10 \
+    --conf spark.task.resource.gpu.amount=0.1 \
+    --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
+    --conf spark.rapids.sql.hasNans=false \
     --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
     --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh
     ```
 
+    For XGBoost:
+
+    ``` bash
+    PYSPARK_DRIVER_PYTHON=jupyter       \
+    PYSPARK_DRIVER_PYTHON_OPTS=notebook \
+    pyspark                             \
+    --master ${SPARK_MASTER}            \
+    --jars ${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}\
+    --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}      \
+    --conf spark.plugins=com.nvidia.spark.SQLPlugin \
+    --conf spark.rapids.memory.gpu.pool=NONE \
+    --conf spark.executor.resource.gpu.amount=1 \
+    --conf spark.executor.cores=10 \
+    --conf spark.task.resource.gpu.amount=1 \
+    --conf spark.rapids.sql.hasNans=false \
+    --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
+    --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh
+    ```
+
+
+
 4. Launch ETL Part 
+
 - Mortgage ETL Notebook: [Python](../../../../examples/XGBoost-Examples/mortgage/notebooks/python/MortgageETL.ipynb)
 - Taxi ETL Notebook: [Python](../../../../examples/XGBoost-Examples/taxi/notebooks/python/taxi-ETL.ipynb)
 - Note: Agaricus does not have ETL part.
