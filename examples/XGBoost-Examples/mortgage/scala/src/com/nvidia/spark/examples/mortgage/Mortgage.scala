@@ -60,17 +60,6 @@ private[mortgage] trait Mortgage {
   lazy val featureNames = schema.filter(_.name != labelColName).map(_.name).toArray
 
   val commParamMap = Map(
-    "eta" -> 0.1,
-    "gamma" -> 0.1,
-    "missing" -> 0.0,
-    "max_depth" -> 10,
-    "max_leaves" -> 256,
     "objective" -> "binary:logistic",
-    "grow_policy" -> "depthwise",
-    "min_child_weight" -> 30,
-    "lambda" -> 1,
-    "scale_pos_weight" -> 2,
-    "subsample" -> 1,
-    "nthread" -> 1,
     "num_round" -> 100)
 }
