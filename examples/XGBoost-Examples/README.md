@@ -12,6 +12,11 @@ In the public cloud, better performance can lead to significantly lower costs as
 
 ![mortgage-speedup](/docs/img/guides/mortgage-perf.png)
 
+Note that the test result is based on 21 years [Fannie Mea Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data) 
+with a 4 A100 GPUs and 512 CPU vcores cluster, the performance is influenced by many conditions, 
+including the dataset size or the GPU card. If the application ran for too long or even failed, 
+please tweak the configs according to your cluster.
+
 In this folder, there are three blue prints for users to learn about using 
 Spark XGBoost and RAPIDS Accelerator on GPUs :
 
