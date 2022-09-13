@@ -14,7 +14,7 @@ In the public cloud, better performance can lead to significantly lower costs as
 
 Note that the test result is based on 21 years [Fannie Mea Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data) 
 with a 4 A100 GPU and 512 CPU vcores cluster, the performance is affected by many aspects, 
-including the dataset size or the GPU card. If the application ran for too long or even failed, 
+including data size and type of GPU. 
 please tweak the configs according to your cluster.
 
 In this folder, there are three blue prints for users to learn about using 
