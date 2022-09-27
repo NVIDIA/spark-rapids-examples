@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,32 +13,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from pyspark.ml.tuning import ParamGridBuilder
+from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
 
-from com.nvidia.spark.examples.mortgage.consts import *
+from .consts import *
 from com.nvidia.spark.examples.utility.utils import *
-from ml.dmlc.xgboost4j.scala.spark import *
-from ml.dmlc.xgboost4j.scala.spark.rapids import CrossValidator
 from pyspark.sql import SparkSession
+
+from xgboost.spark import SparkXGBClassifier, SparkXGBClassifierModel
+
 
 def main(args, xgboost_args):
     spark = (SparkSession
-        .builder
-        .appName(args.mainClass)
-        .getOrCreate())
+             .builder
+             .appName(args.mainClass)
+             .getOrCreate())
 
     train_data, eval_data, trans_data = valid_input_data(spark, args, '', schema)
     features = [x.name for x in schema if x.name != label]
 
-    if args.mode in [ 'all', 'train' ]:
-        classifier = (XGBoostClassifier(**merge_dicts(default_params, xgboost_args))
-                      .setLabelCol(label)
-                      .setFeaturesCols(features))
+    if args.mode in ['all', 'train']:
+        paras = merge_dicts(default_params, xgboost_args)
+        paras['features_col'] = features
+        paras['label_col'] = label
+
+        classifier = SparkXGBClassifier(**paras)
+
         evaluator = (MulticlassClassificationEvaluator()
                      .setLabelCol(label))
+
         param_grid = (ParamGridBuilder()
-                      .addGrid(classifier.maxDepth, [5, 10])
-                      .addGrid(classifier.numRound, [100, 200])
+                      .addGrid(classifier.max_depth, [5, 10])
+                      .addGrid(classifier.n_estimators, [100, 200])
                       .build())
         cross_validator = (CrossValidator()
                            .setEstimator(classifier)
@@ -57,13 +62,14 @@ def main(args, xgboost_args):
             writer = model.write().overwrite() if args.overwrite else model
             writer.save(args.modelPath)
     else:
-        model = XGBoostClassificationModel().load(args.modelPath)
+        model = SparkXGBClassifierModel.load(args.modelPath)
 
-    if args.mode in [ 'all', 'transform' ]:
+    if args.mode in ['all', 'transform']:
         def transform():
             result = model.transform(trans_data).cache()
             result.foreachPartition(lambda _: None)
             return result
+
         if not trans_data:
             print('-' * 80)
             print('Usage: trans data path required when mode is all or transform')
