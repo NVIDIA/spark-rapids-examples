@@ -13,8 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import typing
+
 from pyspark.ml.evaluation import *
 from pyspark.ml.feature import VectorAssembler
+from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
 from pyspark.sql.types import FloatType
 from com.nvidia.spark.examples.taxi.pre_process import pre_process
@@ -83,6 +86,19 @@ def prepare_data(spark, args, schema, dataPath):
 def extract_paths(paths, prefix):
     results = [path[len(prefix):] for path in paths if path.startswith(prefix)]
     return results
+
+
+def transform_data(
+        df: DataFrame,
+        label: str,
+        use_gpu: typing.Optional[bool],
+) -> (DataFrame, typing.Union[str, list[str]]):
+    if use_gpu:
+        features = [x.name for x in df.schema if x.name != label]
+    else:
+        df = vectorize_data_frame(df, label)
+        features = 'features'
+    return df, features
 
 
 def valid_input_data(spark, args, raw_schema, final_schema):

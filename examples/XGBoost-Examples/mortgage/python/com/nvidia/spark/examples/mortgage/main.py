@@ -22,17 +22,7 @@ from com.nvidia.spark.examples.utility.utils import *
 from pyspark.sql import SparkSession, DataFrame
 
 
-def _transform_data(
-        df: DataFrame,
-        label: str,
-        use_gpu: typing.Optional[bool],
-) -> (DataFrame, typing.Union[str, list[str]]):
-    if use_gpu:
-        features = [x.name for x in schema if x.name != label]
-    else:
-        df = vectorize_data_frame(df, label)
-        features = 'features'
-    return df, features
+
 
 
 def main(args, xgboost_args):
@@ -49,7 +39,7 @@ def main(args, xgboost_args):
             print('Usage: training data path required when mode is all or train')
             exit(1)
 
-        train_data, features = _transform_data(train_data, label, args.use_gpu)
+        train_data, features = transform_data(train_data, label, args.use_gpu)
         xgboost_args['features_col'] = features
         xgboost_args['label_col'] = label
         classifier = SparkXGBClassifier(**xgboost_args)
@@ -67,8 +57,7 @@ def main(args, xgboost_args):
         model = SparkXGBClassifierModel.load(args.modelPath)
 
     if args.mode in ['all', 'transform']:
-
-        trans_data, _ = _transform_data(trans_data, label, args.use_gpu)
+        trans_data, _ = transform_data(trans_data, label, args.use_gpu)
 
         def transform():
             result = model.transform(trans_data).cache()

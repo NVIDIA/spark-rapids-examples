@@ -32,18 +32,17 @@ def main(args, xgboost_args):
     features = [x.name for x in schema if x.name != label]
 
     if args.mode in ['all', 'train']:
-        paras = merge_dicts(default_params, xgboost_args)
-        paras['features_col'] = features
-        paras['label_col'] = label
+        xgboost_args['features_col'] = features
+        xgboost_args['label_col'] = label
 
-        classifier = SparkXGBClassifier(**paras)
+        classifier = SparkXGBClassifier(**xgboost_args)
 
         evaluator = (MulticlassClassificationEvaluator()
                      .setLabelCol(label))
 
         param_grid = (ParamGridBuilder()
-                      .addGrid(classifier.max_depth, [5, 10])
-                      .addGrid(classifier.n_estimators, [100, 200])
+                      .addGrid(classifier.max_depth, [6, 8])
+                      .addGrid(classifier.n_estimators, [20, 40])
                       .build())
         cross_validator = (CrossValidator()
                            .setEstimator(classifier)
@@ -65,15 +64,17 @@ def main(args, xgboost_args):
         model = SparkXGBClassifierModel.load(args.modelPath)
 
     if args.mode in ['all', 'transform']:
+        if not trans_data:
+            print('-' * 80)
+            print('Usage: trans data path required when mode is all or transform')
+            exit(1)
+
+        trans_data, _ = transform_data(trans_data, label, args.use_gpu)
         def transform():
             result = model.transform(trans_data).cache()
             result.foreachPartition(lambda _: None)
             return result
 
-        if not trans_data:
-            print('-' * 80)
-            print('Usage: trans data path required when mode is all or transform')
-            exit(1)
         result = with_benchmark('Transformation', transform)
         show_sample(args, result, label)
         with_benchmark('Evaluation', lambda: check_classification_accuracy(result, label))

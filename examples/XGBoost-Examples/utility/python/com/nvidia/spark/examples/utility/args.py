@@ -31,17 +31,13 @@ def _to_ratio_pair(literal):  # e.g., '80:20'
 MAX_CHUNK_SIZE = 2 ** 31 - 1
 
 _examples = [
-    'com.nvidia.spark.examples.agaricus.cpu_main',
-    'com.nvidia.spark.examples.agaricus.gpu_main',
+    'com.nvidia.spark.examples.agaricus.main',
     'com.nvidia.spark.examples.mortgage.main',
     'com.nvidia.spark.examples.mortgage.etl_main',
     'com.nvidia.spark.examples.mortgage.cross_validator_main',
-    'com.nvidia.spark.examples.taxi.cpu_main',
-    'com.nvidia.spark.examples.taxi.gpu_main',
-    'com.nvidia.spark.examples.taxi.gpu_cross_validator_main',
-    'com.nvidia.spark.examples.taxi.cpu_cross_validator_main',
-    'com.nvidia.spark.examples.mortgage.etl_main',
-    'com.nvidia.spark.examples.taxi.etl_main'
+    'com.nvidia.spark.examples.taxi.main',
+    'com.nvidia.spark.examples.taxi.etl_main',
+    'com.nvidia.spark.examples.taxi.cross_validator_main',
 ]
 
 
