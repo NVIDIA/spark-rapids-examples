@@ -70,6 +70,7 @@ def main(args, xgboost_args):
             exit(1)
 
         trans_data, _ = transform_data(trans_data, label, args.use_gpu)
+
         def transform():
             result = model.transform(trans_data).cache()
             result.foreachPartition(lambda _: None)

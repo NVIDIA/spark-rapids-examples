@@ -13,16 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import typing
 
 from xgboost.spark import SparkXGBClassifier, SparkXGBClassifierModel
 
 from .consts import *
 from com.nvidia.spark.examples.utility.utils import *
-from pyspark.sql import SparkSession, DataFrame
-
-
-
+from pyspark.sql import SparkSession
 
 
 def main(args, xgboost_args):
