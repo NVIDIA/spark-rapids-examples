@@ -29,9 +29,14 @@ def main(args, xgboost_args):
              .getOrCreate())
 
     train_data, eval_data, trans_data = valid_input_data(spark, args, '', schema)
-    features = [x.name for x in schema if x.name != label]
 
     if args.mode in ['all', 'train']:
+        if train_data is None:
+            print('-' * 80)
+            print('Usage: training data path required when mode is all or train')
+            exit(1)
+
+        train_data, features = transform_data(train_data, label, args.use_gpu)
         xgboost_args['features_col'] = features
         xgboost_args['label_col'] = label
 
