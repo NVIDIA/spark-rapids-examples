@@ -63,9 +63,6 @@ object Main {
     val xgbClassificationModel = if (xgboostArgs.isToTrain) {
       // build XGBoost classifier
       val paramMap = xgboostArgs.xgboostParams(Map(
-        "eta" -> 0.1,
-        "missing" -> 0.0,
-        "max_depth" -> 2,
         "objective" -> "binary:logistic",
         "eval_sets" -> datasets(1).map(ds => Map("eval" -> ds)).getOrElse(Map.empty)
       ))
