@@ -9,7 +9,7 @@ For simplicity export the location to these jars. All examples assume the packag
    * [XGBoost4j-Spark Package](https://repo1.maven.org/maven2/com/nvidia/xgboost4j-spark_3.0/1.4.2-0.3.0/)
 
 2. Download the RAPIDS Accelerator for Apache Spark plugin jar
-   * [RAPIDS Spark Package](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.08.0/rapids-4-spark_2.12-22.08.0.jar)
+   * [RAPIDS Spark Package](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.10.0/rapids-4-spark_2.12-22.10.0.jar)
 
 ### Build XGBoost Python Examples
 
@@ -26,7 +26,7 @@ You need to copy the dataset to `/opt/xgboost`. Use the following links to downl
 
 ``` bash
 export SPARK_XGBOOST_DIR=/opt/xgboost
-export RAPIDS_JAR=${SPARK_XGBOOST_DIR}/rapids-4-spark_2.12-22.08.0.jar
+export RAPIDS_JAR=${SPARK_XGBOOST_DIR}/rapids-4-spark_2.12-22.10.0.jar
 export XGBOOST4J_JAR=${SPARK_XGBOOST_DIR}/xgboost4j_3.0-1.4.2-0.3.0.jar
 export XGBOOST4J_SPARK_JAR=${SPARK_XGBOOST_DIR}/xgboost4j-spark_3.0-1.4.2-0.3.0.jar
 export SAMPLE_ZIP=${SPARK_XGBOOST_DIR}/samples.zip
