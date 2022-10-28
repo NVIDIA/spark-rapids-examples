@@ -45,13 +45,17 @@ or [in local machine](#build-in-local-machine) after prerequisites.
      docker build -f Dockerfile . -t build-spark-cuspatial
      docker run -it build-spark-cuspatial bash
      ```
-2. Get the code, then run `mvn package`.
+2. Bash into the Docker and install libcuspatial
+     ```Bash
+     conda install -c rapidsai -c nvidia -c conda-forge -c defaults libcuspatial=22.10 python=3.8 -y
+     ```
+3. Get the code, then run `mvn package`.
      ```Bash
      git clone https://github.com/NVIDIA/spark-rapids-examples.git
      cd spark-rapids-examples/examples/UDF-Examples/Spark-cuSpatial/
      mvn package
      ```
-3. You'll get the jar named `spark-cuspatial-<version>.jar` in the target folder.
+4. You'll get the jar named `spark-cuspatial-<version>.jar` in the target folder.
 
 Note: The docker env is just for building the jar, not for running the application.
 
