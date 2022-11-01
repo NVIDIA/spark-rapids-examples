@@ -47,7 +47,7 @@ or [in local machine](#build-in-local-machine) after prerequisites.
      ```
 2. Bash into the Docker and install libcuspatial
      ```Bash
-     conda install -c rapidsai -c nvidia -c conda-forge -c defaults libcuspatial=22.10 python=3.8 -y
+     conda install -c rapidsai -c nvidia -c conda-forge -c defaults libcuspatial=22.12 python=3.8 -y
      # or below command for the nightly (aka SNAPSHOT) version.
      conda install -c rapidsai-nightly -c nvidia -c conda-forge -c defaults libcuspatial=22.12
      ```
@@ -71,7 +71,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 4. [cuspatial](https://github.com/rapidsai/cuspatial): install libcuspatial
     ```Bash
     # Install libcuspatial from conda
-    conda install -c rapidsai -c nvidia -c conda-forge  -c defaults libcuspatial=22.10
+    conda install -c rapidsai -c nvidia -c conda-forge -c defaults libcuspatial=22.12
     # or below command for the nightly (aka SNAPSHOT) version.
     conda install -c rapidsai-nightly -c nvidia -c conda-forge -c defaults libcuspatial=22.12
     ```
