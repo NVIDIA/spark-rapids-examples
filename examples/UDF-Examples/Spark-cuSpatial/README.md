@@ -81,22 +81,18 @@ Note: The docker env is just for building the jar, not for running the applicati
 
 ## Run
 ### GPU Demo on Spark Standalone on-premises cluster
-1. Install necessary libraries. Besides `cudf` and `cuspatial`, the `gdal` library that is compatible with the installed `cuspatial` may also be needed.
-    ```
-    conda install -c conda-forge libgdal=3.3.1
-    ```
-2. Set up [a standalone cluster](/docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md) of Spark. Make sure the conda/lib is included in LD_LIBRARY_PATH, so that spark executors can load libcuspatial.so.
+1. Set up [a standalone cluster](/docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md) of Spark. Make sure the conda/lib is included in LD_LIBRARY_PATH, so that spark executors can load libcuspatial.so.
 
-3. Download Spark RAPIDS JAR
+2. Download Spark RAPIDS JAR
    * [Spark RAPIDS JAR v22.10.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.10.0/rapids-4-spark_2.12-22.10.0.jar) or above
-4. Prepare sample dataset and JARs. Copy the [sample dataset](../../../datasets/cuspatial_data.tar.gz) to `/data/cuspatial_data/`.
+3. Prepare sample dataset and JARs. Copy the [sample dataset](../../../datasets/cuspatial_data.tar.gz) to `/data/cuspatial_data/`.
     Copy Spark RAPIDS JAR and `spark-cuspatial-<version>.jar` to `/data/cuspatial_data/jars/`.
     If you build the `spark-cuspatial-<version>.jar` in docker, please copy the jar from docker to local:
     ```
     docker cp YOUR_DOCKER_CONTAINER:/PATH/TO/spark-cuspatial-<version>.jar ./YOUR_LOCAL_PATH
     ```
     Note: update the paths in `gpu-run.sh` accordingly.
-5. Run `gpu-run.sh`
+4. Run `gpu-run.sh`
     ```Bash
     ./gpu-run.sh
     ```
