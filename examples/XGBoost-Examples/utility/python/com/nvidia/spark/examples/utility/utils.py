@@ -92,7 +92,7 @@ def transform_data(
         df: DataFrame,
         label: str,
         use_gpu: typing.Optional[bool],
-) -> (DataFrame, typing.Union[str, list[str]]):
+) -> (DataFrame, typing.Union[str, typing.List[str]]):
     if use_gpu:
         features = [x.name for x in df.schema if x.name != label]
     else:

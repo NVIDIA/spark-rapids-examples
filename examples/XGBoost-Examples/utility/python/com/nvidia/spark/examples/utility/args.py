@@ -66,7 +66,7 @@ def _attach_derived_args(args):
     args.splitRatios = [args.trainRatio, args.trainEvalRatio, args.evalRatio]
 
 
-def _inspect_xgb_parameters() -> dict[str, type]:
+def _inspect_xgb_parameters() -> typing.Dict[str, type]:
     """inspect XGBModel parameters from __init__"""
     from xgboost import XGBModel
     from typing import get_type_hints, get_origin
