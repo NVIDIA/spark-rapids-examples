@@ -64,7 +64,6 @@ object XGBoostArgs {
     "overwrite" -> XGBoostArg(parse = stringToBool, message = booleanMessage),
     "hasHeader" -> XGBoostArg(parse = stringToBool, message = booleanMessage),
     "saveDict"  -> XGBoostArg(parse = stringToBool, message = booleanMessage),
-    "rabitTrackerHost"  -> XGBoostArg(),
   )
 
   private def help: Unit = {
