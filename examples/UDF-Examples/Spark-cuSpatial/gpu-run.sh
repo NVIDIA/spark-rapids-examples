@@ -28,10 +28,21 @@ DATA_OUT_PATH=$ROOT_PATH/output
 
 rm -rf $DATA_OUT_PATH
 
+arch=$(uname -m)
+case ${arch} in
+    x86_64|amd64)
+        cpu_arch='amd64';;
+    aarch64|arm64)
+        cpu_arch='arm64';;
+    *)
+      echo "Unsupport CPU architecture: ${arch}"; exit 1;;
+esac
+echo "cpu_arch is ${cpu_arch}"
+
 # the path to keep the jars of spark-rapids & spark-cuspatial
 JARS=$ROOT_PATH/jars
 
-JARS_PATH=${JARS_PATH:-$JARS/rapids-4-spark_2.12-22.12.0-SNAPSHOT.jar,$JARS/spark-cuspatial-22.12.0-SNAPSHOT.jar}
+JARS_PATH=${JARS_PATH:-$JARS/rapids-4-spark-${cpu_arch}_2.12-22.12.0-SNAPSHOT.jar,$JARS/spark-cuspatial-22.12.0-SNAPSHOT.jar}
 
 $SPARK_HOME/bin/spark-submit --master spark://$HOSTNAME:7077 \
 --name "Gpu Spatial Join UDF" \

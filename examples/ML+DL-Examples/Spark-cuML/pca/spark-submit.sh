@@ -15,8 +15,19 @@
 # limitations under the License.
 #
 
+arch=$(uname -m)
+case ${arch} in
+    x86_64|amd64)
+        cpu_arch='amd64';;
+    aarch64|arm64)
+        cpu_arch='arm64';;
+    *)
+      echo "Unsupport CPU architecture: ${arch}"; exit 1;;
+esac
+echo "cpu_arch is ${cpu_arch}"
+
 ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/22.12.0-SNAPSHOT/rapids-4-spark-ml_2.12-22.12.0-SNAPSHOT.jar
-PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/22.12.0-SNAPSHOT/rapids-4-spark_2.12-22.12.0-SNAPSHOT.jar
+PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-${cpu_arch}_2.12/22.12.0-SNAPSHOT/rapids-4-spark-${cpu_arch}_2.12-22.12.0-SNAPSHOT.jar
 
 $SPARK_HOME/bin/spark-submit \
 --master spark://127.0.0.1:7077  \
