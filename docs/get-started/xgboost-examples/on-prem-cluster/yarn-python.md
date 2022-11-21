@@ -163,8 +163,8 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --num-executors ${SPARK_NUM_EXECUTORS}                                         \
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
- --jars ${RAPIDS_JAR},${XGBOOST4J_JAR}        \
- --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}                   \
+ --jars ${RAPIDS_JAR}        \
+ --py-files ${SAMPLE_ZIP}                   \
  ${MAIN_PY}                                                     \
  --mainClass=${EXAMPLE_CLASS}                                                   \
  --dataPath=train::${DATA_PATH}/mortgage/out/train/      \
@@ -221,6 +221,10 @@ export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.cpu_main
 
 # tree construction algorithm
 export TREE_METHOD=hist
+
+# if you enable archive python environment
+export PYSPARK_DRIVER_PYTHON=python
+export PYSPARK_PYTHON=./environment/bin/python
 ```
 
 This is the same command as for the GPU example, repeated for convenience:
@@ -228,12 +232,13 @@ This is the same command as for the GPU example, repeated for convenience:
 ``` bash
 ${SPARK_HOME}/bin/spark-submit                                                  \
  --master yarn                                                                  \
+ --archives your_pyspark_venv.tar.gz#environment     #if you enabled archive python environment \
  --deploy-mode ${SPARK_DEPLOY_MODE}                                             \
  --num-executors ${SPARK_NUM_EXECUTORS}                                         \
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
- --jars ${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}                                 \
- --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}                                  \
+ --jars ${RAPIDS_JAR}        \
+ --py-files ${SAMPLE_ZIP}                                  \
  ${MAIN_PY}                                                     \
  --mainClass=${EXAMPLE_CLASS}                                                   \
  --dataPath=train::${DATA_PATH}/mortgage/output/train/       \

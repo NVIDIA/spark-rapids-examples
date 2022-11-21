@@ -285,8 +285,8 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
  --conf spark.cores.max=${TOTAL_CORES}                                          \
- --jars ${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}       \
- --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}                       \
+ --jars ${RAPIDS_JAR}     \
+ --py-files ${SAMPLE_ZIP}                       \
  ${SPARK_PYTHON_ENTRYPOINT}                                                     \
  --mainClass=${EXAMPLE_CLASS}                                                   \
  --dataPath=train::${DATA_PATH}/mortgage/output/train/      \
