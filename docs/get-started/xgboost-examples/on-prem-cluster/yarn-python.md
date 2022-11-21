@@ -12,12 +12,14 @@ Prerequisites
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
   * Ubuntu 18.04, 20.04/CentOS7, CentOS8
-  * CUDA 11.0+
+  * CUDA 11.5+
   * NVIDIA driver compatible with your CUDA
   * NCCL 2.7.8+
-  * Python 3.6+
+  * Python 3.8 or 3.9
   * NumPy
-
+  * XGBoost 1.7.0+
+  * cudf-cu11  
+  
 The number of GPUs per NodeManager dictates the number of Spark executors that can run in that NodeManager. 
 Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
 
@@ -31,6 +33,30 @@ such that Spark will schedule as many executors as there are GPUs in each NodeMa
 We use `SPARK_HOME` environment variable to point to the Apache Spark cluster. 
 And as to how to enable GPU scheduling and isolation for Yarn,
 please refer to [here](https://hadoop.apache.org/docs/r3.1.0/hadoop-yarn/hadoop-yarn-site/UsingGpus.html).
+
+Please make sure to install the XGBoost, cudf-cu11, numpy libraries on all nodes before running XGBoost application.
+``` bash
+pip install xgboost==1.7.0
+pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
+pip install numpy
+```
+You can also create an isolated python environment by using (Virtualenv)[https://virtualenv.pypa.io/en/latest/],
+and then directly pass/unpack the archive file and enable the environment on executors
+by leveraging the --archives option or spark.archives configuration.
+``` bash
+# create an isolated python environment and install libraries
+python -m venv pyspark_venv
+source pyspark_venv/bin/activate
+pip install xgboost==1.7.0
+pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
+pip install numpy
+venv-pack -o pyspark_venv.tar.gz
+
+# enable archive python environment on executors
+export PYSPARK_DRIVER_PYTHON=python # Do not set in cluster modes.
+export PYSPARK_PYTHON=./environment/bin/python
+spark-submit --archives pyspark_venv.tar.gz#environment app.py
+```
 
 Get Application Files, Jar and Dataset
 -------------------------------
@@ -114,6 +140,10 @@ export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.gpu_main
 
 # tree construction algorithm
 export TREE_METHOD=gpu_hist
+
+# if you enable archive python environment
+export PYSPARK_DRIVER_PYTHON=python
+export PYSPARK_PYTHON=./environment/bin/python
 ```
 
 Run spark-submit:
@@ -129,6 +159,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --files ${SPARK_HOME}/examples/src/main/scripts/getGpusResources.sh            \
  --master yarn                                                                  \
  --deploy-mode ${SPARK_DEPLOY_MODE}                                             \
+ --archives your_pyspark_venv.tar.gz#environment     #if you enabled archive python environment \
  --num-executors ${SPARK_NUM_EXECUTORS}                                         \
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
