@@ -275,6 +275,10 @@ export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.cpu_main
 
 # tree construction algorithm
 export TREE_METHOD=hist
+
+# if you enable archive python environment
+export PYSPARK_DRIVER_PYTHON=python
+export PYSPARK_PYTHON=./environment/bin/python
 ```
 
 This is the same command as for the GPU example, repeated for convenience:
@@ -285,6 +289,7 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
  --conf spark.cores.max=${TOTAL_CORES}                                          \
+ --archives your_pyspark_venv.tar.gz#environment     #if you enabled archive python environment \
  --jars ${RAPIDS_JAR}     \
  --py-files ${SAMPLE_ZIP}                       \
  ${SPARK_PYTHON_ENTRYPOINT}                                                     \
