@@ -34,7 +34,7 @@ def main(args, xgboost_args):
     train_data, eval_data, trans_data = valid_input_data(spark, args, '', schema)
 
     if args.mode in ['all', 'train']:
-        if train_data is not None:
+        if train_data is None:
             print('-' * 80)
             print('Usage: train data path required when mode is all or train')
             print('-' * 80)
@@ -58,7 +58,7 @@ def main(args, xgboost_args):
         model = SparkXGBClassifierModel.load(args.modelPath)
 
     if args.mode in ['all', 'transform']:
-        if trans_data is not None:
+        if trans_data is None:
             print('-' * 80)
             print('Usage: trans data path required when mode is all or transform')
             print('-' * 80)
