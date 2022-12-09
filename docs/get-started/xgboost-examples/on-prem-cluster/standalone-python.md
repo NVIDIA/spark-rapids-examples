@@ -52,7 +52,7 @@ And here are the steps to enable the GPU resources discovery for Spark 3.1+.
 3. Install the XGBoost, cudf-cu11, numpy libraries on all nodes before running XGBoost application.
 
 ``` bash
-pip install xgboost==1.7.0
+pip install xgboost
 pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
 pip install numpy
 ```

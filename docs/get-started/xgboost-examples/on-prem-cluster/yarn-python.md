@@ -36,7 +36,7 @@ please refer to [here](https://hadoop.apache.org/docs/r3.1.0/hadoop-yarn/hadoop-
 
 Please make sure to install the XGBoost, cudf-cu11, numpy libraries on all nodes before running XGBoost application.
 ``` bash
-pip install xgboost==1.7.0
+pip install xgboost
 pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
 pip install numpy
 ```
@@ -47,7 +47,7 @@ by leveraging the --archives option or spark.archives configuration.
 # create an isolated python environment and install libraries
 python -m venv pyspark_venv
 source pyspark_venv/bin/activate
-pip install xgboost==1.7.0
+pip install xgboost
 pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
 pip install numpy
 venv-pack -o pyspark_venv.tar.gz

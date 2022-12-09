@@ -1,19 +1,18 @@
 # Spark XGBoost Examples
 
-Spark XGBoost examples here showcase the need for end-to-end GPU acceleration.
+Spark XGBoost examples here showcase the need for ETL+Training pipeline GPU acceleration.
 The Scala based XGBoost examples here use [DMLC’s version](https://repo1.maven.org/maven2/ml/dmlc/xgboost4j-spark_2.12/).
-For PySpark based XGBoost, please refer to the [Spark-RAPIDS-examples 22.04 branch](https://github.com/NVIDIA/spark-rapids-examples/tree/branch-22.04) that
-uses [NVIDIA’s Spark XGBoost version](https://repo1.maven.org/maven2/com/nvidia/xgboost4j-spark_3.0/1.4.2-0.3.0/).
+The pyspark based XGBoost examples requires [installing RAPIDS via pip](https://rapids.ai/pip.html#install).
 Most data scientists spend a lot of time not only on
 Training models but also processing the large amounts of data needed to train these models.
-As you can see below, XGBoost training on GPUs can be up to 10X and data processing using
-RAPIDS Accelerator can also be accelerated with an end-to-end speed-up of 7X on GPU compared to CPU.
+As you can see below, Pyspark+XGBoost training on GPUs can be up to 7.7X and data processing using
+RAPIDS Accelerator can also be accelerated with an end-to-end speed-up of 7.2X on GPU compared to CPU.
 In the public cloud, better performance can lead to significantly lower costs as demonstrated in this [blog](https://developer.nvidia.com/blog/gpu-accelerated-spark-xgboost/).
 
 ![mortgage-speedup](/docs/img/guides/mortgage-perf.png)
 
-Note that the test result is based on 21 years [Fannie Mea Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data) 
-with a 4 A100 GPU and 512 CPU vcores cluster, the performance is affected by many aspects, 
+Note that the Training test result is based on 4 years [Fannie Mea Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data) 
+with a 8 A100 GPU and 1024 CPU vcores cluster, the performance is affected by many aspects, 
 including data size and type of GPU. 
 
 In this folder, there are three blue prints for users to learn about using 
