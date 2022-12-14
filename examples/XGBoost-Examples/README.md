@@ -5,8 +5,8 @@ The Scala based XGBoost examples here use [DMLC’s version](https://repo1.maven
 The pyspark based XGBoost examples requires [installing RAPIDS via pip](https://rapids.ai/pip.html#install).
 Most data scientists spend a lot of time not only on
 Training models but also processing the large amounts of data needed to train these models.
-As you can see below, Pyspark+XGBoost training on GPUs can be up to 7.7X and data processing using
-RAPIDS Accelerator can also be accelerated with an end-to-end speed-up of 7.2X on GPU compared to CPU.
+As you can see below, Pyspark+XGBoost training on GPUs can be up to 13X and data processing using
+RAPIDS Accelerator can also be accelerated with an end-to-end speed-up of 11X on GPU compared to CPU.
 In the public cloud, better performance can lead to significantly lower costs as demonstrated in this [blog](https://developer.nvidia.com/blog/gpu-accelerated-spark-xgboost/).
 
 ![mortgage-speedup](/docs/img/guides/mortgage-perf.png)
@@ -93,6 +93,9 @@ Please follow below steps to run the example notebooks in different notebook env
     - [Jupyter Notebook for Python](/docs/get-started/xgboost-examples/notebook/python-notebook.md)
     
 Note: 
+Update the default value of `spark.sql.execution.arrow.maxRecordsPerBatch` to a larger number(such as 200000) will  
+significantly improve performance by accelerating data transfer between JVM and Python process.
+
 For the CrossValidator job, we need to set `spark.task.resource.gpu.amount=1` to allow only 1 training task running on 1 GPU(executor),
 otherwise the customized CrossValidator may schedule more than 1 xgboost training tasks into one executor simultaneously and trigger 
 [issue-131](https://github.com/NVIDIA/spark-rapids-examples/issues/131).
