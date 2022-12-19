@@ -39,6 +39,7 @@ Please make sure to install the XGBoost, cudf-cu11, numpy libraries on all nodes
 pip install xgboost
 pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
 pip install numpy
+pip install scikit-learn
 ```
 You can also create an isolated python environment by using (Virtualenv)[https://virtualenv.pypa.io/en/latest/],
 and then directly pass/unpack the archive file and enable the environment on executors
@@ -50,6 +51,7 @@ source pyspark_venv/bin/activate
 pip install xgboost
 pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
 pip install numpy
+pip install scikit-learn
 venv-pack -o pyspark_venv.tar.gz
 
 # enable archive python environment on executors
