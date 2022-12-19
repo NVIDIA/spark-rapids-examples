@@ -12,11 +12,13 @@ Prerequisites
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
   * Ubuntu 18.04, 20.04/CentOS7, CentOS8
-  * CUDA 11.0+
+  * CUDA 11.5+
   * NVIDIA driver compatible with your CUDA
   * NCCL 2.7.8+
-  * Python 3.6+
+  * Python 3.8 or 3.9
   * NumPy
+  * XGBoost 1.7.0+
+  * cudf-cu11  
 
 The number of GPUs in each host dictates the number of Spark executors that can run there.
 Additionally, cores per Spark executor and cores per Spark task must match, such that each executor can run 1 task at any given time.
@@ -47,6 +49,14 @@ And here are the steps to enable the GPU resources discovery for Spark 3.1+.
     spark.worker.resource.gpu.amount 1
     spark.worker.resource.gpu.discoveryScript ${SPARK_HOME}/examples/src/main/scripts/getGpusResources.sh
     ```
+3. Install the XGBoost, cudf-cu11, numpy libraries on all nodes before running XGBoost application.
+
+``` bash
+pip install xgboost
+pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
+pip install numpy
+pip install scikit-learn
+```
 
 Get Application Files, Jar and Dataset
 -------------------------------
@@ -182,6 +192,10 @@ export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.gpu_main
 
 # tree construction algorithm
 export TREE_METHOD=gpu_hist
+
+# if you enable archive python environment
+export PYSPARK_DRIVER_PYTHON=python
+export PYSPARK_PYTHON=./environment/bin/python
 ```
 
 Run spark-submit:
@@ -197,8 +211,9 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
  --conf spark.cores.max=${TOTAL_CORES}                                          \
- --jars ${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}     \
- --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}                   \
+ --archives your_pyspark_venv.tar.gz#environment     #if you enabled archive python environment \
+ --jars ${RAPIDS_JAR}    \
+ --py-files ${SAMPLE_ZIP}                   \
  ${MAIN_PY}                                                     \
  --mainClass=${EXAMPLE_CLASS}                                                   \
  --dataPath=train::${SPARK_XGBOOST_DIR}/mortgage/output/train/      \
@@ -261,6 +276,10 @@ export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.cpu_main
 
 # tree construction algorithm
 export TREE_METHOD=hist
+
+# if you enable archive python environment
+export PYSPARK_DRIVER_PYTHON=python
+export PYSPARK_PYTHON=./environment/bin/python
 ```
 
 This is the same command as for the GPU example, repeated for convenience:
@@ -271,8 +290,9 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
  --conf spark.cores.max=${TOTAL_CORES}                                          \
- --jars ${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}       \
- --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}                       \
+ --archives your_pyspark_venv.tar.gz#environment     #if you enabled archive python environment \
+ --jars ${RAPIDS_JAR}     \
+ --py-files ${SAMPLE_ZIP}                       \
  ${SPARK_PYTHON_ENTRYPOINT}                                                     \
  --mainClass=${EXAMPLE_CLASS}                                                   \
  --dataPath=train::${DATA_PATH}/mortgage/output/train/      \

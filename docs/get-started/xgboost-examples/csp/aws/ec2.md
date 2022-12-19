@@ -177,8 +177,8 @@ spark-submit --master spark://$HOSTNAME:7077 \
         ${SAMPLE_JAR} \
         -num_workers=${NUM_EXECUTORS} \
         -format=csv \
-        -dataPath="train::s3a://spark-xgboost-mortgage-dataset/csv/train/2000Q1" \
-        -dataPath="trans::s3a://spark-xgboost-mortgage-dataset/csv/eval/2000Q1" \
+        -dataPath="train::your-train-data-path" \
+        -dataPath="trans::your-eval-data-path" \
         -numRound=100 -max_depth=8 -nthread=$NUM_EXECUTOR_CORES -showFeatures=0 \
         -tree_method=gpu_hist
 ```
