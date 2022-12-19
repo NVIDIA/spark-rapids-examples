@@ -81,11 +81,14 @@ public class DecimalFraction extends GenericUDF implements RapidsUDF {
   }
 
   @Override
-  public ColumnVector evaluateColumnar(ColumnVector... args) {
+  public ColumnVector evaluateColumnar(int numRows, ColumnVector... args) {
     if (args.length != 1) {
       throw new IllegalArgumentException("Unexpected argument count: " + args.length);
     }
     ColumnVector input = args[0];
+    if (numRows != input.getRowCount()) {
+      throw new IllegalArgumentException("Expected " + numRows + " rows, received " + input.getRowCount());
+    }
     if (!input.getType().isDecimalType()) {
       throw new IllegalArgumentException("Argument type is not a decimal column: " +
           input.getType());

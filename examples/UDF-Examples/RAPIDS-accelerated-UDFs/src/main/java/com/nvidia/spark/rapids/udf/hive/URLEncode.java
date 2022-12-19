@@ -93,13 +93,16 @@ public class URLEncode extends GenericUDF implements RapidsUDF {
 
   /** Columnar implementation that runs on the GPU */
   @Override
-  public ColumnVector evaluateColumnar(ColumnVector... args) {
+  public ColumnVector evaluateColumnar(int numRows, ColumnVector... args) {
     // The CPU implementation takes a single string argument, so similarly
     // there should only be one column argument of type STRING.
     if (args.length != 1) {
       throw new IllegalArgumentException("Unexpected argument count: " + args.length);
     }
     ColumnVector input = args[0];
+    if (numRows != input.getRowCount()) {
+      throw new IllegalArgumentException("Expected " + numRows + " rows, received " + input.getRowCount());
+    }
     if (!input.getType().equals(DType.STRING)) {
       throw new IllegalArgumentException("Argument type is not a string column: " +
           input.getType());
