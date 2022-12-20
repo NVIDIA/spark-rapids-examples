@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,33 +13,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import typing
+
 from pyspark.ml.evaluation import *
 from pyspark.ml.feature import VectorAssembler
+from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
 from pyspark.sql.types import FloatType
 from com.nvidia.spark.examples.taxi.pre_process import pre_process
 from time import time
+
 
 def merge_dicts(dict_x, dict_y):
     result = dict_x.copy()
     result.update(dict_y)
     return result
 
+
 def show_sample(args, data_frame, label):
     data_frame = data_frame if args.showFeatures else data_frame.select(label, 'prediction')
     data_frame.show(args.numRows)
 
+
 def vectorize_data_frame(data_frame, label):
-    features = [ x.name for x in data_frame.schema if x.name != label ]
-    to_floats = [ col(x.name).cast(FloatType()) for x in data_frame.schema ]
+    features = [x.name for x in data_frame.schema if x.name != label]
+    to_floats = [col(x.name).cast(FloatType()) for x in data_frame.schema]
     return (VectorAssembler()
-        .setInputCols(features)
-        .setOutputCol('features')
-        .transform(data_frame.select(to_floats))
-        .select(col('features'), col(label)))
+            .setInputCols(features)
+            .setOutputCol('features')
+            .transform(data_frame.select(to_floats))
+            .select(col('features'), col(label)))
+
 
 def vectorize_data_frames(data_frames, label):
-    return [ vectorize_data_frame(x, label) for x in data_frames ]
+    return [vectorize_data_frame(x, label) for x in data_frames]
+
 
 def with_benchmark(phrase, action):
     start = time()
@@ -49,31 +57,48 @@ def with_benchmark(phrase, action):
     print('{} takes {} seconds'.format(phrase, round(end - start, 2)))
     return result
 
+
 def check_classification_accuracy(data_frame, label):
     accuracy = (MulticlassClassificationEvaluator()
-        .setLabelCol(label)
-        .evaluate(data_frame))
+                .setLabelCol(label)
+                .evaluate(data_frame))
     print('-' * 100)
     print('Accuracy is ' + str(accuracy))
 
+
 def check_regression_accuracy(data_frame, label):
     accuracy = (RegressionEvaluator()
-        .setLabelCol(label)
-        .evaluate(data_frame))
+                .setLabelCol(label)
+                .evaluate(data_frame))
     print('-' * 100)
     print('RMSE is ' + str(accuracy))
 
+
 def prepare_data(spark, args, schema, dataPath):
     reader = (spark
-        .read
-        .format(args.format))
+              .read
+              .format(args.format))
     if args.format == 'csv':
         reader.schema(schema).option('header', args.hasHeader)
     return reader.load(dataPath)
 
+
 def extract_paths(paths, prefix):
-    results = [ path[len(prefix):] for path in paths if path.startswith(prefix) ]
+    results = [path[len(prefix):] for path in paths if path.startswith(prefix)]
     return results
+
+
+def transform_data(
+        df: DataFrame,
+        label: str,
+        use_gpu: typing.Optional[bool],
+) -> (DataFrame, typing.Union[str, typing.List[str]]):
+    if use_gpu:
+        features = [x.name for x in df.schema if x.name != label]
+    else:
+        df = vectorize_data_frame(df, label)
+        features = 'features'
+    return df, features
 
 
 def valid_input_data(spark, args, raw_schema, final_schema):
@@ -88,9 +113,9 @@ def valid_input_data(spark, args, raw_schema, final_schema):
     eval_path = ''
 
     if e2e:
-        raw_train_path = extract_paths(args.dataPaths,'rawTrain::')
-        raw_eval_path = extract_paths(args.dataPaths,'rawEval::')
-        raw_trans_path = extract_paths(args.dataPaths,'rawTrans::')
+        raw_train_path = extract_paths(args.dataPaths, 'rawTrain::')
+        raw_eval_path = extract_paths(args.dataPaths, 'rawEval::')
+        raw_trans_path = extract_paths(args.dataPaths, 'rawTrans::')
 
     train_data = ''
     eval_data = ''

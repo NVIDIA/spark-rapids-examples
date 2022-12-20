@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -278,19 +278,3 @@ numeric_columns = [
     'non_interest_bearing_upb',
     'delinquency_12',
 ]
-
-default_params = {
-    'eta': 0.1,
-    'gamma': 0.1,
-    'missing': 0.0,
-    'maxDepth': 10,
-    'maxLeaves': 256,
-    'growPolicy': 'depthwise',
-    'minChildWeight': 30.0,
-    'lambda_': 1.0,
-    'scalePosWeight': 2.0,
-    'subsample': 1.0,
-    'nthread': 1,
-    'numRound': 100,
-    'numWorkers': 1,
-}

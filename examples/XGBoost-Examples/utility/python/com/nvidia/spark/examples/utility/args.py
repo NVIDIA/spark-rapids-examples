@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,94 +13,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import typing
 from argparse import ArgumentParser
 from distutils.util import strtobool
 from re import match
 from sys import exit
 
+
 def _to_bool(literal):
     return bool(strtobool(literal))
 
-def _to_ratio_pair(literal):        # e.g., '80:20'
+
+def _to_ratio_pair(literal):  # e.g., '80:20'
     return match(r'^\d+:\d+$', literal) and [int(x) for x in literal.split(':')]
+
 
 MAX_CHUNK_SIZE = 2 ** 31 - 1
 
 _examples = [
-    'com.nvidia.spark.examples.agaricus.cpu_main',
-    'com.nvidia.spark.examples.agaricus.gpu_main',
-    'com.nvidia.spark.examples.mortgage.cpu_main',
-    'com.nvidia.spark.examples.mortgage.gpu_main',
-    'com.nvidia.spark.examples.mortgage.gpu_cross_validator_main',
-    'com.nvidia.spark.examples.mortgage.cpu_cross_validator_main',
-    'com.nvidia.spark.examples.taxi.cpu_main',
-    'com.nvidia.spark.examples.taxi.gpu_main',
-    'com.nvidia.spark.examples.taxi.gpu_cross_validator_main',
-    'com.nvidia.spark.examples.taxi.cpu_cross_validator_main',
+    'com.nvidia.spark.examples.agaricus.main',
+    'com.nvidia.spark.examples.mortgage.main',
     'com.nvidia.spark.examples.mortgage.etl_main',
-    'com.nvidia.spark.examples.taxi.etl_main'
+    'com.nvidia.spark.examples.mortgage.cross_validator_main',
+    'com.nvidia.spark.examples.taxi.main',
+    'com.nvidia.spark.examples.taxi.etl_main',
+    'com.nvidia.spark.examples.taxi.cross_validator_main',
 ]
 
-_xgboost_simple_args = [
-    ('cacheTrainingSet', _to_bool),
-    ('maximizeEvaluationMetrics', _to_bool),
-    ('useExternalMemory', _to_bool),
-    ('checkpointInterval', int),
-    ('maxBins', int),
-    ('maxDepth', int),
-    ('maxLeaves', int),
-    ('nthread', int),
-    ('numClass', int),
-    ('numEarlyStoppingRounds', int),
-    ('numRound', int),
-    ('numWorkers', int),
-    ('seed', int),
-    ('silent', int),
-    ('timeoutRequestWorkers', int),
-    ('treeLimit', int),
-    ('verbosity', int),
-    ('alpha', float),
-    ('baseScore', float),
-    ('colsampleBylevel', float),
-    ('colsampleBytree', float),
-    ('eta', float),
-    ('gamma', float),
-    ('lambda_', float),
-    ('lambdaBias', float),
-    ('maxDeltaStep', float),
-    ('minChildWeight', float),
-    ('missing', float),
-    ('rateDrop', float),
-    ('scalePosWeight', float),
-    ('sketchEps', float),
-    ('skipDrop', float),
-    ('subsample', float),
-    ('trainTestRatio', float),
-    ('baseMarginCol', str),
-    ('checkpointPath', str),
-    ('contribPredictionCol', str),
-    ('evalMetric', str),
-    ('featuresCol', str),
-    ('groupCol', str),
-    ('growPolicy', str),
-    ('interactionConstraints', str),
-    ('labelCol', str),
-    ('leafPredictionCol', str),
-    ('monotoneConstraints', str),
-    ('normalizeType', str),
-    ('objective', str),
-    ('objectiveType', str),
-    ('predictionCol', str),
-    ('probabilityCol', str),
-    ('rawPredictionCol', str),
-    ('sampleType', str),
-    ('treeMethod', str),
-    ('weightCol', str),
-]
-
-_xgboost_array_args = [
-    ('thresholds', float),
-]
 
 def _validate_args(args):
     usage = ''
@@ -119,11 +58,35 @@ def _validate_args(args):
         print('Usage:\n' + usage)
         exit(1)
 
+
 def _attach_derived_args(args):
     args.trainRatio = args.dataRatios[0]
     args.evalRatio = args.dataRatios[1]
     args.trainEvalRatio = 100 - args.trainRatio - args.evalRatio
     args.splitRatios = [args.trainRatio, args.trainEvalRatio, args.evalRatio]
+
+
+def _inspect_xgb_parameters() -> typing.Dict[str, type]:
+    """inspect XGBModel parameters from __init__"""
+    from xgboost import XGBModel
+    from typing import get_type_hints, get_origin
+    xgb_parameters = {}
+    xgb_model_sig = get_type_hints(XGBModel.__init__)
+    for k, v in xgb_model_sig.items():
+        if k != "kwargs" and k != "return":
+            if get_origin(v) == typing.Union:
+                xgb_parameters[k] = v.__args__[0]
+            else:
+                xgb_parameters[k] = v
+
+    # some extra parameters used by xgboost pyspark
+    xgb_parameters['objective'] = str
+    xgb_parameters['force_repartition'] = _to_bool
+    xgb_parameters['use_gpu'] = _to_bool
+    xgb_parameters['num_workers'] = int
+    xgb_parameters['enable_sparse_data_optim'] = _to_bool
+    return xgb_parameters
+
 
 def parse_arguments():
     parser = ArgumentParser()
@@ -142,23 +105,18 @@ def parse_arguments():
     parser.add_argument('--numRows', type=int, default=5)
     parser.add_argument('--showFeatures', type=_to_bool, default=True)
 
-    # xgboost simple args
-    for arg, arg_type in _xgboost_simple_args:
-        parser.add_argument('--' + arg, type=arg_type)
-
-    # xgboost array args
-    for arg, arg_type in _xgboost_array_args:
-        parser.add_argument('--' + arg, type=arg_type, action='append')
+    xgboost_all_args = _inspect_xgb_parameters()
+    for arg, tp in xgboost_all_args.items():
+        parser.add_argument('--' + arg, type=tp)
 
     parsed_all = parser.parse_args()
     _validate_args(parsed_all)
     _attach_derived_args(parsed_all)
 
-    xgboost_args = [ arg for (arg, _) in _xgboost_simple_args + _xgboost_array_args ]
     parsed_xgboost = {
         k: v
         for k, v in vars(parsed_all).items()
-        if k in xgboost_args and v is not None
+        if k in xgboost_all_args and v is not None
     }
 
     return parsed_all, parsed_xgboost

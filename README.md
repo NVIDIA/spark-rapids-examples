@@ -10,6 +10,7 @@ There are broadly four categories of examples in this repo:
 2. [Spark XGBoost](./examples/XGBoost-Examples) 
 3. [Deep Learning/Machine Learning](./examples/ML+DL-Examples) 
 4. [RAPIDS UDF](./examples/UDF-Examples)
+5. [Databricks Tools demo notebooks](./tools/databricks)
 
 For more information on each of the examples please look into respective categories.
 

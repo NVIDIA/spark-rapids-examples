@@ -132,7 +132,7 @@ inline bool is_invalid_column(cudf::column_view const& col) {
  * double type, and have at least one valid row. Otherwise, the behavior is undefined.
  */
 inline double reduce_as_double(cudf::column_view const& col,
-                               std::unique_ptr<cudf::reduce_aggregation> const& agg) {
+                               cudf::reduce_aggregation const& agg) {
   auto s = cudf::reduce(col, agg, col.type());
   // s is always valid
   auto p_num_scalar = reinterpret_cast<cudf::numeric_scalar<double>*>(s.get());
@@ -279,10 +279,10 @@ Java_com_nvidia_spark_rapids_udf_PointInPolygon_pointInPolygon(JNIEnv* env, jcla
 
     auto min_agg = cudf::make_min_aggregation<cudf::reduce_aggregation>();
     auto max_agg = cudf::make_max_aggregation<cudf::reduce_aggregation>();
-    auto x_min = reduce_as_double(*ply_x, min_agg);
-    auto x_max = reduce_as_double(*ply_x, max_agg);
-    auto y_min = reduce_as_double(*ply_y, min_agg);
-    auto y_max = reduce_as_double(*ply_y, max_agg);
+    auto x_min = reduce_as_double(*ply_x, *min_agg);
+    auto x_max = reduce_as_double(*ply_x, *max_agg);
+    auto y_min = reduce_as_double(*ply_y, *min_agg);
+    auto y_max = reduce_as_double(*ply_y, *max_agg);
 
     // 2) quadtree construction
     cudf::size_type min_size = 512;

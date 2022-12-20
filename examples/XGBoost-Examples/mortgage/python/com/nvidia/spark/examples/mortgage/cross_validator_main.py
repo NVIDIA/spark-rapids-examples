@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,35 +13,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from com.nvidia.spark.examples.taxi.consts import *
+from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
+
+from .consts import *
 from com.nvidia.spark.examples.utility.utils import *
-from ml.dmlc.xgboost4j.scala.spark import *
-from pyspark.ml.tuning import ParamGridBuilder
-from ml.dmlc.xgboost4j.scala.spark.rapids import CrossValidator
 from pyspark.sql import SparkSession
+
+from xgboost.spark import SparkXGBClassifier, SparkXGBClassifierModel
+
 
 def main(args, xgboost_args):
     spark = (SparkSession
-        .builder
-        .appName(args.mainClass)
-        .getOrCreate())
+             .builder
+             .appName(args.mainClass)
+             .getOrCreate())
 
-    train_data, eval_data, trans_data = valid_input_data(spark, args, raw_schema, final_schema)
+    train_data, eval_data, trans_data = valid_input_data(spark, args, '', schema)
 
-    features = [x.name for x in final_schema if x.name != label]
+    if args.mode in ['all', 'train']:
+        if train_data is None:
+            print('-' * 80)
+            print('Usage: training data path required when mode is all or train')
+            exit(1)
 
-    if args.mode in [ 'all', 'train' ]:
-        regressor = (XGBoostRegressor(**merge_dicts(default_params, xgboost_args))
-                     .setLabelCol(label)
-                     .setFeaturesCols(features))
+        train_data, features = transform_data(train_data, label, args.use_gpu)
+        xgboost_args['features_col'] = features
+        xgboost_args['label_col'] = label
+
+        classifier = SparkXGBClassifier(**xgboost_args)
+
+        evaluator = (MulticlassClassificationEvaluator()
+                     .setLabelCol(label))
+
         param_grid = (ParamGridBuilder()
-                      .addGrid(regressor.maxDepth, [5, 10])
-                      .addGrid(regressor.numRound, [100, 200])
+                      .addGrid(classifier.max_depth, [6, 8])
+                      .addGrid(classifier.n_estimators, [20, 40])
                       .build())
-        evaluator = (RegressionEvaluator()
-                    .setLabelCol(label))
         cross_validator = (CrossValidator()
-                           .setEstimator(regressor)
+                           .setEstimator(classifier)
                            .setEvaluator(evaluator)
                            .setEstimatorParamMaps(param_grid)
                            .setNumFolds(3))
@@ -57,19 +66,23 @@ def main(args, xgboost_args):
             writer = model.write().overwrite() if args.overwrite else model
             writer.save(args.modelPath)
     else:
-        model = XGBoostRegressionModel().load(args.modelPath)
+        model = SparkXGBClassifierModel.load(args.modelPath)
 
-    if args.mode in [ 'all', 'transform' ]:
-        def transform():
-            result = model.transform(trans_data).cache()
-            result.foreachPartition(lambda _: None)
-            return result
+    if args.mode in ['all', 'transform']:
         if not trans_data:
             print('-' * 80)
             print('Usage: trans data path required when mode is all or transform')
             exit(1)
+
+        trans_data, _ = transform_data(trans_data, label, args.use_gpu)
+
+        def transform():
+            result = model.transform(trans_data).cache()
+            result.foreachPartition(lambda _: None)
+            return result
+
         result = with_benchmark('Transformation', transform)
         show_sample(args, result, label)
-        with_benchmark('Evaluation', lambda: check_regression_accuracy(result, label))
+        with_benchmark('Evaluation', lambda: check_classification_accuracy(result, label))
 
     spark.stop()
