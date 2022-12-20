@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2019-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -57,12 +57,3 @@ final_schema = StructType([
     StructField('day_of_week', FloatType()),
     StructField('is_weekend', FloatType()),
 ])
-
-default_params = {
-    'eta': 0.05,
-    'maxDepth': 8,
-    'subsample': 0.8,
-    'gamma': 1.0,
-    'numRound': 100,
-    'numWorkers': 1,
-}

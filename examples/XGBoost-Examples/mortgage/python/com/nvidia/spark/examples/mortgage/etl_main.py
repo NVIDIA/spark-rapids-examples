@@ -13,16 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from com.nvidia.spark.examples.mortgage.consts import *
-from com.nvidia.spark.examples.mortgage.etl import etl, extract_paths
+from .etl import etl, extract_paths
 from com.nvidia.spark.examples.utility.utils import *
 from pyspark.sql import SparkSession
 
+
 def main(args, xgboost_args):
     spark = (SparkSession
-        .builder
-        .appName(args.mainClass)
-        .getOrCreate())
+             .builder
+             .appName(args.mainClass)
+             .getOrCreate())
     etled_df = etl(spark, args)
     # outPath should has only one input
     outPath = extract_paths(args.dataPaths, 'out::')[0]

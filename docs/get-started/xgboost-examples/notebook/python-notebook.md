@@ -67,7 +67,3 @@ and the home directory for Apache Spark respectively.
 - Mortgage ETL Notebook: [Python](../../../../examples/XGBoost-Examples/mortgage/notebooks/python/MortgageETL.ipynb)
 - Taxi ETL Notebook: [Python](../../../../examples/XGBoost-Examples/taxi/notebooks/python/taxi-ETL.ipynb)
 - Note: Agaricus does not have ETL part.
-   
-For PySpark based XGBoost, please refer to the
-[Spark-RAPIDS-examples 22.04 branch](https://github.com/NVIDIA/spark-rapids-examples/blob/branch-22.04/docs/get-started/xgboost-examples/notebook/python-notebook.md) 
-that uses [NVIDIA’s Spark XGBoost version](https://repo1.maven.org/maven2/com/nvidia/xgboost4j-spark_3.0/). 
