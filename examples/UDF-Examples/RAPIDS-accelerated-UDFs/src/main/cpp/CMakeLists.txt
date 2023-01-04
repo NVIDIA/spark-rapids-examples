@@ -16,7 +16,7 @@
 
 cmake_minimum_required(VERSION 3.23.1 FATAL_ERROR)
 
-file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/branch-22.12/RAPIDS.cmake
+file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/branch-23.02/RAPIDS.cmake
      ${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 include(${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 
@@ -32,7 +32,7 @@ if(DEFINED GPU_ARCHS)
 endif()
 rapids_cuda_init_architectures(UDFEXAMPLESJNI)
 
-project(UDFEXAMPLESJNI VERSION 22.12.0 LANGUAGES C CXX CUDA)
+project(UDFEXAMPLESJNI VERSION 23.02.0 LANGUAGES C CXX CUDA)
 
 option(PER_THREAD_DEFAULT_STREAM "Build with per-thread default stream" OFF)
 option(BUILD_UDF_BENCHMARKS "Build the benchmarks" OFF)
