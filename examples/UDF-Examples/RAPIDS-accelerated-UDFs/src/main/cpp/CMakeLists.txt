@@ -84,10 +84,10 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -w --expt-extended-lambda --expt-relax
 set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 
 rapids_cpm_init()
-rapids_cpm_find(cudf 22.12.00
+rapids_cpm_find(cudf 23.02.00
         CPM_ARGS
         GIT_REPOSITORY  https://github.com/rapidsai/cudf.git
-        GIT_TAG         branch-22.12
+        GIT_TAG         branch-23.02
         GIT_SHALLOW     TRUE
         SOURCE_SUBDIR   cpp
         OPTIONS         "BUILD_TESTS OFF"
