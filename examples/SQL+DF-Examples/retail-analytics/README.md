@@ -1,0 +1,7 @@
+
+# Overview Retail Analytics 
+This repository contains two Jupyter notebooks:
+
+Data Generation: This notebook generates sample data that can be used for analysis. It demonstrates how to use various Python libraries to create synthetic data sets that can be used for testing and experimentation.
+
+Data Cleaning and Analysis: This notebook takes the generated data and performs a series of cleaning and analysis tasks. It demonstrates how to use Spark RAPIDS library to manipulate and analyze data sets.
