@@ -106,7 +106,6 @@ ${SPARK_HOME}/bin/spark-submit \
    --conf spark.rapids.sql.csv.read.double.enabled=true \
    --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
    --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
-   --conf spark.rapids.sql.hasNans=false \
    --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh \
    --jars ${RAPIDS_JAR}                                           \
    --master <k8s://ip:port or k8s://URL>                                                                  \
@@ -186,7 +185,6 @@ ${SPARK_HOME}/bin/spark-submit                                                  
   --conf spark.rapids.memory.gpu.pool=NONE \
   --conf spark.executor.resource.gpu.amount=1 \
   --conf spark.task.resource.gpu.amount=1 \
-  --conf spark.rapids.sql.hasNans=false \
   --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
   --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh \
   --jars ${RAPIDS_JAR}                           \

@@ -958,8 +958,6 @@ map_gens_sample = all_basic_map_gens + [MapGen(StringGen(pattern='key_[0-9]', nu
 
 allow_negative_scale_of_decimal_conf = {'spark.sql.legacy.allowNegativeScaleOfDecimal': 'true'}
 
-no_nans_conf = {'spark.rapids.sql.hasNans': 'false'}
-
 def copy_and_update(conf, *more_confs):
     local_conf = conf.copy()
     for more in more_confs:
