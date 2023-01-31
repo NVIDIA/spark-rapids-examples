@@ -135,9 +135,9 @@ export SPARK_EXECUTOR_MEMORY=8g
 export SPARK_PYTHON_ENTRYPOINT=${LIBS_PATH}/main.py
 
 # example class to use
-export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.gpu_main
-# or change to com.nvidia.spark.examples.taxi.gpu_main to run Taxi Xgboost benchmark
-# or change to com.nvidia.spark.examples.agaricus.gpu_main to run Agaricus Xgboost benchmark
+export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.main
+# or change to com.nvidia.spark.examples.taxi.main to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.main to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=gpu_hist
@@ -215,9 +215,9 @@ export SPARK_DRIVER_MEMORY=4g
 export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
-export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.cpu_main
-# or change to com.nvidia.spark.examples.taxi.cpu_main to run Taxi Xgboost benchmark
-# or change to com.nvidia.spark.examples.agaricus.cpu_main to run Agaricus Xgboost benchmark
+export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.main
+# or change to com.nvidia.spark.examples.taxi.main to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.main to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=hist
