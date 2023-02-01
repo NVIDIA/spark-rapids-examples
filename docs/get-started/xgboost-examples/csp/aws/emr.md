@@ -167,7 +167,7 @@ For example, for clusters with 2x g4dn.12xlarge as core nodes, use the following
 
 More configuration details can be found in the [configuration](../configs.md) documentation. 
 
-![Step 1: Step 1:  Software, Configuration and Steps](../img/AWS-EMR/RAPIDS_EMR_GUI_1.png)
+![Step 1: Step 1:  Software, Configuration and Steps](../../../../img/AWS-EMR/RAPIDS_EMR_GUI_1.png)
 
 #### Step 2: Hardware
 
@@ -178,7 +178,7 @@ In the "Core" node row, change the "Instance type" to **g4dn.xlarge**, **g4dn.2x
 **p3.2xlarge** and ensure "Instance count" is set to **1** or any higher number. Keep the default
 "Master" node instance type of **m5.xlarge**.
 
-![Step 2: Hardware](../img/AWS-EMR/RAPIDS_EMR_GUI_2.png)
+![Step 2: Hardware](../../../../img/AWS-EMR/RAPIDS_EMR_GUI_2.png)
 
 #### Step 3:  General Cluster Settings
 
@@ -197,7 +197,7 @@ sudo chmod a+rwx -R /sys/fs/cgroup/devices
 
 *Optionally* add key-value "Tags", configure a "Custom AMI" for the EMR cluster on this page.
 
-![Step 3: General Cluster Settings](../img/AWS-EMR/RAPIDS_EMR_GUI_3.png)
+![Step 3: General Cluster Settings](../../../../img/AWS-EMR/RAPIDS_EMR_GUI_3.png)
 
 ####  Step 4: Security
 
@@ -212,7 +212,7 @@ allows for SSH access. Follow these instructions to [allow inbound SSH
 traffic](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/authorizing-access-to-an-instance.html)
 if the security group does not allow it yet.
 
-![Step 4: Security](../img/AWS-EMR/RAPIDS_EMR_GUI_4.png)
+![Step 4: Security](../../../../img/AWS-EMR/RAPIDS_EMR_GUI_4.png)
 
 #### Finish Cluster Configuration
 
@@ -226,4 +226,124 @@ will display **Waiting, cluster ready**.
 In the cluster's "Summary" tab, find the "Master public DNS" field and click the `SSH`
 button. Follow the instructions to SSH to the new cluster's master node.
 
-![Finish Cluster Configuration](../img/AWS-EMR/RAPIDS_EMR_GUI_5.png)
+![Finish Cluster Configuration](../../../../img/AWS-EMR/RAPIDS_EMR_GUI_5.png)
+
+### Build and Execute XGBoost-Spark examples on EMR
+Install git and maven
+
+SSH to the EMR cluster's master node and run the following steps to setup, build, and run the XGBoost-Spark examples.
+
+#### Install git and maven
+
+```
+sudo yum update -y
+
+# install git 
+sudo yum install git -y
+
+# install maven 
+wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz -P /tmp
+sudo tar -xzvf /tmp/apache-maven-3.6.3-bin.tar.gz -C /opt
+sudo ln -s /opt/apache-maven-3.6.3 /opt/maven
+
+# sudo vi /etc/profile.d/maven.sh
+export JAVA_HOME=/usr/lib/jvm/jre-openjdk
+export M2_HOME=/opt/maven
+export MAVEN_HOME=/opt/maven
+export PATH=${M2_HOME}/bin:${PATH}
+source /etc/profile.d/maven.sh
+```
+
+#### Build Example Jars and Preparing the dataset
+Following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-scala.md) to build the jar and download the dataset.
+
+#### Upload Data files to HDFS
+```
+# take mortgage dataset as an example
+hadoop fs -put mortgage /user/
+```
+
+#### Remove the legacy jars
+```
+# bash into the master node and remove legacy jars
+cd /usr/lib/spark/jars/
+sudo rm -rf xgboost4j*
+```
+
+#### Launch the GPU Mortgage Example
+```
+# location where data was downloaded
+export DATA_PATH=/user/mortgage
+# location for the required jar
+# spark deploy mode (see Apache Spark documentation for more information)
+export SPARK_DEPLOY_MODE=client
+# run a single executor for this example to limit the number of spark tasks and
+# partitions to 1 as currently this number must match the number of input files
+export SPARK_NUM_EXECUTORS=1
+# spark driver memory
+export SPARK_DRIVER_MEMORY=2g
+# spark executor memory
+export SPARK_EXECUTOR_MEMORY=2g
+# example class to use
+export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.Main
+# XGBoost4J example jar
+export JAR_EXAMPLE=/home/hadoop/sample_xgboost_apps-0.2.3-SNAPSHOT-jar-with-dependencies.jar
+# tree construction algorithm
+export TREE_METHOD=gpu_hist
+ 
+spark-submit                                                                    \
+ --master yarn                                                                  \
+ --deploy-mode ${SPARK_DEPLOY_MODE}                                             \
+ --num-executors ${SPARK_NUM_EXECUTORS}                                         \
+ --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
+ --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
+ --conf spark.executor.cores=2         \
+ --conf spark.dynamicAllocation.enabled=false \
+ --conf spark.executor.resource.gpu.amount=1 \
+ --conf spark.task.resource.gpu.amount=0.5 \
+ --conf spark.rapids.sql.concurrentGpuTasks=1 \
+ --class ${EXAMPLE_CLASS}                                                       \
+ ${JAR_EXAMPLE}                                                                 \
+ -dataPath=train::${DATA_PATH}/parquet/train/       \
+ -dataPath=trans::${DATA_PATH}/parquet/eval/          \
+ -format=parquet                                                                    \
+ -numWorkers=${SPARK_NUM_EXECUTORS}                                             \
+ -treeMethod=${TREE_METHOD}                                                     \
+ -numRound=100                                                                  \
+ -maxDepth=8  \
+ -allow_non_zero_for_missing=true
+```
+
+#### Review the results
+If using the client mode for spark deploy, you can view the results directly from master node. 
+For example, the terminal output on master node has following lines for the benchmark using two g4dn.2xlarge instances.
+
+```
+......
+
+2023-02-01 06:24:24,279 INFO scheduler.DAGScheduler: Job 7 finished: show at Main.scala:90, took 0.116612 s
+2023-02-01 06:24:24,315 INFO codegen.CodeGenerator: Code generated in 25.369402 ms
++------------+----------------+------------+-------------+----------------+--------------+------------+-----------------------------+-----------+--------+------------------+--------+--------------+--------+---------+-------------+----+---------------------+---------+---+--------------------------+-------------------------------+------------------+-------------+--------+-------+------------------------+--------------+--------------------+--------------------+----------+
+|orig_channel|first_home_buyer|loan_purpose|property_type|occupancy_status|property_state|product_type|relocation_mortgage_indicator|seller_name|mod_flag|orig_interest_rate|orig_upb|orig_loan_term|orig_ltv|orig_cltv|num_borrowers| dti|borrower_credit_score|num_units|zip|mortgage_insurance_percent|current_loan_delinquency_status|current_actual_upb|interest_rate|loan_age|    msa|non_interest_bearing_upb|delinquency_12|       rawPrediction|         probability|prediction|
++------------+----------------+------------+-------------+----------------+--------------+------------+-----------------------------+-----------+--------+------------------+--------+--------------+--------+---------+-------------+----+---------------------+---------+---+--------------------------+-------------------------------+------------------+-------------+--------+-------+------------------------+--------------+--------------------+--------------------+----------+
+|         0.0|             0.0|         0.0|          0.0|             0.0|           0.0|         0.0|                          0.0|        0.0|     0.0|              4.25|   96000|           180|    64.0|     64.0|          1.0|54.0|                768.0|        1|  9|                       0.0|                              0|               0.0|         4.25|     0.0|41980.0|                     0.0|             0|[15.6395120620727...|[0.99999983862132...|       0.0|
+|         0.0|             0.0|         0.0|          0.0|             0.0|           0.0|         0.0|                          0.0|        0.0|     0.0|              4.25|   96000|           180|    64.0|     64.0|          1.0|54.0|                768.0|        1|  9|                       0.0|                              0|               0.0|         4.25|     1.0|41980.0|                     0.0|             0|[15.0541849136352...|[0.99999971023200...|       0.0|
+|         0.0|             0.0|         0.0|          0.0|             0.0|           0.0|         0.0|                          0.0|        0.0|     0.0|              4.25|   96000|           180|    64.0|     64.0|          1.0|54.0|                768.0|        1|  9|                       0.0|                              0|               0.0|         4.25|     3.0|41980.0|                     0.0|             0|[14.1502227783203...|[0.99999928445652...|       0.0|
+|         0.0|             0.0|         0.0|          0.0|             0.0|           0.0|         0.0|                          0.0|        0.0|     0.0|              4.25|   96000|           180|    64.0|     64.0|          1.0|54.0|                768.0|        1|  9|                       0.0|                              0|               0.0|         4.25|     4.0|41980.0|                     0.0|             0|[14.1266565322875...|[0.99999926739360...|       0.0|
+|         0.0|             0.0|         0.0|          0.0|             0.0|           0.0|         0.0|                          0.0|        0.0|     0.0|              4.25|   96000|           180|    64.0|     64.0|          1.0|54.0|                768.0|        1|  9|                       0.0|                              0|               0.0|         4.25|     5.0|41980.0|                     0.0|             0|[13.3200092315673...|[0.99999835868175...|       0.0|
++------------+----------------+------------+-------------+----------------+--------------+------------+-----------------------------+-----------+--------+------------------+--------+--------------+--------+---------+-------------+----+---------------------+---------+---+--------------------------+-------------------------------+------------------+-------------+--------+-------+------------------------+--------------+--------------------+--------------------+----------+
+only showing top 5 rows
+
+
+------Accuracy of Evaluation------
+2023-02-01 06:24:24,377 WARN rapids.GpuOverrides:
+
+......
+
+2023-02-01 06:24:24,655 INFO scheduler.TaskSchedulerImpl: Killing all running tasks in stage 11: Stage finished
+2023-02-01 06:24:24,655 INFO scheduler.DAGScheduler: Job 8 finished: collectAsMap at MulticlassMetrics.scala:61, took 0.219596 s
+
+--------------
+==> Benchmark: Accuracy for [Mortgage Mai Accuracy parquet stub Unknown Unknown Unknown]: 0.9999
+--------------
+```
