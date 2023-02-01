@@ -85,7 +85,8 @@ Please follow below steps to run the example Spark jobs in different Spark envir
     - [EC2](/docs/get-started/xgboost-examples/csp/aws/ec2.md)
     - [AWS EMR](/docs/get-started/xgboost-examples/csp/aws/emr.md)  
   - [Databricks](/docs/get-started/xgboost-examples/csp/databricks/databricks.md)
-
+  - [GCP](/docs/get-started/xgboost-examples/csp/dataproc/gcp.md)
+    
 Please follow below steps to run the example notebooks in different notebook environments:
 
 - Getting started for Jupyter Notebook applications
