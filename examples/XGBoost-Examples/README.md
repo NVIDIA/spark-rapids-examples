@@ -83,7 +83,6 @@ Please follow below steps to run the example Spark jobs in different Spark envir
 - Getting started on cloud service providers    
   - Amazon AWS
     - [EC2](/docs/get-started/xgboost-examples/csp/aws/ec2.md)
-    - [AWS EMR](/docs/get-started/xgboost-examples/csp/aws/emr.md)  
   - [Databricks](/docs/get-started/xgboost-examples/csp/databricks/databricks.md)
   - [GCP](/docs/get-started/xgboost-examples/csp/dataproc/gcp.md)
     
