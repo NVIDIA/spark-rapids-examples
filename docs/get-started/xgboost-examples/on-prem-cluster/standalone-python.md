@@ -115,7 +115,6 @@ ${SPARK_HOME}/bin/spark-submit \
     --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
     --conf spark.rapids.sql.csv.read.double.enabled=true \
     --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
-    --conf spark.rapids.sql.hasNans=false \
     --py-files ${SAMPLE_ZIP} \
     main.py \
     --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \
@@ -186,9 +185,9 @@ export SPARK_DRIVER_MEMORY=4g
 export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
-export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.gpu_main
-# or change to com.nvidia.spark.examples.taxi.gpu_main to run Taxi Xgboost benchmark
-# or change to com.nvidia.spark.examples.agaricus.gpu_main to run Agaricus Xgboost benchmark
+export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.main
+# or change to com.nvidia.spark.examples.taxi.main to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.main to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=gpu_hist
@@ -206,7 +205,6 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --conf spark.rapids.memory.gpu.pool=NONE                     \
  --conf spark.executor.resource.gpu.amount=1                           \
  --conf spark.task.resource.gpu.amount=1                              \
- --conf spark.rapids.sql.hasNans=false \
  --master ${SPARK_MASTER}                                                       \
  --driver-memory ${SPARK_DRIVER_MEMORY}                                         \
  --executor-memory ${SPARK_EXECUTOR_MEMORY}                                     \
@@ -271,7 +269,7 @@ export SPARK_DRIVER_MEMORY=4g
 export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
-export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.cpu_main
+export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.main
 # Please make sure to change the class while running Taxi or Agaricus benchmark    
 
 # tree construction algorithm
