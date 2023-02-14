@@ -1,4 +1,4 @@
-Get Started with XGBoost4J-Spark with Jupyter Notebook
+Get Started with pyspark+XGBoost with Jupyter Notebook
 ===================================================================
 
 This is a getting started guide to XGBoost4J-Spark using an [Jupyter notebook](https://jupyter.org/). 
@@ -29,14 +29,13 @@ and the home directory for Apache Spark respectively.
     PYSPARK_DRIVER_PYTHON_OPTS=notebook \
     pyspark                             \
     --master ${SPARK_MASTER}            \
-    --jars ${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}\
-    --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}      \
+    --jars ${RAPIDS_JAR}\
+    --py-files ${SAMPLE_ZIP}      \
     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
     --conf spark.executor.resource.gpu.amount=1 \
     --conf spark.executor.cores=10 \
     --conf spark.task.resource.gpu.amount=0.1 \
     --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
-    --conf spark.rapids.sql.hasNans=false \
     --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
     --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh
     ```
@@ -48,19 +47,17 @@ and the home directory for Apache Spark respectively.
     PYSPARK_DRIVER_PYTHON_OPTS=notebook \
     pyspark                             \
     --master ${SPARK_MASTER}            \
-    --jars ${RAPIDS_JAR},${XGBOOST4J_JAR},${XGBOOST4J_SPARK_JAR}\
-    --py-files ${XGBOOST4J_SPARK_JAR},${SAMPLE_ZIP}      \
+    --jars ${RAPIDS_JAR}\
+    --py-files ${SAMPLE_ZIP}      \
     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
     --conf spark.rapids.memory.gpu.pool=NONE \
     --conf spark.executor.resource.gpu.amount=1 \
     --conf spark.executor.cores=10 \
     --conf spark.task.resource.gpu.amount=1 \
-    --conf spark.rapids.sql.hasNans=false \
+    --conf spark.sql.execution.arrow.maxRecordsPerBatch=200000 \
     --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh \
     --files $SPARK_HOME/examples/src/main/scripts/getGpusResources.sh
     ```
-
-
 
 4. Launch ETL Part 
 

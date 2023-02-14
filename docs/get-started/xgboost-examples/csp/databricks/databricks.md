@@ -159,35 +159,33 @@ Accuracy is 0.9980699597729774
 Limitations
 -------------
 
-1. Adaptive query execution(AQE) and Delta optimization write do not work. These should be disabled
-when using the plugin. Queries may still see significant speedups even with AQE disabled.
+1. When selecting GPU nodes, Databricks UI requires the driver node to be a GPU node. However you 
+   can use Databricks API to create a cluster with CPU driver node.
+   Outside of Databricks the plugin can operate with the driver as a CPU node and workers as GPU nodes.
 
-    ```bash 
-    spark.databricks.delta.optimizeWrite.enabled false
-    spark.sql.adaptive.enabled false
-    ```
-    
-    See [issue-1059](https://github.com/NVIDIA/spark-rapids/issues/1059) for more detail. 
+2. Cannot spin off multiple executors on a multi-GPU node. 
 
-2. Dynamic partition pruning(DPP) does not work.  This results in poor performance for queries which
-   would normally benefit from DPP.  See
-   [issue-3143](https://github.com/NVIDIA/spark-rapids/issues/3143) for more detail.
+   Even though it is possible to set `spark.executor.resource.gpu.amount=1` in the in Spark 
+   Configuration tab, Databricks overrides this to `spark.executor.resource.gpu.amount=N` 
+   (where N is the number of GPUs per node). This will result in failed executors when starting the
+   cluster.
 
-3. When selecting GPU nodes, Databricks requires the driver node to be a GPU node.  Outside of
-   Databricks the plugin can operate with the driver as a CPU node and workers as GPU nodes.
+3. Parquet rebase mode is set to "LEGACY" by default.
 
-4. Cannot spin off multiple executors on a multi-GPU node. 
+   The following Spark configurations are set to `LEGACY` by default on Databricks:
+   
+   ```
+   spark.sql.legacy.parquet.datetimeRebaseModeInWrite
+   spark.sql.legacy.parquet.int96RebaseModeInWrite
+   ```
+   
+   These settings will cause a CPU fallback for Parquet writes involving dates and timestamps.
+   If you do not need `LEGACY` write semantics, set these configs to `EXCEPTION` which is
+   the default value in Apache Spark 3.0 and higher.
 
-	Even though it is possible to set `spark.executor.resource.gpu.amount=N` (where N is the number
-    of GPUs per node) in the in Spark Configuration tab, Databricks overrides this to
-    `spark.executor.resource.gpu.amount=1`.  This will result in failed executors when starting the
-    cluster.
-
-5. Databricks makes changes to the runtime without notification.
+4. Databricks makes changes to the runtime without notification.
 
     Databricks makes changes to existing runtimes, applying patches, without notification.
 	[Issue-3098](https://github.com/NVIDIA/spark-rapids/issues/3098) is one example of this.  We run
 	regular integration tests on the Databricks environment to catch these issues and fix them once
 	detected.
-   
-<sup>*</sup> The timings in this Getting Started guide are only illustrative. Please see our [release announcement](https://medium.com/rapids-ai/nvidia-gpus-and-apache-spark-one-step-closer-2d99e37ac8fd) for official benchmarks.

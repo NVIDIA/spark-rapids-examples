@@ -91,7 +91,6 @@ ${SPARK_HOME}/bin/spark-submit \
     --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
     --conf spark.rapids.sql.csv.read.double.enabled=true \
     --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
-    --conf spark.rapids.sql.hasNans=false \
     --jars ${RAPIDS_JAR}\
     ${MAIN_PY} \
     --mainClass='com.nvidia.spark.examples.mortgage.etl_main' \
@@ -136,9 +135,9 @@ export SPARK_EXECUTOR_MEMORY=8g
 export SPARK_PYTHON_ENTRYPOINT=${LIBS_PATH}/main.py
 
 # example class to use
-export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.gpu_main
-# or change to com.nvidia.spark.examples.taxi.gpu_main to run Taxi Xgboost benchmark
-# or change to com.nvidia.spark.examples.agaricus.gpu_main to run Agaricus Xgboost benchmark
+export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.main
+# or change to com.nvidia.spark.examples.taxi.main to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.main to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=gpu_hist
@@ -156,7 +155,6 @@ ${SPARK_HOME}/bin/spark-submit                                                  
  --conf spark.rapids.memory.gpu.pool=NONE                     \
  --conf spark.executor.resource.gpu.amount=1                           \
  --conf spark.task.resource.gpu.amount=1                              \
- --conf spark.rapids.sql.hasNans=false \
  --conf spark.executor.resource.gpu.discoveryScript=./getGpusResources.sh        \
  --files ${SPARK_HOME}/examples/src/main/scripts/getGpusResources.sh            \
  --master yarn                                                                  \
@@ -217,9 +215,9 @@ export SPARK_DRIVER_MEMORY=4g
 export SPARK_EXECUTOR_MEMORY=8g
 
 # example class to use
-export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.cpu_main
-# or change to com.nvidia.spark.examples.taxi.cpu_main to run Taxi Xgboost benchmark
-# or change to com.nvidia.spark.examples.agaricus.cpu_main to run Agaricus Xgboost benchmark
+export EXAMPLE_CLASS=com.nvidia.spark.examples.mortgage.main
+# or change to com.nvidia.spark.examples.taxi.main to run Taxi Xgboost benchmark
+# or change to com.nvidia.spark.examples.agaricus.main to run Agaricus Xgboost benchmark
 
 # tree construction algorithm
 export TREE_METHOD=hist
