@@ -6,27 +6,26 @@ This is a getting started guide to XGBoost4J-Spark on Databricks. At the end of 
 Prerequisites
 -------------
 
-    * Apache Spark 3.1+ running in Databricks Runtime 9.1 ML or 10.4 ML with GPU
-    * AWS: 9.1 LTS ML (GPU, Scala 2.12, Spark 3.1.2) or 10.4 LTS ML (GPU, Scala 2.12, Spark 3.2.1)
-    * Azure: 9.1 LTS ML (GPU, Scala 2.12, Spark 3.1.2) or 10.4 LTS ML (GPU, Scala 2.12, Spark 3.2.1)
+    * Apache Spark 3.x running in Databricks Runtime 9.1 ML, 10.4 ML or 11.3 ML with GPU
+    * AWS: 9.1 LTS ML (GPU, Scala 2.12, Spark 3.1.2), 10.4 LTS ML (GPU, Scala 2.12, Spark 3.2.1) or 11.3 LTS ML (GPU, Scala 2.12, Spark 3.3.0)
+    * Azure: 9.1 LTS ML (GPU, Scala 2.12, Spark 3.1.2) or 10.4 LTS ML (GPU, Scala 2.12, Spark 3.2.1) or 11.3 LTS ML (GPU, Scala 2.12, Spark 3.3.0)
 
 The number of GPUs per node dictates the number of Spark executors that can run in that node. Each executor should only be allowed to run 1 task at any given time.
    
 Start A Databricks Cluster
 --------------------------
 
-Create a Databricks cluster by clicking "+ Create -> Cluster" on the left panel. Ensure the
+Create a Databricks cluster by going to "Compute", then clicking `+ Create compute`.  Ensure the
 cluster meets the prerequisites above by configuring it as follows:
 1. Select the Databricks Runtime Version from one of the supported runtimes specified in the
    Prerequisites section.
-2. Under Autopilot Options, disable autoscaling.
-3. Choose the number of workers you want to use.
-4. Select a worker type.  On AWS, use nodes with 1 GPU each such as `p3.2xlarge` or `g4dn.xlarge`.
+2. Choose the number of workers that matches the number of GPUs you want to use.
+3. Select a worker type. On AWS, use nodes with 1 GPU each such as `p3.2xlarge` or `g4dn.xlarge`.
    p2 nodes do not meet the architecture requirements (Pascal or higher) for the Spark worker
    (although they can be used for the driver node).  For Azure, choose GPU nodes such as
-   Standard_NC6s_v3.
-5. Select the driver type. Generally this can be set to be the same as the worker.
-6. Start the cluster.
+   Standard_NC6s_v3. For GCP, choose N1 or A2 instance types with GPUs. 
+4. Select the driver type. Generally this can be set to be the same as the worker.
+5. Start the cluster.
 
 Advanced Cluster Configuration
 --------------------------
@@ -51,6 +50,12 @@ cluster.
     ML](https://docs.databricks.com/release-notes/runtime/9.1ml.html#system-environment) has CUDA 11
     installed.  Users will need to use 22.04.0 or later on Databricks 10.4 LTS ML. In this case use
     [generate-init-script-10.4.ipynb](generate-init-script-10.4.ipynb) which will install
+    the RAPIDS Spark plugin.
+      
+    - [Databricks 11.3 LTS
+    ML](https://docs.databricks.com/release-notes/runtime/11.3ml.html#system-environment) has CUDA 11
+    installed.  Users will need to use 23.02.0 or later on Databricks 11.3 LTS ML. In this case use
+    [generate-init-script-11.3.ipynb](generate-init-script-11.3.ipynb) which will install
     the RAPIDS Spark plugin.
       
 2. Once you are in the notebook, click the “Run All” button.
@@ -82,13 +87,11 @@ cluster.
     the Databricks `spark.databricks.delta.optimizeWrite` option.
 
     ```bash
-    spark.plugins com.nvidia.spark.SQLPlugin
-    spark.task.resource.gpu.amount 0.1
-    spark.rapids.memory.pinnedPool.size 2G
-    spark.locality.wait 0s
-    spark.databricks.delta.optimizeWrite.enabled false
-    spark.sql.adaptive.enabled false
-    spark.rapids.sql.concurrentGpuTasks 2
+     spark.plugins com.nvidia.spark.SQLPlugin
+     spark.task.resource.gpu.amount 0.1
+     spark.rapids.memory.pinnedPool.size 2G
+     spark.rapids.sql.concurrentGpuTasks 2
+     spark.databricks.optimizer.dynamicFilePruning false
     ```
 
     ![Spark Config](../../../../img/databricks/sparkconfig.png)
@@ -186,6 +189,15 @@ Limitations
 4. Databricks makes changes to the runtime without notification.
 
     Databricks makes changes to existing runtimes, applying patches, without notification.
-	[Issue-3098](https://github.com/NVIDIA/spark-rapids/issues/3098) is one example of this.  We run
-	regular integration tests on the Databricks environment to catch these issues and fix them once
-	detected.
+    [Issue-3098](https://github.com/NVIDIA/spark-rapids/issues/3098) is one example of this.  We run
+    regular integration tests on the Databricks environment to catch these issues and fix them once
+    detected.
+   
+5. In Databricks 11.3, an incorrect result is returned for window frames defined by a range in case 
+   of DecimalTypes with precision greater than 38. There is a bug filed in Apache Spark for it 
+   [here](https://issues.apache.org/jira/browse/SPARK-41793), whereas when using the plugin the 
+   correct result will be returned.
+
+6. A query may fail when Dynamic File Pruning is enabled. As a workaround, please
+   disable the feature by setting `spark.databricks.optimizer.dynamicFilePruning false`. More details
+   are in [issue-7648](https://github.com/NVIDIA/spark-rapids/issues/7648).
