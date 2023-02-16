@@ -15,7 +15,7 @@ Prerequisites
   * CUDA 11.0+
   * NVIDIA driver compatible with your CUDA
   * NCCL 2.7.8+
-* [Kubernetes 1.6+ cluster with NVIDIA GPUs](https://docs.nvidia.com/datacenter/kubernetes/index.html)
+* [Kubernetes cluster with NVIDIA GPUs](https://docs.nvidia.com/datacenter/cloud-native/kubernetes/install-k8s.html)
   * See official [Spark on Kubernetes](https://spark.apache.org/docs/latest/running-on-kubernetes.html#prerequisites) 
     instructions for detailed spark-specific cluster requirements
 * kubectl installed and configured in the job submission environment
