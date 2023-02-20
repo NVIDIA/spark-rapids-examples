@@ -7,12 +7,12 @@ This is a description of all the parameters available when you are running examp
    * Please use the `camelCase`, e.g., `--treeMethod=gpu_hist`.
    * `lambda` is replaced with `lambda_`, because `lambda` is a keyword in Python.
 2. `--mainClass=[app class]`: The entry class of the application to be started. Available value is one of the below classes.
-   * com.nvidia.spark.examples.agaricus.cpu_main
-   * com.nvidia.spark.examples.agaricus.gpu_main
-   * com.nvidia.spark.examples.mortgage.cpu_main
-   * com.nvidia.spark.examples.mortgage.gpu_main
-   * com.nvidia.spark.examples.taxi.cpu_main
-   * com.nvidia.spark.examples.taxi.gpu_main
+   * com.nvidia.spark.examples.agaricus.main
+   * com.nvidia.spark.examples.agaricus.main
+   * com.nvidia.spark.examples.mortgage.main
+   * com.nvidia.spark.examples.mortgage.main
+   * com.nvidia.spark.examples.taxi.main
+   * com.nvidia.spark.examples.taxi.main
    * com.nvidia.spark.examples.mortgage.etl_main
    * com.nvidia.spark.examples.taxi.etl_main
 3. `--format=[csv|parquet|orc]`: The format of the data for training/transforming, now only supports 'csv', 'parquet' and 'orc'. *Required*.

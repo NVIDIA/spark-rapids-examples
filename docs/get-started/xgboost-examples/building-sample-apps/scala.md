@@ -1,6 +1,6 @@
 # Build XGBoost Scala Examples
 
-The examples rely on [XGBoost](https://github.com/nvidia/spark-xgboost).
+The examples rely on [XGBoost](https://github.com/dmlc/xgboost).
 
 ## Build
 

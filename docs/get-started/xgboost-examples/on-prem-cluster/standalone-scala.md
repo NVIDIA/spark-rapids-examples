@@ -109,7 +109,6 @@ ${SPARK_HOME}/bin/spark-submit \
     --conf spark.rapids.sql.incompatibleDateFormats.enabled=true \
     --conf spark.rapids.sql.csv.read.double.enabled=true \
     --conf spark.sql.cache.serializer=com.nvidia.spark.ParquetCachedBatchSerializer \
-    --conf spark.rapids.sql.hasNans=false \
     --class com.nvidia.spark.examples.mortgage.ETLMain  \
     $SAMPLE_JAR \
     -format=csv \
@@ -194,7 +193,6 @@ Run spark-submit:
 ${SPARK_HOME}/bin/spark-submit                                                  \
  --conf spark.plugins=com.nvidia.spark.SQLPlugin                       \
  --conf spark.rapids.memory.gpu.pool=NONE                     \
- --conf spark.rapids.sql.hasNans=false \
  --conf spark.executor.resource.gpu.amount=1                           \
  --conf spark.task.resource.gpu.amount=1                              \
  --master ${SPARK_MASTER}                                                       \
