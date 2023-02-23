@@ -51,7 +51,7 @@
         <dependency>
             <groupId>com.nvidia</groupId>
             <artifactId>rapids-4-spark-ml_2.12</artifactId>
-            <version>23.02.0</version>
+            <version>22.02.0</version>
         </dependency>
     </dependencies>
 
