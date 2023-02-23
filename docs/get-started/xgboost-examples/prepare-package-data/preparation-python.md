@@ -4,12 +4,8 @@ For simplicity export the location to these jars. All examples assume the packag
 
 ### Download the jars
 
-1. Download the XGBoost for Apache Spark jars
-   * [XGBoost4j Package](https://repo1.maven.org/maven2/com/nvidia/xgboost4j_3.0/1.4.2-0.3.0/)
-   * [XGBoost4j-Spark Package](https://repo1.maven.org/maven2/com/nvidia/xgboost4j-spark_3.0/1.4.2-0.3.0/)
-
-2. Download the RAPIDS Accelerator for Apache Spark plugin jar
-   * [RAPIDS Spark Package](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.12.0/rapids-4-spark_2.12-22.12.0.jar)
+Download the RAPIDS Accelerator for Apache Spark plugin jar
+  * [RAPIDS Spark Package](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.12.0/rapids-4-spark_2.12-22.12.0.jar)
 
 ### Build XGBoost Python Examples
 

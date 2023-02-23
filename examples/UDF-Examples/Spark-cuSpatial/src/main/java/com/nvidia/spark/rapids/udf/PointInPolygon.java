@@ -116,7 +116,7 @@ public class PointInPolygon implements UDF2<Double, Double, List<Integer>>, Rapi
 
   /** Columnar implementation that processes data on the GPU */
   @Override
-  public ColumnVector evaluateColumnar(ColumnVector... args) {
+  public ColumnVector evaluateColumnar(int numRows, ColumnVector... args) {
     if (args.length != 2) {
       throw new IllegalArgumentException("Unexpected argument count: " + args.length +
           ", expects 2 for (x, y)");

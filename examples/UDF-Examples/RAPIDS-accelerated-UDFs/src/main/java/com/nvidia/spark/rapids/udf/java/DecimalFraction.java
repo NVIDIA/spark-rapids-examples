@@ -40,7 +40,7 @@ public class DecimalFraction implements UDF1<BigDecimal, BigDecimal>, RapidsUDF 
   }
 
   @Override
-  public ColumnVector evaluateColumnar(ColumnVector... args) {
+  public ColumnVector evaluateColumnar(int numRows, ColumnVector... args) {
     if (args.length != 1) {
       throw new IllegalArgumentException("Unexpected argument count: " + args.length);
     }
