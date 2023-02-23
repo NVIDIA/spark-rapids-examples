@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/23.02.0/rapids-4-spark-ml_2.12-23.02.0.jar
+ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/23.02.0/rapids-4-spark-ml_2.12-23.02.0-SNAPSHOT.jar
 PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/23.02.0/rapids-4-spark_2.12-23.02.0.jar
 
 $SPARK_HOME/bin/spark-submit \
