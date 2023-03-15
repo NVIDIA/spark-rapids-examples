@@ -48,7 +48,7 @@ It is assumed that a Standalone Spark cluster has been set up, the `SPARK_MASTER
 
     ``` bash
     RAPIDS_ML_JAR=PATH_TO_rapids-4-spark-ml_2.12-22.02.0-cuda11.jar
-    PLUGIN_JAR=PATH_TO_rapids-4-spark_2.12-23.02.0-SNAPSHOT.jar
+    PLUGIN_JAR=PATH_TO_rapids-4-spark_2.12-23.04.0-SNAPSHOT.jar
 
     jupyter toree install                                \
     --spark_home=${SPARK_HOME}                             \

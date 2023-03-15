@@ -31,7 +31,7 @@ rm -rf $DATA_OUT_PATH
 # the path to keep the jars of spark-rapids & spark-cuspatial
 JARS=$ROOT_PATH/jars
 
-JARS_PATH=${JARS_PATH:-$JARS/rapids-4-spark_2.12-23.02.0-SNAPSHOT.jar,$JARS/spark-cuspatial-23.02.0-SNAPSHOT.jar}
+JARS_PATH=${JARS_PATH:-$JARS/rapids-4-spark_2.12-23.04.0-SNAPSHOT.jar,$JARS/spark-cuspatial-23.04.0-SNAPSHOT.jar}
 
 $SPARK_HOME/bin/spark-submit --master spark://$HOSTNAME:7077 \
 --name "Gpu Spatial Join UDF" \
