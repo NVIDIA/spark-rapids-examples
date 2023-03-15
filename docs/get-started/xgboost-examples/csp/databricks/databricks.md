@@ -54,7 +54,7 @@ cluster.
       
     - [Databricks 11.3 LTS
     ML](https://docs.databricks.com/release-notes/runtime/11.3ml.html#system-environment) has CUDA 11
-    installed.  Users will need to use 23.02.0 or later on Databricks 11.3 LTS ML. In this case use
+    installed.  Users will need to use 23.04.0 or later on Databricks 11.3 LTS ML. In this case use
     [generate-init-script-11.3.ipynb](generate-init-script-11.3.ipynb) which will install
     the RAPIDS Spark plugin.
       
