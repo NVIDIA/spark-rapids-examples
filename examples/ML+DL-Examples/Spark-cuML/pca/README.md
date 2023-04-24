@@ -12,7 +12,7 @@ User can also download the release jar from Maven central:
 
 [rapids-4-spark-ml_2.12-22.02.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/22.02.0/rapids-4-spark-ml_2.12-22.02.0-cuda11.jar)
 
-[rapids-4-spark_2.12-23.02.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.02.0/rapids-4-spark_2.12-23.02.0.jar)
+[rapids-4-spark_2.12-23.04.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.04.0/rapids-4-spark_2.12-23.04.0.jar)
 
 
 ## Sample code

@@ -6,9 +6,9 @@ This is a getting started guide to XGBoost4J-Spark on Databricks. At the end of 
 Prerequisites
 -------------
 
-    * Apache Spark 3.x running in Databricks Runtime 9.1 ML, 10.4 ML or 11.3 ML with GPU
-    * AWS: 9.1 LTS ML (GPU, Scala 2.12, Spark 3.1.2), 10.4 LTS ML (GPU, Scala 2.12, Spark 3.2.1) or 11.3 LTS ML (GPU, Scala 2.12, Spark 3.3.0)
-    * Azure: 9.1 LTS ML (GPU, Scala 2.12, Spark 3.1.2) or 10.4 LTS ML (GPU, Scala 2.12, Spark 3.2.1) or 11.3 LTS ML (GPU, Scala 2.12, Spark 3.3.0)
+    * Apache Spark 3.x running in Databricks Runtime 10.4 ML or 11.3 ML with GPU
+    * AWS: 10.4 LTS ML (GPU, Scala 2.12, Spark 3.2.1) or 11.3 LTS ML (GPU, Scala 2.12, Spark 3.3.0)
+    * Azure: 10.4 LTS ML (GPU, Scala 2.12, Spark 3.2.1) or 11.3 LTS ML (GPU, Scala 2.12, Spark 3.3.0)
 
 The number of GPUs per node dictates the number of Spark executors that can run in that node. Each executor should only be allowed to run 1 task at any given time.
    
@@ -37,26 +37,18 @@ cluster.
    your workspace.  See [Managing
    Notebooks](https://docs.databricks.com/notebooks/notebooks-manage.html#id2) for instructions on
    how to import a notebook.  
-   Select the initialization script based on the Databricks runtime
+   Select the version of the RAPIDS Accelerator for Apache Spark based on the Databricks runtime
    version:
-   
-    - [Databricks 9.1 LTS
-    ML](https://docs.databricks.com/release-notes/runtime/9.1ml.html#system-environment) has CUDA 11
-    installed.  Users will need to use 21.12.0 or later on Databricks 9.1 LTS ML. In this case use
-    [generate-init-script.ipynb](generate-init-script.ipynb) which will install
-    the RAPIDS Spark plugin.
-      
-    - [Databricks 10.4 LTS
-    ML](https://docs.databricks.com/release-notes/runtime/9.1ml.html#system-environment) has CUDA 11
-    installed.  Users will need to use 22.04.0 or later on Databricks 10.4 LTS ML. In this case use
-    [generate-init-script-10.4.ipynb](generate-init-script-10.4.ipynb) which will install
-    the RAPIDS Spark plugin.
-      
-    - [Databricks 11.3 LTS
-    ML](https://docs.databricks.com/release-notes/runtime/11.3ml.html#system-environment) has CUDA 11
-    installed.  Users will need to use 23.02.0 or later on Databricks 11.3 LTS ML. In this case use
-    [generate-init-script-11.3.ipynb](generate-init-script-11.3.ipynb) which will install
-    the RAPIDS Spark plugin.
+   - [Databricks 10.4 LTS
+     ML](https://docs.databricks.com/release-notes/runtime/10.4ml.html#system-environment) has CUDA 11
+     installed.  Users will need to use 22.04.0 or later on Databricks 10.4 LTS ML.
+   - [Databricks 11.3 LTS
+     ML](https://docs.databricks.com/release-notes/runtime/11.3ml.html#system-environment) has CUDA 11
+     installed.  Users will need to use 23.02.0 or later on Databricks 11.3 LTS ML.
+     
+     In both cases use
+     [generate-init-script.ipynb](./generate-init-script.ipynb) which will install
+     the RAPIDS Spark plugin.
       
 2. Once you are in the notebook, click the “Run All” button.
 3. Ensure that the newly created init.sh script is present in the output from cell 2 and that the
@@ -77,21 +69,17 @@ cluster.
     The
     [`spark.task.resource.gpu.amount`](https://spark.apache.org/docs/latest/configuration.html#scheduling)
     configuration is defaulted to 1 by Databricks. That means that only 1 task can run on an
-    executor with 1 GPU, which is limiting, especially on the reads and writes from Parquet.  Set
+    executor with 1 GPU, which is limiting, especially on the reads and writes from Parquet. Set
     this to 1/(number of cores per executor) which will allow multiple tasks to run in parallel just
-    like the CPU side.  Having the value smaller is fine as well.
-
-	There is an incompatibility between the Databricks specific implementation of adaptive query
-    execution (AQE) and the spark-rapids plugin.  In order to mitigate this,
-    `spark.sql.adaptive.enabled` should be set to false.  In addition, the plugin does not work with
-    the Databricks `spark.databricks.delta.optimizeWrite` option.
+    like the CPU side. Having the value smaller is fine as well.
+    Note: Please remove the `spark.task.resource.gpu.amount` config for a single-node Databricks 
+    cluster because Spark local mode does not support GPU scheduling.
 
     ```bash
      spark.plugins com.nvidia.spark.SQLPlugin
      spark.task.resource.gpu.amount 0.1
      spark.rapids.memory.pinnedPool.size 2G
      spark.rapids.sql.concurrentGpuTasks 2
-     spark.databricks.optimizer.dynamicFilePruning false
     ```
 
     ![Spark Config](../../../../img/databricks/sparkconfig.png)
@@ -197,7 +185,3 @@ Limitations
    of DecimalTypes with precision greater than 38. There is a bug filed in Apache Spark for it 
    [here](https://issues.apache.org/jira/browse/SPARK-41793), whereas when using the plugin the 
    correct result will be returned.
-
-6. A query may fail when Dynamic File Pruning is enabled. As a workaround, please
-   disable the feature by setting `spark.databricks.optimizer.dynamicFilePruning false`. More details
-   are in [issue-7648](https://github.com/NVIDIA/spark-rapids/issues/7648).
