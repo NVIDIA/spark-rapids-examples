@@ -44,7 +44,7 @@ cluster.
      installed.  Users will need to use 22.04.0 or later on Databricks 10.4 LTS ML.
    - [Databricks 11.3 LTS
      ML](https://docs.databricks.com/release-notes/runtime/11.3ml.html#system-environment) has CUDA 11
-     installed.  Users will need to use 23.02.0 or later on Databricks 11.3 LTS ML.
+     installed.  Users will need to use 23.04.0 or later on Databricks 11.3 LTS ML.
      
      In both cases use
      [generate-init-script.ipynb](./generate-init-script.ipynb) which will install
