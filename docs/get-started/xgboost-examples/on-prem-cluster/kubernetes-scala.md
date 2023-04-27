@@ -11,11 +11,11 @@ Prerequisites
   * NVIDIA Pascal™ GPU architecture or better
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
-  * Ubuntu 18.04, 20.04/CentOS7, CentOS8
+  * Ubuntu 18.04, 20.04/CentOS7, Rocky Linux 8
   * CUDA 11.0+
   * NVIDIA driver compatible with your CUDA
   * NCCL 2.7.8+
-* [Kubernetes 1.6+ cluster with NVIDIA GPUs](https://docs.nvidia.com/datacenter/kubernetes/index.html)
+* [Kubernetes cluster with NVIDIA GPUs](https://docs.nvidia.com/datacenter/cloud-native/kubernetes/install-k8s.html)
   * See official [Spark on Kubernetes](https://spark.apache.org/docs/latest/running-on-kubernetes.html#prerequisites) 
     instructions for detailed spark-specific cluster requirements
 * kubectl installed and configured in the job submission environment
@@ -40,7 +40,7 @@ export SPARK_DOCKER_IMAGE=<gpu spark docker image repo and name>
 export SPARK_DOCKER_TAG=<spark docker image tag>
 
 pushd ${SPARK_HOME}
-wget https://github.com/NVIDIA/spark-rapids-examples/raw/branch-23.02/dockerfile/Dockerfile
+wget https://github.com/NVIDIA/spark-rapids-examples/raw/branch-23.04/dockerfile/Dockerfile
 
 # Optionally install additional jars into ${SPARK_HOME}/jars/
 
