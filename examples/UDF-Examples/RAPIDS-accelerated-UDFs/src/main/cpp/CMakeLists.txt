@@ -32,7 +32,7 @@ if(DEFINED GPU_ARCHS)
 endif()
 rapids_cuda_init_architectures(UDFEXAMPLESJNI)
 
-project(UDFEXAMPLESJNI VERSION 23.02.0 LANGUAGES C CXX CUDA)
+project(UDFEXAMPLESJNI VERSION 23.04.0 LANGUAGES C CXX CUDA)
 
 option(PER_THREAD_DEFAULT_STREAM "Build with per-thread default stream" OFF)
 option(BUILD_UDF_BENCHMARKS "Build the benchmarks" OFF)
