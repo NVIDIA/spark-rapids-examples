@@ -17,7 +17,7 @@
 gcloud dataproc clusters create $CLUSTER_NAME  \
     --region=$REGION \
     --image-version=2.0-ubuntu18 \
-    --master-machine-type=n1-standard-16 \
+    --master-machine-type=n2-standard-16 \
     --num-workers=$NUM_WORKERS \
     --worker-accelerator=type=nvidia-tesla-t4,count=$NUM_GPUS \
     --worker-machine-type=n1-highmem-32\
