@@ -17,7 +17,7 @@
 
 ARG CUDA_VER=11.5.1
 FROM nvidia/cuda:${CUDA_VER}-devel-ubuntu20.04
-ARG BRANCH_VER=23.04
+ARG BRANCH_VER=23.06
 
 RUN apt-get update
 RUN apt-get install -y wget ninja-build git
@@ -39,7 +39,7 @@ RUN conda --version
 RUN conda install -c conda-forge openjdk=8 maven=3.8.1 -y
 
 # install cuDF dependency.
-RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=${BRANCH_VER} python=3.8 -y
+RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=${BRANCH_VER} python=3.9 -y
 
 RUN wget --quiet \
     https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-linux-x86_64.tar.gz \
