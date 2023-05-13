@@ -64,7 +64,7 @@ Then create a directory in HDFS, and run below commands,
 Please make sure to install the XGBoost, cudf-cu11, numpy libraries on all nodes before running XGBoost application.
 ``` bash
 pip install xgboost
-pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
+pip install cudf-cu11 --extra-index-url=https://pypi.nvidia.com
 pip install numpy
 pip install scikit-learn
 ```
@@ -76,7 +76,7 @@ by leveraging the --archives option or spark.archives configuration.
 python -m venv pyspark_venv
 source pyspark_venv/bin/activate
 pip install xgboost
-pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
+pip install cudf-cu11 --extra-index-url=https://pypi.nvidia.com
 pip install numpy
 pip install scikit-learn
 pip install venv-pack
