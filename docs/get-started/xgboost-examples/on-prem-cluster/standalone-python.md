@@ -61,7 +61,7 @@ pip install scikit-learn
 Get Application Files, Jar and Dataset
 -------------------------------
 
-Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
+Make sure you have prepared the necessary packages and dataset by following this [guide](../prepare-package-data/preparation-python.md)
 
 
 #### Note: 

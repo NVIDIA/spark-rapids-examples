@@ -41,7 +41,7 @@ pip install cudf-cu11 --extra-index-url=https://pypi.nvidia.com
 pip install numpy
 pip install scikit-learn
 ```
-You can also create an isolated python environment by using (Virtualenv)[https://virtualenv.pypa.io/en/latest/],
+You can also create an isolated python environment by using [Virtualenv](https://virtualenv.pypa.io/en/latest/),
 and then directly pass/unpack the archive file and enable the environment on executors
 by leveraging the --archives option or spark.archives configuration.
 ``` bash
@@ -63,7 +63,7 @@ spark-submit --archives pyspark_venv.tar.gz#environment app.py
 Get Application Files, Jar and Dataset
 -------------------------------
 
-Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
+Make sure you have prepared the necessary packages and dataset by following this [guide](../prepare-package-data/preparation-python.md)
 
 Then create a directory in HDFS, and run below commands,
 
