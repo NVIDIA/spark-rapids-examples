@@ -14,28 +14,28 @@ The number of GPUs per node dictates the number of Spark executors that can run 
    
 Start A Databricks Cluster
 --------------------------
-
-Create a Databricks cluster by going to "Compute", then clicking `+ Create compute`.  Ensure the
-cluster meets the prerequisites above by configuring it as follows:
+Before creating the cluster, we will need to create an [initialization script](https://docs.databricks.com/clusters/init-scripts.html) for the 
+cluster to install the RAPIDS jars. Databricks recommends storing all cluster-scoped init scripts using workspace files. 
+Each user has a Home directory configured under the /Users directory in the workspace. 
+Navigate to your home directory in the UI and select **Create** > **File** from the menu, 
+create an `init.sh` scripts with contents:   
+   ```bash
+   #!/bin/bash
+   sudo wget -O /databricks/jars/rapids-4-spark_2.12-23.04.0.jar https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.04.0/rapids-4-spark_2.12-23.04.0.jar
+   ```
 1. Select the Databricks Runtime Version from one of the supported runtimes specified in the
    Prerequisites section.
 2. Choose the number of workers that matches the number of GPUs you want to use.
 3. Select a worker type. On AWS, use nodes with 1 GPU each such as `p3.2xlarge` or `g4dn.xlarge`.
    For Azure, choose GPU nodes such as Standard_NC6s_v3. For GCP, choose N1 or A2 instance types with GPUs. 
 4. Select the driver type. Generally this can be set to be the same as the worker.
-5. We will need to create an initialization script for the cluster that installs the RAPIDS jars to the
-cluster. Databricks recommends storing all cluster-scoped init scripts using workspace files. 
-Each user has a Home directory configured under the /Users directory in the workspace.
-Navigate to your home directory in the UI and select **Create** > **File** from the menu,
-create an `init.sh` scripts with contents:   
-```bash
-#!/bin/bash
-sudo wget -O /databricks/jars/rapids-4-spark_2.12-23.04.0.jar https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.04.0/rapids-4-spark_2.12-23.04.0.jar
-```
+5. Click the “Edit” button, then navigate down to the “Advanced Options” section. Select the “Init Scripts” tab in 
+   the advanced options section, and paste the workspace path to the initialization script:`/Users/user@domain/init.sh`, then click “Add”.
+   ![Init Script](../../../../img/databricks/initscript.png)
 6. Now select the “Spark” tab, and paste the following config options into the Spark Config section.
    Change the config values based on the workers you choose. See Apache Spark
    [configuration](https://spark.apache.org/docs/latest/configuration.html) and RAPIDS Accelerator
-   for Apache Spark [descriptions](../configs.md) for each config.
+   for Apache Spark [descriptions](https://nvidia.github.io/spark-rapids/docs/configs.html) for each config.
 
     The
     [`spark.task.resource.gpu.amount`](https://spark.apache.org/docs/latest/configuration.html#scheduling)
@@ -53,17 +53,17 @@ sudo wget -O /databricks/jars/rapids-4-spark_2.12-23.04.0.jar https://repo1.mave
     spark.rapids.sql.concurrentGpuTasks 2
     ```
 
-    ![Spark Config](../img/Databricks/sparkconfig.png)
+    ![Spark Config](../../../../img/databricks/sparkconfig.png)
 
     If running Pandas UDFs with GPU support from the plugin, at least three additional options
     as below are required. The `spark.python.daemon.module` option is to choose the right daemon module
     of python for Databricks. On Databricks, the python runtime requires different parameters than the
-    Spark one, so a dedicated python deamon module `rapids.daemon_databricks` is created and should
+    Spark one, so a dedicated python demon module `rapids.daemon_databricks` is created and should
     be specified here. Set the config
-    [`spark.rapids.sql.python.gpu.enabled`](../configs.md#sql.python.gpu.enabled) to `true` to
+    [`spark.rapids.sql.python.gpu.enabled`](https://nvidia.github.io/spark-rapids/docs/configs.html#sql.python.gpu.enabled) to `true` to
     enable GPU support for python. Add the path of the plugin jar (supposing it is placed under
     `/databricks/jars/`) to the `spark.executorEnv.PYTHONPATH` option. For more details please go to
-    [GPU Scheduling For Pandas UDF](../additional-functionality/rapids-udfs.md#gpu-support-for-pandas-udf)
+    [GPU Scheduling For Pandas UDF](https://nvidia.github.io/spark-rapids/docs/additional-functionality/rapids-udfs.html#gpu-support-for-pandas-udf)
 
     ```bash
     spark.rapids.sql.python.gpu.enabled true
