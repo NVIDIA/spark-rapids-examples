@@ -16,7 +16,7 @@ and the home directory for Apache Spark respectively.
 
 2. Prepare packages and dataset.
 
-    Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
+    Make sure you have prepared the necessary packages and dataset by following this [guide](../prepare-package-data/preparation-python.md)
 
 3. Launch the notebook:
 

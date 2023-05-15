@@ -53,7 +53,7 @@ And here are the steps to enable the GPU resources discovery for Spark 3.1+.
 
 ``` bash
 pip install xgboost
-pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
+pip install cudf-cu11 --extra-index-url=https://pypi.nvidia.com
 pip install numpy
 pip install scikit-learn
 ```
@@ -61,7 +61,7 @@ pip install scikit-learn
 Get Application Files, Jar and Dataset
 -------------------------------
 
-Make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md)
+Make sure you have prepared the necessary packages and dataset by following this [guide](../prepare-package-data/preparation-python.md)
 
 
 #### Note: 
