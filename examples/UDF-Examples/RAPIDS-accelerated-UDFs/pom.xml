@@ -43,7 +43,7 @@
         <udf.native.build.path>${project.build.directory}/cpp-build</udf.native.build.path>
         <BUILD_UDF_BENCHMARKS>OFF</BUILD_UDF_BENCHMARKS>
         <CMAKE_CXX_FLAGS/>
-        <GPU_ARCHS>ALL</GPU_ARCHS>
+        <GPU_ARCHS>RAPIDS</GPU_ARCHS>
         <PER_THREAD_DEFAULT_STREAM>ON</PER_THREAD_DEFAULT_STREAM>
         <CPP_PARALLEL_LEVEL>10</CPP_PARALLEL_LEVEL>
         <CUDF_ENABLE_ARROW_S3>OFF</CUDF_ENABLE_ARROW_S3>
