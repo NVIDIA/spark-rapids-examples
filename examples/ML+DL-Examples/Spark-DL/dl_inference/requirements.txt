@@ -1,0 +1,19 @@
+docker
+huggingface
+jupyterlab
+matplotlib
+numpy
+pandas
+portalocker
+pyarrow
+pyspark>=3.4.0
+sentencepiece
+sentence_transformers
+scikit-learn
+tensorflow-cpu
+transformers
+tritonclient
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchtext
+torchvision
