@@ -1,0 +1,16 @@
+platform: "pytorch_libtorch"
+max_batch_size: 8192
+input [
+  {
+    name: "input"
+    data_type: TYPE_FP32
+    dims: [ 8 ]
+  }
+]
+output [
+  {
+    name: "output"
+    data_type: TYPE_FP32
+    dims: [ 1 ]
+  }
+]
