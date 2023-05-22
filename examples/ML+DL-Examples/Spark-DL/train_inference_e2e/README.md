@@ -20,7 +20,7 @@ This example is based on the [distributed training example](https://docs.databri
   databricks fs cp init.sh dbfs:/path/to/init.sh
   ```
 - Create a multi-node Databricks cluster with the following configuration:
-  - Databricks Runtime Versions: `13.0 ML GPU Runtime`
+  - Databricks Runtime Versions: `13.1 ML GPU Runtime`
   - Worker type: `g4dn.xlarge` (x2)
   - Driver type: `same as worker`
   - Advanced options -> Init Scripts: `dbfs:/path/to/init.sh`
