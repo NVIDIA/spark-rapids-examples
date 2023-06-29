@@ -21,6 +21,7 @@ The polygon data can be downloaded from [taxi_zone dataset](https://data.cityofn
 
 Note: Please update the `x,y` column names to `Start_Lon,Start_Lat` in
 the [notebook](./notebooks/cuspatial_sample_db.ipynb) if you test with the download points.
+This demo could only work with v23.02.0 version or previous.
 
 taxi-zones map:
 
@@ -47,7 +48,7 @@ or [in local machine](#build-in-local-machine) after prerequisites.
      ```
 2. Bash into the Docker and install libcuspatial
      ```Bash
-     conda install -c rapidsai-nightly -c nvidia -c conda-forge -c defaults libcuspatial=23.04
+     conda install -c rapidsai-nightly -c nvidia -c conda-forge -c defaults libcuspatial=23.02
      ```
 3. Get the code, then run `mvn package`.
      ```Bash
@@ -69,7 +70,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 4. [cuspatial](https://github.com/rapidsai/cuspatial): install libcuspatial
     ```Bash
     # Install libcuspatial from conda
-    conda install -c rapidsai-nightly -c nvidia -c conda-forge -c defaults libcuspatial=23.04
+    conda install -c rapidsai-nightly -c nvidia -c conda-forge -c defaults libcuspatial=23.02
     ```
 5. Build the JAR using `mvn package`.
      ```Bash
@@ -84,7 +85,7 @@ Note: The docker env is just for building the jar, not for running the applicati
 1. Set up [a standalone cluster](/docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md) of Spark. Make sure the conda/lib is included in LD_LIBRARY_PATH, so that spark executors can load libcuspatial.so.
 
 2. Download Spark RAPIDS JAR
-   * [Spark RAPIDS JAR v23.04.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.04.0/rapids-4-spark_2.12-23.04.0.jar) or above
+   * [Spark RAPIDS JAR v23.02.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.02.0/rapids-4-spark_2.12-23.02.0.jar) or above
 3. Prepare sample dataset and JARs. Copy the [sample dataset](../../../datasets/cuspatial_data.tar.gz) to `/data/cuspatial_data/`.
     Copy Spark RAPIDS JAR and `spark-cuspatial-<version>.jar` to `/data/cuspatial_data/jars/`.
     If you build the `spark-cuspatial-<version>.jar` in docker, please copy the jar from docker to local:
