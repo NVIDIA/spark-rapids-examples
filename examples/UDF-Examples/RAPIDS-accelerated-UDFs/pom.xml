@@ -25,7 +25,7 @@
         user defined functions for use with the RAPIDS Accelerator
         for Apache Spark
     </description>
-    <version>23.04.0</version>
+    <version>23.06.0</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -37,13 +37,13 @@
         <cuda.version>cuda11</cuda.version>
         <scala.binary.version>2.12</scala.binary.version>
         <!-- Depends on release version, Snapshot version is not published to the Maven Central -->
-        <rapids4spark.version>23.04.0</rapids4spark.version>
+        <rapids4spark.version>23.06.0</rapids4spark.version>
         <spark.version>3.1.1</spark.version>
         <scala.version>2.12.15</scala.version>
         <udf.native.build.path>${project.build.directory}/cpp-build</udf.native.build.path>
         <BUILD_UDF_BENCHMARKS>OFF</BUILD_UDF_BENCHMARKS>
         <CMAKE_CXX_FLAGS/>
-        <GPU_ARCHS>ALL</GPU_ARCHS>
+        <GPU_ARCHS>RAPIDS</GPU_ARCHS>
         <PER_THREAD_DEFAULT_STREAM>ON</PER_THREAD_DEFAULT_STREAM>
         <CPP_PARALLEL_LEVEL>10</CPP_PARALLEL_LEVEL>
         <CUDF_ENABLE_ARROW_S3>OFF</CUDF_ENABLE_ARROW_S3>

@@ -38,7 +38,7 @@
 
     <properties>
         <encoding>UTF-8</encoding>
-        <xgboost.version>1.7.1</xgboost.version>
+        <xgboost.version>2.0.0-SNAPSHOT</xgboost.version>
         <spark.version>3.1.1</spark.version>
         <scala.version>2.12.8</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
@@ -144,4 +144,13 @@
             </repositories>
         </profile>
     </profiles>
+
+    <repositories>
+      <repository>
+        <id>XGBoost4J Snapshot Repo</id>
+        <name>XGBoost4J Snapshot Repo</name>
+        <url>https://s3-us-west-2.amazonaws.com/xgboost-maven-repo/snapshot/</url>
+      </repository>
+    </repositories>
+
 </project>

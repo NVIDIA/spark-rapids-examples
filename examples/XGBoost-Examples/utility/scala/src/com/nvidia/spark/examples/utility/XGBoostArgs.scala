@@ -202,7 +202,7 @@ class XGBoostArgs private[utility] (
 
     val hostIp = params.getOrElse("rabit_tracker_host", "").toString
     if (!hostIp.isEmpty) {
-      params ++ Map("tracker_conf" -> TrackerConf(0l, "python", hostIp))
+      params ++ Map("tracker_conf" -> TrackerConf(0l, hostIp))
     } else params
   }
 
