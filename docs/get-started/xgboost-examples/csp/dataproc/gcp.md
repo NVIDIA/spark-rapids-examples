@@ -45,7 +45,7 @@ If you'd like to further accelerate init time to 4-5 minutes, create a custom Da
 
 ## Get Application Files, Jar and Dataset
 
-Bash into the master node and make sure you have prepared the necessary packages and dataset by following this [guide](/docs/get-started/xgboost-examples/prepare-package-data/preparation-python.md).
+Bash into the master node and make sure you have prepared the necessary packages and dataset by following this [guide](../../prepare-package-data/preparation-python.md).
 
 Note: Since there is no maven CLI in master node, so we need to manually install.
 ``` bash
@@ -64,11 +64,11 @@ Then create a directory in HDFS, and run below commands,
 Please make sure to install the XGBoost, cudf-cu11, numpy libraries on all nodes before running XGBoost application.
 ``` bash
 pip install xgboost
-pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
+pip install cudf-cu11 --extra-index-url=https://pypi.nvidia.com
 pip install numpy
 pip install scikit-learn
 ```
-You can also create an isolated python environment by using (Virtualenv)[https://virtualenv.pypa.io/en/latest/],
+You can also create an isolated python environment by using [Virtualenv](https://virtualenv.pypa.io/en/latest/),
 and then directly pass/unpack the archive file and enable the environment on executors
 by leveraging the --archives option or spark.archives configuration.
 ``` bash
@@ -76,7 +76,7 @@ by leveraging the --archives option or spark.archives configuration.
 python -m venv pyspark_venv
 source pyspark_venv/bin/activate
 pip install xgboost
-pip install cudf-cu11 --extra-index-url=https://pypi.ngc.nvidia.com
+pip install cudf-cu11 --extra-index-url=https://pypi.nvidia.com
 pip install numpy
 pip install scikit-learn
 pip install venv-pack
