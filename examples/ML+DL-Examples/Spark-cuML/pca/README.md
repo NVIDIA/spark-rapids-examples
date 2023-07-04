@@ -14,7 +14,7 @@ User can also download the release jar from Maven central:
 
 [rapids-4-spark_2.12-23.06.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.06.0/rapids-4-spark_2.12-23.06.0.jar)
 
-Note: This demo could only work with v23.04.0 version or previous.
+Note: This demo could only work with v23.02.0 and v23.04.0 version.
 
 ## Sample code
 
