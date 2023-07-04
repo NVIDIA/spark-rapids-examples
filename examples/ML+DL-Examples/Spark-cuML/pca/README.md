@@ -10,11 +10,11 @@ Please refer to [README](https://github.com/NVIDIA/spark-rapids-ml#readme) in th
 
 User can also download the release jar from Maven central:
 
-[rapids-4-spark-ml_2.12-23.04.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/23.04.0/rapids-4-spark-ml_2.12-23.04.0-cuda11.jar)
+[rapids-4-spark-ml_2.12-22.02.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/23.02.0/rapids-4-spark-ml_2.12-22.02.0-cuda11.jar)
 
 [rapids-4-spark_2.12-23.06.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.06.0/rapids-4-spark_2.12-23.06.0.jar)
 
-Note: This demo could only work with v23.02.0 and v23.04.0 version.
+Note: This demo could only work with v22.02.0 version.
 
 ## Sample code
 
