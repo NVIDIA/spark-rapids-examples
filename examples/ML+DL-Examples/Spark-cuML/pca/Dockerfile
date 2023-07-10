@@ -42,7 +42,7 @@ RUN conda install -c conda-forge openjdk=8 maven=3.8.1 -y
 RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=${BRANCH_VER} python=3.8 -y
 
 RUN wget --quiet \
-    https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-linux-x86_64.tar.gz \
+    https://github.com/Kitware/CMake/releases/download/v3.26.4/cmake-3.26.4-linux-x86_64.tar.gz \
     && tar -xzf cmake-3.21.3-linux-x86_64.tar.gz \
     && rm -rf cmake-3.21.3-linux-x86_64.tar.gz
 
