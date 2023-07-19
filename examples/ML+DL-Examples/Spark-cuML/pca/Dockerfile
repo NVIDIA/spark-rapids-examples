@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-ARG CUDA_VER=11.5.1
+ARG CUDA_VER=11.8.0
 FROM nvidia/cuda:${CUDA_VER}-devel-ubuntu20.04
 ARG BRANCH_VER=23.08
 

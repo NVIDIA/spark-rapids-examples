@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 #
 
 # A container that can be used to build UDF native code against libcudf
-ARG CUDA_VERSION=11.5.0
+ARG CUDA_VERSION=11.8.0
 ARG LINUX_VERSION=ubuntu18.04
 
 FROM nvidia/cuda:${CUDA_VERSION}-devel-${LINUX_VERSION}
