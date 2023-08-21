@@ -51,7 +51,7 @@
         <dependency>
             <groupId>com.nvidia</groupId>
             <artifactId>rapids-4-spark-ml_2.12</artifactId>
-            <version>23.08</version>
+            <version>23.08.1</version>
             <!--The last rapids-4-spark-ml release version is 22.02.0, snapshot version is 23.04.0-SNPASHOT!-->
         </dependency>
     </dependencies>
