@@ -24,7 +24,7 @@
   <name>UDF of the cuSpatial case for the RAPIDS Accelerator</name>
   <description>The RAPIDS accelerated user defined function of the cuSpatial case
     for use with the RAPIDS Accelerator for Apache Spark</description>
-  <version>23.08.1</version>
+  <version>23.02.0</version>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
