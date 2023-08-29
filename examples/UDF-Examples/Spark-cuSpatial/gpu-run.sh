@@ -32,7 +32,6 @@ rm -rf $DATA_OUT_PATH
 JARS=$ROOT_PATH/jars
 
 JARS_PATH=${JARS_PATH:-$JARS/rapids-4-spark_2.12-23.02.0.jar,$JARS/spark-cuspatial-23.02.0.jar}
-
 $SPARK_HOME/bin/spark-submit --master spark://$HOSTNAME:7077 \
 --name "Gpu Spatial Join UDF" \
 --executor-memory 20G \

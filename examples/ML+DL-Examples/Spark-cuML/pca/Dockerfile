@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 # limitations under the License.
 #
 
-ARG CUDA_VER=11.5.1
+ARG CUDA_VER=11.8.0
 FROM nvidia/cuda:${CUDA_VER}-devel-ubuntu20.04
-ARG BRANCH_VER=23.06
+ARG BRANCH_VER=23.08
 
 RUN apt-get update
 RUN apt-get install -y wget ninja-build git
@@ -42,7 +42,7 @@ RUN conda install -c conda-forge openjdk=8 maven=3.8.1 -y
 RUN conda install -c rapidsai-nightly -c nvidia -c conda-forge cudf=${BRANCH_VER} python=3.8 -y
 
 RUN wget --quiet \
-    https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-linux-x86_64.tar.gz \
+    https://github.com/Kitware/CMake/releases/download/v3.26.4/cmake-3.26.4-linux-x86_64.tar.gz \
     && tar -xzf cmake-3.21.3-linux-x86_64.tar.gz \
     && rm -rf cmake-3.21.3-linux-x86_64.tar.gz
 

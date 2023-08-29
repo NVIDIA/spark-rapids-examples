@@ -21,7 +21,7 @@
     <groupId>com.nvidia</groupId>
     <artifactId>PCAExample</artifactId>
     <packaging>jar</packaging>
-    <version>23.06.0</version>
+    <version>23.08.0</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>com.nvidia</groupId>
             <artifactId>rapids-4-spark-ml_2.12</artifactId>
-            <version>23.06.0</version>
+            <version>23.02.0</version>
         </dependency>
     </dependencies>
 

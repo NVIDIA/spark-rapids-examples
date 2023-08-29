@@ -12,14 +12,15 @@ User can also download the release jar from Maven central:
 
 [rapids-4-spark-ml_2.12-22.02.0-cuda11.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark-ml_2.12/22.02.0/rapids-4-spark-ml_2.12-22.02.0-cuda11.jar)
 
-[rapids-4-spark_2.12-23.06.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.06.0/rapids-4-spark_2.12-23.06.0.jar)
+[rapids-4-spark_2.12-23.08.1.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.08.1/rapids-4-spark_2.12-23.08.1.jar)
 
+Note: This demo could only work with v22.02.0 version.
 
 ## Sample code
 
 User can find sample scala code in [`main.scala`](main.scala). In the sample code, we will generate random data with 2048 feature dimensions. Then we use PCA to reduce number of features to 3.
 
-Just copy the sample code into the spark-shell laucnhed according to [this section](https://github.com/NVIDIA/spark-rapids-ml#how-to-use) and REPL will give out the algorithm results.
+Just copy the sample code into the spark-shell launched according to [this section](https://github.com/NVIDIA/spark-rapids-ml#how-to-use) and REPL will give out the algorithm results.
 
 ## Notebook
 
@@ -48,7 +49,7 @@ It is assumed that a Standalone Spark cluster has been set up, the `SPARK_MASTER
 
     ``` bash
     RAPIDS_ML_JAR=PATH_TO_rapids-4-spark-ml_2.12-22.02.0-cuda11.jar
-    PLUGIN_JAR=PATH_TO_rapids-4-spark_2.12-23.06.0.jar
+    PLUGIN_JAR=PATH_TO_rapids-4-spark_2.12-23.08.1.jar
 
     jupyter toree install                                \
     --spark_home=${SPARK_HOME}                             \
