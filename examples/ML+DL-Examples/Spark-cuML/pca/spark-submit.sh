@@ -15,8 +15,9 @@
 # limitations under the License.
 #
 
+# Note that the last rapids-4-spark-ml release version is 22.02.0, snapshot version is 23.04.0-SNPASHOT
 ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/23.04.0-SNAPSHOT/rapids-4-spark-ml_2.12-23.04.0-SNAPSHOT.jar
-PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/23.08.0-SNAPSHOT/rapids-4-spark_2.12-23.10.0-SNAPSHOT.jar
+PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/23.08.0-SNAPSHOT/rapids-4-spark_2.12-23.08.0-SNAPSHOT.jar
 Note: The last rapids-4-spark-ml release version is 22.02.0, snapshot version is 23.04.0-SNPASHOT.
 
 $SPARK_HOME/bin/spark-submit \

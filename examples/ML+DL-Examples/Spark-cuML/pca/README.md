@@ -14,7 +14,7 @@ User can also download the release jar from Maven central:
 
 [rapids-4-spark_2.12-23.08.1.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.08.1/rapids-4-spark_2.12-23.08.1.jar)
 
-Note: This demo could only work with v22.02.0 version.
+Note: This demo could only work with v22.02.0 spark-ml version, and only compatible with spark-rapids versions prior to 23.08.1 .
 
 ## Sample code
 
