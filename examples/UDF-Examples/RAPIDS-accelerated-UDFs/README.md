@@ -1,7 +1,22 @@
 # RAPIDS Accelerated UDF Examples
 This project contains sample implementations of RAPIDS accelerated user-defined functions.
 
+The ideal solution would be usually if you can translate UDFs to dataframe or SQL operation, besides doing that translation, 
+we also provide an easy-to-use feature called [UDF compiler extension](https://nvidia.github.io/spark-rapids/docs/additional-functionality/udf-to-catalyst-expressions.html) 
+to translate UDFs to Catalyst expressions. The extension is limited to only support compiling simple operations, so you can also implement
+a RAPIDS Accelerated UDF.
+
 ## Spark Scala UDF Examples
+This is the best and simplest demo for us to getting started. From the code you can see there is an original CPU implementation 
+and this is how we write in a CPU way, we only need to implement the RapidsUDF interface which provides a single method we need to override called
+evaluateColumnar. The CPU URLDecode function process the input row by row, but the GPU evaluateColumnar takes the number of rows and the number of 
+columns, then return a cudf columnvector, because GPU get its speed by doing operations on many rows at a time, 
+this is the way it can run faster than the CPU. In the evaluateColumnar function, there is a cudf implementation of URL decode 
+that we're leveraging, so we don't need to write any native C++ code, this is all done through the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable).
+The benefit to implement in Java API is ease of development, but the memory model is not friendly for doing GPU operations
+because JVM make the assumption that everything we're trying to do is on the heap memory, we need to free them in a timely manner with many try finally
+blocks, and since the limitation of GPU memory, the more intermediate products you build the more you're going to be GPU memory bandwidth bound.
+Note that we need to implement both CPU and GPU functions to avoid if the operation failed to CPU then UDF will crash the application.
 
 - [URLDecode](src/main/scala/com/nvidia/spark/rapids/udf/scala/URLDecode.scala)
   decodes URL-encoded strings using the
@@ -11,6 +26,17 @@ This project contains sample implementations of RAPIDS accelerated user-defined 
   [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
 
 ## Spark Java UDF Examples
+Below are some showcases about implementing RAPIDS accelerated scala UDF by JNI binding codes and native code.
+If there is no existing simple Java API we could leverage, we can write native custom code.
+The Java class for the UDF is similar as the previous URLDecode/URLEncode demo, we need to implement a cosineSimilarity
+function in C++ code and goes into the native code as quickly as possible, because it is easier to write the code
+safely. In the native code, it `reinterpret_cast` the input to columnview, do some sanity checking and convert to list
+columnviews, then compute the cosine similarity, finally return the unique pointer to a column, release the underlying resources.
+On Java side we are going to wrap it in a columnvector and own that resource. In `cosine_similarity.cu` we implement
+the computation as the actual CUDA kernel. In CUDA kernel part, we can leverage thrust template library to write the 
+standard algorithms for GPU parallelizing code.
+The benefit for native code is doing the UDF with the least amount of GPU memory and it could be good for performance,
+however the trade-off is we need to build against libcudf and it will take a long time, and it is an advanced feature.
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/java/URLDecode.java)
   decodes URL-encoded strings using the
@@ -23,6 +49,7 @@ This project contains sample implementations of RAPIDS accelerated user-defined 
   between two float vectors using [native code](src/main/cpp/src)
 
 ## Hive UDF Examples
+Below are some showcases about implementing RAPIDS accelerated hive UDF by JNI binding codes and native code.
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/hive/URLDecode.java)
   implements a Hive simple UDF using the
