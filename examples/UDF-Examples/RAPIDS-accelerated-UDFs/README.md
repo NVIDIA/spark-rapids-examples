@@ -29,7 +29,7 @@ Below are some showcases about implementing RAPIDS accelerated scala UDF by JNI 
 If there is no existing simple Java API we could leverage, we can write native custom code.
 The Java class for the UDF is similar as the previous URLDecode/URLEncode demo, we need to implement a cosineSimilarity
 function in C++ code and goes into the native code as quickly as possible, because it is easier to write the code
-safely. In the native code, it `reinterpret_cast` the input to columnview, do some sanity checking and convert to list
+safely. In the native code, it `reinterpret_cast` the input to a column view, do some sanity checking and convert to list
 column views, then compute the cosine similarity, finally return the unique pointer to a column, release the underlying resources.
 On Java side we are going to wrap it in a columnvector and own that resource. In `cosine_similarity.cu` we implement
 the computation as the actual CUDA kernel. In CUDA kernel part, we can leverage thrust template library to write the 
