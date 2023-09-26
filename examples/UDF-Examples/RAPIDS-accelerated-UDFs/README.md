@@ -27,7 +27,7 @@ Note that we need to implement both CPU and GPU functions to avoid if the operat
 ## Spark Java UDF Examples
 Below are some showcases about implementing RAPIDS accelerated scala UDF by JNI binding codes and native code.
 If there is no existing simple Java API we could leverage, we can write native custom code.
-The Java class for the UDF is similar as the previous URLDecode/URLEncode demo, we need to implement a cosineSimilarity
+The Java class for the UDF is similar as the previous URLDecode/URLEncode demo. We need to implement a cosineSimilarity
 function in C++ code and goes into the native code as quickly as possible, because it is easier to write the code
 safely. In the native code, it `reinterpret_cast` the input to a column view, do some sanity checking and convert to list
 column views, then compute the cosine similarity, finally return the unique pointer to a column, release the underlying resources.
