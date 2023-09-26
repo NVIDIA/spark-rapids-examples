@@ -30,7 +30,7 @@ If there is no existing simple Java API we could leverage, we can write native c
 The Java class for the UDF is similar as the previous URLDecode/URLEncode demo, we need to implement a cosineSimilarity
 function in C++ code and goes into the native code as quickly as possible, because it is easier to write the code
 safely. In the native code, it `reinterpret_cast` the input to columnview, do some sanity checking and convert to list
-columnviews, then compute the cosine similarity, finally return the unique pointer to a column, release the underlying resources.
+column views, then compute the cosine similarity, finally return the unique pointer to a column, release the underlying resources.
 On Java side we are going to wrap it in a columnvector and own that resource. In `cosine_similarity.cu` we implement
 the computation as the actual CUDA kernel. In CUDA kernel part, we can leverage thrust template library to write the 
 standard algorithms for GPU parallelizing code.
