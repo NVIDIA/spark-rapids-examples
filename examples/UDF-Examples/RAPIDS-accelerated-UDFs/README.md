@@ -1,8 +1,7 @@
 # RAPIDS Accelerated UDF Examples
 This project contains sample implementations of RAPIDS accelerated user-defined functions.
 
-The ideal solution would be usually if you can translate UDFs to dataframe or SQL operation, besides doing that translation, 
-we also provide an easy-to-use feature called [UDF compiler extension](https://nvidia.github.io/spark-rapids/docs/additional-functionality/udf-to-catalyst-expressions.html) 
+The ideal solution would be to replace the UDF with a series of DataFrame or SQL operations. If that is not possible, we also provide a [UDF compiler extension](https://nvidia.github.io/spark-rapids/docs/additional-functionality/udf-to-catalyst-expressions.html) 
 to translate UDFs to Catalyst expressions. The extension is limited to only support compiling simple operations, For complitcated cases, you can choose to implement
 a RAPIDS Accelerated UDF.
 
