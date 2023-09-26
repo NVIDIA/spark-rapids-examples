@@ -76,7 +76,7 @@ Java_com_nvidia_spark_rapids_udf_java_CosineSimilarity_cosineSimilarity(JNIEnv* 
     auto lv2 = cudf::lists_column_view(*v2);
     std::unique_ptr<cudf::column> result = cosine_similarity(lv1, lv2);
 
-    // take ownership of the column and return the column address to Java
+    // take ownership of the column and return the column address to Java and release the underlying resources.
     return reinterpret_cast<jlong>(result.release());
   } catch (std::bad_alloc const& e) {
     auto msg = std::string("Unable to allocate native memory: ") +
