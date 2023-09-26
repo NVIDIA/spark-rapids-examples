@@ -6,7 +6,7 @@ to translate UDFs to Catalyst expressions. The extension is limited to only supp
 For complicated cases, you can choose to implement a RAPIDS Accelerated UDF.
 
 ## Spark Scala UDF Examples
-This is the best and simplest demo for us to getting started. From the code you can see there is an original CPU implementation 
+This is the simplest demo for getting started. From the code you can see there is an original CPU implementation 
 and this is how we write in a CPU way, we only need to implement the RapidsUDF interface which provides a single method we need to override called
 evaluateColumnar. The CPU URLDecode function process the input row by row, but the GPU evaluateColumnar takes the number of rows and the number of 
 columns, then return a cudf columnvector, because GPU get its speed by doing operations on many rows at a time, 
