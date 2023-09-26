@@ -48,7 +48,7 @@ however the trade-off is we need to build against libcudf and it will take a lon
   between two float vectors using [native code](src/main/cpp/src)
 
 ## Hive UDF Examples
-Below are some showcases about implementing RAPIDS accelerated hive UDF by JNI binding codes and native code.
+Below are some showcases about implementing RAPIDS accelerated Hive UDF by JNI binding codes and native code.
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/hive/URLDecode.java)
   implements a Hive simple UDF using the
