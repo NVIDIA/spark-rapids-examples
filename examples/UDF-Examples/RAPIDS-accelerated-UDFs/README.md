@@ -7,15 +7,12 @@ For complicated cases, you can choose to implement a RAPIDS Accelerated UDF.
 
 ## Spark Scala UDF Examples
 This is the simplest demo for getting started. From the code you can see there is an original CPU implementation 
-and this is how we write in a CPU way, we only need to implement the RapidsUDF interface which provides a single method we need to override called
-evaluateColumnar. The CPU URLDecode function process the input row by row, but the GPU evaluateColumnar takes the number of rows and the number of 
-columns, then return a cudf columnvector, because GPU get its speed by doing operations on many rows at a time, 
-this is the way it can run faster than the CPU. In the evaluateColumnar function, there is a cudf implementation of URL decode 
-that we're leveraging, so we don't need to write any native C++ code, this is all done through the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable).
-The benefit to implement in Java API is ease of development, but the memory model is not friendly for doing GPU operations
-because JVM make the assumption that everything we're trying to do is on the heap memory, we need to free them in a timely manner with many try finally
-blocks, and since the limitation of GPU memory, the more intermediate products you build the more you're going to be GPU memory bandwidth bound.
-Note that we need to implement both CPU and GPU functions to avoid if the operation failed to CPU then UDF will crash the application.
+provided by the `apply` method. We only need to implement the RapidsUDF interface which provides a single method we need to override called
+`evaluateColumnar`. The CPU URLDecode function processes the input row by row, but the GPU evaluateColumnar returns a cudf ColumnVector, because the GPU get its speed by performing operations on many rows at a time. In the `evaluateColumnar` function, there is a cudf implementation of URL decode 
+that we're leveraging, so we don't need to write any native C++ code. This is all done through the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable).
+The benefit to implement via the Java API is ease of development, but the memory model is not friendly for doing GPU operations
+because the JVM makes the assumption that everything we're trying to do is in heap memory. We need to free the GPU resources in a timely manner with try-finally blocks.
+Note that we need to implement both CPU and GPU functions so the UDF will still work if a higher-level operation involving the RAPIDS accelerated UDF falls back to the CPU.
 
 - [URLDecode](src/main/scala/com/nvidia/spark/rapids/udf/scala/URLDecode.scala)
   decodes URL-encoded strings using the
