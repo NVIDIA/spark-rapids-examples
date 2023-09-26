@@ -2,8 +2,8 @@
 This project contains sample implementations of RAPIDS accelerated user-defined functions.
 
 The ideal solution would be to replace the UDF with a series of DataFrame or SQL operations. If that is not possible, we also provide a [UDF compiler extension](https://nvidia.github.io/spark-rapids/docs/additional-functionality/udf-to-catalyst-expressions.html) 
-to translate UDFs to Catalyst expressions. The extension is limited to only support compiling simple operations, For complitcated cases, you can choose to implement
-a RAPIDS Accelerated UDF.
+to translate UDFs to Catalyst expressions. The extension is limited to only support compiling simple operations.
+For complicated cases, you can choose to implement a RAPIDS Accelerated UDF.
 
 ## Spark Scala UDF Examples
 This is the best and simplest demo for us to getting started. From the code you can see there is an original CPU implementation 
