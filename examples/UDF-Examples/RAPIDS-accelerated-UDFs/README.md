@@ -62,7 +62,7 @@ accelerated UDF in native code is a significant effort.
 
 ## Hive UDF Examples
 
-Below are some showcases about implementing RAPIDS accelerated Hive UDF by JNI binding codes and
+Below are some examples for implementing RAPIDS accelerated Hive UDF via JNI and
 native code.
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/hive/URLDecode.java)
