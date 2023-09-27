@@ -151,7 +151,7 @@ export SPARK_HOME=path-to-spark
 ```
 
 Install Python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda. See
-above Prerequisites section
+above [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites) section.
 
 ```
 ./run_pyspark_from_build.sh
