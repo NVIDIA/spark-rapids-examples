@@ -137,7 +137,7 @@ cd spark-rapids-examples/examples/UDF-Examples/RAPIDS-accelerated-UDFs
 mvn clean package -Pudf-native-examples
 ```
 
-The building will spend some time like 1.5 hours. Then the rapids-4-spark-udf-examples*.jar is
+The build could take a long time (e.g.: 1.5 hours). Then the rapids-4-spark-udf-examples*.jar is
 generated under RAPIDS-accelerated-UDFs/target directory.
 
 ### Run all the examples including native examples in the docker
