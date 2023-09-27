@@ -34,21 +34,22 @@ involving the RAPIDS accelerated UDF falls back to the CPU.
 
 ## Spark Java UDF Examples
 
-Below are some examples for implementing RAPIDS accelerated Scala UDF via JNI and
-native code. If there is no existing simple Java API we could leverage, we can write native custom
-code. Take [CosineSimilarity](src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java) as the example,
-the Java class for the UDF is similar as the previous URLDecode/URLEncode demo. We need to
+Below are some examples for implementing RAPIDS accelerated Scala UDF via JNI and native code. If
+there is no existing simple Java API we could leverage, we can write native custom code.
+Take [CosineSimilarity](src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java) as the
+example, the Java class for the UDF is similar as the previous URLDecode/URLEncode demo. We need to
 implement a cosineSimilarity function in C++ code and goes into the native code as quickly as
 possible, because it is easier to write the code safely. In the native code, it `reinterpret_cast`
 the input to a column view, do some sanity checking and convert to list column views, then compute
 the cosine similarity, finally return the unique pointer to a column, release the underlying
 resources. On Java side we are going to wrap it in a column vector and own that resource.
 In `cosine_similarity.cu` we implement the computation as the actual CUDA kernel. In the CUDA kernel
-we can leverage the [Thrust template library](https://docs.nvidia.com/cuda/thrust/index.html) to write the standard algorithms for GPU parallelizing
-code. The benefit of implementing the UDF in native code is for maximum control over GPU
-memory utilization and performance. However the trade-off is a more complicated build environment,
-as we need to build against libcudf with significantly longer build times. Implementing a RAPIDS
-accelerated UDF in native code is a significant effort.
+we can leverage the [Thrust template library](https://docs.nvidia.com/cuda/thrust/index.html) to
+write the standard algorithms for GPU parallelizing code. The benefit of implementing the UDF in
+native code is for maximum control over GPU memory utilization and performance. However the
+trade-off is a more complicated build environment, as we need to build against libcudf with
+significantly longer build times. Implementing a RAPIDS accelerated UDF in native code is a
+significant effort.
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/java/URLDecode.java)
   decodes URL-encoded strings using the
@@ -62,8 +63,7 @@ accelerated UDF in native code is a significant effort.
 
 ## Hive UDF Examples
 
-Below are some examples for implementing RAPIDS accelerated Hive UDF via JNI and
-native code.
+Below are some examples for implementing RAPIDS accelerated Hive UDF via JNI and native code.
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/hive/URLDecode.java)
   implements a Hive simple UDF using the
@@ -151,7 +151,8 @@ export SPARK_HOME=path-to-spark
 ```
 
 Install Python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda. See
-above [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites) section.
+above [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)
+section.
 
 ```
 ./run_pyspark_from_build.sh
@@ -208,5 +209,6 @@ spark.sql("select wordcount(c1) from tab group by c1").show()
 spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
 
-Refer to the [on-premises Spark documentation](../../../docs/get-started/xgboost-examples/on-prem-cluster) to test
-against various Spark cluster setups.
+Refer to
+the [on-premises Spark documentation](../../../docs/get-started/xgboost-examples/on-prem-cluster) to
+test against various Spark cluster setups.
