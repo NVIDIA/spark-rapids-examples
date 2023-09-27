@@ -34,7 +34,7 @@ involving the RAPIDS accelerated UDF falls back to the CPU.
 
 ## Spark Java UDF Examples
 
-Below are some showcases about implementing RAPIDS accelerated scala UDF by JNI binding codes and
+Below are some examples for implementing RAPIDS accelerated Scala UDF via JNI and
 native code. If there is no existing simple Java API we could leverage, we can write native custom
 code. Take [CosineSimilarity](src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java) as the example,
 the Java class for the UDF is similar as the previous URLDecode/URLEncode demo. We need to
