@@ -208,5 +208,5 @@ spark.sql("select wordcount(c1) from tab group by c1").show()
 spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
 
-Refer to [more Spark modes](../../../docs/get-started/xgboost-examples/on-prem-cluster) to test
-against more Spark modes.
+Refer to the [on-premises Spark documentation](../../../docs/get-started/xgboost-examples/on-prem-cluster) to test
+against various Spark cluster setups.
