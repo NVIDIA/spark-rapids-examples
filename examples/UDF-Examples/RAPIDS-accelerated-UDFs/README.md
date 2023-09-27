@@ -43,8 +43,8 @@ possible, because it is easier to write the code safely. In the native code, it 
 the input to a column view, do some sanity checking and convert to list column views, then compute
 the cosine similarity, finally return the unique pointer to a column, release the underlying
 resources. On Java side we are going to wrap it in a column vector and own that resource.
-In `cosine_similarity.cu` we implement the computation as the actual CUDA kernel. In CUDA kernel
-part, we can leverage thrust template library to write the standard algorithms for GPU parallelizing
+In `cosine_similarity.cu` we implement the computation as the actual CUDA kernel. In the CUDA kernel
+we can leverage the [Thrust template library](https://docs.nvidia.com/cuda/thrust/index.html) to write the standard algorithms for GPU parallelizing
 code. The benefit for native code is doing the UDF with the least amount of GPU memory and it could
 be good for performance, however the trade-off is we need to build against libcudf and it will take
 a long time, and it is an advanced feature.
