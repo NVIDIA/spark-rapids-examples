@@ -45,9 +45,10 @@ the cosine similarity, finally return the unique pointer to a column, release th
 resources. On Java side we are going to wrap it in a column vector and own that resource.
 In `cosine_similarity.cu` we implement the computation as the actual CUDA kernel. In the CUDA kernel
 we can leverage the [Thrust template library](https://docs.nvidia.com/cuda/thrust/index.html) to write the standard algorithms for GPU parallelizing
-code. The benefit for native code is doing the UDF with the least amount of GPU memory and it could
-be good for performance, however the trade-off is we need to build against libcudf and it will take
-a long time, and it is an advanced feature.
+code. The benefit of implementing the UDF in native code is for maximum control over GPU
+memory utilization and performance. However the trade-off is a more complicated build environment,
+as we need to build against libcudf with significantly longer build times. Implementing a RAPIDS
+accelerated UDF in native code is a significant effort.
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/java/URLDecode.java)
   decodes URL-encoded strings using the
