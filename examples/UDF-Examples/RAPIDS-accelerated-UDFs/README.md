@@ -129,7 +129,7 @@ nvidia-docker run -it my-local:my-udf-example-ubuntu
 
 ### Build the udf-examples jar
 
-In the docker, clone the code and compile.
+In the Docker container, clone the code and compile.
 
 ```bash
 git clone https://github.com/NVIDIA/spark-rapids-examples.git
