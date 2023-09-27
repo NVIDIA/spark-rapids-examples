@@ -150,7 +150,7 @@ Set SPARK_HOME environment variable.
 export SPARK_HOME=path-to-spark
 ```
 
-Install python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda. See
+Install Python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda. See
 above Prerequisites section
 
 ```
