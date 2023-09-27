@@ -160,7 +160,7 @@ above Prerequisites section
 ## How to run the Native UDFs on Spark local mode
 
 First finish the steps in "Building with Native Code Examples and run test cases" section, then do
-the following in the docker.
+the following inside the Docker container.
 
 ### Get jars from Maven Central
 
