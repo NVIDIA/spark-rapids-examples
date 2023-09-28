@@ -143,7 +143,7 @@ generated under RAPIDS-accelerated-UDFs/target directory.
 ### Run all the examples including native examples in the docker
 
 Download Spark and set SPARK_HOME environment variable. Refer
-to [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)   
+to [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites).
 Set SPARK_HOME environment variable.
 
 ```
