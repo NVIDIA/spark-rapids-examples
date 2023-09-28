@@ -85,7 +85,7 @@ libcudf build environment, so these examples do not build by default.
 ### Prerequisites
 
 Download Spark and set SPARK_HOME environment variable. Refer
-to [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites)  
+to [Prerequisites](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-python.md#Prerequisites).
 Install Python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda. For
 example:
 
