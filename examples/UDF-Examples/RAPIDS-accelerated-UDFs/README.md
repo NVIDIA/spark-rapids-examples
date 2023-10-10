@@ -210,5 +210,5 @@ spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
 
 Refer to
-the [on-premises Spark documentation](../../../docs/get-started/xgboost-examples/on-prem-cluster) to
+the [on-premises Spark documentation](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-on-prem.html#spark-standalone-cluster) to
 test against various Spark cluster setups.
