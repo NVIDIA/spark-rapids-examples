@@ -85,7 +85,7 @@ libcudf build environment, so these examples do not build by default.
 ### Prerequisites
 
 Download Spark and set SPARK_HOME environment variable. Refer
-to [Prerequisites](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-on-prem.html#spark-standalone-cluster).
+to [Prerequisites](https://docs.nvidia.com/spark-rapids/user-guide/latest/getting-started/on-premise.html#spark-standalone-cluster).
 Install Python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda. For
 example:
 
@@ -143,7 +143,7 @@ generated under RAPIDS-accelerated-UDFs/target directory.
 ### Run all the examples including native examples in the docker
 
 Download Spark and set SPARK_HOME environment variable. Refer
-to [Prerequisites](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-on-prem.html#spark-standalone-cluster).
+to [Prerequisites](https://docs.nvidia.com/spark-rapids/user-guide/latest/getting-started/on-premise.html#spark-standalone-cluster).
 Set SPARK_HOME environment variable.
 
 ```
@@ -151,7 +151,7 @@ export SPARK_HOME=path-to-spark
 ```
 
 Install Python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda. See
-above [Prerequisites](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-on-prem.html#spark-standalone-cluster)
+above [Prerequisites](https://docs.nvidia.com/spark-rapids/user-guide/latest/getting-started/on-premise.html#spark-standalone-cluster)
 section.
 
 ```
@@ -210,5 +210,5 @@ spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
 
 Refer to
-the [on-premises Spark documentation](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-on-prem.html#spark-standalone-cluster) to
+the [on-premises Spark documentation](https://docs.nvidia.com/spark-rapids/user-guide/latest/getting-started/on-premise.html#spark-standalone-cluster) to
 test against various Spark cluster setups.
