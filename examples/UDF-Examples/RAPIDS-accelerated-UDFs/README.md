@@ -84,21 +84,20 @@ libcudf build environment, so these examples do not build by default.
 
 ### Prerequisites
 
-Download Spark and set SPARK_HOME environment variable. Refer
-to [Prerequisites](https://docs.nvidia.com/spark-rapids/user-guide/latest/getting-started/on-premise.html#spark-standalone-cluster).
-Install Python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda. For
+Download [Apache Spark](https://spark.apache.org/downloads.html) and set `SPARK_HOME` environment variable.
+Install Python 3.8+, then install `pytest`, `sre_yield` by using pip or conda. For
 example:
 
 ```
+export SPARK_HOME=path-to-spark
 pip install pytest
-pip install pyspark
 pip install sre_yield
-pip install findspark
 ```
 
 Run the following command to build and run tests
 
 ```bash
+cd spark-rapids-examples/examples/UDF-Examples/RAPIDS-accelerated-UDFs
 mvn clean package
 ./run_pyspark_from_build.sh -m "not rapids_udf_example_native"
 ```
@@ -142,17 +141,16 @@ generated under RAPIDS-accelerated-UDFs/target directory.
 
 ### Run all the examples including native examples in the docker
 
-Download Spark and set SPARK_HOME environment variable. Refer
-to [Prerequisites](https://docs.nvidia.com/spark-rapids/user-guide/latest/getting-started/on-premise.html#spark-standalone-cluster).
-Set SPARK_HOME environment variable.
+Download [Apache Spark](https://spark.apache.org/downloads.html) and set `SPARK_HOME` environment variable.
+Install Python 3.8+, then install `pytest`, `sre_yield` by using pip or conda. 
 
 ```
 export SPARK_HOME=path-to-spark
+pip install pytest
+pip install sre_yield
 ```
 
-Install Python 3.8+, then install pytest, pyspark, sre_yield, findspark by using pip or conda. See
-above [Prerequisites](https://docs.nvidia.com/spark-rapids/user-guide/latest/getting-started/on-premise.html#spark-standalone-cluster)
-section.
+Run the following command to run tests
 
 ```
 ./run_pyspark_from_build.sh
@@ -208,7 +206,3 @@ spark.sql("CREATE TEMPORARY FUNCTION {} AS '{}'".format("wordcount", "com.nvidia
 spark.sql("select wordcount(c1) from tab group by c1").show()
 spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
-
-Refer to
-the [on-premises Spark documentation](https://docs.nvidia.com/spark-rapids/user-guide/latest/getting-started/on-premise.html#spark-standalone-cluster) to
-test against various Spark cluster setups.
