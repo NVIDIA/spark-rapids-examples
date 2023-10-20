@@ -141,8 +141,7 @@ generated under RAPIDS-accelerated-UDFs/target directory.
 
 ### Run all the examples including native examples in the docker
 
-Download [Apache Spark](https://spark.apache.org/downloads.html) and set `SPARK_HOME` environment variable.
-Install Python 3.8+, then install `pytest`, `sre_yield` by using pip or conda. 
+See the above [Prerequisites section](#prerequisites)
 
 ```
 export SPARK_HOME=path-to-spark
