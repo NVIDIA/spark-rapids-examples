@@ -157,8 +157,9 @@ Run the following command to run tests
 
 ## How to run the Native UDFs on Spark local mode
 
-First finish the steps in "Building with Native Code Examples and run test cases" section, then do
-the following inside the Docker container.
+First finish the steps in 
+[Building with Native Code Examples and run test cases](#building-with-native-code-examples-and-run-test-cases) section, 
+then do the following inside the Docker container.
 
 ### Get jars from Maven Central
 
