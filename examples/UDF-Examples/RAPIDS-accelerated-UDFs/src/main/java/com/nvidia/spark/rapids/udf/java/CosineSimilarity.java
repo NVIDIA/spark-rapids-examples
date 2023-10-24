@@ -68,9 +68,12 @@ public class CosineSimilarity
 
     // Load the native code if it has not been already loaded. This is done here
     // rather than in a static code block since the driver may not have the
-    // required CUDA environment.
+    // required CUDA environment. 
     NativeUDFExamplesLoader.ensureLoaded();
-
+    
+    // We need to go into the native code as quickly as possible
+    // because it is easier to write the code safely.
+    // Then wrap returns in a column vector and own that resource.
     return new ColumnVector(cosineSimilarity(args[0].getNativeView(), args[1].getNativeView()));
   }
 
