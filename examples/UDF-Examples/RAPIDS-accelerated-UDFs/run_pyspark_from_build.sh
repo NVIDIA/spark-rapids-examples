@@ -49,7 +49,7 @@ else
       "$SCRIPTPATH"
       "$SCRIPTPATH"/src/main/python)
 
-    # --ignore=target is used to exclude the target directory whihch contains unrelated python files.
+    # --ignore=target is used to exclude the target directory which contains unrelated python files.
     TEST_COMMON_OPTS=(-v
           -rfExXs
           "$TEST_ARGS"
