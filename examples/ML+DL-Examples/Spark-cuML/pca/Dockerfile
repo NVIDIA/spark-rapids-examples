@@ -18,7 +18,7 @@
 ARG CUDA_VER=11.8.0
 FROM nvidia/cuda:${CUDA_VER}-devel-ubuntu20.04
 # Please do not update the BRANCH_VER version
-ARG BRANCH_VER=23.10
+ARG BRANCH_VER=23.12
 
 RUN apt-get update
 RUN apt-get install -y wget ninja-build git
