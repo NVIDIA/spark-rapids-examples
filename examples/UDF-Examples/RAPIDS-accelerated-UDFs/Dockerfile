@@ -70,3 +70,18 @@ RUN cd /tmp \
  && make install -j${PARALLEL_LEVEL} \
  && cd /tmp && rm -rf /tmp/cmake-$CMAKE_VERSION*
 
+# Install ccache
+ARG CCACHE_VERSION=4.6
+RUN cd /tmp && wget --quiet https://github.com/ccache/ccache/releases/download/v${CCACHE_VERSION}/ccache-${CCACHE_VERSION}.tar.gz && \
+  tar zxf ccache-${CCACHE_VERSION}.tar.gz && \
+  rm ccache-${CCACHE_VERSION}.tar.gz && \
+  cd ccache-${CCACHE_VERSION} && \
+  mkdir build && \
+  cd build && \
+  cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DZSTD_FROM_INTERNET=ON \
+    -DREDIS_STORAGE_BACKEND=OFF && \
+  cmake --build . --parallel ${PARALLEL_LEVEL} --target install && \
+  cd ../.. && \
+  rm -rf ccache-${CCACHE_VERSION}
