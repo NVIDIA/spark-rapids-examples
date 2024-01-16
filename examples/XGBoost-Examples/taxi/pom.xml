@@ -25,7 +25,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spark_examples_taxi</artifactId>
+    <artifactId>spark_examples_taxi_${scala.binary.version}</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -35,7 +35,7 @@
     <dependencies>
         <dependency>
             <groupId>com.nvidia</groupId>
-            <artifactId>spark_examples_utility</artifactId>
+            <artifactId>spark_examples_utility_${scala.binary.version}</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
