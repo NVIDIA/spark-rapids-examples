@@ -144,7 +144,7 @@ mvn clean package -Pudf-native-examples
 ```
 
 The Docker container has installed ccache 4.6 to accelerate the incremental building.
-You can change the LOCAL_CCACHE_DIR to a mounted folder so that the cache can be kept by next docker running.
+You can change the LOCAL_CCACHE_DIR to a mounted folder so that the cache can persist.
 If you don't want to use ccache, you can remove or unset the ccache environment variables.
 
 ```bash
