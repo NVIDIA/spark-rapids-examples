@@ -133,11 +133,34 @@ In the Docker container, clone the code and compile.
 ```bash
 git clone https://github.com/NVIDIA/spark-rapids-examples.git
 cd spark-rapids-examples/examples/UDF-Examples/RAPIDS-accelerated-UDFs
+export LOCAL_CCACHE_DIR="$HOME/.ccache"
+mkdir -p $LOCAL_CCACHE_DIR
+export CCACHE_DIR="$LOCAL_CCACHE_DIR"
+export CMAKE_C_COMPILER_LAUNCHER="ccache"
+export CMAKE_CXX_COMPILER_LAUNCHER="ccache"
+export CMAKE_CUDA_COMPILER_LAUNCHER="ccache"
+export CMAKE_CXX_LINKER_LAUNCHER="ccache
 mvn clean package -Pudf-native-examples
 ```
 
-The build could take a long time (e.g.: 1.5 hours). Then the rapids-4-spark-udf-examples*.jar is
+The Docker container has installed ccache 4.6 to accelerate the incremental building.
+You can change the LOCAL_CCACHE_DIR to a mounted folder so that the cache can persist.
+If you don't want to use ccache, you can remove or unset the ccache environment variables.
+
+```bash
+unset CCACHE_DIR
+unset CMAKE_C_COMPILER_LAUNCHER
+unset CMAKE_CXX_COMPILER_LAUNCHER
+unset CMAKE_CUDA_COMPILER_LAUNCHER
+unset CMAKE_CXX_LINKER_LAUNCHER
+```
+
+The first build could take a long time (e.g.: 1.5 hours). Then the rapids-4-spark-udf-examples*.jar is
 generated under RAPIDS-accelerated-UDFs/target directory.
+The following build can benefit from ccache if you enable it.
+
+If you want to enable building with ccache on your own system,
+please refer to the commands which build ccache from the source code in the Dockerfile.
 
 ### Run all the examples including native examples in the docker
 
