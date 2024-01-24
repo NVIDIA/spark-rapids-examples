@@ -192,10 +192,11 @@ schema = StructType([
     StructField("c2", IntegerType()),
 ])
 data = [
-    ("a b c d",1),
-    ("",2),
-    (None,3),
-    ("the quick brown fox jumped over the lazy dog",3),
+    ("s1",1),
+    ("s2",2),
+    ("s1",3),
+    ("s2",3),
+    ("s1",3),
 ]
 df = spark.createDataFrame(
         SparkContext.getOrCreate().parallelize(data, numSlices=2),
@@ -203,6 +204,6 @@ df = spark.createDataFrame(
 df.createOrReplaceTempView("tab")
 
 spark.sql("CREATE TEMPORARY FUNCTION {} AS '{}'".format("wordcount", "com.nvidia.spark.rapids.udf.hive.StringWordCount"))
-spark.sql("select c1, wordcount(c1) from tab").show()
-spark.sql("select c1, wordcount(c1) from tab").explain()
+spark.sql("select wordcount(c1) from tab group by c1").show()
+spark.sql("select wordcount(c1) from tab group by c1").explain()
 ```
