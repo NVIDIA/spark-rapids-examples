@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 # limitations under the License.
 #
 
-# Note that the last rapids-4-spark-ml release version is 22.02.0, snapshot version is 23.04.0-SNPASHOT, please do not update the version in release
+# Note that the last rapids-4-spark-ml release version is 22.02.0, snapshot version is 23.04.0-SNAPSHOT, please do not update the version in release
 ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/22.02.0/rapids-4-spark-ml_2.12-22.02.0.jar
 PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/23.12.1/rapids-4-spark_2.12-23.12.1.jar
-Note: The last rapids-4-spark-ml release version is 22.02.0, snapshot version is 23.04.0-SNPASHOT.
+Note: The last rapids-4-spark-ml release version is 22.02.0, snapshot version is 23.04.0-SNAPSHOT.
 
 $SPARK_HOME/bin/spark-submit \
 --master spark://127.0.0.1:7077  \
