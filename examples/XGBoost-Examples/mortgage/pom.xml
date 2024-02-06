@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+  ~ Copyright (c) 2019-2024, NVIDIA CORPORATION. All rights reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spark_examples_mortgage</artifactId>
+    <artifactId>spark_examples_mortgage_${scala.binary.version}</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -35,7 +35,7 @@
     <dependencies>
         <dependency>
             <groupId>com.nvidia</groupId>
-            <artifactId>spark_examples_utility</artifactId>
+            <artifactId>spark_examples_utility_${scala.binary.version}</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
