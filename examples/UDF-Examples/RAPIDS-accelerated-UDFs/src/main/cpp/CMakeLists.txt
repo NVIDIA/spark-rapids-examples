@@ -81,7 +81,7 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -w --expt-extended-lambda --expt-relax
 # - cudf -------------------------------------------------------------------------------------------
 
 # Ensure CUDA runtime is dynamic despite statically linking Arrow in libcudf
-set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
+set(CUDA_USE_STATIC_CUDA_RUNTIME ON)
 
 rapids_cpm_init()
 rapids_cpm_find(cudf 24.04.00
@@ -94,7 +94,7 @@ rapids_cpm_find(cudf 24.04.00
                         "BUILD_BENCHMARKS OFF"
                         "CUDF_USE_ARROW_STATIC ON"
                         "JITIFY_USE_CACHE ON"
-                        "CUDA_STATIC_RUNTIME OFF"
+                        "CUDA_STATIC_RUNTIME ${CUDA_USE_STATIC_CUDA_RUNTIME}"
                         "DISABLE_DEPRECATION_WARNING ON"
                         "AUTO_DETECT_CUDA_ARCHITECTURES OFF"
     )
