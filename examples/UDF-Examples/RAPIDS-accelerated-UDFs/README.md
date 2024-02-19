@@ -18,7 +18,7 @@ which provides a single method we need to override called
 evaluateColumnar returns a cudf ColumnVector, because the GPU get its speed by performing operations
 on many rows at a time. In the `evaluateColumnar` function, there is a cudf implementation of URL
 decode that we're leveraging, so we don't need to write any native C++ code. This is all done
-through the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable). The benefit to
+through the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy). The benefit to
 implement via the Java API is ease of development, but the memory model is not friendly for doing
 GPU operations because the JVM makes the assumption that everything we're trying to do is in heap
 memory. We need to free the GPU resources in a timely manner with try-finally blocks. Note that we
@@ -27,10 +27,10 @@ involving the RAPIDS accelerated UDF falls back to the CPU.
 
 - [URLDecode](src/main/scala/com/nvidia/spark/rapids/udf/scala/URLDecode.scala)
   decodes URL-encoded strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 - [URLEncode](src/main/scala/com/nvidia/spark/rapids/udf/scala/URLEncode.scala)
   URL-encodes strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 
 ## Spark Java UDF Examples
 
@@ -53,10 +53,10 @@ significant effort.
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/java/URLDecode.java)
   decodes URL-encoded strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 - [URLEncode](src/main/java/com/nvidia/spark/rapids/udf/java/URLEncode.java)
   URL-encodes strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 - [CosineSimilarity](src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java)
   computes the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity)
   between two float vectors using [native code](src/main/cpp/src)
@@ -67,11 +67,11 @@ Below are some examples for implementing RAPIDS accelerated Hive UDF via JNI and
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/hive/URLDecode.java)
   implements a Hive simple UDF using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
   to decode URL-encoded strings
 - [URLEncode](src/main/java/com/nvidia/spark/rapids/udf/hive/URLEncode.java)
   implements a Hive generic UDF using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
   to URL-encode strings
 - [StringWordCount](src/main/java/com/nvidia/spark/rapids/udf/hive/StringWordCount.java)
   implements a Hive simple UDF using
