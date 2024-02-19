@@ -26,7 +26,7 @@ jobs:
     - name: work around permission issue
       run: git config --global --add safe.directory /github/workspace
     - uses: actions/checkout@master
-    - uses: gaurav-nelson/github-action-markdown-link-check@v1.0.14
+    - uses: gaurav-nelson/github-action-markdown-link-check@v1.0.15
       with:
         max-depth: -1
         use-verbose-mode: 'yes'
