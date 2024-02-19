@@ -1,4 +1,12 @@
 {
+  "ignorePatterns": [
+    {
+      "pattern": "/docs"
+    },
+    {
+      "pattern": "/datasets"
+    }
+  ],
   "timeout": "15s",
   "retryOn429": true,
   "retryCount":30,
