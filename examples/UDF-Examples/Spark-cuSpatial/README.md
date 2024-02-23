@@ -82,7 +82,8 @@ Note: The docker env is just for building the jar, not for running the applicati
 
 ## Run
 ### GPU Demo on Spark Standalone on-premises cluster
-1. Set up [a standalone cluster](/docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md) of Spark. Make sure the conda/lib is included in LD_LIBRARY_PATH, so that spark executors can load libcuspatial.so.
+1. Set up [a standalone cluster](../../../docs/get-started/xgboost-examples/on-prem-cluster/standalone-scala.md) of Spark. 
+   Make sure the conda/lib is included in LD_LIBRARY_PATH, so that spark executors can load libcuspatial.so.
 
 2. Download Spark RAPIDS JAR
    * [Spark RAPIDS JAR v23.02.0](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.02.0/rapids-4-spark_2.12-23.02.0.jar) or above
@@ -105,7 +106,7 @@ Note: The docker env is just for building the jar, not for running the applicati
      docker push <your-dockerhub-repo>:<your-tag>
      ```
  
-2. Follow the [Spark-rapids get-started document](https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-databricks.html#start-a-databricks-cluster) to create a GPU cluster on AWS Databricks.
+2. Follow the [Spark-rapids get-started document](https://docs.nvidia.com/spark-rapids/user-guide/latest/getting-started/databricks.html) to create a GPU cluster on AWS Databricks.
  Below are some different steps since a custom docker image is used with Databricks:
     * Databricks Runtime Version
   Choose a non-ML Databricks Runtime such as `Runtime: 9.1 LTS(Scala 2.12, Spark 3.1.2)` and

@@ -7,7 +7,7 @@ _Please note: The following demo is dedicated for DGX-2 machine(with V100 GPUs).
 ## Dataset
 
 The dataset used here is from Criteo clicklog dataset. 
-It's preprocessed by [DLRM](https://github.com/NVIDIA/DeepLearningExamples/tree/master/TensorFlow2/Recommendation/DLRM/preproc) 
+It's preprocessed by [DLRM](https://github.com/NVIDIA/DeepLearningExamples/tree/master/TensorFlow2/Recommendation/DLRM_and_DCNv2/preproc) 
 ETL job on Spark. We also provide a small size sample data in sample_data folder.
 All 40 columns(1 label + 39 features) are already numeric.
 
