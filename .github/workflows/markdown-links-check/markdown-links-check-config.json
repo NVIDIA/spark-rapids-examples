@@ -1,4 +1,18 @@
 {
+  "ignorePatterns": [
+    {
+      "pattern": "/docs"
+    },
+    {
+      "pattern": "/datasets"
+    },
+    {
+      "pattern": "/dockerfile"
+    },
+    {
+      "pattern": "/examples"
+    }
+  ],
   "timeout": "15s",
   "retryOn429": true,
   "retryCount":30,
