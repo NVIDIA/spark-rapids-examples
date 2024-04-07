@@ -1,4 +1,4 @@
-# Copyright (c) 2022, NVIDIA CORPORATION.
+# Copyright (c) 2022-2024, NVIDIA CORPORATION.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,6 +30,5 @@ jobs:
       with:
         max-depth: -1
         use-verbose-mode: 'yes'
-        check-modified-files-only: 'yes'
         config-file: '.github/workflows/markdown-links-check/markdown-links-check-config.json'
         base-branch: 'main'

@@ -18,7 +18,7 @@ which provides a single method we need to override called
 evaluateColumnar returns a cudf ColumnVector, because the GPU get its speed by performing operations
 on many rows at a time. In the `evaluateColumnar` function, there is a cudf implementation of URL
 decode that we're leveraging, so we don't need to write any native C++ code. This is all done
-through the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable). The benefit to
+through the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy). The benefit to
 implement via the Java API is ease of development, but the memory model is not friendly for doing
 GPU operations because the JVM makes the assumption that everything we're trying to do is in heap
 memory. We need to free the GPU resources in a timely manner with try-finally blocks. Note that we
@@ -27,10 +27,10 @@ involving the RAPIDS accelerated UDF falls back to the CPU.
 
 - [URLDecode](src/main/scala/com/nvidia/spark/rapids/udf/scala/URLDecode.scala)
   decodes URL-encoded strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 - [URLEncode](src/main/scala/com/nvidia/spark/rapids/udf/scala/URLEncode.scala)
   URL-encodes strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 
 ## Spark Java UDF Examples
 
@@ -53,10 +53,10 @@ significant effort.
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/java/URLDecode.java)
   decodes URL-encoded strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 - [URLEncode](src/main/java/com/nvidia/spark/rapids/udf/java/URLEncode.java)
   URL-encodes strings using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
 - [CosineSimilarity](src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java)
   computes the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity)
   between two float vectors using [native code](src/main/cpp/src)
@@ -67,11 +67,11 @@ Below are some examples for implementing RAPIDS accelerated Hive UDF via JNI and
 
 - [URLDecode](src/main/java/com/nvidia/spark/rapids/udf/hive/URLDecode.java)
   implements a Hive simple UDF using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
   to decode URL-encoded strings
 - [URLEncode](src/main/java/com/nvidia/spark/rapids/udf/hive/URLEncode.java)
   implements a Hive generic UDF using the
-  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/stable)
+  [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy)
   to URL-encode strings
 - [StringWordCount](src/main/java/com/nvidia/spark/rapids/udf/hive/StringWordCount.java)
   implements a Hive simple UDF using
@@ -118,8 +118,6 @@ and other settings. See the top of the `Dockerfile` for details.
 
 First install docker and [nvidia-docker](https://github.com/NVIDIA/nvidia-docker)
 
-Run the following commands to build and start a docker
-
 ```bash
 cd spark-rapids-examples/examples/UDF-Examples/RAPIDS-accelerated-UDFs
 docker build -t my-local:my-udf-example-ubuntu .
@@ -133,11 +131,34 @@ In the Docker container, clone the code and compile.
 ```bash
 git clone https://github.com/NVIDIA/spark-rapids-examples.git
 cd spark-rapids-examples/examples/UDF-Examples/RAPIDS-accelerated-UDFs
+export LOCAL_CCACHE_DIR="$HOME/.ccache"
+mkdir -p $LOCAL_CCACHE_DIR
+export CCACHE_DIR="$LOCAL_CCACHE_DIR"
+export CMAKE_C_COMPILER_LAUNCHER="ccache"
+export CMAKE_CXX_COMPILER_LAUNCHER="ccache"
+export CMAKE_CUDA_COMPILER_LAUNCHER="ccache"
+export CMAKE_CXX_LINKER_LAUNCHER="ccache
 mvn clean package -Pudf-native-examples
 ```
 
-The build could take a long time (e.g.: 1.5 hours). Then the rapids-4-spark-udf-examples*.jar is
+The Docker container has installed ccache 4.6 to accelerate the incremental building.
+You can change the LOCAL_CCACHE_DIR to a mounted folder so that the cache can persist.
+If you don't want to use ccache, you can remove or unset the ccache environment variables.
+
+```bash
+unset CCACHE_DIR
+unset CMAKE_C_COMPILER_LAUNCHER
+unset CMAKE_CXX_COMPILER_LAUNCHER
+unset CMAKE_CUDA_COMPILER_LAUNCHER
+unset CMAKE_CXX_LINKER_LAUNCHER
+```
+
+The first build could take a long time (e.g.: 1.5 hours). Then the rapids-4-spark-udf-examples*.jar is
 generated under RAPIDS-accelerated-UDFs/target directory.
+The following build can benefit from ccache if you enable it.
+
+If you want to enable building with ccache on your own system,
+please refer to the commands which build ccache from the source code in the Dockerfile.
 
 ### Run all the examples including native examples in the docker
 
@@ -163,7 +184,7 @@ then do the following inside the Docker container.
 
 ### Get jars from Maven Central
 
-[rapids-4-spark_2.12-23.12.1.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/23.12.1/rapids-4-spark_2.12-23.12.1.jar)
+[rapids-4-spark_2.12-24.02.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.02.0/rapids-4-spark_2.12-24.02.0.jar)
 
 
 ### Launch a local mode Spark
@@ -192,11 +213,10 @@ schema = StructType([
     StructField("c2", IntegerType()),
 ])
 data = [
-    ("s1",1),
-    ("s2",2),
-    ("s1",3),
-    ("s2",3),
-    ("s1",3),
+    ("a b c d",1),
+    ("",2),
+    (None,3),
+    ("the quick brown fox jumped over the lazy dog",3),
 ]
 df = spark.createDataFrame(
         SparkContext.getOrCreate().parallelize(data, numSlices=2),
@@ -204,6 +224,6 @@ df = spark.createDataFrame(
 df.createOrReplaceTempView("tab")
 
 spark.sql("CREATE TEMPORARY FUNCTION {} AS '{}'".format("wordcount", "com.nvidia.spark.rapids.udf.hive.StringWordCount"))
-spark.sql("select wordcount(c1) from tab group by c1").show()
-spark.sql("select wordcount(c1) from tab group by c1").explain()
+spark.sql("select c1, wordcount(c1) from tab").show()
+spark.sql("select c1, wordcount(c1) from tab").explain()
 ```

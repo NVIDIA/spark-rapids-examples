@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  ~ Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+  ~ Copyright (c) 2019-2024, NVIDIA CORPORATION. All rights reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -38,8 +38,8 @@
 
     <properties>
         <encoding>UTF-8</encoding>
-        <xgboost.version>2.0.0</xgboost.version>
-        <spark.version>3.1.1</spark.version>
+        <xgboost.version>2.0.3</xgboost.version>
+        <spark.version>3.5.0</spark.version>
         <scala.version>2.12.8</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
     </properties>
@@ -47,12 +47,12 @@
     <dependencies>
         <dependency>
             <groupId>ml.dmlc</groupId>
-            <artifactId>xgboost4j-gpu_2.12</artifactId>
+            <artifactId>xgboost4j-gpu_${scala.binary.version}</artifactId>
             <version>${xgboost.version}</version>
         </dependency>
         <dependency>
             <groupId>ml.dmlc</groupId>
-            <artifactId>xgboost4j-spark-gpu_2.12</artifactId>
+            <artifactId>xgboost4j-spark-gpu_${scala.binary.version}</artifactId>
             <version>${xgboost.version}</version>
         </dependency>
         <dependency>
@@ -133,6 +133,15 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>scala-2.13</id>
+            <properties>
+                <xgboost.version>2.1.0-SNAPSHOT</xgboost.version>
+                <spark.version>3.5.0</spark.version>
+                <scala.version>2.13.11</scala.version>
+                <scala.binary.version>2.13</scala.binary.version>
+            </properties>
+        </profile>
         <profile>
             <id>sonatype-repo</id>
             <repositories>
