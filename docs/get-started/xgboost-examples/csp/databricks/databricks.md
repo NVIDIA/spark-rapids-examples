@@ -22,7 +22,6 @@ create an `init.sh` scripts with contents:
    ```bash
    #!/bin/bash
    sudo wget -O /databricks/jars/rapids-4-spark_2.12-24.04.0.jar https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.04.0/rapids-4-spark_2.12-24.04.0.jar
-   ```
 1. Select the Databricks Runtime Version from one of the supported runtimes specified in the
    Prerequisites section.
 2. Choose the number of workers that matches the number of GPUs you want to use.

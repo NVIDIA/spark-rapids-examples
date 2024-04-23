@@ -118,8 +118,6 @@ and other settings. See the top of the `Dockerfile` for details.
 
 First install docker and [nvidia-docker](https://github.com/NVIDIA/nvidia-docker)
 
-Run the following commands to build and start a docker
-
 ```bash
 cd spark-rapids-examples/examples/UDF-Examples/RAPIDS-accelerated-UDFs
 docker build -t my-local:my-udf-example-ubuntu .
