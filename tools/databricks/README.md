@@ -16,4 +16,4 @@ top of the notebook.  After that, select *Run all* to execute the tools for the 
 2. DBFS path must use the File API Format. 
 3. Example: `/dbfs/<path-to-event-log>`.
 
-**Latest Tools Version Supported** 24.04.0
+**Latest Tools Version Supported** 24.06.0
