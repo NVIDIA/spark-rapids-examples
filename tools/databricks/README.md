@@ -12,16 +12,8 @@ cluster.  Once the notebook is activated, you can enter in the log path location
 top of the notebook.  After that, select *Run all* to execute the tools for the specific logs in the log path.
 
 ## Limitations
-
-### Qualification Tool Notebook
-- Currently, only local or DBFS paths with multiple event logs are supported. 
-- Qualification tool will fail if eventlog path contains single event log.
-- Multiple event logs must use the File API format and should be comma-separated.
-- Example: `/dbfs/<path-to-event-log1>,/dbfs/<path-to-event-log2>` or `/dbfs/<path-to-event-log-dir-with-multiple-logs>`
-
-### Profiling Tool Notebook
-- Currently, only local or DBFS event log paths are supported.
-- Multiple event logs must use the File API format and should be comma-separated.
-- Example: `/dbfs/<path-to-event-log>`
+1. Currently only local or DBFS eventlog paths are supported.
+2. DBFS path must use the File API Format. 
+3. Example: `/dbfs/<path-to-event-log>`.
 
 **Latest Tools Version Supported** 24.04.0
