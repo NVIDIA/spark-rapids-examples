@@ -18,25 +18,25 @@ Here is the list of notebooks in this repo:
 
 |   | Category  | Notebook Name | Description
 | ------------- | ------------- | ------------- | -------------
-| 1 | SQL/DF | Microbenchmark | Spark SQL operations such as expand, hash aggregate, windowing, and cross joins with up to 20x performance benefits
-| 2 | SQL/DF | Customer Churn | Data federation for modeling customer Churn with a sample telco customer data
-| 3 | XGBoost | Agaricus (Scala) | Uses XGBoost classifier function to create model that can accurately differentiate between edible and poisonous mushrooms with the [agaricus dataset](https://archive.ics.uci.edu/ml/datasets/mushroom)
-| 4 | XGBoost | Mortgage (Scala) | End-to-end ETL + XGBoost example to predict mortgage default with [Fannie Mae Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
-| 5 | XGBoost | Taxi (Scala) | End-to-end ETL + XGBoost example to predict taxi trip fare amount with [NYC taxi trips data set](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
-| 6 | ML/DL | Criteo Training | ETL and deep learning training of the Criteo 1TB Click Logs dataset
-| 7 | ML/DL | PCA End-to-End | Spark MLlib based PCA example to train and transform with a synthetic dataset
-| 8 | UDF | cuSpatial - Point in Polygon | Spark cuSpatial example for Point in Polygon function using NYC Taxi pickup location dataset
+| 1 | SQL/DF | [Microbenchmark](https://github.com/NVIDIA/spark-rapids-examples/blob/main/examples/SQL%2BDF-Examples/micro-benchmarks/notebooks/micro-benchmarks-gpu.ipynb) | Spark SQL operations such as expand, hash aggregate, windowing, and cross joins with up to 20x performance benefits
+| 2 | SQL/DF | [Customer Churn](https://github.com/NVIDIA/spark-rapids-examples/blob/main/examples/SQL%2BDF-Examples/customer-churn/notebooks/python/augment.ipynb) | Data federation for modeling customer Churn with a sample telco customer data
+| 3 | XGBoost | [Agaricus (Scala)](https://github.com/NVIDIA/spark-rapids-examples/blob/main/examples/XGBoost-Examples/agaricus/notebooks/scala/agaricus-gpu.ipynb) | Uses XGBoost classifier function to create model that can accurately differentiate between edible and poisonous mushrooms with the [agaricus dataset](https://archive.ics.uci.edu/ml/datasets/mushroom)
+| 4 | XGBoost | [Mortgage (Scala)](https://github.com/NVIDIA/spark-rapids-examples/tree/main/examples/XGBoost-Examples/mortgage/notebooks/scala) | End-to-end ETL + XGBoost example to predict mortgage default with [Fannie Mae Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
+| 5 | XGBoost | [Taxi (Scala)](https://github.com/NVIDIA/spark-rapids-examples/tree/main/examples/XGBoost-Examples/taxi/notebooks/scala) | End-to-end ETL + XGBoost example to predict taxi trip fare amount with [NYC taxi trips data set](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
+| 6 | ML/DL | [Criteo Training](https://github.com/NVIDIA/spark-rapids-examples/blob/main/examples/ML%2BDL-Examples/Spark-DL/criteo_train/notebooks/Criteo-Training.ipynb) | ETL and deep learning training of the Criteo 1TB Click Logs dataset
+| 7 | ML/DL | [PCA End-to-End](https://github.com/NVIDIA/spark-rapids-examples/blob/main/examples/ML%2BDL-Examples/Spark-cuML/pca/notebooks/Spark_PCA_End_to_End.ipynb) | Spark MLlib based PCA example to train and transform with a synthetic dataset
+| 8 | UDF | [cuSpatial - Point in Polygon](https://github.com/NVIDIA/spark-rapids-examples/tree/main/examples/UDF-Examples/Spark-cuSpatial/notebooks) | Spark cuSpatial example for Point in Polygon function using NYC Taxi pickup location dataset
 
 Here is the list of Apache Spark applications (Scala and PySpark) that 
 can be built for running on GPU with RAPIDS Accelerator in this repo:
 
 |   | Category  | Notebook Name | Description
 | ------------- | ------------- | ------------- | -------------
-| 1 | XGBoost | Agaricus (Scala) | Uses XGBoost classifier function to create model that can accurately differentiate between edible and poisonous mushrooms with the [agaricus dataset](https://archive.ics.uci.edu/ml/datasets/mushroom)
-| 2 | XGBoost | Mortgage (Scala) | End-to-end ETL + XGBoost example to predict mortgage default with [Fannie Mae Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
-| 3 | XGBoost | Taxi (Scala) | End-to-end ETL + XGBoost example to predict taxi trip fare amount with [NYC taxi trips data set](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
-| 4 | ML/DL | PCA End-to-End | Spark MLlib based PCA example to train and transform with a synthetic dataset
-| 5 | UDF | cuSpatial - Point in Polygon | Spark cuSpatial example for Point in Polygon function using NYC Taxi pickup location dataset
+| 1 | XGBoost | [Agaricus (Scala)](https://github.com/NVIDIA/spark-rapids-examples/blob/main/examples/XGBoost-Examples/agaricus/notebooks/scala/agaricus-gpu.ipynb) | Uses XGBoost classifier function to create model that can accurately differentiate between edible and poisonous mushrooms with the [agaricus dataset](https://archive.ics.uci.edu/ml/datasets/mushroom)
+| 2 | XGBoost | [Mortgage (Scala)](https://github.com/NVIDIA/spark-rapids-examples/tree/main/examples/XGBoost-Examples/mortgage/notebooks/scala) | End-to-end ETL + XGBoost example to predict mortgage default with [Fannie Mae Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
+| 3 | XGBoost | [Taxi (Scala)](https://github.com/NVIDIA/spark-rapids-examples/tree/main/examples/XGBoost-Examples/taxi/notebooks/scala) | End-to-end ETL + XGBoost example to predict taxi trip fare amount with [NYC taxi trips data set](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
+| 4 | ML/DL | [PCA End-to-End](https://github.com/NVIDIA/spark-rapids-examples/blob/main/examples/ML%2BDL-Examples/Spark-cuML/pca/notebooks/Spark_PCA_End_to_End.ipynb) | Spark MLlib based PCA example to train and transform with a synthetic dataset
+| 5 | UDF | [cuSpatial - Point in Polygon](https://github.com/NVIDIA/spark-rapids-examples/tree/main/examples/UDF-Examples/Spark-cuSpatial/notebooks) | Spark cuSpatial example for Point in Polygon function using NYC Taxi pickup location dataset
 | 6 | UDF | URL Decode | Decodes URL-encoded strings using the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy/)
 | 7 | UDF | URL Encode | URL-encodes strings using the [Java APIs of RAPIDS cudf](https://docs.rapids.ai/api/cudf-java/legacy/)
 | 8 | UDF | [CosineSimilarity](./examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/java/com/nvidia/spark/rapids/udf/java/CosineSimilarity.java) | Computes the cosine similarity between two float vectors using [native code](./examples/UDF-Examples/RAPIDS-accelerated-UDFs/src/main/cpp/src)
