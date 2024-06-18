@@ -12,8 +12,9 @@ cluster.  Once the notebook is activated, you can enter in the log path location
 top of the notebook.  After that, select *Run all* to execute the tools for the specific logs in the log path.
 
 ## Limitations
-1. Currently only local or DBFS eventlog paths are supported.
-2. DBFS path must use the File API Format. 
-3. Example: `/dbfs/<path-to-event-log>`.
+1. Currently local, S3 or DBFS event log paths are supported.
+2. S3 path is only supported on Databricks AWS using [instance profiles](https://docs.databricks.com/en/connect/storage/tutorial-s3-instance-profile.html).
+3. DBFS path must use the File API Format. Example: `/dbfs/<path-to-event-log>`.
+4. Multiple event logs must be comma-separated.
 
 **Latest Tools Version Supported** 24.06.0
