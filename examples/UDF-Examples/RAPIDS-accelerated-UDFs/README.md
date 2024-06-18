@@ -122,8 +122,8 @@ Run the following commands to build and start a docker
 
 ```bash
 cd spark-rapids-examples/examples/UDF-Examples/RAPIDS-accelerated-UDFs
-docker build -t my-local:my-udf-example-ubuntu .
-nvidia-docker run -it my-local:my-udf-example-ubuntu
+docker build -t my-local:my-udf-example .
+nvidia-docker run -it my-local:my-udf-example
 ```
 
 ### Build the udf-examples jar
@@ -139,7 +139,7 @@ export CCACHE_DIR="$LOCAL_CCACHE_DIR"
 export CMAKE_C_COMPILER_LAUNCHER="ccache"
 export CMAKE_CXX_COMPILER_LAUNCHER="ccache"
 export CMAKE_CUDA_COMPILER_LAUNCHER="ccache"
-export CMAKE_CXX_LINKER_LAUNCHER="ccache
+export CMAKE_CXX_LINKER_LAUNCHER="ccache"
 mvn clean package -Pudf-native-examples
 ```
 
@@ -206,9 +206,9 @@ $SPARK_HOME/bin/pyspark --master local[*] \
 
 ### Test native based UDF
 
-Input the following commands to test wordcount JIN UDF
+Input the following commands to test wordcount JNI UDF
 
-```bash
+```python
 from pyspark.sql.types import *
 schema = StructType([
     StructField("c1", StringType()),
