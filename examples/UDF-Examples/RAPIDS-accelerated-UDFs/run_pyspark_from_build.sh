@@ -33,7 +33,7 @@ else
     # more lineant configuration, else it will set them to 1 as spurious task failures are not expected
     # for Spark 3.1.1+
     VERSION_STRING=`$SPARK_HOME/bin/pyspark --version 2>&1|grep -v Scala|awk '/version\ [0-9.]+/{print $NF}'`
-    VERSION_STRING="${VERSION_STRING/-SNAPSHOT/}"
+    VERSION_STRING="${VERSION_STRING//}"
     [[ -z $VERSION_STRING ]] && { echo "Unable to detect the Spark version at $SPARK_HOME"; exit 1; }
     [[ -z $SPARK_SHIM_VER ]] && { SPARK_SHIM_VER="spark${VERSION_STRING//./}"; }
 

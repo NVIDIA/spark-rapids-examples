@@ -16,9 +16,8 @@
 #
 
 # Note that the last rapids-4-spark-ml release version is 22.02.0, snapshot version is 23.04.0-SNAPSHOT, please do not update the version in release
-ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/22.02.0/rapids-4-spark-ml_2.12-22.02.0.jar
-PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/24.06.0/rapids-4-spark_2.12-24.06.0.jar
-Note: The last rapids-4-spark-ml release version is 22.02.0, snapshot version is 23.04.0-SNAPSHOT.
+ML_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark-ml_2.12/23.02.0-SNAPSHOT/rapids-4-spark-ml_2.12-23.04.0.jar
+PLUGIN_JAR=/root/.m2/repository/com/nvidia/rapids-4-spark_2.12/23.02.0-SNAPSHOT/rapids-4-spark_2.12-23.04.0.jar
 
 $SPARK_HOME/bin/spark-submit \
 --master spark://127.0.0.1:7077  \
@@ -40,4 +39,4 @@ $SPARK_HOME/bin/spark-submit \
 --conf spark.network.timeout=1000s \
 --jars $ML_JAR,$PLUGIN_JAR \
 --class com.nvidia.spark.examples.pca.Main \
-/workspace/target/PCAExample-24.06.0-SNAPSHOT.jar
+/workspace/target/PCAExample-23.04.0.jar
