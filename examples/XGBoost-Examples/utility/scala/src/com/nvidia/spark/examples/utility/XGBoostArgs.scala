@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2019-2024, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,7 +202,7 @@ class XGBoostArgs private[utility] (
 
     val hostIp = params.getOrElse("rabit_tracker_host", "").toString
     if (!hostIp.isEmpty) {
-      params ++ Map("tracker_conf" -> TrackerConf(0l, hostIp))
+      params ++ Map("tracker_conf" -> TrackerConf(0, hostIp))
     } else params
   }
 

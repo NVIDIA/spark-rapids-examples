@@ -118,6 +118,8 @@ and other settings. See the top of the `Dockerfile` for details.
 
 First install docker and [nvidia-docker](https://github.com/NVIDIA/nvidia-docker)
 
+Run the following commands to build and start a docker
+
 ```bash
 cd spark-rapids-examples/examples/UDF-Examples/RAPIDS-accelerated-UDFs
 docker build -t my-local:my-udf-example-ubuntu .
@@ -184,7 +186,7 @@ then do the following inside the Docker container.
 
 ### Get jars from Maven Central
 
-[rapids-4-spark_2.12-24.04.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.04.0/rapids-4-spark_2.12-24.04.0.jar)
+[rapids-4-spark_2.12-24.06.0.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.06.0/rapids-4-spark_2.12-24.06.0.jar)
 
 
 ### Launch a local mode Spark
