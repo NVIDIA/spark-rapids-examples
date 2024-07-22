@@ -11,7 +11,7 @@ The microbenchmark notebook in this repo uses five such queries in the chart sho
   timestamped event data in marketing or financial industry.
 - **Intersect**: an operator used to remove duplicates in a dataframe.
 - **Cross-join**: A common use for a cross join is to obtain all combinations of items.
-- **Hash-join**: A common use for a hash join is to obtain all combinations of items.
+- **Hash-join**: Joining two tables together by matching rows based on a common column.
 
 These queries were run on a standard eight-nodes CPU cluster with 2 CPU (128 cores),
 512GB memory and 1xA100 GPUs per node. The dataset used was of size 3TB with multiple different data types.
