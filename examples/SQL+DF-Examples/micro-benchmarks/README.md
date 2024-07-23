@@ -3,7 +3,7 @@
 Standard industry benchmarks are a great way to measure performance over 
 a period of time but another barometer to measure performance is to measure
 performance of common operators that are used in the data preprocessing stage or in data analytics.
-The microbenchmark notebook in this repo uses four such queries in the chart shown below:
+The microbenchmark notebook in this repo uses five such queries in the chart shown below:
 
 - **Count Distinct**: a function used to estimate the number of unique page views or 
   unique customers visiting an e-commerce site.
@@ -11,6 +11,7 @@ The microbenchmark notebook in this repo uses four such queries in the chart sho
   timestamped event data in marketing or financial industry.
 - **Intersect**: an operator used to remove duplicates in a dataframe.
 - **Cross-join**: A common use for a cross join is to obtain all combinations of items.
+- **Hash-join**: Joining two tables together by matching rows based on a common column.
 
 These queries were run on a standard eight-nodes CPU cluster with 2 CPU (128 cores),
 512GB memory and 1xA100 GPUs per node. The dataset used was of size 3TB with multiple different data types.
