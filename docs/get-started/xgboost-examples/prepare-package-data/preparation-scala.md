@@ -16,4 +16,4 @@ Following this [guide](/docs/get-started/xgboost-examples/building-sample-apps/s
 You need to copy the dataset to `/opt/xgboost`. Use the following links to download the data.
 1. [Mortgage dataset](/docs/get-started/xgboost-examples/dataset/mortgage.md)
 2. [Taxi dataset](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
-3. [Agaricus dataset](https://gust.dev/r/xgboost-agaricus)
+3. [Agaricus dataset](https://github.com/dmlc/xgboost/tree/master/demo/data)
