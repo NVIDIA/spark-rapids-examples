@@ -23,8 +23,7 @@ Here is the list of notebooks in this repo:
 | 3 | XGBoost | Agaricus (Scala) | Uses XGBoost classifier function to create model that can accurately differentiate between edible and poisonous mushrooms with the [agaricus dataset](https://archive.ics.uci.edu/ml/datasets/mushroom)
 | 4 | XGBoost | Mortgage (Scala) | End-to-end ETL + XGBoost example to predict mortgage default with [Fannie Mae Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
 | 5 | XGBoost | Taxi (Scala) | End-to-end ETL + XGBoost example to predict taxi trip fare amount with [NYC taxi trips data set](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
-| 6 | ML/DL | Criteo Training | ETL and deep learning training of the Criteo 1TB Click Logs dataset
-| 7 | ML/DL | PCA End-to-End | Spark MLlib based PCA example to train and transform with a synthetic dataset
+| 6 | ML/DL | PCA End-to-End | Spark MLlib based PCA example to train and transform with a synthetic dataset
 
 Here is the list of Apache Spark applications (Scala and PySpark) that 
 can be built for running on GPU with RAPIDS Accelerator in this repo:
