@@ -19,12 +19,12 @@ def task(seed):
     return study.best_params, study.best_value
 
 
-# Set n_jobs to the number of workers which used to run optuna task.
+# Set n_jobs to the number of workers which is used to run optuna task.
 # TODO, Support resource profile to get the GPU.
 n_jobs = 2
 
 with joblib.parallel_backend('spark'):
-    results = joblib.Parallel(n_jobs=n_jobs)(
+    results = joblib.Parallel()(
         joblib.delayed(task)(i) for i in range(n_jobs)
     )
 

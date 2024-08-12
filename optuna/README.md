@@ -1,14 +1,15 @@
 # How to run optuna on Spark
 
-## Setup DataBase for Optuna 
+## Setup DataBase for Optuna
 
-Optuna provides RDBStorage that is able to persist the experiments, which is 
-able to make optuna run on the different machines and different processes.
+Optuna offers an RDBStorage option which allows for the persistence of experiments
+across different machines and processes, thereby enabling Optuna tasks to be distributed.
 
-This documentation guides you through to use MySQL as the backend of RDBStorage.
+This guide will walk you through setting up MySQL as the backend for RDBStorage in Optuna.
 
-We strongly recommend installing MySql on the driver side, in that case, we don't
-need to worry about the mysql connection between workers and driver.
+We highly recommend installing MySQL on the driver node. This setup eliminates concerns
+regarding MySQL connectivity between worker nodes and the driver, simplifying the
+management of database connections.
 
 1. Install MySql
 
@@ -41,7 +42,7 @@ sudo mysql
 mysql> CREATE USER 'optuna_user'@'%' IDENTIFIED BY 'optuna_password';
 Query OK, 0 rows affected (0.01 sec)
 
-mysql> GRANT ALL PRIVILEGES ON *.* TO 'optuna_user'@'%' WITH GRANT OPTION;                                   
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'optuna_user'@'%' WITH GRANT OPTION;
 Query OK, 0 rows affected (0.01 sec)
 
 mysql> FLUSH PRIVILEGES;
@@ -51,8 +52,8 @@ mysql> EXIT;
 Bye
 ```
 
-> Trouble shooting
-> If you encounter 
+Trouble shooting
+> If you encounter
 `"ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)"`, try below commands
 > Try `ln -s /var/run/mysqld/mysqld.sock /tmp/mysql.sock`
 
@@ -66,15 +67,15 @@ conda activiate optuna-spark
 pip install mysqlclient
 pip install optuna joblib
 
-# We must install joblibspark from source due to https://github.com/joblib/joblib-spark/issues/51 
+# We must install joblibspark from source due to https://github.com/joblib/joblib-spark/issues/51
 git clone git@github.com:joblib/joblib-spark.git
 cd joblib-spark; pip install .
 ```
 
 ## Create optuna database and study.
 
-On the driver side, execute below commands to create database in MySql and optuna 
-study.
+On the driver node, run the following commands to establish a database in MySql and create
+an Optuna study.
 
 ``` shell
 mysql -u optuna_user -p -e "CREATE DATABASE IF NOT EXISTS optuna"
@@ -93,4 +94,11 @@ After packing the optuna runtime environment, you can play around the optuna on 
 
 ```shell
 run-optuna-spark.sh
+```
+
+If you would like to try optuna spark task, you can
+
+``` shell
+optuna create-study --study-name "optuna-spark-xgboost" --storage "mysql://optuna_user:optuna_password@localhost/optuna"
+run-optuna-spark-xgboost.sh
 ```
