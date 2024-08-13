@@ -103,3 +103,22 @@ commands,
 optuna create-study --study-name "optuna-spark-xgboost" --storage "mysql://optuna_user:optuna_password@localhost/optuna"
 run-optuna-spark-xgboost.sh
 ```
+
+## How does it work
+
+![](images/optuna.svg)
+
+The optuna tasks will be serialized into bytes and distributed to spark workers
+to run. So it's the optuna task on the executor side that loads the optuna study from RDBStorage, and then
+runs the tuning.
+
+During tuning, the optuna tasks needs to send intermediate result back to RDBStorage to persist,
+and ask for the parameters from RDBStorage sampled by optuna on the driver to run.
+
+Each optuna task is a Spark application that has only 1 job, 1 stage, 1 task, and the Spark application
+will be submitted on the local threads. So here we can use `n_jobs` when configuring the spark backend
+to limit at most how many spark applications can be submitted at the same time.
+
+From the above, we can get that the optuna + spark is the Spark application level parallelism, it's not
+task-level parallelism. So for the  xgboost case, we first need to make sure the single xgboost task can 
+run on a single node without any CPU/GPU OOM.
