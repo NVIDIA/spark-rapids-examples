@@ -16,7 +16,7 @@ def task(num_trials: int = 100):
     This demo is to distribute xgboost training on spark cluster by referring to
     https://forecastegy.com/posts/xgboost-hyperparameter-tuning-with-optuna/
     """
-    #url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
+    # url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
     url = "/home/bobwang/data/xgboost/winequality-red.csv"
     data = pd.read_csv(url, delimiter=";")
 
@@ -50,7 +50,7 @@ def task(num_trials: int = 100):
     return study.best_params, study.best_value
 
 
-def partition(total_trials: int, total_tasks: int) -> List[int]:
+def partition_trials(total_trials: int, total_tasks: int) -> List[int]:
     # Calculate the base size of each partition
     base_size = total_trials // total_tasks
     # Calculate the number of partitions that will have an extra trial
@@ -71,7 +71,7 @@ total_tasks = 2
 
 with joblib.parallel_backend("spark", n_jobs=8):
     results = joblib.Parallel()(
-        joblib.delayed(task)(i) for i in partition(total_trials, total_tasks)
+        joblib.delayed(task)(i) for i in partition_trials(total_trials, total_tasks)
     )
 
 best_params = min(results, key=lambda x: x[1])[0]

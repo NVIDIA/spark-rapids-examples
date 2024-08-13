@@ -23,7 +23,7 @@ def task(seed):
 # TODO, Support resource profile to get the GPU.
 n_jobs = 2
 
-with joblib.parallel_backend('spark'):
+with joblib.parallel_backend("spark", n_jobs=n_jobs):
     results = joblib.Parallel()(
         joblib.delayed(task)(i) for i in range(n_jobs)
     )

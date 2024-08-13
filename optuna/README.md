@@ -96,7 +96,8 @@ After packing the optuna runtime environment, you can play around the optuna on 
 run-optuna-spark.sh
 ```
 
-If you would like to try optuna spark task, you can
+If you would like to distribute optuna xgboost tasks to spark cluster, you can run the following
+commands,
 
 ``` shell
 optuna create-study --study-name "optuna-spark-xgboost" --storage "mysql://optuna_user:optuna_password@localhost/optuna"
