@@ -51,7 +51,7 @@ def task(num_trials: int = 100):
             "subsample": trial.suggest_float("subsample", 0.05, 1.0),
             "colsample_bytree": trial.suggest_float("colsample_bytree", 0.05, 1.0),
             "min_child_weight": trial.suggest_int("min_child_weight", 1, 20),
-            "device": f"cuda:${gpu_id}",
+            "device": f"cuda:{gpu_id}",
         }
 
         model = xgb.XGBRegressor(**params)
