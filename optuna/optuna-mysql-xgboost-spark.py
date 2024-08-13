@@ -5,6 +5,7 @@ import optuna
 import pandas as pd
 import xgboost as xgb
 from joblibspark import register_spark
+from pyspark import TaskContext
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
@@ -24,6 +25,21 @@ def task(num_trials: int = 100):
     y = data["quality"]
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
 
+    def get_gpu_id(task_context: TaskContext) -> int:
+        """Get the gpu id from the task resources"""
+        if task_context is None:
+            # This is a safety check.
+            raise RuntimeError("_get_gpu_id should not be invoked from driver side.")
+        resources = task_context.resources()
+        if "gpu" not in resources:
+            raise RuntimeError(
+                "Couldn't get the gpu id, Please check the GPU resource configuration"
+            )
+        # return the first gpu id.
+        return int(resources["gpu"].addresses[0].strip())
+
+    gpu_id = get_gpu_id(TaskContext.get())
+
     # The objective function will be executed on the node for a total of "num_trials" times.
     def objective(trial):
         params = {
@@ -35,6 +51,7 @@ def task(num_trials: int = 100):
             "subsample": trial.suggest_float("subsample", 0.05, 1.0),
             "colsample_bytree": trial.suggest_float("colsample_bytree", 0.05, 1.0),
             "min_child_weight": trial.suggest_int("min_child_weight", 1, 20),
+            "device": f"cuda:${gpu_id}",
         }
 
         model = xgb.XGBRegressor(**params)
@@ -64,11 +81,12 @@ def partition_trials(total_trials: int, total_tasks: int) -> List[int]:
     return partitions
 
 
-# The total trials need to be run
+# The total trials need to run
 total_trials = 100
 # How many spark tasks will be launched, Please make sure total_tasks should be <= parallelism of spark
 total_tasks = 2
 
+# n_jobs=8 means Spark Backend will launch at most 8 threads to launch spark applications at the same time.
 with joblib.parallel_backend("spark", n_jobs=8):
     results = joblib.Parallel()(
         joblib.delayed(task)(i) for i in partition_trials(total_trials, total_tasks)

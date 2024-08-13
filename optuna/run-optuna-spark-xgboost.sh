@@ -4,7 +4,9 @@ export PYSPARK_PYTHON=./environment/bin/python
 spark-submit \
   --master spark://10.19.129.248:7077 \
   --conf spark.executor.cores=1 \
-  --conf spark.executor.memory=60g \
   --conf spark.task.cpus=1 \
+  --conf spark.executor.resource.gpu.amount=1 \
+  --conf spark.task.resource.gpu.amount=1 \
+  --conf spark.executor.memory=60g \
   --archives optuna-env.tar.gz#environment \
     optuna-mysql-xgboost-spark.py
