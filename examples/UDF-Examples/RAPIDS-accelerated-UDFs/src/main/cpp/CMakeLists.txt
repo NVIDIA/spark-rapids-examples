@@ -32,7 +32,7 @@ if(DEFINED GPU_ARCHS)
 endif()
 rapids_cuda_init_architectures(UDFEXAMPLESJNI)
 
-project(UDFEXAMPLESJNI VERSION 24.08.0 LANGUAGES C CXX CUDA)
+project(UDFEXAMPLESJNI VERSION 24.08.1 LANGUAGES C CXX CUDA)
 
 option(PER_THREAD_DEFAULT_STREAM "Build with per-thread default stream" OFF)
 option(BUILD_UDF_BENCHMARKS "Build the benchmarks" OFF)
@@ -84,7 +84,7 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -w --expt-extended-lambda --expt-relax
 set(CUDA_USE_STATIC_CUDA_RUNTIME ON)
 
 rapids_cpm_init()
-rapids_cpm_find(cudf 24.08.00
+rapids_cpm_find(cudf 24.08.10
         CPM_ARGS
         GIT_REPOSITORY  https://github.com/rapidsai/cudf.git
         GIT_TAG         branch-24.08
