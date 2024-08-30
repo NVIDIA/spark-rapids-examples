@@ -1,5 +1,4 @@
-#!/bin/bash
-# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2024, NVIDIA CORPORATION.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,8 +11,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-# This script is used to convert a ".cny" points file into parquet.
- 
-python to_parquet.py /data/cuspatial/points.cny /data/cuspatial/points/points.parquet
+name: Add new issues and pull requests to project
+
+on:
+  issues:
+    types:
+      - opened
+  pull_request_target:
+    types:
+      - opened
+
+jobs:
+  add-to-project:
+    if: github.repository == 'NVIDIA/spark-rapids-examples'
+    name: Add new issues and pull requests to project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@v0.6.1
+        with:
+          project-url: https://github.com/orgs/NVIDIA/projects/4
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+
