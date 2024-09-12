@@ -85,7 +85,7 @@ optuna create-study --study-name "optuna-spark" --storage "mysql://optuna_user:o
 ## Pack the optuna runtime environment and run.
 
 ``` shell
-conda activiate optuna-spark
+conda activate optuna-spark
 pip install conda-pack
 conda pack -f -o optuna-env.tar.gz
 ```
