@@ -6,7 +6,7 @@ Example notebooks for the [predict_batch_udf](https://spark.apache.org/docs/late
 
 This directory contains notebooks for each DL framework (based on their own published examples).  The goal is to demonstrate how models trained and saved on single-node machines can be easily used for parallel inferencing on Spark clusters.
 
-For example, a basic model trained in TensorFlow and saved on disk as "mnist_model" can be used in Spark as follows:
+For example, a basic model trained in TensorFlow and saved on disk as "mnist_model.keras" can be used in Spark as follows:
 ```
 import numpy as np
 from pyspark.sql.functions import predict_batch_udf
@@ -14,7 +14,7 @@ from pyspark.sql.types import ArrayType, FloatType
 
 def predict_batch_fn():
     import tensorflow as tf
-    model = tf.keras.models.load_model("/path/to/mnist_model")
+    model = tf.keras.models.load_model("/path/to/mnist_model.keras")
     def predict(inputs: np.ndarray) -> np.ndarray:
         return model.predict(inputs)
     return predict
@@ -28,18 +28,34 @@ df = spark.read.parquet("mnist_data")
 predictions = df.withColumn("preds", mnist("data")).collect()
 ```
 
-In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function which operates on numpy arrays.  The `predict_batch_udf` will automatically convert the Spark DataFrame columns to the expected numpy inputs.
+In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function which operates on numpy arrays.  The `predict_batch_udf` will automatically convert the Spark DataFrame columns to the expected numpy inputs. For Huggingface, use the respective environment for the model in the example. 
 
 All notebooks have been saved with sample outputs for quick browsing.
 
 ## Running the Notebooks
 
-If you want to run the notebooks yourself, please follow these instructions.
+If you want to run the notebooks yourself, please follow these instructions. 
 
-**Note**: for demonstration purposes, these examples just use a local Spark Standalone cluster with a single executor, but you should be able to run them on any distributed Spark cluster.
+**Notes**: 
+- Please create separate environments for PyTorch/Tensorflow to avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples will have a _torch or _tf suffix to specify the environment used.
+- For demonstration purposes, these examples just use a local Spark Standalone cluster with a single executor, but you should be able to run them on any distributed Spark cluster.
+- The notebooks can also be run on your local machine in any Jupyter environment, and will default to using a local Spark Session. 
 ```
-# install dependencies for example notebooks
+# for pytorch:
+conda create -n spark-dl-torch
+conda activate spark-dl-torch
+# for tensorflow:
+conda create -n spark-dl-tf
+conda activate spark-dl-tf
+
+# install dependencies
 pip install -r requirements.txt
+
+# for pytorch:
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+pip install sentence_transformers sentencepiece
+# for tensorflow:
+pip install tensorflow[and-cuda] tf-keras
 
 # setup environment variables
 export SPARK_HOME=/path/to/spark
