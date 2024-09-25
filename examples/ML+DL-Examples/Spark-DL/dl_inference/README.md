@@ -37,6 +37,7 @@ All notebooks have been saved with sample outputs for quick browsing.
 If you want to run the notebooks yourself, please follow these instructions. 
 
 **Notes**: 
+- The notebooks require a GPU environment.  
 - Please create separate environments for PyTorch/Tensorflow to avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples will have a _torch or _tf suffix to specify the environment used.
 - For demonstration purposes, these examples just use a local Spark Standalone cluster with a single executor, but you should be able to run them on any distributed Spark cluster.
 - The notebooks can also be run on your local machine in any Jupyter environment, and will default to using a local Spark Session. The cells initializing Spark locally can be safely ignored when running on a cluster.
@@ -52,7 +53,7 @@ conda activate spark-dl-tf
 pip install -r requirements.txt
 
 # for pytorch:
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+pip install torch torchvision torch-tensorrt tensorrt --extra-index-url https://download.pytorch.org/whl/cu121
 pip install sentence_transformers sentencepiece
 # for tensorflow:
 pip install tensorflow[and-cuda] tf-keras
