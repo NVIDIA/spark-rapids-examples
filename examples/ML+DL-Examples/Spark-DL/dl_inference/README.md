@@ -43,10 +43,10 @@ If you want to run the notebooks yourself, please follow these instructions.
 - The notebooks can also be run on your local machine in any Jupyter environment, and will default to using a local Spark Session. The cells initializing Spark locally can be safely ignored when running on a cluster.
 ```
 # for pytorch:
-conda create -n spark-dl-torch
+conda create -n spark-dl-torch python=3.11
 conda activate spark-dl-torch
 # for tensorflow:
-conda create -n spark-dl-tf
+conda create -n spark-dl-tf python=3.11
 conda activate spark-dl-tf
 
 # install dependencies
