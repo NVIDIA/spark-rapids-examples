@@ -28,17 +28,17 @@ df = spark.read.parquet("mnist_data")
 predictions = df.withColumn("preds", mnist("data")).collect()
 ```
 
-In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function which operates on numpy arrays.  The `predict_batch_udf` will automatically convert the Spark DataFrame columns to the expected numpy inputs. For Huggingface, use the respective environment for the model in the example. 
+In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function which operates on numpy arrays.  The `predict_batch_udf` will automatically convert the Spark DataFrame columns to the expected numpy inputs.
 
 All notebooks have been saved with sample outputs for quick browsing.
 
 ## Running the Notebooks
 
-If you want to run the notebooks yourself, please follow these instructions. 
+If you want to run the notebooks yourself, please follow these instructions.
 
 **Notes**: 
 - The notebooks require a GPU environment.  
-- Please create separate environments for PyTorch/Tensorflow to avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples will have a _torch or _tf suffix to specify the environment used.
+- Please create separate environments for PyTorch and Tensorflow examples as specified below. This will avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples will have a `_torch` or `_tf` suffix to specify the environment used.
 - For demonstration purposes, these examples just use a local Spark Standalone cluster with a single executor, but you should be able to run them on any distributed Spark cluster.
 - The notebooks can also be run on your local machine in any Jupyter environment, and will default to using a local Spark Session. The cells initializing Spark locally can be safely ignored when running on a cluster.
 ```
