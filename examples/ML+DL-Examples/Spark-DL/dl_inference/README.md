@@ -6,7 +6,7 @@ Example notebooks for the [predict_batch_udf](https://spark.apache.org/docs/late
 
 This directory contains notebooks for each DL framework (based on their own published examples).  The goal is to demonstrate how models trained and saved on single-node machines can be easily used for parallel inferencing on Spark clusters.
 
-For example, a basic model trained in TensorFlow and saved on disk as "mnist_model.keras" can be used in Spark as follows:
+For example, a basic model trained in TensorFlow and saved on disk as "mnist_model" can be used in Spark as follows:
 ```
 import numpy as np
 from pyspark.sql.functions import predict_batch_udf
@@ -14,7 +14,7 @@ from pyspark.sql.types import ArrayType, FloatType
 
 def predict_batch_fn():
     import tensorflow as tf
-    model = tf.keras.models.load_model("/path/to/mnist_model.keras")
+    model = tf.keras.models.load_model("/path/to/mnist_model")
     def predict(inputs: np.ndarray) -> np.ndarray:
         return model.predict(inputs)
     return predict
