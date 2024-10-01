@@ -37,10 +37,10 @@ All notebooks have been saved with sample outputs for quick browsing.
 If you want to run the notebooks yourself, please follow these instructions.
 
 **Notes**: 
-- The notebooks require a GPU environment.  
+- The notebooks require a GPU environment for the executors.  
 - Please create separate environments for PyTorch and Tensorflow examples as specified below. This will avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples will have a `_torch` or `_tf` suffix to specify the environment used.
+- The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but may require downgrading the TF version. 
 - For demonstration purposes, these examples just use a local Spark Standalone cluster with a single executor, but you should be able to run them on any distributed Spark cluster.
-- The notebooks can also be run on your local machine in any Jupyter environment, and will default to using a local Spark Session. The cells initializing Spark locally can be safely ignored when running on a cluster.
 ```
 # for pytorch:
 conda create -n spark-dl-torch python=3.11
@@ -55,6 +55,7 @@ pip install -r requirements.txt
 # for pytorch:
 pip install torch torchvision torch-tensorrt tensorrt --extra-index-url https://download.pytorch.org/whl/cu121
 pip install sentence_transformers sentencepiece
+pip install "nvidia-modelopt[all]" --extra-index-url https://pypi.nvidia.com
 # for tensorflow:
 pip install tensorflow[and-cuda] tf-keras
 

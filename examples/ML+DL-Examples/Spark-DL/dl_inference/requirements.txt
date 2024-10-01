@@ -13,3 +13,4 @@ datasets
 docker
 tritonclient[grpc]
 transformers
+ipywidgets
