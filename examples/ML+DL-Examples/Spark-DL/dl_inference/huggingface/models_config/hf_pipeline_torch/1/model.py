@@ -55,31 +55,26 @@ class TritonPythonModel:
           * model_version: Model version
           * model_name: Model name
         """
-        import tensorflow as tf
-        # Enable GPU memory growth
-        gpus = tf.config.experimental.list_physical_devices('GPU')
-        if gpus:
-            try:
-                for gpu in gpus:
-                    tf.config.experimental.set_memory_growth(gpu, True)
-            except RuntimeError as e:
-                print(e)
-                
-        print(tf.__version__)
+        import torch
+        print("torch: {}".format(torch.__version__))
+        print("cuda: {}".format(torch.cuda.is_available()))
 
-        from transformers import AutoTokenizer, TFT5ForConditionalGeneration
+        import transformers
+        print("transformers: {}".format(transformers.__version__))
 
-        self.tokenizer = AutoTokenizer.from_pretrained("google-t5/t5-small")
-        self.model = TFT5ForConditionalGeneration.from_pretrained("google-t5/t5-small")
+        from transformers import pipeline
+        self.pipe = pipeline("sentiment-analysis", device=0)
 
         # You must parse model_config. JSON string is not parsed here
         self.model_config = model_config = json.loads(args['model_config'])
 
         # Get output configuration
-        output_config = pb_utils.get_output_config_by_name(model_config, "output")
+        label_config = pb_utils.get_output_config_by_name(model_config, "label")
+        score_config = pb_utils.get_output_config_by_name(model_config, "score")
 
         # Convert Triton types to numpy types
-        self.output_dtype = pb_utils.triton_string_to_numpy(output_config['data_type'])
+        self.label_dtype = pb_utils.triton_string_to_numpy(label_config['data_type'])
+        self.score_dtype = pb_utils.triton_string_to_numpy(score_config['data_type'])
 
     def execute(self, requests):
         """`execute` MUST be implemented in every Python model. `execute`
@@ -103,7 +98,8 @@ class TritonPythonModel:
           be the same as `requests`
         """
 
-        output_dtype = self.output_dtype
+        label_dtype = self.label_dtype
+        score_dtype = self.score_dtype
 
         responses = []
 
@@ -111,21 +107,18 @@ class TritonPythonModel:
         # and create a pb_utils.InferenceResponse for each of them.
         for request in requests:
             # Get input numpy
-            sentence_input = pb_utils.get_input_tensor_by_name(request, "input")
-            sentences = list(sentence_input.as_numpy())
-            sentences = np.squeeze(sentences, -1).tolist()
-            sentences = [s.decode('utf-8') for s in sentences]
+            sentence_input = pb_utils.get_input_tensor_by_name(request, "sentence")
+            sentences = [s.decode('utf-8') for s in sentence_input.as_numpy().flatten()]
 
-            input_ids = self.tokenizer(sentences,
-                                       padding="longest",
-                                       max_length=512,
-                                       return_tensors="tf").input_ids
-            output_ids = self.model.generate(input_ids)
-            outputs = np.array([self.tokenizer.decode(o, skip_special_tokens=True) for o in output_ids])
+            results = self.pipe(sentences)
+
+            label = np.array([res['label'] for res in results])
+            score = np.array([res['score'] for res in results])
 
             # Create output tensors. You need pb_utils.Tensor
             # objects to create pb_utils.InferenceResponse.
-            output_tensor = pb_utils.Tensor("output", outputs.astype(output_dtype))
+            label_tensor = pb_utils.Tensor("label", label.astype(label_dtype))
+            score_tensor = pb_utils.Tensor("score", score.astype(score_dtype))
 
             # Create InferenceResponse. You can set an error here in case
             # there was a problem with handling this inference request.
@@ -134,7 +127,7 @@ class TritonPythonModel:
             #
             # pb_utils.InferenceResponse(
             #    output_tensors=..., TritonError("An error occured"))
-            inference_response = pb_utils.InferenceResponse(output_tensors=[output_tensor])
+            inference_response = pb_utils.InferenceResponse(output_tensors=[label_tensor, score_tensor])
             responses.append(inference_response)
 
         # You should return a list of pb_utils.InferenceResponse. Length
