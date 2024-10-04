@@ -45,18 +45,15 @@ If you want to run the notebooks yourself, please follow these instructions.
 # for pytorch:
 conda create -n spark-dl-torch python=3.11
 conda activate spark-dl-torch
-# for tensorflow:
-conda create -n spark-dl-tf python=3.11
-conda activate spark-dl-tf
-
-# install dependencies
 pip install -r requirements.txt
-
-# for pytorch:
 pip install torch torchvision torch-tensorrt tensorrt --extra-index-url https://download.pytorch.org/whl/cu121
 pip install sentence_transformers sentencepiece
 pip install "nvidia-modelopt[all]" --extra-index-url https://pypi.nvidia.com
+
 # for tensorflow:
+conda create -n spark-dl-tf python=3.11
+conda activate spark-dl-tf
+pip install -r requirements.txt
 pip install tensorflow[and-cuda] tf-keras
 
 # setup environment variables
