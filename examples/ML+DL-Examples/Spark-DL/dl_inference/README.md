@@ -41,21 +41,29 @@ If you want to run the notebooks yourself, please follow these instructions.
 - Please create separate environments for PyTorch and Tensorflow examples as specified below. This will avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples will have a `_torch` or `_tf` suffix to specify the environment used.
 - The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but may require downgrading the TF version. 
 - For demonstration purposes, these examples just use a local Spark Standalone cluster with a single executor, but you should be able to run them on any distributed Spark cluster.
+
+#### Create environment
+
+**For PyTorch:**
 ```
-# for pytorch:
 conda create -n spark-dl-torch python=3.11
 conda activate spark-dl-torch
 pip install -r requirements.txt
 pip install torch torchvision torch-tensorrt tensorrt --extra-index-url https://download.pytorch.org/whl/cu121
 pip install sentence_transformers sentencepiece
 pip install "nvidia-modelopt[all]" --extra-index-url https://pypi.nvidia.com
-
-# for tensorflow:
+```
+**For TensorFlow:**
+```
 conda create -n spark-dl-tf python=3.11
 conda activate spark-dl-tf
 pip install -r requirements.txt
 pip install tensorflow[and-cuda] tf-keras
+```
 
+#### Launch Jupyter + Spark
+
+```
 # setup environment variables
 export SPARK_HOME=/path/to/spark
 export MASTER=spark://$(hostname):7077
