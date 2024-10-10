@@ -30,9 +30,10 @@ predictions = df.withColumn("preds", mnist("data")).collect()
 
 In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function which operates on numpy arrays.  The `predict_batch_udf` will automatically convert the Spark DataFrame columns to the expected numpy inputs.
 
-All notebooks have been saved with sample outputs for quick browsing. Here is a full list of the notebooks:
+All notebooks have been saved with sample outputs for quick browsing.  
+Here is a full list of the notebooks with their published example links:
 
-|   | Category  | Notebook Name | Description | Example Link
+|   | Category  | Notebook Name | Description | Link
 | ------------- | ------------- | ------------- | ------------- | ------------- 
 | 1 | PyTorch | Image Classification | Training a model to predict clothing categories in FashionMNIST, including accelerated inference with Torch-TensorRT. | [Link](https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html)
 | 2 | PyTorch | Regression | Training a model to predict housing prices in the California Housing Dataset, including accelerated inference with Torch-TensorRT. | [Link](https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-create-a-neural-network-for-regression-with-pytorch.md)
