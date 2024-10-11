@@ -1,0 +1,2 @@
+tensorflow[and-cuda]
+tf-keras
