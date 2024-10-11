@@ -69,7 +69,7 @@ pip install -r torch_requirements.txt
 conda create -n spark-dl-tf python=3.11
 conda activate spark-dl-tf
 pip install -r requirements.txt
-pip install tf_requirements.txt
+pip install -r tf_requirements.txt
 ```
 
 #### Launch Jupyter + Spark
