@@ -61,14 +61,12 @@ If you want to run the notebooks yourself, please follow these instructions.
 ```
 conda create -n spark-dl-torch python=3.11
 conda activate spark-dl-torch
-pip install -r requirements.txt
 pip install -r torch_requirements.txt
 ```
 **For TensorFlow:**
 ```
 conda create -n spark-dl-tf python=3.11
 conda activate spark-dl-tf
-pip install -r requirements.txt
 pip install -r tf_requirements.txt
 ```
 
