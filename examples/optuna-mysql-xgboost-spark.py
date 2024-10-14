@@ -1,33 +1,39 @@
+#
+# Copyright (c) 2022, NVIDIA CORPORATION.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 from typing import List
-
+import argparse
 import os
 import joblib
 import optuna
-import cudf
 import xgboost as xgb
 from joblibspark import register_spark
 from pyspark import TaskContext
-from cuml.metrics.regression import mean_squared_error
-from cuml.model_selection import train_test_split
+from pyspark.sql import SparkSession
 
-register_spark()
-
-# Get the databricks driver IP to connect to the MySQL server.
-driver_ip = spark.conf.get("spark.driver.host", None)
-
-if driver_ip is None:
-    raise ValueError("Driver IP could not be retrieved from Spark configuration.")
-
-# Check the environment variable to ensure GDS is disabled for cuDF on databricks
-assert(os.environ.get('LIBCUDF_CUFILE_POLICY') == 'OFF')
-
-def task(num_trials: int = 100):
+def task(num_trials: int, driver_ip: str, filepath: str):
     """
-    This demo is to distribute xgboost training on spark cluster by referring to
-    https://forecastegy.com/posts/xgboost-hyperparameter-tuning-with-optuna/
-    This code contains best practices to precompute data and read to GPU, and perform training + prediction on GPU.
-    This example uses Joblib-Spark to distribute the trials across the cluster.
+    This demo is to distribute xgboost training on spark cluster. 
+    We implement best practices to precompute data and maximize computations on the GPU.
+    Reference: https://forecastegy.com/posts/xgboost-hyperparameter-tuning-with-optuna/
+    Dataset: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv
     """
+
+    import cudf
+    from cuml.metrics.regression import mean_squared_error
+    from cuml.model_selection import train_test_split
 
     def get_gpu_id(task_context: TaskContext) -> int:
         """Get the gpu id from the task resources"""
@@ -39,13 +45,18 @@ def task(num_trials: int = 100):
             raise RuntimeError(
                 "Couldn't get the gpu id, Please check the GPU resource configuration"
             )
-        # return the first gpu id.
+        # Return the first GPU ID.
         return int(resources["gpu"].addresses[0].strip())
 
     gpu_id = get_gpu_id(TaskContext.get())
+
+    if filepath.startswith("/dbfs/"):
+        # Check the environment variable to ensure GDS is disabled for cuDF on databricks.
+        libcudf_policy = os.environ.get('LIBCUDF_CUFILE_POLICY')
+        if libcudf_policy != 'OFF':
+            raise RuntimeError("Set LIBCUDF_CUFILE_POLICY=OFF to read from DBFS with cuDF.")
     
-    url = "/dbfs/FileStore/datasets/winequality-red.csv"
-    data = cudf.read_csv(url, delimiter=";")
+    data = cudf.read_csv(filepath, delimiter=";")
     # Extract features; label is last column. 
     X = data.iloc[:, :-1].values # Tests show that converting to cupy, then to QDM, is faster than converting from cudf directly.
     y = data["quality"].values
@@ -99,7 +110,6 @@ def partition_trials(total_trials: int, total_tasks: int) -> List[int]:
     base_size = total_trials // total_tasks
     # Calculate the number of partitions that will have an extra trial
     extra = total_trials % total_tasks
-
     # Create the partitions
     partitions = [base_size] * total_tasks
     for i in range(extra):
@@ -107,19 +117,28 @@ def partition_trials(total_trials: int, total_tasks: int) -> List[int]:
 
     return partitions
 
-# The total trials need to run
-total_trials = 100
-# How many spark tasks will be launched, Please make sure total_tasks should be <= parallelism of spark
-total_tasks = 2
 
-# n_jobs=8 means Spark Backend will launch at most 8 threads to launch spark applications at the same time.
-with joblib.parallel_backend("spark", n_jobs=8):
-    results = joblib.Parallel()(
-        joblib.delayed(task)(i) for i in partition_trials(total_trials, total_tasks)
-    )
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Spark-Optuna-XGBoost")
+    parser.add_argument("--filepath", type=str, required=True, help="Absolute path to the dataset CSV file. If running on databricks, the path should begin with /dbfs/.")
+    parser.add_argument("--trials", type=int, default=100, help="Total number of trials to run (default 100).")
+    parser.add_argument("--tasks", type=int, default=2, help="Total number of Spark tasks to launch (default 2). This should be <= parallelism of Spark.")
+    parser.add_argument("--jobs", type=int, default=8, help="Number of threads to launch Spark applications at the same time (default 8).")
+    args = parser.parse_args()
 
-best_params = min(results, key=lambda x: x[1])[0]
-best_value = min(results, key=lambda x: x[1])[1]
+    spark = SparkSession.builder.getOrCreate()
+    register_spark()
 
-print(f"Best parameters: {best_params}")
-print(f"Best value: {best_value}")
+    # Get the driver IP to connect to the MySQL server.
+    driver_ip = spark.conf.get("spark.driver.host")
+
+    with joblib.parallel_backend("spark", n_jobs=args.jobs):
+        results = joblib.Parallel()(
+            joblib.delayed(task)(i, driver_ip, args.filepath) for i in partition_trials(args.trials, args.tasks)
+        )
+
+    best_params = min(results, key=lambda x: x[1])[0]
+    best_value = min(results, key=lambda x: x[1])[1]
+
+    print(f"Best parameters: {best_params}")
+    print(f"Best value: {best_value}")
