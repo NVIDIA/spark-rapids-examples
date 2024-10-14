@@ -30,26 +30,29 @@ SPARK_RAPIDS_VERSION=24.06.1
 curl -L https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/${SPARK_RAPIDS_VERSION}/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}-cuda11.jar -o \
     /databricks/jars/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}.jar
 
-# setup cuda: install cudatoolkit 11.8 via runfile approach
-wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
-sh cuda_11.8.0_520.61.05_linux.run --silent --toolkit
-# reset symlink and update library loading paths
-rm /usr/local/cuda
-ln -s /usr/local/cuda-11.8 /usr/local/cuda
+if [[ $DB_IS_DRIVER != "TRUE" ]]; then
+    # setup cuda: install cudatoolkit 11.8 via runfile approach
+    wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
+    sh cuda_11.8.0_520.61.05_linux.run --silent --toolkit
+    # reset symlink and update library loading paths
+    rm /usr/local/cuda
+    ln -s /usr/local/cuda-11.8 /usr/local/cuda
+
+    # cudf, cuml, rapids dependencies
+    sudo /databricks/python3/bin/pip3 install cudf-cu11~=${RAPIDS_VERSION} \
+        cuml-cu11~=${RAPIDS_VERSION} \
+        cuvs-cu11~=${RAPIDS_VERSION} \
+        pylibraft-cu11~=${RAPIDS_VERSION} \
+        rmm-cu11~=${RAPIDS_VERSION} \
+        --extra-index-url=https://pypi.nvidia.com
+fi
 
 # setup python environment
 sudo apt-get install -y libmysqlclient-dev
 sudo /databricks/python3/bin/pip3 install --upgrade pip
-sudo /databricks/python3/bin/pip3 install mysqlclient pandas xgboost scikit-learn cupy-cuda11x
+sudo /databricks/python3/bin/pip3 install mysqlclient xgboost
 sudo /databricks/python3/bin/pip3 install optuna joblib joblibspark
 
-# cudf, cuml, rapids dependencies
-sudo /databricks/python3/bin/pip3 install cudf-cu11~=${RAPIDS_VERSION} \
-    cuml-cu11~=${RAPIDS_VERSION} \
-    cuvs-cu11~=${RAPIDS_VERSION} \
-    pylibraft-cu11~=${RAPIDS_VERSION} \
-    rmm-cu11~=${RAPIDS_VERSION} \
-    --extra-index-url=https://pypi.nvidia.com
 
 if [[ $DB_IS_DRIVER = "TRUE" ]]; then
     # create optuna database and study
