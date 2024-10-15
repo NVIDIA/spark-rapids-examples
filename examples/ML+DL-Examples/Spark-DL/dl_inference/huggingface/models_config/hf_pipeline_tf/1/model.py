@@ -55,15 +55,20 @@ class TritonPythonModel:
           * model_version: Model version
           * model_name: Model name
         """
-        import torch
-        print("torch: {}".format(torch.__version__))
-        print("cuda: {}".format(torch.cuda.is_available()))
+        import tensorflow as tf
+        print("tf: {}".format(tf.__version__))
 
-        import transformers
-        print("transformers: {}".format(transformers.__version__))
+        # Enable GPU memory growth
+        gpus = tf.config.experimental.list_physical_devices('GPU')
+        if gpus:
+            try:
+                for gpu in gpus:
+                    tf.config.experimental.set_memory_growth(gpu, True)
+            except RuntimeError as e:
+                print(e)
 
         from transformers import pipeline
-        self.pipe = pipeline("text-classification", device=0)
+        self.pipe = pipeline("sentiment-analysis", device=0)
 
         # You must parse model_config. JSON string is not parsed here
         self.model_config = model_config = json.loads(args['model_config'])
@@ -108,9 +113,7 @@ class TritonPythonModel:
         for request in requests:
             # Get input numpy
             sentence_input = pb_utils.get_input_tensor_by_name(request, "sentence")
-            sentences = list(sentence_input.as_numpy())
-            sentences = np.squeeze(sentences).tolist()
-            sentences = [s.decode('utf-8') for s in sentences]
+            sentences = [s.decode('utf-8') for s in sentence_input.as_numpy().flatten()]
 
             results = self.pipe(sentences)
 

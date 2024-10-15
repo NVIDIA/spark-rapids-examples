@@ -24,7 +24,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-name: "hf_pipeline"
+name: "hf_pipeline_torch"
 backend: "python"
 max_batch_size: 8192
 
@@ -52,6 +52,6 @@ instance_group [{ kind: KIND_GPU }]
 
 parameters: {
   key: "EXECUTION_ENV_PATH",
-  value: {string_value: "$$TRITON_MODEL_DIRECTORY/../huggingface.tar.gz"}
+  value: {string_value: "$$TRITON_MODEL_DIRECTORY/../huggingface-torch.tar.gz"}
 }
 
