@@ -113,8 +113,9 @@ class TritonPythonModel:
             input_ids = self.tokenizer(sentences,
                                        padding="longest",
                                        max_length=512,
+                                       truncation=True,
                                        return_tensors="pt").input_ids
-            output_ids = self.model.generate(input_ids)
+            output_ids = self.model.generate(input_ids, max_length=20)
             outputs = np.array([self.tokenizer.decode(o, skip_special_tokens=True) for o in output_ids])
 
             # Create output tensors. You need pb_utils.Tensor

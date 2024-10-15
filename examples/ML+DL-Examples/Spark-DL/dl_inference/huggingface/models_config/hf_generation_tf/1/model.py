@@ -26,7 +26,6 @@
 
 import numpy as np
 import json
-import tensorflow as tf
 
 # triton_python_backend_utils is available in every Triton Python model. You
 # need to use this module to create inference requests and responses. It also
@@ -56,44 +55,31 @@ class TritonPythonModel:
           * model_version: Model version
           * model_name: Model name
         """
-        import re
-        import string
-        from tensorflow.keras import layers
+        import tensorflow as tf
+        # Enable GPU memory growth
+        gpus = tf.config.experimental.list_physical_devices('GPU')
+        if gpus:
+            try:
+                for gpu in gpus:
+                    tf.config.experimental.set_memory_growth(gpu, True)
+            except RuntimeError as e:
+                print(e)
+                
+        print(tf.__version__)
 
-        print("tf: {}".format(tf.__version__))
+        from transformers import AutoTokenizer, TFT5ForConditionalGeneration
 
-        def custom_standardization(input_data):
-            lowercase = tf.strings.lower(input_data)
-            stripped_html = tf.strings.regex_replace(lowercase, "<br />", " ")
-            return tf.strings.regex_replace(
-                stripped_html, "[%s]" % re.escape(string.punctuation), ""
-            )
-
-        max_features = 10000
-        sequence_length = 250
-
-        vectorize_layer = layers.TextVectorization(
-            standardize=custom_standardization,
-            max_tokens=max_features,
-            output_mode="int",
-            output_sequence_length=sequence_length,
-        )
-
-        custom_objects = {"vectorize_layer": vectorize_layer,
-                          "custom_standardization": custom_standardization}
-        with tf.keras.utils.custom_object_scope(custom_objects):
-            self.model = tf.keras.models.load_model(
-                "/text_model_cleaned.keras", compile=False
-            )
+        self.tokenizer = AutoTokenizer.from_pretrained("google-t5/t5-small")
+        self.model = TFT5ForConditionalGeneration.from_pretrained("google-t5/t5-small")
 
         # You must parse model_config. JSON string is not parsed here
         self.model_config = model_config = json.loads(args['model_config'])
 
         # Get output configuration
-        pred_config = pb_utils.get_output_config_by_name(model_config, "pred")
+        output_config = pb_utils.get_output_config_by_name(model_config, "output")
 
         # Convert Triton types to numpy types
-        self.pred_dtype = pb_utils.triton_string_to_numpy(pred_config['data_type'])
+        self.output_dtype = pb_utils.triton_string_to_numpy(output_config['data_type'])
 
     def execute(self, requests):
         """`execute` MUST be implemented in every Python model. `execute`
@@ -117,7 +103,7 @@ class TritonPythonModel:
           be the same as `requests`
         """
 
-        pred_dtype = self.pred_dtype
+        output_dtype = self.output_dtype
 
         responses = []
 
@@ -125,17 +111,22 @@ class TritonPythonModel:
         # and create a pb_utils.InferenceResponse for each of them.
         for request in requests:
             # Get input numpy
-            sentence_input = pb_utils.get_input_tensor_by_name(request, "sentence")
-            sentences = sentence_input.as_numpy()
-            sentences = np.squeeze(sentences).tolist()
+            sentence_input = pb_utils.get_input_tensor_by_name(request, "input")
+            sentences = list(sentence_input.as_numpy())
+            sentences = np.squeeze(sentences, -1).tolist()
             sentences = [s.decode('utf-8') for s in sentences]
-            sentences = tf.convert_to_tensor(sentences)
 
-            pred = self.model.predict(sentences, verbose=0)
+            input_ids = self.tokenizer(sentences,
+                                       padding="longest",
+                                       max_length=512,
+                                       truncation=True,
+                                       return_tensors="tf").input_ids
+            output_ids = self.model.generate(input_ids, max_length=20)
+            outputs = np.array([self.tokenizer.decode(o, skip_special_tokens=True) for o in output_ids])
 
             # Create output tensors. You need pb_utils.Tensor
             # objects to create pb_utils.InferenceResponse.
-            pred_tensor = pb_utils.Tensor("pred", pred.astype(pred_dtype))
+            output_tensor = pb_utils.Tensor("output", outputs.astype(output_dtype))
 
             # Create InferenceResponse. You can set an error here in case
             # there was a problem with handling this inference request.
@@ -144,7 +135,7 @@ class TritonPythonModel:
             #
             # pb_utils.InferenceResponse(
             #    output_tensors=..., TritonError("An error occured"))
-            inference_response = pb_utils.InferenceResponse(output_tensors=[pred_tensor])
+            inference_response = pb_utils.InferenceResponse(output_tensors=[output_tensor])
             responses.append(inference_response)
 
         # You should return a list of pb_utils.InferenceResponse. Length

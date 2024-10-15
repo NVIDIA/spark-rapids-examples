@@ -26,7 +26,6 @@
 
 import numpy as np
 import json
-import tensorflow as tf
 
 # triton_python_backend_utils is available in every Triton Python model. You
 # need to use this module to create inference requests and responses. It also
@@ -56,44 +55,26 @@ class TritonPythonModel:
           * model_version: Model version
           * model_name: Model name
         """
-        import re
-        import string
-        from tensorflow.keras import layers
+        import torch
+        print("torch: {}".format(torch.__version__))
+        print("cuda: {}".format(torch.cuda.is_available()))
 
-        print("tf: {}".format(tf.__version__))
+        import transformers
+        print("transformers: {}".format(transformers.__version__))
 
-        def custom_standardization(input_data):
-            lowercase = tf.strings.lower(input_data)
-            stripped_html = tf.strings.regex_replace(lowercase, "<br />", " ")
-            return tf.strings.regex_replace(
-                stripped_html, "[%s]" % re.escape(string.punctuation), ""
-            )
-
-        max_features = 10000
-        sequence_length = 250
-
-        vectorize_layer = layers.TextVectorization(
-            standardize=custom_standardization,
-            max_tokens=max_features,
-            output_mode="int",
-            output_sequence_length=sequence_length,
-        )
-
-        custom_objects = {"vectorize_layer": vectorize_layer,
-                          "custom_standardization": custom_standardization}
-        with tf.keras.utils.custom_object_scope(custom_objects):
-            self.model = tf.keras.models.load_model(
-                "/text_model_cleaned.keras", compile=False
-            )
+        from transformers import pipeline
+        self.pipe = pipeline("sentiment-analysis", device=0)
 
         # You must parse model_config. JSON string is not parsed here
         self.model_config = model_config = json.loads(args['model_config'])
 
         # Get output configuration
-        pred_config = pb_utils.get_output_config_by_name(model_config, "pred")
+        label_config = pb_utils.get_output_config_by_name(model_config, "label")
+        score_config = pb_utils.get_output_config_by_name(model_config, "score")
 
         # Convert Triton types to numpy types
-        self.pred_dtype = pb_utils.triton_string_to_numpy(pred_config['data_type'])
+        self.label_dtype = pb_utils.triton_string_to_numpy(label_config['data_type'])
+        self.score_dtype = pb_utils.triton_string_to_numpy(score_config['data_type'])
 
     def execute(self, requests):
         """`execute` MUST be implemented in every Python model. `execute`
@@ -117,7 +98,8 @@ class TritonPythonModel:
           be the same as `requests`
         """
 
-        pred_dtype = self.pred_dtype
+        label_dtype = self.label_dtype
+        score_dtype = self.score_dtype
 
         responses = []
 
@@ -126,16 +108,17 @@ class TritonPythonModel:
         for request in requests:
             # Get input numpy
             sentence_input = pb_utils.get_input_tensor_by_name(request, "sentence")
-            sentences = sentence_input.as_numpy()
-            sentences = np.squeeze(sentences).tolist()
-            sentences = [s.decode('utf-8') for s in sentences]
-            sentences = tf.convert_to_tensor(sentences)
+            sentences = [s.decode('utf-8') for s in sentence_input.as_numpy().flatten()]
 
-            pred = self.model.predict(sentences, verbose=0)
+            results = self.pipe(sentences)
+
+            label = np.array([res['label'] for res in results])
+            score = np.array([res['score'] for res in results])
 
             # Create output tensors. You need pb_utils.Tensor
             # objects to create pb_utils.InferenceResponse.
-            pred_tensor = pb_utils.Tensor("pred", pred.astype(pred_dtype))
+            label_tensor = pb_utils.Tensor("label", label.astype(label_dtype))
+            score_tensor = pb_utils.Tensor("score", score.astype(score_dtype))
 
             # Create InferenceResponse. You can set an error here in case
             # there was a problem with handling this inference request.
@@ -144,7 +127,7 @@ class TritonPythonModel:
             #
             # pb_utils.InferenceResponse(
             #    output_tensors=..., TritonError("An error occured"))
-            inference_response = pb_utils.InferenceResponse(output_tensors=[pred_tensor])
+            inference_response = pb_utils.InferenceResponse(output_tensors=[label_tensor, score_tensor])
             responses.append(inference_response)
 
         # You should return a list of pb_utils.InferenceResponse. Length
