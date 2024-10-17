@@ -147,6 +147,7 @@ You can then run the simple demo of Optuna on Spark:
 ```shell
 export PYSPARK_DRIVER_PYTHON=/path/to/anaconda3/envs/optuna-spark/bin/python
 cd standalone
+chmod +x run-optuna-spark.sh
 ./run-optuna-spark.sh
 ```
 
@@ -156,6 +157,7 @@ cd standalone
 optuna create-study --study-name "optuna-spark-xgboost" --storage "mysql://optuna_user:optuna_password@localhost/optuna"
 export PYSPARK_DRIVER_PYTHON=/path/to/anaconda3/envs/optuna-spark/bin/python
 cd standalone
+chmod +x run-optuna-spark-xgboost.sh
 ./run-optuna-spark-xgboost.sh
 ```
 
