@@ -8,6 +8,6 @@ $SPARK_HOME/bin/spark-submit \
   --conf spark.executor.memory=16g \
   --archives ../optuna-env.tar.gz#environment \
   ../optuna-mysql-xgboost-spark.py \
-    --filepath /home/rishic/Datasets/winequality-red.csv \
+    --filepath /path/to/winequality-red.csv \
     --tasks 2 \
     --jobs 2 \
