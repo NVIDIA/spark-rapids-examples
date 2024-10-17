@@ -32,7 +32,7 @@ This repo demonstrates distributed hyperparameter tuning with [Optuna](https://o
 We provide the following scripts under `/examples/`:  
 - `optuna-mysql-spark.py`: Demonstrates a simple study on CPU to minimize a quadratic function using the MySQL backend and Joblib Spark to distribute tasks.
 - `optuna-mysql-xgboost-spark.py`: Demonstrates a regression study to tune XGBoost on GPU to predict red wine quality, adapted from [this example](https://forecastegy.com/posts/xgboost-hyperparameter-tuning-with-optuna/), using the MySQL backend and Joblib Spark to distribute tasks.
-- `optuna-mysql-xgboost-spark-rdd.py`: Demonstrates a regression study to tune XGBoost on GPU to predict red wine quality as above, but uses native Spark RDDs rather than Joblib-Spark to distribute trials across the cluster.
+- `optuna-mysql-xgboost-spark-rdd.py`: Demonstrates a regression study to tune XGBoost on GPU to predict red wine quality as above, but uses native Spark RDDs rather than Joblib-Spark to distribute trials across the cluster. 
 
 ## Running Optuna on Spark Standalone
 
@@ -232,13 +232,11 @@ runs the tuning.
 During tuning, the Optuna tasks need to send intermediate results back to RDBStorage to persist,
 and ask for the parameters from RDBStorage sampled by Optuna on the driver to run next.
 
-Each Optuna task is a Spark application that has only 1 job, 1 stage, 1 task, and the Spark application
+Using JoblibSpark, each Optuna task is a Spark application that has only 1 job, 1 stage, 1 task, and the Spark application
 will be submitted on the local threads. So here we can use `n_jobs` when configuring the Spark backend
-to limit at most how many Spark applications can be submitted at the same time.
+to limit at most how many Spark applications can be submitted at the same time.  
 
-From the above, we can see that the Optuna + Spark uses Spark application level parallelism, rather than
-task-level parallelism. So for the XGBoost case, we first need to ensure that the single XGBoost task can 
-run on a single node without any CPU/GPU OOM.
+Thus Optuna with JoblibSpark uses Spark application level parallelism, rather than task-level parallelism. So for the XGBoost case, we first need to ensure that the single XGBoost task can run on a single node without any CPU/GPU OOM.
 
 ### Implementation Notes
 
