@@ -5,12 +5,12 @@ The notebook uses PCA to reduce a random dataset with 2048 feature dimensions to
 
 ## Build
 
-Please refer to the Spark-Rapids-ML [README](https://github.com/NVIDIA/spark-rapids-ml/blob/HEAD/python) for environment setup instructions and API usage.
+Please refer to the Spark-Rapids-ML [README](https://github.com/NVIDIA/spark-rapids-ml/blob/HEAD/python) to setup the RAPIDS conda environment and install Spark-Rapids-ML dependencies. 
 
 ## Download RAPIDS Jar from Maven Central
 
-Download the RAPIDS jar from Maven Central: [rapids-4-spark_2.12-24.08.1.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.08.1/rapids-4-spark_2.12-24.08.1.jar)  
-Alternatively, see the Spark-Rapids [download page](https://nvidia.github.io/spark-rapids/docs/download.html#download-rapids-accelerator-for-apache-spark-v24081) for version selection. 
+Download the [Spark-Rapids plugin](https://nvidia.github.io/spark-rapids/docs/download.html#download-rapids-accelerator-for-apache-spark-v24081).  
+For Spark-RAPIDS-ML version 24.08, download the RAPIDS jar from Maven Central: [rapids-4-spark_2.12-24.08.1.jar](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.08.1/rapids-4-spark_2.12-24.08.1.jar). 
 
 ## Running the Notebooks
 
