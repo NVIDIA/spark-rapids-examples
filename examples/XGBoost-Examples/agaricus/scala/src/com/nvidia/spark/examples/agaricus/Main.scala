@@ -64,12 +64,13 @@ object Main {
       // build XGBoost classifier
       val paramMap = xgboostArgs.xgboostParams(Map(
         "objective" -> "binary:logistic",
-        "eval_sets" -> datasets(1).map(ds => Map("eval" -> ds)).getOrElse(Map.empty)
       ))
       val xgbClassifier = new XGBoostClassifier(paramMap)
         .setLabelCol(labelName)
         // === diff ===
         .setFeaturesCol(featureCols)
+
+      datasets(1).foreach(_ => xgbClassifier.setEvalDataset(_))
 
       println("\n------ Training ------")
       val (model, _) = benchmark.time("train") {
