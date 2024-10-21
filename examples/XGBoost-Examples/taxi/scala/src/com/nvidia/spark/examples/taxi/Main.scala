@@ -58,13 +58,12 @@ object Main extends Taxi {
 
     val xgbRegressionModel = if (xgboostArgs.isToTrain) {
       // build XGBoost XGBoostRegressor
-      val xgbParamFinal = xgboostArgs.xgboostParams(commParamMap +
-        // Add train-eval dataset if specified
-        ("eval_sets" -> datasets(1).map(ds => Map("test" -> ds)).getOrElse(Map.empty))
-      )
+      val xgbParamFinal = xgboostArgs.xgboostParams(commParamMap)
       val xgbRegressor = new XGBoostRegressor(xgbParamFinal)
         .setLabelCol(labelColName)
         .setFeaturesCol(featureNames)
+
+      datasets(1).foreach(_ => xgbRegressor.setEvalDataset(_))
 
       println("\n------ Training ------")
       // Shall we not log the time if it is abnormal, which is usually caused by training failure

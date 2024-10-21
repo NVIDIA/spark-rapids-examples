@@ -52,13 +52,12 @@ object Main extends Mortgage {
 
       val xgbClassificationModel = if (appArgs.isToTrain) {
         // build XGBoost classifier
-        val xgbParamFinal = appArgs.xgboostParams(commParamMap +
-          // Add train-eval dataset if specified
-          ("eval_sets" -> datasets(1).map(ds => Map("eval" -> ds)).getOrElse(Map.empty))
-        )
+        val xgbParamFinal = appArgs.xgboostParams(commParamMap)
         val xgbClassifier = new XGBoostClassifier(xgbParamFinal)
           .setLabelCol(labelColName)
           .setFeaturesCol(featureNames)
+
+        datasets(1).foreach(_ => xgbClassifier.setEvalDataset(_))
 
         // Start training
         println("\n------ Training ------")
