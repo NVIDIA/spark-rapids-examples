@@ -5,7 +5,7 @@ For simplicity export the location to these jars. All examples assume the packag
 ### Download the jars
 
 1. Download the RAPIDS Accelerator for Apache Spark plugin jar
-   * [RAPIDS Spark Package](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.08.1/rapids-4-spark_2.12-24.08.1.jar)
+   * [RAPIDS Spark Package](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.10.0/rapids-4-spark_2.12-24.10.0.jar)
 
 ### Build XGBoost Scala Examples
 
