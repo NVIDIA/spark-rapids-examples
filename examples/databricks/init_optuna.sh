@@ -1,4 +1,5 @@
 #!/bin/bash
+# Copyright (c) 2024, NVIDIA CORPORATION.
 
 set -x # for debugging
 if [[ $DB_IS_DRIVER = "TRUE" ]]; then
