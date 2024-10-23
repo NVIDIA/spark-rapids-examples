@@ -1,3 +1,5 @@
+# Copyright (c) 2024, NVIDIA CORPORATION.
+
 export PYSPARK_PYTHON=./environment/bin/python
 
 $SPARK_HOME/bin/spark-submit \
