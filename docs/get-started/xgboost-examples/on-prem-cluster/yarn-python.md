@@ -6,12 +6,12 @@ At the end of this guide, the reader will be able to run a sample Apache Spark P
 Prerequisites
 -------------
 
-* Apache Spark 3.1.1+ running on YARN supporting GPU scheduling. (e.g.: Spark 3.1.1, Hadoop-Yarn 3.3.0)
+* Apache Spark 3.2.0+ running on YARN supporting GPU scheduling. (e.g.: Spark 3.2.0, Hadoop-Yarn 3.3.0)
 * Hardware Requirements
   * NVIDIA Pascal™ GPU architecture or better
   * Multi-node clusters with homogenous GPU configuration
 * Software Requirements
-  * Ubuntu 18.04, 20.04/CentOS7, Rocky Linux 8
+  * Ubuntu 20.04, 22.04/CentOS7, Rocky Linux 8
   * CUDA 11.5+
   * NVIDIA driver compatible with your CUDA
   * NCCL 2.7.8+
