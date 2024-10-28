@@ -26,6 +26,7 @@
 
 import numpy as np
 import json
+import tensorflow as tf
 
 # triton_python_backend_utils is available in every Triton Python model. You
 # need to use this module to create inference requests and responses. It also
@@ -57,7 +58,6 @@ class TritonPythonModel:
         """
         import re
         import string
-        import tensorflow as tf
         from tensorflow.keras import layers
 
         print("tf: {}".format(tf.__version__))
@@ -83,7 +83,7 @@ class TritonPythonModel:
                           "custom_standardization": custom_standardization}
         with tf.keras.utils.custom_object_scope(custom_objects):
             self.model = tf.keras.models.load_model(
-                "/text_model"
+                "/text_model_cleaned.keras", compile=False
             )
 
         # You must parse model_config. JSON string is not parsed here
@@ -126,11 +126,12 @@ class TritonPythonModel:
         for request in requests:
             # Get input numpy
             sentence_input = pb_utils.get_input_tensor_by_name(request, "sentence")
-            sentences = list(sentence_input.as_numpy())
+            sentences = sentence_input.as_numpy()
             sentences = np.squeeze(sentences).tolist()
             sentences = [s.decode('utf-8') for s in sentences]
+            sentences = tf.convert_to_tensor(sentences)
 
-            pred = self.model.predict(sentences)
+            pred = self.model.predict(sentences, verbose=0)
 
             # Create output tensors. You need pb_utils.Tensor
             # objects to create pb_utils.InferenceResponse.

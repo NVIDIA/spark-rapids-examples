@@ -22,8 +22,6 @@ import com.google.common.base.CaseFormat
 import scala.collection.mutable
 import scala.util.Try
 
-import ml.dmlc.xgboost4j.scala.spark.TrackerConf
-
 private case class XGBoostArg(
   required: Boolean = false,
   parse: String => Any = value => value,
@@ -202,7 +200,7 @@ class XGBoostArgs private[utility] (
 
     val hostIp = params.getOrElse("rabit_tracker_host", "").toString
     if (!hostIp.isEmpty) {
-      params ++ Map("tracker_conf" -> TrackerConf(0, hostIp))
+      params ++ Map("rabitTrackerHostIp" -> hostIp)
     } else params
   }
 
