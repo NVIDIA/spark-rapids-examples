@@ -1,0 +1,8 @@
+-r requirements.txt
+torch
+torchvision
+torch-tensorrt
+tensorrt --extra-index-url https://download.pytorch.org/whl/cu121
+sentence_transformers
+sentencepiece
+nvidia-modelopt[all] --extra-index-url https://pypi.nvidia.com

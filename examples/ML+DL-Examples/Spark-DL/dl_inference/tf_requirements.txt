@@ -1,0 +1,3 @@
+-r requirements.txt
+tensorflow[and-cuda]
+tf-keras

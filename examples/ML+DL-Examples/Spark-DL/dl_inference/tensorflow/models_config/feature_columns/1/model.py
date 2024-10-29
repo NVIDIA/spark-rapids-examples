@@ -69,7 +69,7 @@ class TritonPythonModel:
                 # Memory growth must be set before GPUs have been initialized
                 print(e)
 
-        self.model = tf.keras.models.load_model("/my_pet_classifier")
+        self.model = tf.keras.models.load_model("/my_pet_classifier.keras")
 
         # You must parse model_config. JSON string is not parsed here
         self.model_config = model_config = json.loads(args['model_config'])
@@ -134,7 +134,7 @@ class TritonPythonModel:
             # Get input numpy
             inputs = {name: transform(pb_utils.get_input_tensor_by_name(request, name)) for name, transform in input_transforms.items()}
 
-            pred = self.model.predict(inputs)
+            pred = self.model.predict(inputs, verbose=0)
 
             # Create output tensors. You need pb_utils.Tensor
             # objects to create pb_utils.InferenceResponse.

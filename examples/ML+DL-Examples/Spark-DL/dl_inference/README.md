@@ -30,17 +30,49 @@ predictions = df.withColumn("preds", mnist("data")).collect()
 
 In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function which operates on numpy arrays.  The `predict_batch_udf` will automatically convert the Spark DataFrame columns to the expected numpy inputs.
 
-All notebooks have been saved with sample outputs for quick browsing.
+All notebooks have been saved with sample outputs for quick browsing.  
+Here is a full list of the notebooks with their published example links:
+
+|   | Category  | Notebook Name | Description | Link
+| ------------- | ------------- | ------------- | ------------- | ------------- 
+| 1 | PyTorch | Image Classification | Training a model to predict clothing categories in FashionMNIST, including accelerated inference with Torch-TensorRT. | [Link](https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html)
+| 2 | PyTorch | Regression | Training a model to predict housing prices in the California Housing Dataset, including accelerated inference with Torch-TensorRT. | [Link](https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-create-a-neural-network-for-regression-with-pytorch.md)
+| 3 | Tensorflow | Image Classification | Training a model to predict hand-written digits in MNIST. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_load.ipynb)
+| 4 | Tensorflow | Feature Columns | Training a model with preprocessing layers to predict likelihood of pet adoption in the PetFinder mini dataset. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/structured_data/preprocessing_layers.ipynb)
+| 5 | Tensorflow | Keras Metadata | Training ResNet-50 to perform flower recognition on Databricks. | [Link](https://docs.databricks.com/en/_extras/notebooks/source/deep-learning/keras-metadata.html)
+| 6 | Tensorflow | Text Classification | Training a model to perform sentiment analysis on the IMDB dataset. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/text_classification.ipynb)
+| 7+8 | HuggingFace | Conditional Generation | Sentence translation using the T5 text-to-text transformer, with notebooks demoing both Torch and Tensorflow. | [Link](https://huggingface.co/docs/transformers/model_doc/t5#t5) 
+| 9+10 | HuggingFace | Pipelines | Sentiment analysis using Huggingface pipelines, with notebooks demoing both Torch and Tensorflow. | [Link](https://huggingface.co/docs/transformers/quicktour#pipeline-usage)
+| 11 | HuggingFace | Sentence Transformers | Sentence embeddings using the SentenceTransformers framework in Torch. | [Link](https://huggingface.co/sentence-transformers)
 
 ## Running the Notebooks
 
 If you want to run the notebooks yourself, please follow these instructions.
 
-**Note**: for demonstration purposes, these examples just use a local Spark Standalone cluster with a single executor, but you should be able to run them on any distributed Spark cluster.
-```
-# install dependencies for example notebooks
-pip install -r requirements.txt
+**Notes**: 
+- The notebooks require a GPU environment for the executors.  
+- Please create separate environments for PyTorch and Tensorflow examples as specified below. This will avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples will have a `_torch` or `_tf` suffix to specify the environment used.
+- The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but may require downgrading the TF version. 
+- For demonstration purposes, these examples just use a local Spark Standalone cluster with a single executor, but you should be able to run them on any distributed Spark cluster.
 
+#### Create environment
+
+**For PyTorch:**
+```
+conda create -n spark-dl-torch python=3.11
+conda activate spark-dl-torch
+pip install -r torch_requirements.txt
+```
+**For TensorFlow:**
+```
+conda create -n spark-dl-tf python=3.11
+conda activate spark-dl-tf
+pip install -r tf_requirements.txt
+```
+
+#### Launch Jupyter + Spark
+
+```
 # setup environment variables
 export SPARK_HOME=/path/to/spark
 export MASTER=spark://$(hostname):7077
