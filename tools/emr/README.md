@@ -5,10 +5,19 @@ GPU acceleration as well as analyzing GPU Spark jobs.  For customers on EMR, the
 notebooks offer a simple interface for running the tools given a set of Spark event logs from
 CPU (qualification) or GPU (profiling) application runs.
 
-To use a demo notebook, you can import the notebook in the EMR Workspace.
+## Usage
 
-Once the demo notebook is imported, you can enter in the log path location in the cell below the `User Input` in the 
-notebook.  After that, click on the `fast-forward` icon which says *Restart the kernel, then re-run the whole notebook* to execute the tools for the specific logs in the log path.
+### Pre-requisites: Setup EMR Studio and Workspace
+1. Ensure that you have an **EMR cluster** running.
+2. Set up **EMR Studio** and **Workspace** by following the instructions in the [AWS Documentation](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-studio-create-studio.html):
+   - Select **Custom Settings** while creating the Studio.
+   - Choose the **VPC** and **Subnet** where the EMR cluster is running.
+3. Attach the Workspace to the running EMR cluster. For more details, refer to the [AWS Documentation](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-studio-create-use-clusters.html).
+
+### Running the Notebook
+1. Import the notebook into the EMR Workspace by dragging and dropping the notebook file.
+2. In the **User Input** section of the notebook, enter the path to event log files.
+3. Click the **fast-forward** icon labeled *Restart the kernel, then re-run the whole notebook* to process the logs at the specified path.
 
 ## Limitations
 1. Currently, local and S3 event log paths are supported.
