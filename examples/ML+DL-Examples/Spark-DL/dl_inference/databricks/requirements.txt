@@ -1,0 +1,17 @@
+numpy
+pandas
+matplotlib
+portalocker
+pyarrow
+pydot
+scikit-learn
+huggingface
+datasets
+transformers
+urllib3<2
+torch
+torchvision --extra-index-url https://download.pytorch.org/whl/cu118
+sentence_transformers
+sentencepiece
+nvidia-pytriton
+nvidia-modelopt[all] --extra-index-url https://pypi.nvidia.com
