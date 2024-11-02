@@ -23,6 +23,7 @@ from joblibspark import register_spark
 from pyspark import TaskContext
 from pyspark.sql import SparkSession
 
+
 def task(num_trials: int, driver_ip: str, filepath: str):
     """
     This demo is to distribute xgboost training on spark cluster. 
@@ -60,7 +61,7 @@ def task(num_trials: int, driver_ip: str, filepath: str):
     # Extract features; label is last column. 
     X = data.iloc[:, :-1].values # Tests show that converting to cupy, then to QDM, is faster than converting from cudf directly.
     y = data["quality"].values
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
     # Precompute Quantile DMatrix to avoid repeated quantization every trial.
     Xy_train_qdm = xgb.QuantileDMatrix(X_train, y_train)
 
@@ -124,13 +125,17 @@ if __name__ == "__main__":
     parser.add_argument("--trials", type=int, default=100, help="Total number of trials to run (default 100).")
     parser.add_argument("--tasks", type=int, default=2, help="Total number of Spark tasks to launch (default 2). This should be <= parallelism of Spark.")
     parser.add_argument("--jobs", type=int, default=8, help="Number of threads to launch Spark applications at the same time (default 8).")
+    parser.add_argument("--localhost", action='store_true', help="Include if the MySQL server is running on localhost (e.g., in a local Standalone cluster).")
     args = parser.parse_args()
 
     spark = SparkSession.builder.getOrCreate()
     register_spark()
 
-    # Get the driver IP to connect to the MySQL server.
-    driver_ip = spark.conf.get("spark.driver.host")
+    if args.localhost:
+        driver_ip = "localhost"
+    else:
+        # Get the driver IP to connect to the MySQL server.
+        driver_ip = spark.conf.get("spark.driver.host")
 
     with joblib.parallel_backend("spark", n_jobs=args.jobs):
         results = joblib.Parallel()(

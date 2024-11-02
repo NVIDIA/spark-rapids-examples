@@ -20,6 +20,7 @@ import argparse
 from joblibspark import register_spark
 from pyspark.sql import SparkSession
 
+
 def task(num_trials: int, driver_ip: str):
 
     def objective(trial):
@@ -47,18 +48,23 @@ def partition_trials(total_trials: int, total_tasks: int) -> List[int]:
 
     return partitions
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Spark-Optuna-XGBoost")
     parser.add_argument("--trials", type=int, default=100, help="Total number of trials to run (default 100).")
     parser.add_argument("--tasks", type=int, default=2, help="Total number of Spark tasks to launch (default 2). This should be <= parallelism of Spark.")
     parser.add_argument("--jobs", type=int, default=8, help="Number of threads to launch Spark applications at the same time (default 8).")
+    parser.add_argument("--localhost", action='store_true', help="Include if the MySQL server is running on localhost (e.g., in a local Standalone cluster).")
     args = parser.parse_args()
     
     spark = SparkSession.builder.getOrCreate()
     register_spark()
 
-    # Get the driver IP to connect to the MySQL server.
-    driver_ip = spark.conf.get("spark.driver.host")
+    if args.localhost:
+        driver_ip = "localhost"
+    else:
+        # Get the driver IP to connect to the MySQL server.
+        driver_ip = spark.conf.get("spark.driver.host")
 
     with joblib.parallel_backend("spark", n_jobs=args.jobs):
         results = joblib.Parallel()(

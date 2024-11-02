@@ -1,19 +1,19 @@
 # Optuna on Spark + GPUs
 
-This repo demonstrates distributed hyperparameter tuning with [Optuna](https://optuna.readthedocs.io/en/stable/index.html) on Apache Spark using the MySQL storage backend, accelerated with [RAPIDS](https://rapids.ai/) data processing on GPU. It contains examples that showcase how to set up and tune XGBoost on GPU, with deployment on Spark Standalone or Databricks clusters. 
+This repo demonstrates distributed hyperparameter tuning with [Optuna](https://optuna.readthedocs.io/en/stable/index.html) on Apache Spark using the MySQL storage backend, accelerated with [RAPIDS](https://rapids.ai/) on GPU. It contains examples that showcase how to set up and tune XGBoost on GPU, with deployment on Spark Standalone or Databricks clusters. 
 
 ## Contents:
 - [Overview](#overview)
+- [Running Optuna + Spark on Databricks](#running-optuna--spark-on-databricks)
+  - [Upload Init and Python Scripts](#1-upload-init-and-python-scripts)
+  - [Create Cluster](#2-create-cluster)
+  - [Run Script](#3-run-script)
 - [Running Optuna on Spark Standalone](#running-optuna-on-spark-standalone)
   - [Setup Database for Optuna](#setup-database-for-optuna)
   - [Setup Optuna Python Environment](#setup-optuna-python-environment)
   - [Create Optuna Database and Study](#create-optuna-database-and-study)
   - [Pack the Optuna Runtime Environment and Run](#pack-the-optuna-runtime-environment-and-start-cluster)
   - [Configure and run the script](#configure-and-run-the-script)
-- [Running Optuna + Spark on Databricks](#running-optuna--spark-on-databricks)
-  - [Upload Init and Python Scripts](#1-upload-init-and-python-scripts)
-  - [Create Cluster](#2-create-cluster)
-  - [Run Script](#3-run-script)
 - [How Does it Work?](#how-does-it-work)
   - [Implementation Notes](#implementation-notes)
 
@@ -21,18 +21,77 @@ This repo demonstrates distributed hyperparameter tuning with [Optuna](https://o
 
 ## Overview
 
-**Please refer to the instructions below to properly setup your environment and run the script for [Spark Standalone](#running-optuna-on-spark-standalone) or [Databricks](#running-optuna--spark-on-databricks).**  
- The Python scripts take the following arguments:
+Please refer to the instructions to run the examples for [Spark Standalone](#running-optuna-on-spark-standalone) or [Databricks](#running-optuna--spark-on-databricks).  
 
-- `--filepath` (required for XGBoost examples): The absolute path (locally or on /dbfs/) to the dataset used in XGBoost examples.
-- `--tasks` (optional): Number of Spark tasks to launch, <= parallelism of Spark (default: `2`).
-- `--trials` (optional): Number of trials for Optuna to perform (default: `100`).
-- `--jobs` (optional): Number of Spark application threads to run in parallel (default: `8`).
+We provide the following example scripts:  
 
-We provide the following scripts under `/examples/`:  
-- `optuna-mysql-spark.py`: Demonstrates a simple study on CPU to minimize a quadratic function using the MySQL backend and Joblib Spark to distribute tasks.
-- `optuna-mysql-xgboost-spark.py`: Demonstrates a regression study to tune XGBoost on GPU to predict red wine quality, adapted from [this example](https://forecastegy.com/posts/xgboost-hyperparameter-tuning-with-optuna/), using the MySQL backend and Joblib Spark to distribute tasks.
-- `optuna-mysql-xgboost-spark-rdd.py`: Demonstrates a regression study to tune XGBoost on GPU to predict red wine quality as above, but uses native Spark RDDs rather than Joblib-Spark to distribute trials across the cluster. 
+**Using JoblibSpark backend:**
+- `joblibspark-simple.py`: Demonstrates a simple study on CPU to minimize a quadratic function using MySQL storage and the Joblib Spark backend.
+- `joblibspark-xgboost.py`: Demonstrates a regression study to tune XGBoost on GPU to predict red wine quality, adapted from [this example](https://forecastegy.com/posts/xgboost-hyperparameter-tuning-with-optuna/), using MySQL storage and the Joblib Spark backend.  
+
+**Using Spark Dataframe:**
+
+`sparkrapids-xgboost`: Demonstrates a regression study to tune XGBoost on GPU to predict red wine quality, using the MySQL storage and Spark Dataframes. Accelerated on GPU with the [RAPIDS Accelerator](https://nvidia.github.io/spark-rapids/).   
+We provide two implementations with differences in how data is passed to workers (see [implementation notes](#implementation-notes)):
+
+- `sparkrapids-xgboost-read-per-worker.py`: Each worker reads the full dataset from a specified filepath (e.g., distributed file system).
+- `sparkrapids-xgboost-duplicate.py`: The driver reads the dataset from a specified filepath, and duplicates/repartitions it so that each node receives a copy. Avoids I/O.
+
+## Running Optuna + Spark on Databricks
+
+### 1. Upload init and Python scripts
+
+- Make sure your [Databricks CLI]((https://docs.databricks.com/en/dev-tools/cli/tutorial.html)) is configured for your Databricks workspace.
+- Copy the desired Python script into your Databricks workspace, for example:
+    ```shell
+    databricks workspace import /path/to/directory/in/workspace --format AUTO --file sparkrapids-xgboost-read-per-worker.py
+    ```
+- Copy the corresponding init script ```databricks/init_optuna.sh``` or ```databricks/init_optuna_xgboost.sh```, for example:
+    ```shell
+    databricks workspace import /path/to/directory/in/workspace --format AUTO --file databricks/init_optuna_xgboost.sh
+    ```
+- (For XGBOOST example): Upload the [Wine Qualities](https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv) dataset via the Databricks CLI:
+    ```shell
+    wget https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv -O winequality-red.csv
+    databricks fs mkdir dbfs:/FileStore/datasets/
+    databricks fs cp winequality-red.csv dbfs:/FileStore/datasets/winequality-red.csv
+     ```
+
+### 2. Create cluster
+
+- Go to `Compute > Create compute` and set the desired cluster settings.    
+- Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
+- Under `Advanced Options > Spark > Environment variables`, set `LIBCUDF_CUFILE_POLICY=OFF`. 
+- For XGBOOST examples: Make sure to use a GPU cluster and include task GPU resources.
+
+The init script will install the required libraries on all nodes, including rapids/cuml for data operations on GPU. On the driver, it will setup the MySQL server backend and create an Optuna study referencing the server. 
+
+### 3. Run Script
+
+To run the script, you can either:
+- **Run interactively**: [convert the script into a Databricks notebook](https://docs.databricks.com/en/notebooks/notebook-export-import.html#import-a-file-and-convert-it-to-a-notebook), attach to the cluster, and run on the web UI. 
+- **Run as a Databricks job**: create a job via the CLI, for example:
+  ```shell
+  databricks jobs create --json '{
+    "name": "Optuna-Spark-XGBoost",
+    "tasks": [
+      {
+        "existing_cluster_id": "<cluster_id>",
+        "task_key": "spark_python_task",
+        "spark_python_task": {
+          "python_file": "/path/in/workspace/to/sparkrapids-xgboost-read-per-worker.py",
+          "parameters": [
+            "--filepath", "/dbfs/FileStore/datasets/winequality-red.csv",
+            "--trials", "100",
+            "--tasks", "8"
+          ]
+        }
+      }
+    ]
+  }'
+  ```
+  - The cluster ID can be retrieved with ```databricks clusters list```. 
+  - The job can be viewed and run on the Databricks `Workflows` panel or using `databricks jobs run-now` in the CLI.
 
 ## Running Optuna on Spark Standalone
 
@@ -108,12 +167,10 @@ pip install optuna joblib joblibspark
 
 ### Create Optuna database and study
 
-On the driver node, run the following commands to establish a database in MySql and create
-an Optuna study.
+On the driver node, run the following commands to establish a database in MySql.
 
 ``` shell
 mysql -u optuna_user -p -e "CREATE DATABASE IF NOT EXISTS optuna"
-optuna create-study --study-name "optuna-spark" --storage "mysql://optuna_user:optuna_password@localhost/optuna"
 ```
 
 Troubleshooting:  
@@ -141,18 +198,38 @@ ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORE
 
 ### Configure and run the script
 
-Modify the run scripts to customize the Spark config and task/job parallelism.  
-You can then run the simple demo of Optuna on Spark: 
+If desired, modify the run scripts to customize the Spark config and the script arguments:  
+- `--filepath` (required for XGBoost examples): The absolute path (locally or on /dbfs/) to the WineQuality dataset used in XGBoost examples.
+- `--tasks` (optional): Number of Spark tasks to launch, <= parallelism of Spark (default: `2`).
+- `--trials` (optional): Number of trials for Optuna to perform (default: `100`).
+- `--jobs` (optional, for JoblibSpark only): number of Spark application threads to run in parallel (default: `8`).
+- `--localhost` (optional): Sets the MySQL backend IP to localhost. Included by default in the standalone run scripts.  
 
+**Run the simple demo of Optuna on Spark:**
+
+Create and run study:
 ```shell
+optuna create-study --study-name "optuna-spark" --storage "mysql://optuna_user:optuna_password@localhost/optuna"
 export PYSPARK_DRIVER_PYTHON=/path/to/anaconda3/envs/optuna-spark/bin/python
 cd standalone
 chmod +x run-optuna-spark.sh
 ./run-optuna-spark.sh
 ```
 
-...or the Optuna XGBoost GPU example:
+**Run the XGBoost demo of Optuna on Spark:**
 
+Download the dataset:
+```shell
+wget https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv -O /path/to/winequality-red.csv
+export FILEPATH=/path/to/winequality-red.csv
+```
+
+For `sparkrapids-xgboost` examples, download the [Spark-RAPIDS plugin](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.08.1/rapids-4-spark_2.12-24.08.1.jar).
+```shell
+export RAPIDS_JAR=/path/to/rapids-4-spark_2.12-24.08.1.jar
+```
+
+Create and run study:
 ``` shell
 optuna create-study --study-name "optuna-spark-xgboost" --storage "mysql://optuna_user:optuna_password@localhost/optuna"
 export PYSPARK_DRIVER_PYTHON=/path/to/anaconda3/envs/optuna-spark/bin/python
@@ -161,87 +238,30 @@ chmod +x run-optuna-spark-xgboost.sh
 ./run-optuna-spark-xgboost.sh
 ```
 
-Please be aware that studies will continue where they left off; delete and recreate the study if you would like to start anew.
-
-
-## Running Optuna + Spark on Databricks
-
-### 1. Upload init and Python scripts
-
-- Make sure your Databricks CLI is configured for your Databricks workspace. See the [tutorial](https://docs.databricks.com/en/dev-tools/cli/tutorial.html) for setup. 
-- Copy the desired Python script into your Databricks workspace, for example:
-    ```shell
-    databricks workspace import /path/to/directory/in/workspace --format AUTO --file optuna-mysql-xgboost-spark.py
-    ```
-- Copy the corresponding init script ```databricks/init_optuna.sh``` or ```databricks/init_optuna_xgboost.sh```, for example:
-    ```shell
-    databricks workspace import /path/to/directory/in/workspace --format AUTO --file databricks/init_optuna_xgboost.sh
-    ```
-- (For XGBOOST example): Upload the [Wine Qualities](https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv) dataset via the Databricks CLI:
-    ```shell
-    wget https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv -O winequality-red.csv
-    databricks fs mkdir dbfs:/FileStore/datasets/
-    databricks fs cp winequality-red.csv dbfs:/FileStore/datasets/winequality-red.csv
-     ```
-
-### 2. Create cluster
-
-- Go to `Compute > Create compute` and set the desired cluster settings.    
-- Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
-- Under `Advanced Options > Spark > Environment variables`, set `LIBCUDF_CUFILE_POLICY=OFF`. 
-- (For XGBOOST example): Make sure to use a GPU cluster, and set the Spark config value for `spark.task.resource.gpu.amount`.
-
-The init script will install the required libraries on all nodes, including rapids/cuml for data operations on GPU. On the driver, it will setup the MySQL server backend and create an Optuna study referencing the server. 
-
-### 3. Run Script
-
-To run the script, you can either:
-- **Run interactively**: copy the script into a Databricks notebook, attach to the cluster, and run on the web UI. 
-- **Run as a Databricks job**: create a job via the CLI, for example:
-  ```shell
-  databricks jobs create --json '{
-    "name": "Optuna-MySQL-XGBoost-Spark",
-    "tasks": [
-      {
-        "existing_cluster_id": "<cluster_id>",
-        "task_key": "spark_python_task",
-        "spark_python_task": {
-          "python_file": "/path/in/workspace/to/script.py",
-          "parameters": [
-            "--filepath", "/dbfs/Filestore/datasets/winequality-red.csv",
-            "--trials", "100",
-            "--tasks", "2",
-            "--jobs", "8"
-          ]
-        }
-      }
-    ]
-  }'
-  ```
-  - The cluster ID can be retrieved with ```databricks clusters list```. 
-  - The job can be viewed and run on the Databricks `Workflows` panel or using `databricks jobs run-now` in the CLI.
-
-
-
 ## How does it work?
 
-![](images/optuna.svg)
+The Optuna tasks will be serialized into bytes and distributed to Spark workers to run. So it's the Optuna task on the executor side that loads the optuna study from RDBStorage, and then runs the tuning.
 
-The Optuna tasks will be serialized into bytes and distributed to Spark workers
-to run. So it's the Optuna task on the executor side that loads the optuna study from RDBStorage, and then
-runs the tuning.
+During tuning, the Optuna tasks need to send intermediate results back to RDBStorage to persist, and ask for the parameters from RDBStorage sampled by Optuna on the driver to run next.
 
-During tuning, the Optuna tasks need to send intermediate results back to RDBStorage to persist,
-and ask for the parameters from RDBStorage sampled by Optuna on the driver to run next.
+Using JoblibSpark, each Optuna task is a Spark application that has only 1 job, 1 stage, 1 task, and the Spark application will be submitted on the local threads. So here we can use `n_jobs` when configuring the Spark backend to limit at most how many Spark applications can be submitted at the same time.  
 
-Using JoblibSpark, each Optuna task is a Spark application that has only 1 job, 1 stage, 1 task, and the Spark application
-will be submitted on the local threads. So here we can use `n_jobs` when configuring the Spark backend
-to limit at most how many Spark applications can be submitted at the same time.  
+Thus Optuna with JoblibSpark uses Spark application level parallelism, rather than task-level parallelism. So for the XGBoost case, we first need to ensure that the single XGBoost task can run on a single node without any CPU/GPU OOM.  
 
-Thus Optuna with JoblibSpark uses Spark application level parallelism, rather than task-level parallelism. So for the XGBoost case, we first need to ensure that the single XGBoost task can run on a single node without any CPU/GPU OOM.
+Application parallelism with JoblibSpark:  
+
+![Optuna on JoblibSpark](images/optuna.svg)
 
 ### Implementation Notes
 
+###### Data passing in sparkrapids-xgboost:
+Since each worker requires the full dataset to perform hyperparameter tuning, there are two strategies to enable this:
+  - In joblibspark-simple.py, joblibspark-xgboost.py, sparkrapids-xgboost-read-per-worker.py: **each worker reads the dataset** from the filepath (in practice, from a distributed file system) once the task has begun.
+  - In sparkrapids-xgboost-duplicate.py: the driver reads the dataset and **send copies of it to each worker** at task execution. In practice, this enables the code to be chained to other Dataframe operations (e.g. ETL stages) and avoids I/O. 
+    - To do this, we coalesce the input Dataframe to a single partition, and recursively self-union until we have the desired number of duplicates (i.e., the number of workers). Thus each partition will contain a duplciate, and the Optuna task can be mapped directly onto the partitions.
+
+
+###### Misc:
 - Please be aware that Optuna studies will continue where they left off; delete and recreate the study if you would like to start anew.
 - Optuna in distributed mode is **non-deterministic** (see [this link](https://optuna.readthedocs.io/en/stable/faq.html#how-can-i-obtain-reproducible-optimization-results)), as trials are executed asynchronously by executors. Deterministic behavior would require synchronizing executor reads/writes to the database, which are handled internally by Optuna.
 - Reading data with GPU using cuDF requires disabling [GPUDirect Storage](https://docs.rapids.ai/api/cudf/nightly/user_guide/io/io/#magnum-io-gpudirect-storage-integration), i.e., setting the environment variable `LIBCUDF_CUFILE_POLICY=OFF`, to be compatible with the Databricks file system. Without GDS, cuDF will use a CPU bounce buffer when reading files, but all parsing and decoding will still be accelerated by the GPU. 
