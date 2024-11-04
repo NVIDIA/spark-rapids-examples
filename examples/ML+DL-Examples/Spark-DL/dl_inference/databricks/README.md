@@ -12,7 +12,7 @@ Distributed deep learning inference using the PySpark [predict_batch_udf](https:
     export NOTEBOOK_PATH=/path/in/workspace/to/conditional_generation.ipynb
     export REQ_PATH=/path/to/requirements.txt # excluding the 'dbfs:' header
     ```
-    Copy files to Databricks, updating the init script to point to `/dbfs/.../requirements.txt`:
+    Copy files to Databricks:
     ```
     databricks fs cp requirements.txt dbfs:$REQ_PATH
     sed -i "s|/REQ_PATH|$REQ_PATH|" init_spark_dl_torch.sh
@@ -28,4 +28,4 @@ Distributed deep learning inference using the PySpark [predict_batch_udf](https:
 
 ### Triton Inference Server
 
-The examples also demonstrate integration with [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), an open-source, GPU-accelerated serving solution for DL. We use [PyTriton](https://github.com/triton-inference-server/pytriton), a Flask-like interface to deploy Triton from Python. 
+The examples also demonstrate integration with [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), an open-source, GPU-accelerated serving solution for DL. 
