@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2020-2024, NVIDIA CORPORATION.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.nvidia</groupId>
+    <artifactId>rapids-4-spark-udf-examples_2.12</artifactId>
+    <name>RAPIDS Accelerator for Apache Spark UDF Examples</name>
+    <description>Sample implementations of RAPIDS accelerated
+        user defined functions for use with the RAPIDS Accelerator
+        for Apache Spark
+    </description>
+    <version>24.10.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.major.version>8</java.major.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.sourceEncoding>UTF-8</project.reporting.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <cuda.version>cuda11</cuda.version>
+        <scala.binary.version>2.12</scala.binary.version>
+        <!-- Depends on release version, Snapshot version is not published to the Maven Central -->
+        <rapids4spark.version>24.10.0</rapids4spark.version>
+        <spark.version>3.1.1</spark.version>
+        <scala.version>2.12.15</scala.version>
+        <udf.native.build.path>${project.build.directory}/cpp-build</udf.native.build.path>
+        <BUILD_UDF_BENCHMARKS>OFF</BUILD_UDF_BENCHMARKS>
+        <CMAKE_CXX_FLAGS/>
+        <GPU_ARCHS>RAPIDS</GPU_ARCHS>
+        <PER_THREAD_DEFAULT_STREAM>ON</PER_THREAD_DEFAULT_STREAM>
+        <CPP_PARALLEL_LEVEL>10</CPP_PARALLEL_LEVEL>
+        <CUDF_ENABLE_ARROW_S3>OFF</CUDF_ENABLE_ARROW_S3>
+        <target.classifier/>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-hive_${scala.binary.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nvidia</groupId>
+            <artifactId>rapids-4-spark_${scala.binary.version}</artifactId>
+            <version>${rapids4spark.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <!-- Include the properties file to provide the build information. -->
+                <directory>${project.build.directory}/extra-resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <!-- disable test jar -->
+                        <id>default-test-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>4.3.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <version>0.13</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-build-info</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>run pyspark tests</id>
+                        <phase>verify</phase><!--run after packaging and collecting dependencies-->
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>./run_pyspark_from_build.sh</executable>
+                            <workingDirectory>./</workingDirectory>
+                            <environmentVariables>
+                                <SKIP_TESTS>${skipTests}</SKIP_TESTS>
+                            </environmentVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <!-- copy rapids-4-spark.jar to dependency directory-->
+                <executions>
+                    <execution>
+                        <id>copy-dist-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <useBaseVersion>true</useBaseVersion>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.nvidia</groupId>
+                                    <artifactId>rapids-4-spark_${scala.binary.version}</artifactId>
+                                    <version>${rapids4spark.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>udf-native-examples</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>${project.build.directory}/native-deps/</directory>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>cmake</id>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <target>
+                                        <mkdir dir="${udf.native.build.path}"/>
+                                        <exec dir="${udf.native.build.path}"
+                                              failonerror="true"
+                                              executable="cmake">
+                                            <arg value="${basedir}/src/main/cpp"/>
+                                            <arg value="-DBUILD_UDF_BENCHMARKS=${BUILD_UDF_BENCHMARKS}"/>
+                                            <arg value="-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}"/>
+                                            <arg value="-DGPU_ARCHS=${GPU_ARCHS}"/>
+                                            <arg value="-DPER_THREAD_DEFAULT_STREAM=${PER_THREAD_DEFAULT_STREAM}"/>
+                                            <arg value="-DCUDF_ENABLE_ARROW_S3=${CUDF_ENABLE_ARROW_S3}"/>
+                                        </exec>
+                                        <exec failonerror="true"
+                                              executable="cmake">
+                                            <arg value="--build"/>
+                                            <arg value="${udf.native.build.path}"/>
+                                            <arg value="-j${CPP_PARALLEL_LEVEL}"/>
+                                            <arg value="-v"/>
+                                        </exec>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>copy-native-libs</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <overwrite>true</overwrite>
+                                    <outputDirectory>${project.build.directory}/native-deps/${os.arch}/${os.name}
+                                    </outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${udf.native.build.path}</directory>
+                                            <includes>
+                                                <include>libudfexamplesjni.so</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

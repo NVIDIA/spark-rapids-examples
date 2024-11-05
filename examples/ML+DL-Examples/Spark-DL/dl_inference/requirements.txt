@@ -1,0 +1,16 @@
+numpy
+pandas
+matplotlib
+portalocker
+pyarrow
+h5py
+pydot
+scikit-learn
+jupyterlab
+pyspark>=3.4.0
+huggingface
+datasets
+docker
+tritonclient[grpc]
+transformers
+ipywidgets
