@@ -1,6 +1,6 @@
 # Optuna on Spark + GPUs
 
-This repo demonstrates distributed hyperparameter tuning with [Optuna](https://optuna.readthedocs.io/en/stable/index.html) on Apache Spark using the MySQL storage backend, accelerated with [RAPIDS](https://rapids.ai/) on GPU. It contains examples that showcase how to set up and tune XGBoost on GPU, with deployment on Spark Standalone or Databricks clusters. 
+These examples demonstrates distributed hyperparameter tuning with [Optuna](https://optuna.readthedocs.io/en/stable/index.html) on Apache Spark using the MySQL storage backend, accelerated with [RAPIDS](https://rapids.ai/) on GPU. We showcase how to set up and tune XGBoost on GPU, with deployment on Spark Standalone or Databricks clusters. 
 
 ## Contents:
 - [Overview](#overview)
