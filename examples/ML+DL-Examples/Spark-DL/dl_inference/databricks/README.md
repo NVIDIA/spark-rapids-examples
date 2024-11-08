@@ -21,7 +21,11 @@ Distributed deep learning inference using the PySpark [predict_batch_udf](https:
     ```
 
 3. Launch cluster with init script.
-    - Go to `Compute > Create compute` and set the desired cluster settings (make sure to include GPU resources).
+    - Go to `Compute > Create compute` and set the desired cluster settings.
+        - Integration with Triton inference server uses stage-level scheudling. Make sure to:
+            - use a cluster with GPU resources
+            - set a value for `spark.executor.cores`
+            - ensure that `spark.executor.resource.gpu.amount` <= 1
     - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
 
 4. Run the notebook interactively from the workspace.
