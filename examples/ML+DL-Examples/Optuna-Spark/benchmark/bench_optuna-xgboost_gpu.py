@@ -62,7 +62,7 @@ def task(num_trials: int):
     start_etl = time.time()
     # read data from dbfs
     start_read = time.time()
-    file_path = "/dbfs/FileStore/rishic/datasets/reg_2m_156_f32_multicol.parquet"
+    file_path = "/dbfs/FileStore/path/to/reg_2m_156_f32_multicol.parquet"
     data = cudf.read_parquet(file_path)
     end_read = time.time()
     print(f"GPU Read Runtime: {end_read - start_read}")

@@ -44,7 +44,7 @@ def task(num_trials: int):
   
     # read data from dbfs
     start_read = time.time()
-    file_path = "/dbfs/FileStore/rishic/datasets/reg_2m_156_f32.parquet"
+    file_path = "/dbfs/FileStore/path/to/reg_2m_156_f32.parquet"
     data = pd.read_parquet(file_path)
     end_read = time.time()
     print(f"CPU Read Runtime: {end_read - start_read}")
