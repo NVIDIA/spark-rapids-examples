@@ -18,6 +18,6 @@ ln -s /usr/local/cuda-11.8 /usr/local/cuda
 
 # install requirements
 sudo /databricks/python3/bin/pip3 install --upgrade pip
-sudo /databricks/python3/bin/pip3 install --upgrade --force-reinstall -r /dbfs/REQ_PATH
+sudo /databricks/python3/bin/pip3 install --upgrade --force-reinstall -r REQ_PATH
 
 set +x

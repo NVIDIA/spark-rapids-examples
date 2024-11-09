@@ -10,12 +10,13 @@ Distributed deep learning inference using the PySpark [predict_batch_udf](https:
     ```shell
     export INIT_PATH=/path/in/workspace/to/init_spark_dl_torch.sh
     export NOTEBOOK_PATH=/path/in/workspace/to/conditional_generation.ipynb
-    export REQ_PATH=/path/to/requirements.txt # excluding the 'dbfs:' header
+    export REQ_PATH=dbfs:/path/in/dbfs/to/requirements.txt
     ```
     Copy files to Databricks:
     ```
-    databricks fs cp requirements.txt dbfs:$REQ_PATH
-    sed -i "s|/REQ_PATH|$REQ_PATH|" init_spark_dl_torch.sh
+    databricks fs cp requirements.txt $REQ_PATH
+    NEW_REQ_PATH="/dbfs${REQ_PATH#dbfs:}"
+    sed -i "s|REQ_PATH|$NEW_REQ_PATH|" init_spark_dl_torch.sh
     databricks workspace import $INIT_PATH --format AUTO --file init_spark_dl_torch.sh
     databricks workspace import $NOTEBOOK_PATH --format JUPYTER --file conditional_generation.ipynb
     ```
