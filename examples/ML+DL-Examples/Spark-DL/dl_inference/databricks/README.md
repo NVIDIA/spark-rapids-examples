@@ -1,16 +1,17 @@
 # Spark DL Inference on Databricks
 
-Distributed deep learning inference using the PySpark [predict_batch_udf](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.functions.predict_batch_udf.html#pyspark.ml.functions.predict_batch_udf) function on Databricks. 
+Distributed deep learning inference using the PySpark [predict_batch_udf](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.functions.predict_batch_udf.html#pyspark.ml.functions.predict_batch_udf) function on Databricks.  
+The examples also demonstrate integration with [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), an open-source, GPU-accelerated serving solution for DL. 
 
 ## Setup
 
 1. Install latest [databricks-cli](https://docs.databricks.com/en/dev-tools/cli/tutorial.html) and configure for your workspace.
 
-2. Set your destination paths:
+2. Specify the destination filepaths on Databricks:
     ```shell
     export NOTEBOOK_PATH=/path/in/workspace/to/conditional_generation.ipynb
     export INIT_PATH=/path/in/workspace/to/init_spark_dl.sh
-    export REQ_PATH=/path/in/dbfs/to/requirements.txt
+    export REQ_PATH=/path/in/DBFS/to/requirements.txt
     ```
 
 3. Run the setup script, which will copy files to Databricks: 
@@ -28,7 +29,3 @@ Distributed deep learning inference using the PySpark [predict_batch_udf](https:
     - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
 
 4. Run the notebook interactively from the workspace.
-
-### Triton Inference Server
-
-The examples also demonstrate integration with [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), an open-source, GPU-accelerated serving solution for DL. 
