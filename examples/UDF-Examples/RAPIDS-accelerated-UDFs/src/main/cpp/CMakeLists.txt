@@ -98,6 +98,7 @@ rapids_cpm_find(cudf 24.12.00
                         "DISABLE_DEPRECATION_WARNING ON"
                         "AUTO_DETECT_CUDA_ARCHITECTURES OFF"
                         "KvikIO_REMOTE_SUPPORT OFF"
+                        "CUDF_KVIKIO_REMOTE_IO OFF"
     )
 
 ###################################################################################################
