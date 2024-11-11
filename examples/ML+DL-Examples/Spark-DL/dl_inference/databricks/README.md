@@ -6,27 +6,24 @@ Distributed deep learning inference using the PySpark [predict_batch_udf](https:
 
 1. Install latest [databricks-cli](https://docs.databricks.com/en/dev-tools/cli/tutorial.html) and configure for your workspace.
 
-2. Set your paths:
+2. Set your destination paths:
     ```shell
-    export INIT_PATH=/path/in/workspace/to/init_spark_dl_torch.sh
     export NOTEBOOK_PATH=/path/in/workspace/to/conditional_generation.ipynb
-    export REQ_PATH=dbfs:/path/in/dbfs/to/requirements.txt
-    ```
-    Copy files to Databricks:
-    ```
-    databricks fs cp requirements.txt $REQ_PATH
-    NEW_REQ_PATH="/dbfs${REQ_PATH#dbfs:}"
-    sed -i "s|REQ_PATH|$NEW_REQ_PATH|" init_spark_dl_torch.sh
-    databricks workspace import $INIT_PATH --format AUTO --file init_spark_dl_torch.sh
-    databricks workspace import $NOTEBOOK_PATH --format JUPYTER --file conditional_generation.ipynb
+    export INIT_PATH=/path/in/workspace/to/init_spark_dl.sh
+    export REQ_PATH=/path/in/dbfs/to/requirements.txt
     ```
 
-3. Launch cluster with init script.
+3. Run the setup script to copy files to Databricks: 
+    ```
+    ./setup.sh
+    ```
+
+3. Launch the cluster with the init script:
     - Go to `Compute > Create compute` and set the desired cluster settings.
         - Integration with Triton inference server uses stage-level scheudling. Make sure to:
             - use a cluster with GPU resources
             - set a value for `spark.executor.cores`
-            - ensure that `spark.executor.resource.gpu.amount` <= 1
+            - ensure that `spark.executor.resource.gpu.amount` = 1
     - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
 
 4. Run the notebook interactively from the workspace.
