@@ -13,14 +13,15 @@ Distributed deep learning inference using the PySpark [predict_batch_udf](https:
     export REQ_PATH=/path/in/dbfs/to/requirements.txt
     ```
 
-3. Run the setup script to copy files to Databricks: 
+3. Run the setup script, which will copy files to Databricks: 
     ```
+    chmod +x setup.sh
     ./setup.sh
     ```
 
 3. Launch the cluster with the init script:
     - Go to `Compute > Create compute` and set the desired cluster settings.
-        - Integration with Triton inference server uses stage-level scheudling. Make sure to:
+        - Integration with Triton inference server uses stage-level scheduling. Make sure to:
             - use a cluster with GPU resources
             - set a value for `spark.executor.cores`
             - ensure that `spark.executor.resource.gpu.amount` = 1
