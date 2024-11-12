@@ -1,3 +1,12 @@
+#!/bin/bash
+# Copyright (c) 2024, NVIDIA CORPORATION.
+
+# configure arguments
+if [[ -z ${INIT_PATH} ]]; then
+    echo "Please export INIT_PATH per README.md"
+    exit 1
+fi
+
 databricks clusters create --json \
 '{
     "cluster_name": "spark-dl-inference",
@@ -39,7 +48,7 @@ databricks clusters create --json \
     "init_scripts": [
         {
             "workspace": {
-                "destination": "INIT_PATH"
+                "destination": "${INIT_PATH}"
             }
         }
     ],

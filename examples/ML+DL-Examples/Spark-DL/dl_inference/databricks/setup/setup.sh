@@ -22,5 +22,3 @@ databricks workspace import $INIT_PATH --format AUTO --file init_spark_dl.sh
 
 echo "**** copying conditional_generation.ipynb to ${NOTEBOOK_PATH} ****"
 databricks workspace import $NOTEBOOK_PATH --format JUPYTER --file ../conditional_generation.ipynb
-
-sed -i "s|INIT_PATH|$INIT_PATH|" start_cluster.sh
