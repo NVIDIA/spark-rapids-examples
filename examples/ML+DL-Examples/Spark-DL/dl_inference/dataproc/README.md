@@ -54,6 +54,17 @@ The examples also demonstrate integration with [Triton Inference Server](https:/
 
     OR, for remote access, connect through an SSH tunnel:
     - Create an SSH tunnel using local port 1080:
+        ```shell
+        gcloud compute ssh ${CLUSTER_NAME}-m \
+            --project=${PROJECT} \
+            --zone=${COMPUTE_ZONE} -- -D 1080 -N
+        ```
+    - Run Chrome and connect through the proxy:
+        ```shell
+        /usr/bin/google-chrome \
+            --proxy-server="socks5://localhost:1080" \
+            --user-data-dir="/tmp/${CLUSTER_NAME}-m" http://${CLUSTER_NAME}-m:8088
+        ```
 
 
 7. To cleanup, you can delete the cluster:

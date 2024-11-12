@@ -30,5 +30,5 @@ if [[ ${SPARK_DL_HOME} == "UNSET" ]]; then
     exit 1
 fi
 
-gcloud storage cp requirements.txt gs://${SPARK_DL_HOME}/requirements.txt .
+gcloud storage cp gs://${SPARK_DL_HOME}/requirements.txt .
 pip install --upgrade --force-reinstall -r requirements.txt
