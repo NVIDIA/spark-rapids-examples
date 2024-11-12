@@ -97,7 +97,6 @@ rapids_cpm_find(cudf 24.12.00
                         "CUDA_STATIC_RUNTIME ${CUDA_USE_STATIC_CUDA_RUNTIME}"
                         "DISABLE_DEPRECATION_WARNING ON"
                         "AUTO_DETECT_CUDA_ARCHITECTURES OFF"
-                        "KvikIO_REMOTE_SUPPORT OFF"
                         "CUDF_KVIKIO_REMOTE_IO OFF"
     )
 
