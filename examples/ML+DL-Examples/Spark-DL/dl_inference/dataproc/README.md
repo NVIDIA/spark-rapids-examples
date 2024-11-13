@@ -55,12 +55,3 @@ Also demonstrates integration with [Triton Inference Server](https://developer.n
 
 8. Open and run the notebook interactively with the Python 3 kernel. 
 The init script copies the notebook to `Local Disk` > `notebooks` > `conditional_generation.ipynb` on the master node.
-
-9. To cleanup, you can delete the cluster:
-    ```shell
-    gcloud dataproc clusters delete ${CLUSTER_NAME} --region=${COMPUTE_REGION}
-    ```
-    and the bucket:
-    ```shell
-    gcloud 
-    ```
