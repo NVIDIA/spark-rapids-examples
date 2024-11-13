@@ -186,11 +186,11 @@ pip install conda-pack
 conda pack -f -o optuna-env.tar.gz
 ```
 
-After packing the optuna runtime environment, configure your standalone cluster settings. Make sure to download the [GPU discovery script](https://github.com/apache/spark/blob/master/examples/src/main/scripts/getGpusResources.sh) and specify the absolute path to it.
+After packing the optuna runtime environment, configure your standalone cluster settings. 
 This example just creates local cluster with a single GPU worker:
 ```shell
 export SPARK_HOME=/path/to/spark
-export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 -Dspark.worker.resource.gpu.discoveryScript=/path/to/getGpusResources.sh"
+export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 -Dspark.worker.resource.gpu.discoveryScript=$SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
 export MASTER=spark://$(hostname):7077; export SPARK_WORKER_INSTANCES=1; export CORES_PER_WORKER=8
 
 ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORES_PER_WORKER} -m 16G ${MASTER}
