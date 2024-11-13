@@ -11,9 +11,6 @@ function get_metadata_attribute() {
 
 RAPIDS_VERSION=$(get_metadata_attribute "rapids_version" "24.10.0")
 
-# patch existing packages
-mamba install "llvmlite<0.40,>=0.39.0dev0" "numba>=0.56.2"
-
 pip install --upgrade pip
 
 # # dataproc 2.1 pyarrow and arrow conda installation is not compatible with cudf
@@ -32,3 +29,7 @@ fi
 
 gcloud storage cp gs://${SPARK_DL_HOME}/requirements.txt .
 pip install --upgrade --force-reinstall -r requirements.txt
+
+gcloud storage cp gs://${SPARK_DL_HOME}/conditional_generation.ipynb notebooks/conditional_generation.ipynb
+
+sudo chmod -R a+rw /home

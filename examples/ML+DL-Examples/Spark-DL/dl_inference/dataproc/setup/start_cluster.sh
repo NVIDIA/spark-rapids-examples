@@ -33,7 +33,7 @@ if [[ $? == 0 ]]; then
 else
     set -x
     gcloud dataproc clusters create ${cluster_name} \
-    --image-version=2.1-ubuntu \
+    --image-version=2.2-ubuntu \
     --region ${COMPUTE_REGION} \
     --master-machine-type n1-standard-16 \
     --num-workers 2 \

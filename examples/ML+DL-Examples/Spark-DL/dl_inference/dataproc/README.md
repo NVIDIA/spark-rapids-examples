@@ -7,7 +7,9 @@ The examples also demonstrate integration with [Triton Inference Server](https:/
 
 1. Install the latest [gcloud-cli](https://cloud.google.com/sdk/docs/install) and configure for your workspace.
 
-2. Configure the following settings:
+2. `cd` into the [setup directory](setup).
+
+3. Configure the following settings:
     ```shell
     export PROJECT=<your_project>
     export DATAPROC_REGION=<your_dataproc_region>
@@ -20,14 +22,14 @@ The examples also demonstrate integration with [Triton Inference Server](https:/
     gcloud config set compute/zone ${COMPUTE_ZONE}
     ```
 
-3. Create a GCS bucket if you don't already have one:
+4. Create a GCS bucket if you don't already have one:
     ```shell
     export GCS_BUCKET=<your_gcs_bucket_name>
 
     gcloud storage buckets create gs://${GCS_BUCKET}
     ```
 
-4. Run the setup script, which will copy files to your GCS bucket: 
+5. Run the setup script, which will copy files to your GCS bucket: 
     ```shell
     export SPARK_DL_HOME=${GCS_BUCKET}/spark-dl
     
@@ -36,14 +38,14 @@ The examples also demonstrate integration with [Triton Inference Server](https:/
     ./setup.sh
     ```
 
-5. Launch the cluster (default to 2 node GPU cluster):
+6. Launch the cluster (default to 2 node GPU cluster):
     ```shell
     chmod +x start_cluster.sh
     ./start_cluster.sh
     ```
     The default cluster name will be `"${USER}-spark-dl-gpu"`.
 
-6. Run the notebook interactively on the web UI. You can get the links to the Jupyter web interface by running this command:
+7. Attach to the Jupyter web UI. You can get the link by running this command:
     ```shell
     export CLUSTER_NAME=${USER}-spark-dl-gpu
     gcloud dataproc clusters describe ${CLUSTER_NAME} --region=${COMPUTE_REGION}
@@ -52,22 +54,14 @@ The examples also demonstrate integration with [Triton Inference Server](https:/
     OR, you can find the links on the GCP web UI:
     - Go to `Dataproc` > `Clusters` > `<cluster_name>` > `Web Interfaces` > `Jupyter`
 
-    OR, for remote access, connect through an SSH tunnel:
-    - Create an SSH tunnel using local port 1080:
-        ```shell
-        gcloud compute ssh ${CLUSTER_NAME}-m \
-            --project=${PROJECT} \
-            --zone=${COMPUTE_ZONE} -- -D 1080 -N
-        ```
-    - Run Chrome and connect through the proxy:
-        ```shell
-        /usr/bin/google-chrome \
-            --proxy-server="socks5://localhost:1080" \
-            --user-data-dir="/tmp/${CLUSTER_NAME}-m" http://${CLUSTER_NAME}-m:8088
-        ```
+8. Open and run the notebook interactively. 
+The init script copies the notebook to `Local disk` > `notebooks` > `conditional_generation.ipynb` on the master node.
 
-
-7. To cleanup, you can delete the cluster:
+9. To cleanup, you can delete the cluster:
     ```shell
     gcloud dataproc clusters delete ${CLUSTER_NAME} --region=${COMPUTE_REGION}
+    ```
+    and the bucket:
+    ```shell
+    gcloud 
     ```

@@ -2,6 +2,12 @@
 
 Example notebooks for the [predict_batch_udf](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.functions.predict_batch_udf.html#pyspark.ml.functions.predict_batch_udf) function introduced in Spark 3.4.
 
+## Contents:
+- [Overview](#overview)
+- [Running Locally](#running-the-notebooks)
+- [Running on Cloud](#running-on-cloud-environments)
+- [Triton Inference Server](#triton-inference-server)
+
 ## Overview
 
 This directory contains notebooks for each DL framework (based on their own published examples).  The goal is to demonstrate how models trained and saved on single-node machines can be easily used for parallel inferencing on Spark clusters.
@@ -96,10 +102,13 @@ ${SPARK_HOME}/bin/pyspark --master ${MASTER} \
 ${SPARK_HOME}/sbin/stop-worker.sh; ${SPARK_HOME}/sbin/stop-master.sh
 ```
 
+## Running on cloud environments
+
+We also provide instructions to run the notebooks on CSP Spark environments.  
+See the instructions for [Databricks](databricks/README.md) and [GCP Dataproc](dataproc/README.md) respectively. 
+
 ## Triton Inference Server
 
 The example notebooks also demonstrate integration with [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), an open-source, GPU-accelerated serving solution for DL.
 
-**Note**: Some examples may require special configuration of server as highlighted in the notebooks.
-
-**Note**: for demonstration purposes, the Triton Inference Server integrations just launch the server in a docker container on the local host, so you will need to [install docker](https://docs.docker.com/engine/install/) on your local host.  Most real-world deployments will likely be hosted on remote machines.
+**Note for local deployment**: Some examples may require special configuration of server as highlighted in the notebooks. The Triton Inference Server integrations just launch the server in a docker container on the local host, so you will need to [install docker](https://docs.docker.com/engine/install/) on your local host. 
