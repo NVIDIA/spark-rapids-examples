@@ -53,5 +53,5 @@ Also demonstrates integration with [Triton Inference Server](https://developer.n
     OR, you can find the links on the GCP web UI:
     - Go to `Dataproc` > `Clusters` > `<cluster_name>` > `Web Interfaces` > `Jupyter`
 
-8. Open and run the notebook interactively with the Python 3 kernel. 
+8. Open and run the notebook interactively with the Python 3 kernel.  
 The init script copies the notebook to `Local Disk` > `notebooks` > `conditional_generation.ipynb` on the master node.
