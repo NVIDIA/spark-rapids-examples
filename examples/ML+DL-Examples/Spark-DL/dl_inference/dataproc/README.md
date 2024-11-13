@@ -7,9 +7,7 @@ The examples also demonstrate integration with [Triton Inference Server](https:/
 
 1. Install the latest [gcloud-cli](https://cloud.google.com/sdk/docs/install) and configure for your workspace.
 
-2. `cd` into the [setup directory](setup).
-
-3. Configure the following settings:
+2. Configure the following settings:
     ```shell
     export PROJECT=<your_project>
     export DATAPROC_REGION=<your_dataproc_region>
@@ -22,18 +20,19 @@ The examples also demonstrate integration with [Triton Inference Server](https:/
     gcloud config set compute/zone ${COMPUTE_ZONE}
     ```
 
-4. Create a GCS bucket if you don't already have one:
+3. Create a GCS bucket if you don't already have one:
     ```shell
     export GCS_BUCKET=<your_gcs_bucket_name>
 
     gcloud storage buckets create gs://${GCS_BUCKET}
     ```
 
+4. `cd` into the [setup directory](setup).
+
 5. Run the setup script, which will copy files to your GCS bucket: 
     ```shell
     export SPARK_DL_HOME=${GCS_BUCKET}/spark-dl
-    
-    cd setup
+
     chmod +x setup.sh
     ./setup.sh
     ```

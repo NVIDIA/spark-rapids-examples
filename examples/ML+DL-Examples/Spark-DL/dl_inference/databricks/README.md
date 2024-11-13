@@ -15,14 +15,15 @@ Includes integration with [Triton Inference Server](https://developer.nvidia.com
     export REQ_PATH=<dbfs:/path/to/requirements.txt>
     ```
 
-3. Run the setup script, which will copy files to Databricks: 
+3. `cd` into the [setup directory](setup).
+
+4. Run the setup script, which will copy files to Databricks: 
     ```shell
-    cd setup
     chmod +x setup.sh
     ./setup.sh
     ```
 
-4. Launch the cluster with the provided script (defaults to 8 node GPU cluster):
+5. Launch the cluster with the provided script (defaults to 8 node GPU cluster):
     ```shell
     chmod +x start_cluster.sh
     ./start_cluster.sh
@@ -37,4 +38,4 @@ Includes integration with [Triton Inference Server](https://developer.nvidia.com
             - ensure that `spark.executor.resource.gpu.amount` = 1
     - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
 
-5. Navigate to the notebook in your Databricks workspace. Attach the notebook to the cluster and run the cells interactively.
+6. Navigate to the notebook in your Databricks workspace. Attach the notebook to the cluster and run the cells interactively.
