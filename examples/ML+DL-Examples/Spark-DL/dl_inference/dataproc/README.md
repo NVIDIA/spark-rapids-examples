@@ -54,4 +54,19 @@ Also demonstrates integration with [Triton Inference Server](https://developer.n
     - Go to `Dataproc` > `Clusters` > `<cluster_name>` > `Web Interfaces` > `Jupyter`
 
 8. Open and run the notebook interactively with the Python 3 kernel.  
-The init script copies the notebook to `Local Disk` > `notebooks` > `conditional_generation.ipynb` on the master node.
+The init script copies the notebook to `Local Disk` > `notebooks` > `conditional_generation.ipynb` on the master node.  
+
+## Inference with PyTriton 
+
+![Spark PyTriton Overview](../images/spark-pytriton.png)
+
+The diagram above demonstrates how Spark distributes inference tasks to run on the [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), with PyTriton handling request/response communication with the server.  
+
+The process looks like this:
+- Distribute a PyTriton task across the Spark cluster, instructing each node to launch a Triton server process.
+- Define a Triton inference function, which binds to the local server on a given node and sends inference requests.
+- Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
+- Finally, distribute a shutdown signal to terminate the Triton server processes on each node.
+
+Here is the high-level design of PyTriton (from [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/)):
+![PyTriton Design](../images/pytriton.svg)

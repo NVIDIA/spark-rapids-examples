@@ -38,4 +38,20 @@ Also demonstrates integration with [Triton Inference Server](https://developer.n
             - ensure that `spark.executor.resource.gpu.amount` = 1
     - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
 
-6. Navigate to the notebook in your Databricks workspace. Attach the notebook to the cluster and run the cells interactively.
+6. Navigate to the notebook in your Databricks workspace. Attach the notebook to the cluster and run the cells interactively.  
+
+## Inference with PyTriton 
+
+![Spark PyTriton Overview](../images/spark-pytriton.png)
+
+The diagram above demonstrates how Spark distributes inference tasks to run on the [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), with PyTriton handling request/response communication with the server.  
+
+The process looks like this:
+- Distribute a PyTriton task across the Spark cluster, instructing each node to launch a Triton server process.
+    - Use stage-level scheduling to ensure each node is assigned a single startup task.
+- Define a Triton inference function, which contains a client that binds to the local server on a given node and sends inference requests.
+- Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
+- Finally, distribute a shutdown signal to terminate the Triton server processes on each node.
+
+Here is the high-level design of PyTriton (from [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/)):
+![PyTriton Design](../images/pytriton.svg){width=800}
