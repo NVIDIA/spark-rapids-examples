@@ -44,15 +44,18 @@ We provide two implementations with differences in how data is passed to workers
 - Make sure your [Databricks CLI]((https://docs.databricks.com/en/dev-tools/cli/tutorial.html)) is configured for your Databricks workspace.
 - Copy the desired Python script into your Databricks workspace, for example:
     ```shell
-    databricks workspace import /path/to/directory/in/workspace --format AUTO --file sparkrapids-xgboost-read-per-worker.py
+    databricks workspace import /path/to/directory/in/workspace  \
+        --format AUTO --file sparkrapids-xgboost-read-per-worker.py
     ```
 - Copy the corresponding init script ```databricks/init_optuna.sh``` or ```databricks/init_optuna_xgboost.sh```, for example:
     ```shell
-    databricks workspace import /path/to/directory/in/workspace --format AUTO --file databricks/init_optuna_xgboost.sh
+    databricks workspace import /path/to/directory/in/workspace  \
+        --format AUTO --file databricks/init_optuna_xgboost.sh
     ```
 - (For XGBOOST example): Upload the [Wine Qualities](https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv) dataset via the Databricks CLI:
     ```shell
-    wget https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv -O winequality-red.csv
+    wget https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv  \
+        -O winequality-red.csv
     databricks fs mkdir dbfs:/FileStore/datasets/
     databricks fs cp winequality-red.csv dbfs:/FileStore/datasets/winequality-red.csv
      ```
@@ -155,11 +158,12 @@ try the command:
 
 ### Setup Optuna Python environment
 
+See the [RAPIDS docs](https://docs.rapids.ai/install/#get-rapids) for version selection.
 ``` shell
 sudo apt install libmysqlclient-dev
 
 conda create -n optuna-spark -c rapidsai -c conda-forge -c nvidia  \
-    rapids=24.08 python=3.10 'cuda-version>=12.0,<=12.5' # see https://docs.rapids.ai/install/#get-rapids for version selection
+    rapids=24.08 python=3.10 'cuda-version>=12.0,<=12.5'
 conda activate optuna-spark
 pip install mysqlclient
 pip install optuna joblib joblibspark
@@ -174,7 +178,7 @@ mysql -u optuna_user -p -e "CREATE DATABASE IF NOT EXISTS optuna"
 ```
 
 Troubleshooting:  
-> If you encounter   
+> If you encounter  
 `ImportError: ... GLIBCXX_3.4.32' not found`,  
 you can run the following to override Conda to use your system's `libstdc++.so.6`:  
 `export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6`
@@ -190,7 +194,8 @@ After packing the optuna runtime environment, configure your standalone cluster 
 This example just creates local cluster with a single GPU worker:
 ```shell
 export SPARK_HOME=/path/to/spark
-export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 -Dspark.worker.resource.gpu.discoveryScript=$SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
+export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1  \
+    -Dspark.worker.resource.gpu.discoveryScript=$SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
 export MASTER=spark://$(hostname):7077; export SPARK_WORKER_INSTANCES=1; export CORES_PER_WORKER=8
 
 ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORES_PER_WORKER} -m 16G ${MASTER}
@@ -209,7 +214,8 @@ If desired, modify the run scripts to customize the Spark config and the script 
 
 Create and run study:
 ```shell
-optuna create-study --study-name "optuna-spark" --storage "mysql://optuna_user:optuna_password@localhost/optuna"
+optuna create-study --study-name "optuna-spark"  \
+    --storage "mysql://optuna_user:optuna_password@localhost/optuna"
 export PYSPARK_DRIVER_PYTHON=/path/to/anaconda3/envs/optuna-spark/bin/python
 cd standalone
 chmod +x run-optuna-spark.sh
@@ -220,7 +226,8 @@ chmod +x run-optuna-spark.sh
 
 Download the dataset:
 ```shell
-wget https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv -O /path/to/winequality-red.csv
+wget https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv  \
+    -O /path/to/winequality-red.csv
 export FILEPATH=/path/to/winequality-red.csv
 ```
 
@@ -231,7 +238,8 @@ export RAPIDS_JAR=/path/to/rapids-4-spark_2.12-24.08.1.jar
 
 Create and run study:
 ``` shell
-optuna create-study --study-name "optuna-spark-xgboost" --storage "mysql://optuna_user:optuna_password@localhost/optuna"
+optuna create-study --study-name "optuna-spark-xgboost"  \
+    --storage "mysql://optuna_user:optuna_password@localhost/optuna"
 export PYSPARK_DRIVER_PYTHON=/path/to/anaconda3/envs/optuna-spark/bin/python
 cd standalone
 chmod +x run-optuna-spark-xgboost.sh
