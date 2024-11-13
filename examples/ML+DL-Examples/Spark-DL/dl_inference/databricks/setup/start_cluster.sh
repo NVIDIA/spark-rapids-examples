@@ -7,7 +7,7 @@ if [[ -z ${INIT_PATH} ]]; then
     exit 1
 fi
 
-databricks clusters create --json <<EOF
+json_config=$(cat <<EOF
 {
     "cluster_name": "spark-dl-inference",
     "spark_version": "13.3.x-gpu-ml-scala2.12",
@@ -56,3 +56,6 @@ databricks clusters create --json <<EOF
     "num_workers": 8
 }
 EOF
+)
+
+databricks clusters create --json "$json_config"
