@@ -37,7 +37,7 @@ Also demonstrates integration with [Triton Inference Server](https://developer.n
     ./setup.sh
     ```
 
-6. Launch the cluster (default to 2 node GPU cluster):
+6. Launch the cluster (defaults to 2 node GPU cluster):
     ```shell
     chmod +x start_cluster.sh
     ./start_cluster.sh
@@ -53,8 +53,8 @@ Also demonstrates integration with [Triton Inference Server](https://developer.n
     OR, you can find the links on the GCP web UI:
     - Go to `Dataproc` > `Clusters` > `<cluster_name>` > `Web Interfaces` > `Jupyter`
 
-8. Open and run the notebook interactively. 
-The init script copies the notebook to `Local disk` > `notebooks` > `conditional_generation.ipynb` on the master node.
+8. Open and run the notebook interactively with the Python 3 kernel. 
+The init script copies the notebook to `Local Disk` > `notebooks` > `conditional_generation.ipynb` on the master node.
 
 9. To cleanup, you can delete the cluster:
     ```shell

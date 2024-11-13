@@ -32,4 +32,4 @@ pip install --upgrade --force-reinstall -r requirements.txt
 
 gcloud storage cp gs://${SPARK_DL_HOME}/conditional_generation.ipynb notebooks/conditional_generation.ipynb
 
-sudo chmod -R a+rw /home
+sudo chmod -R a+rw /home/
