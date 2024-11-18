@@ -218,8 +218,8 @@ optuna create-study --study-name "optuna-spark"  \
     --storage "mysql://optuna_user:optuna_password@localhost/optuna"
 export PYSPARK_DRIVER_PYTHON=/path/to/anaconda3/envs/optuna-spark/bin/python
 cd standalone
-chmod +x run-optuna-spark.sh
-./run-optuna-spark.sh
+chmod +x run-joblibspark-simple.sh
+./run-joblibspark-simple.sh
 ```
 
 **Run the XGBoost demo of Optuna on Spark:**
@@ -242,8 +242,8 @@ optuna create-study --study-name "optuna-spark-xgboost"  \
     --storage "mysql://optuna_user:optuna_password@localhost/optuna"
 export PYSPARK_DRIVER_PYTHON=/path/to/anaconda3/envs/optuna-spark/bin/python
 cd standalone
-chmod +x run-optuna-spark-xgboost.sh
-./run-optuna-spark-xgboost.sh
+chmod +x run-joblibspark-xgboost.sh
+./run-joblibspark-xgboost.sh
 ```
 
 ## How does it work?
