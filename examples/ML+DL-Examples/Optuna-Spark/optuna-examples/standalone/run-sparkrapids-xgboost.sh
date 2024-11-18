@@ -1,5 +1,10 @@
 # Copyright (c) 2024, NVIDIA CORPORATION.
 
+if [[ -z ${SCRIPT} ]]; then
+    echo "Please select the implementation with: export SCRIPT=sparkrapids-xgboost-<implementation>.py"
+    exit 1
+fi
+
 $SPARK_HOME/bin/spark-submit \
   --master spark://$(hostname):7077 \
   --conf spark.executor.cores=8 \
@@ -33,7 +38,7 @@ $SPARK_HOME/bin/spark-submit \
   --conf spark.sql.execution.arrow.maxRecordsPerBatch=20000 \
   --conf spark.rapids.sql.explain=NONE \
   --archives ../optuna-env.tar.gz#environment \
-  ../sparkrapids-xgboost-repartition.py \
+  ../${SCRIPT} \
     --filepath $FILEPATH \
     --tasks 4 \
     --localhost \
