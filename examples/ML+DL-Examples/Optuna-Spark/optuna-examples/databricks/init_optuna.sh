@@ -5,6 +5,9 @@ set -x # for debugging
 if [[ $DB_IS_DRIVER = "TRUE" ]]; then
     # setup database for optuna on driver
 
+    sudo apt-get purge mysql-server
+    sudo apt-get autoremove && sudo apt-get autoclean
+
     # install mysql server
     sudo apt-get update 
     sudo apt-get install -y mysql-server
