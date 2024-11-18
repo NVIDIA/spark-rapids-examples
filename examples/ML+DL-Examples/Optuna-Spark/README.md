@@ -231,11 +231,6 @@ wget https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/wine
 export FILEPATH=/path/to/winequality-red.csv
 ```
 
-For `sparkrapids-xgboost` examples, download the [Spark-RAPIDS plugin](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.08.1/rapids-4-spark_2.12-24.08.1.jar).
-```shell
-export RAPIDS_JAR=/path/to/rapids-4-spark_2.12-24.08.1.jar
-```
-
 Create and run study:
 ``` shell
 optuna create-study --study-name "optuna-spark-xgboost"  \
@@ -245,6 +240,21 @@ cd standalone
 chmod +x run-joblibspark-xgboost.sh
 ./run-joblibspark-xgboost.sh
 ```
+
+For `sparkrapids-xgboost` examples, download the [Spark-RAPIDS plugin](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.08.1/rapids-4-spark_2.12-24.08.1.jar) and select the implementation before running:
+```shell
+SPARK_RAPIDS_VERSION=24.08.1
+curl -L https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/${SPARK_RAPIDS_VERSION}/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}-cuda11.jar -o \
+    rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}.jar
+export RAPIDS_JAR=rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}.jar
+
+cd standalone
+export SCRIPT=sparkrapids-xgboost-read-per-worker.py
+chmod +x run-sparkrapids-xgboost.sh
+./run-sparkrapids-xgboost.sh
+```
+
+
 
 ## How does it work?
 
