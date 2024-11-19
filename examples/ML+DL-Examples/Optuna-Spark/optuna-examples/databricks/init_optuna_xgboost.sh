@@ -5,12 +5,20 @@ set -x # for debugging
 if [[ $DB_IS_DRIVER = "TRUE" ]]; then
     # setup database for optuna on driver
 
-    sudo apt-get purge mysql-server
-    sudo apt-get autoremove && sudo apt-get autoclean
-
     # install mysql server
     sudo apt-get update 
     sudo apt-get install -y mysql-server
+
+    if [[ ! -f "/etc/mysql/mysql.conf.d/mysqld.cnf" ]]; then
+        sudo apt-get remove --purge mysql\*
+        sudo apt-get update
+        sudo apt-get install -y mysql-server
+    fi
+
+    if [[ ! -f "/etc/mysql/mysql.conf.d/mysqld.cnf" ]]; then
+        echo "ERROR: MYSQL installation failed"
+        exit 1
+    fi
 
     # configure mysql
     BIND_ADDRESS=$DB_DRIVER_IP
@@ -29,9 +37,9 @@ if [[ $DB_IS_DRIVER = "TRUE" ]]; then
 fi
 
 # rapids import
-RAPIDS_VERSION=24.8.0
-SPARK_RAPIDS_VERSION=24.06.1
-curl -L https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/${SPARK_RAPIDS_VERSION}/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}-cuda11.jar -o \
+RAPIDS_VERSION=24.10.0
+SPARK_RAPIDS_VERSION=24.10.1
+curl -L https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/${SPARK_RAPIDS_VERSION}/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}.jar -o \
     /databricks/jars/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}.jar
 
 if [[ $DB_IS_DRIVER != "TRUE" ]]; then
@@ -52,6 +60,8 @@ if [[ $DB_IS_DRIVER != "TRUE" ]]; then
 fi
 
 # setup python environment
+sudo apt-get update
+sudo apt-get install pkg-config
 sudo apt-get install -y libmysqlclient-dev
 sudo /databricks/python3/bin/pip3 install --upgrade pip
 sudo /databricks/python3/bin/pip3 install mysqlclient xgboost
