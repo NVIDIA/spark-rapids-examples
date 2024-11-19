@@ -1,5 +1,10 @@
 # Copyright (c) 2024, NVIDIA CORPORATION.
 
+if [[ -z $SPARK_HOME ]]; then
+  echo "Please export SPARK_HOME to the Spark path"
+  exit 1
+fi
+
 if [[ -z ${SCRIPT} ]]; then
     echo "Please select the implementation with: export SCRIPT=sparkrapids-xgboost-<implementation>.py"
     exit 1
