@@ -133,7 +133,7 @@ def task_udf(pdf_iter: Iterable[pd.DataFrame],
             )
         return int(resources["gpu"].addresses[0].strip()) # Return the first GPU ID for multi-GPU setups.
 
-    tc = TaskContext().get()
+    tc = TaskContext.get()
     gpu_id = get_gpu_id(tc)
 
     if filepath.startswith("/dbfs/"):
