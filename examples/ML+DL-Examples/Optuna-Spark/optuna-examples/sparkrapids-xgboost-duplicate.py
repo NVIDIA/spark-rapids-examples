@@ -154,12 +154,12 @@ def task_udf(pdf_iter: Iterable[pd.DataFrame],
     Xy_train_qdm = xgb.QuantileDMatrix(X_train, y_train) # Precompute Quantile DMatrix to avoid repeated quantization every trial.
 
     def objective(trial):
-        params = ({
+        params = {
             "objective": "reg:squarederror",
             "verbosity": 0,
-            "tree_method": "hist",
+            "tree_method": "gpu_hist",
             "device": f"cuda:{gpu_id}",
-        })
+        }
         params.update(hyperparams.to_dict(trial))
 
         if "max_bins" in params:
