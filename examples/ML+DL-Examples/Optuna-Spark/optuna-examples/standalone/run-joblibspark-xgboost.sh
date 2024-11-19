@@ -1,5 +1,10 @@
 # Copyright (c) 2024, NVIDIA CORPORATION.
 
+if [[ -z $FILEPATH ]]; then
+  echo "Please export FILEPATH to the path of the dataset"
+  exit 1
+fi
+
 $SPARK_HOME/bin/spark-submit \
   --master spark://$(hostname):7077 \
   --conf spark.executor.cores=8 \
