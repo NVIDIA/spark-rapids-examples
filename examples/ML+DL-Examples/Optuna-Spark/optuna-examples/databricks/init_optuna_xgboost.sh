@@ -1,18 +1,21 @@
 #!/bin/bash
 # Copyright (c) 2024, NVIDIA CORPORATION.
 
-set -x # for debugging
+set -x
+
+sudo rm -r /var/lib/apt/lists/*
+sudo apt clean && sudo apt update --fix-missing -y
+
 if [[ $DB_IS_DRIVER = "TRUE" ]]; then
     # setup database for optuna on driver
 
     # install mysql server
-    sudo apt-get update 
-    sudo apt-get install -y mysql-server
+    sudo apt install -y mysql-server
 
     if [[ ! -f "/etc/mysql/mysql.conf.d/mysqld.cnf" ]]; then
-        sudo apt-get remove --purge mysql\*
-        sudo apt-get update
-        sudo apt-get install -y mysql-server
+        sudo apt remove --purge mysql\*
+        sudo apt clean && sudo apt update --fix-missing -y
+        sudo apt install -y mysql-server
     fi
 
     if [[ ! -f "/etc/mysql/mysql.conf.d/mysqld.cnf" ]]; then
@@ -35,6 +38,7 @@ if [[ $DB_IS_DRIVER = "TRUE" ]]; then
         GRANT ALL PRIVILEGES ON *.* TO '$OPTUNA_USER'@'%' WITH GRANT OPTION;
         FLUSH PRIVILEGES;"  
 fi
+
 
 # rapids import
 RAPIDS_VERSION=24.10.0
@@ -60,13 +64,12 @@ if [[ $DB_IS_DRIVER != "TRUE" ]]; then
 fi
 
 # setup python environment
-sudo apt-get update
-sudo apt-get install pkg-config
-sudo apt-get install -y libmysqlclient-dev
+sudo apt clean && sudo apt update --fix-missing -y
+sudo apt install pkg-config
+sudo apt install -y libmysqlclient-dev
 sudo /databricks/python3/bin/pip3 install --upgrade pip
 sudo /databricks/python3/bin/pip3 install mysqlclient xgboost
 sudo /databricks/python3/bin/pip3 install optuna joblib joblibspark
-
 
 if [[ $DB_IS_DRIVER = "TRUE" ]]; then
     # create optuna database and study
