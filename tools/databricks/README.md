@@ -1,8 +1,7 @@
-# Databricks Tools Demo Notebooks
+# Databricks Qualification/Profiling Quick Start Notebooks
 
 The RAPIDS Accelerator for Apache Spark includes two key tools for understanding the benefits of
-GPU acceleration as well as analyzing GPU Spark jobs.  For customers on Databricks, the demo
-notebooks offer a simple interface for running the tools given a set of Spark event logs from
+GPU acceleration as well as analyzing GPU Spark jobs.  For customers on Databricks, the quick start notebooks offer a simple interface for running the tools given a set of Spark event logs from
 CPU (qualification) or GPU (profiling) application runs.
 
 To use a demo notebook, you can import the notebook in the Databricks Notebook UI via File->Import Notebook.
