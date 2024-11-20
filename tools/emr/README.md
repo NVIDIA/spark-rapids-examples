@@ -1,7 +1,7 @@
-# EMR Tools Demo Notebooks
+# EMR Qualification/Profiling Quick Start Notebooks
 
 The RAPIDS Accelerator for Apache Spark includes two key tools for understanding the benefits of
-GPU acceleration as well as analyzing GPU Spark jobs.  For customers on EMR, the demo
+GPU acceleration as well as analyzing GPU Spark jobs.  For customers on EMR, the quick start
 notebooks offer a simple interface for running the tools given a set of Spark event logs from
 CPU (qualification) or GPU (profiling) application runs.
 
