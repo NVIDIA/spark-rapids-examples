@@ -35,7 +35,7 @@ We provide the following example scripts:
 We provide two implementations with differences in how data is passed to workers (see [implementation notes](#implementation-notes)):
 
 - `sparkrapids-xgboost-read-per-worker.py`: Each worker reads the full dataset from a specified filepath (e.g., distributed file system).
-- `sparkrapids-xgboost-duplicate.py`: The driver reads the dataset from a specified filepath, and duplicates/repartitions it so that each node receives a copy. Avoids I/O.
+- `sparkrapids-xgboost-copy-and-map.py`: The driver reads the dataset from a specified filepath, then duplicates and repartitions it so that each worker task is mapped onto a copy of the dataset. Avoids I/O.
 
 ## Running Optuna + Spark on Databricks
 
@@ -241,7 +241,7 @@ chmod +x run-joblibspark-xgboost.sh
 ./run-joblibspark-xgboost.sh
 ```
 
-For `sparkrapids-xgboost` examples, download the [Spark-RAPIDS plugin](https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/24.08.1/rapids-4-spark_2.12-24.08.1.jar) and select the implementation before running:
+For `sparkrapids-xgboost` examples, download the [Spark-RAPIDS plugin](https://nvidia.github.io/spark-rapids/docs/download.html) and select which implementation before running:
 ```shell
 SPARK_RAPIDS_VERSION=24.08.1
 curl -L https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/${SPARK_RAPIDS_VERSION}/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}-cuda11.jar -o \
@@ -249,7 +249,7 @@ curl -L https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/${SPARK_RA
 export RAPIDS_JAR=rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}.jar
 
 cd standalone
-export SCRIPT=sparkrapids-xgboost-read-per-worker.py
+export SCRIPT=sparkrapids-xgboost-<implementation>.py
 chmod +x run-sparkrapids-xgboost.sh
 ./run-sparkrapids-xgboost.sh
 ```
@@ -274,9 +274,9 @@ Application parallelism with JoblibSpark:
 
 ###### Data passing in sparkrapids-xgboost:
 Since each worker requires the full dataset to perform hyperparameter tuning, there are two strategies to enable this:
-  - In joblibspark-simple.py, joblibspark-xgboost.py, sparkrapids-xgboost-read-per-worker.py: **each worker reads the dataset** from the filepath (in practice, from a distributed file system) once the task has begun.
-  - In sparkrapids-xgboost-duplicate.py: the driver reads the dataset and **send copies of it to each worker** at task execution. In practice, this enables the code to be chained to other Dataframe operations (e.g. ETL stages) and avoids I/O. 
-    - To do this, we coalesce the input Dataframe to a single partition, and recursively self-union until we have the desired number of duplicates (i.e., the number of workers). Thus each partition will contain a duplciate, and the Optuna task can be mapped directly onto the partitions.
+  - In joblibspark-simple.py, joblibspark-xgboost.py, sparkrapids-xgboost-read-per-worker.py: **each worker reads the dataset** from the filepath once the task has begun. In practice, this requires the dataset to be written to a distributed file system accessible to all workers prior to tuning. 
+  - In sparkrapids-xgboost-copy-and-map.py: the driver reads the dataset and **creates a copy of the dataset for each worker**, then maps the tuning task onto each copy. In practice, this enables the code to be chained to other Dataframe operations (e.g. ETL stages) and avoids I/O, at the cost of memory overhead on the driver during duplication.
+    - To do this, we coalesce the input Dataframe to a single partition, and recursively self-union until we have the desired number of copies (number of workers). Thus each partition will contain a duplicate of the entire dataset, and the Optuna task can be mapped directly onto the partitions.
 
 
 ###### Misc:
