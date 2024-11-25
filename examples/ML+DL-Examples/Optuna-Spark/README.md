@@ -44,12 +44,12 @@ We provide two implementations with differences in how data is passed to workers
 - Make sure your [Databricks CLI]((https://docs.databricks.com/en/dev-tools/cli/tutorial.html)) is configured for your Databricks workspace.
 - Copy the desired Python script into your Databricks workspace, for example:
     ```shell
-    databricks workspace import /path/to/directory/in/workspace  \
+    databricks workspace import /path/in/workspace/to/sparkrapids-xgboost-read-per-worker.py  \
         --format AUTO --file sparkrapids-xgboost-read-per-worker.py
     ```
-- Copy the corresponding init script ```databricks/init_optuna.sh``` or ```databricks/init_optuna_xgboost.sh```, for example:
+- Copy the init script ```databricks/init_optuna_xgboost.sh```:
     ```shell
-    databricks workspace import /path/to/directory/in/workspace  \
+    databricks workspace import /path/in/workspace/to/init_optuna_xgboost.sh  \
         --format AUTO --file databricks/init_optuna_xgboost.sh
     ```
 - (For XGBOOST example): Upload the [Wine Qualities](https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv) dataset via the Databricks CLI:
@@ -62,10 +62,19 @@ We provide two implementations with differences in how data is passed to workers
 
 ### 2. Create cluster
 
+Run the cluster startup script, which is configured to create an 8 node GPU cluster:
+```shell
+export INIT_PATH=/path/in/workspace/to/init_optuna_xgboost.sh
+cd databricks
+chmod +x start_cluster.sh
+./start_cluster.sh
+```
+
+Or, create a cluster via the web UI:
 - Go to `Compute > Create compute` and set the desired cluster settings.    
 - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
 - Under `Advanced Options > Spark > Environment variables`, set `LIBCUDF_CUFILE_POLICY=OFF`. 
-- For XGBOOST examples: Make sure to use a GPU cluster and include task GPU resources.
+- Make sure to use a GPU cluster and include task GPU resources.
 
 The init script will install the required libraries on all nodes, including rapids/cuml for data operations on GPU. On the driver, it will setup the MySQL server backend and create an Optuna study referencing the server. 
 
