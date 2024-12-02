@@ -2,11 +2,12 @@
 
 Example notebooks for the [predict_batch_udf](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.functions.predict_batch_udf.html#pyspark.ml.functions.predict_batch_udf) function introduced in Spark 3.4.
 
+The example notebooks also demonstrate integration with [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), an open-source, GPU-accelerated serving solution for DL.
+
 ## Contents:
 - [Overview](#overview)
 - [Running Locally](#running-the-notebooks)
 - [Running on Cloud](#running-on-cloud-environments)
-- [Triton Inference Server](#triton-inference-server)
 
 ## Overview
 
@@ -59,7 +60,6 @@ If you want to run the notebooks yourself, please follow these instructions.
 - The notebooks require a GPU environment for the executors.  
 - Please create separate environments for PyTorch and Tensorflow examples as specified below. This will avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples will have a `_torch` or `_tf` suffix to specify the environment used.
 - The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but may require downgrading the TF version. 
-- For demonstration purposes, these examples just use a local Spark Standalone cluster with a single executor, but you should be able to run them on any distributed Spark cluster.
 
 #### Create environment
 
@@ -78,6 +78,7 @@ pip install -r tf_requirements.txt
 
 #### Launch Jupyter + Spark
 
+For demonstration, these examples just use a local Standalone cluster with a single executor, but you may run them on any distributed Spark cluster.
 ```
 # setup environment variables
 export SPARK_HOME=/path/to/spark
@@ -94,7 +95,6 @@ ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORE
 ${SPARK_HOME}/bin/pyspark --master ${MASTER} \
 --driver-memory 8G \
 --executor-memory 8G \
---conf spark.python.worker.reuse=True
 
 # BROWSE to localhost:8888 to view/run notebooks
 
@@ -106,9 +106,3 @@ ${SPARK_HOME}/sbin/stop-worker.sh; ${SPARK_HOME}/sbin/stop-master.sh
 
 We also provide instructions to run the notebooks on CSP Spark environments.  
 See the instructions for [Databricks](databricks/README.md) and [GCP Dataproc](dataproc/README.md) respectively. 
-
-## Triton Inference Server
-
-The example notebooks also demonstrate integration with [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), an open-source, GPU-accelerated serving solution for DL.
-
-**Note for local deployment**: Some examples may require special configuration of server as highlighted in the notebooks. The Triton Inference Server integrations just launch the server in a docker container on the local host, so you will need to [install docker](https://docs.docker.com/engine/install/) on your local host. 

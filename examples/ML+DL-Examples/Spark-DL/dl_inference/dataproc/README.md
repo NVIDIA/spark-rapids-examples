@@ -1,8 +1,5 @@
 # Spark DL Inference on Dataproc
 
-Distributed deep learning inference using the PySpark [predict_batch_udf](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.functions.predict_batch_udf.html#pyspark.ml.functions.predict_batch_udf) function on GCP Dataproc.  
-Also demonstrates integration with [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), an open-source, GPU-accelerated serving solution for DL. 
-
 ## Setup
 
 1. Install the latest [gcloud-cli](https://cloud.google.com/sdk/docs/install) and configure for your workspace.

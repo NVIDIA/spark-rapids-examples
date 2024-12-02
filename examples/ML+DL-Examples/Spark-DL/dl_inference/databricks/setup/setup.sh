@@ -20,5 +20,5 @@ sed -i "s|REQ_PATH|$NEW_REQ_PATH|" init_spark_dl.sh
 echo "**** copying init_spark_dl.sh to ${INIT_PATH} ****"
 databricks workspace import $INIT_PATH --format AUTO --file init_spark_dl.sh
 
-echo "**** copying conditional_generation.ipynb to ${NOTEBOOK_PATH} ****"
+echo "**** copying notebook to ${NOTEBOOK_PATH} ****"
 databricks workspace import $NOTEBOOK_PATH --format JUPYTER --file ../conditional_generation.ipynb
