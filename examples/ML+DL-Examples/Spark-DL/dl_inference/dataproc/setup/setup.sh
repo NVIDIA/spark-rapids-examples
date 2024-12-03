@@ -9,5 +9,3 @@ fi
 gcloud storage cp requirements.txt gs://${SPARK_DL_HOME}/requirements.txt
 gcloud storage cp init_spark_dl.sh gs://${SPARK_DL_HOME}/init_spark_dl.sh
 gcloud storage cp ../conditional_generation.ipynb gs://${SPARK_DL_HOME}/conditional_generation.ipynb
-curl -LO https://raw.githubusercontent.com/GoogleCloudDataproc/initialization-actions/master/spark-rapids/spark-rapids.sh
-gcloud storage cp spark-rapids.sh gs://${SPARK_DL_HOME}/spark-rapids.sh

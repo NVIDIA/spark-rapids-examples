@@ -10,7 +10,7 @@ jupyterlab
 pyspark>=3.4.0
 huggingface
 datasets
-docker
-tritonclient[grpc]
 transformers
 ipywidgets
+urllib3<2
+nvidia-pytriton

@@ -9,8 +9,6 @@ function get_metadata_attribute() {
   /usr/share/google/get_metadata_value "attributes/${attribute_name}" || echo -n "${default_value}"
 }
 
-RAPIDS_VERSION=$(get_metadata_attribute "rapids_version" "24.10.0")
-
 pip install --upgrade pip
 
 SPARK_DL_HOME=$(get_metadata_attribute spark-dl-home UNSET)

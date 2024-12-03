@@ -17,9 +17,8 @@ SPARK_DL_HOME=${SPARK_DL_HOME:-${GCS_BUCKET}/spark-dl}
 gpu_args=$(cat <<EOF
 --master-accelerator type=nvidia-tesla-t4,count=1
 --worker-accelerator type=nvidia-tesla-t4,count=1
---initialization-actions gs://${SPARK_DL_HOME}/spark-rapids.sh,gs://${SPARK_DL_HOME}/init_spark_dl.sh
+--initialization-actions gs://${SPARK_DL_HOME}/init_spark_dl.sh
 --metadata gpu-driver-provider="NVIDIA"
---metadata rapids_runtime=SPARK
 --metadata spark-dl-home=${SPARK_DL_HOME}
 EOF
 )

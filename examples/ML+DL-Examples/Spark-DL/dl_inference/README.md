@@ -59,7 +59,7 @@ If you want to run the notebooks yourself, please follow these instructions.
 **Notes**: 
 - The notebooks require a GPU environment for the executors.  
 - Please create separate environments for PyTorch and Tensorflow examples as specified below. This will avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples will have a `_torch` or `_tf` suffix to specify the environment used.
-- The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but may require downgrading the TF version. 
+- The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but as of writing it is not supported in TF==2.17.0. 
 
 #### Create environment
 
@@ -84,6 +84,7 @@ For demonstration, these examples just use a local Standalone cluster with a sin
 export SPARK_HOME=/path/to/spark
 export MASTER=spark://$(hostname):7077
 export SPARK_WORKER_INSTANCES=1
+export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 -Dspark.worker.resource.gpu.discoveryScript=$SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
 export CORES_PER_WORKER=8
 export PYSPARK_DRIVER_PYTHON=jupyter
 export PYSPARK_DRIVER_PYTHON_OPTS='lab'
@@ -95,11 +96,20 @@ ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORE
 ${SPARK_HOME}/bin/pyspark --master ${MASTER} \
 --driver-memory 8G \
 --executor-memory 8G \
+--conf spark.executor.resource.gpu.amount=1 \
+--conf spark.task.resource.gpu.amount=0.125 \
+--conf spark.executor.cores=8 \
+--conf spark.executorEnv.LD_LIBRARY_PATH="${CONDA_PREFIX}/lib:${CONDA_PREFIX}/lib/python3.11/site-packages/nvidia_pytriton.libs:$LD_LIBRARY_PATH"
 
 # BROWSE to localhost:8888 to view/run notebooks
 
 # stop spark standalone cluster
 ${SPARK_HOME}/sbin/stop-worker.sh; ${SPARK_HOME}/sbin/stop-master.sh
+```
+
+**Troubleshooting:** If you encounter issues starting the Triton server, you may need to link your libstdc++ file to the conda environment, e.g.:
+```shell
+ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ${CONDA_PREFIX}/lib/libstdc++.so.6
 ```
 
 ## Running on cloud environments
