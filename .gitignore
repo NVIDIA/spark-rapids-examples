@@ -7,6 +7,11 @@
 *.pyo
 *.swp
 *~
+*.log
+*.db
+*.json
+*.pt
+*.tar.gz
 .DS_Store
 .cache
 .classpath
@@ -22,3 +27,5 @@
 .settings
 hs_err*.log
 target
+/home/rishic/spark-rapids-examples/examples/ML+DL-Examples/Spark-DL/dl_inference/pytriton
+/home/rishic/spark-rapids-examples/examples/ML+DL-Examples/Spark-DL/dl_inference/huggingface/archive
