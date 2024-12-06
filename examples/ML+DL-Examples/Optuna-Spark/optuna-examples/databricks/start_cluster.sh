@@ -50,7 +50,7 @@ json_config=$(cat <<EOF
         }
     ],
     "runtime_engine": "STANDARD",
-    "num_workers": 4,
+    "num_workers": 4
 }
 EOF
 )

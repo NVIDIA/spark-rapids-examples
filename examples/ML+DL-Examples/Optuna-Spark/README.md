@@ -73,11 +73,11 @@ We provide **2 notebooks**, with differences in the backend/implementation. See 
 
 **Using Spark Dataframe:**
 
-- `optuna-dataframes.ipynb`: Uses Spark dataframes to distribute tasks on the cluster, with a MySQL storage backend. In the notebook, we demonstrate two implementations: 
+- `optuna-dataframe.ipynb`: Uses Spark dataframes to distribute tasks on the cluster, with a MySQL storage backend. In the notebook, we demonstrate two implementations: 
   - *worker-io*, where each worker reads the full dataset from a specified filepath (e.g., distributed file system)
   - *spark-io*, where Spark reads the dataset from a specified filepath, then duplicates and repartitions it so that each worker task is mapped onto a copy of the dataset
 
-These examples are accelerated on GPU with the [RAPIDS Accelerator](https://nvidia.github.io/spark-rapids/).
+  Dataframe operations are accelerated on GPU with the [Spark-RAPIDS Accelerator](https://nvidia.github.io/spark-rapids/).
 
 ## Running Optuna on Spark Standalone
 
@@ -181,13 +181,11 @@ The notebook contains instructions to attach to the standalone cluster.
 - Make sure your [Databricks CLI]((https://docs.databricks.com/en/dev-tools/cli/tutorial.html)) is configured for your Databricks workspace.
 - Copy the desired notebook into your Databricks workspace. For example:
     ```shell
-    databricks workspace import /Users/someone@example.com/optuna/optuna-joblibspark.ipynb --format JUPYTER \ 
-        --file optuna-joblibspark.ipynb
+    databricks workspace import /Users/someone@example.com/optuna/optuna-joblibspark.ipynb --format JUPYTER --file optuna-joblibspark.ipynb
     ```
 - Copy the init script ```databricks/init_optuna.sh```:
     ```shell
-    databricks workspace import /Users/someone@example.com/optuna/init_optuna.sh  \
-        --format AUTO --file databricks/init_optuna_xgboost.sh
+    databricks workspace import /Users/someone@example.com/optuna/init_optuna.sh --format AUTO --file databricks/init_optuna_xgboost.sh
     ```
 
 ### 2. Create Cluster
