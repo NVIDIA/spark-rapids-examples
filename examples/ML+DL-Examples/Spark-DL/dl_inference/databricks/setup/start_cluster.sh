@@ -15,7 +15,7 @@ json_config=$(cat <<EOF
         "spark.task.resource.gpu.amount": "0.125",
         "spark.executor.cores": "8",
         "spark.executor.resource.gpu.amount": "1",
-        "spark.sql.execution.arrow.pyspark.enabled": "true",
+        "spark.sql.execution.arrow.pyspark.enabled": "true"
     },
     "node_type_id": "Standard_NC8as_T4_v3",
     "driver_node_type_id": "Standard_NC8as_T4_v3",
