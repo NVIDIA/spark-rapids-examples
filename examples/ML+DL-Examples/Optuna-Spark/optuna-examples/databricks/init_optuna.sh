@@ -1,16 +1,27 @@
 #!/bin/bash
 # Copyright (c) 2024, NVIDIA CORPORATION.
 
-set -x # for debugging
+set -x
+
+sudo rm -r /var/lib/apt/lists/*
+sudo apt clean && sudo apt update --fix-missing -y
+
 if [[ $DB_IS_DRIVER = "TRUE" ]]; then
     # setup database for optuna on driver
 
-    sudo apt-get purge mysql-server
-    sudo apt-get autoremove && sudo apt-get autoclean
-
     # install mysql server
-    sudo apt-get update 
-    sudo apt-get install -y mysql-server
+    sudo apt install -y mysql-server
+
+    if [[ ! -f "/etc/mysql/mysql.conf.d/mysqld.cnf" ]]; then
+        sudo apt remove --purge mysql\*
+        sudo apt clean && sudo apt update --fix-missing -y
+        sudo apt install -y mysql-server
+    fi
+
+    if [[ ! -f "/etc/mysql/mysql.conf.d/mysqld.cnf" ]]; then
+        echo "ERROR: MYSQL installation failed"
+        exit 1
+    fi
 
     # configure mysql
     BIND_ADDRESS=$DB_DRIVER_IP
@@ -28,14 +39,33 @@ if [[ $DB_IS_DRIVER = "TRUE" ]]; then
         FLUSH PRIVILEGES;"  
 fi
 
+
+# rapids import
+SPARK_RAPIDS_VERSION=24.10.1
+curl -L https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/${SPARK_RAPIDS_VERSION}/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}.jar -o \
+    /databricks/jars/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}.jar
+
+# setup cuda: install cudatoolkit 11.8 via runfile approach
+wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
+sh cuda_11.8.0_520.61.05_linux.run --silent --toolkit
+# reset symlink and update library loading paths
+rm /usr/local/cuda
+ln -s /usr/local/cuda-11.8 /usr/local/cuda
+
+sudo /databricks/python3/bin/pip3 install \
+    --extra-index-url=https://pypi.nvidia.com \
+    "cudf-cu11==24.10.*" "cuml-cu11==24.10.*"
+
 # setup python environment
-sudo apt-get install -y libmysqlclient-dev
+sudo apt clean && sudo apt update --fix-missing -y
+sudo apt install pkg-config
+sudo apt install -y libmysqlclient-dev
 sudo /databricks/python3/bin/pip3 install --upgrade pip
-sudo /databricks/python3/bin/pip3 install mysqlclient optuna joblib joblibspark
+sudo /databricks/python3/bin/pip3 install mysqlclient xgboost
+sudo /databricks/python3/bin/pip3 install optuna joblib joblibspark
 
 if [[ $DB_IS_DRIVER = "TRUE" ]]; then
     # create optuna database and study
     sudo mysql -u $OPTUNA_USER -p$OPTUNA_PASSWORD -e "CREATE DATABASE IF NOT EXISTS optuna;"
-    /databricks/python3/bin/optuna create-study --study-name "optuna-spark" --storage "mysql://$OPTUNA_USER:$OPTUNA_PASSWORD@$DB_DRIVER_IP/optuna"
 fi
 set +x

@@ -13,7 +13,6 @@ json_config=$(cat <<EOF
     "spark_conf": {
         "spark.task.resource.gpu.amount": "1",
         "spark.executorEnv.PYTHONPATH": "/databricks/jars/rapids-4-spark_2.12-24.10.1.jar:/databricks/spark/python:/databricks/python3",
-        "spark.sql.execution.arrow.maxRecordsPerBatch": "10000",
         "spark.executor.cores": "8",
         "spark.rapids.memory.gpu.minAllocFraction": "0.0001",
         "spark.plugins": "com.nvidia.spark.SQLPlugin",
@@ -21,13 +20,12 @@ json_config=$(cat <<EOF
         "spark.sql.cache.serializer": "com.nvidia.spark.ParquetCachedBatchSerializer",
         "spark.rapids.memory.gpu.pooling.enabled": "false",
         "spark.executor.resource.gpu.amount": "1",
+        "spark.rapids.sql.explain": "NONE",
         "spark.sql.execution.sortBeforeRepartition": "false",
         "spark.rapids.sql.python.gpu.enabled": "true",
         "spark.rapids.memory.pinnedPool.size": "2G",
-        "spark.executor.instances": "8",
         "spark.task.maxFailures": "1",
         "spark.python.daemon.module": "rapids.daemon_databricks",
-        "spark.rapids.ml.uvm.enabled": "true",
         "spark.rapids.sql.batchSizeBytes": "512m",
         "spark.sql.adaptive.enabled": "false",
         "spark.rapids.sql.format.parquet.reader.type": "MULTITHREADED",
@@ -47,12 +45,12 @@ json_config=$(cat <<EOF
     "init_scripts": [
         {
             "workspace": {
-                "destination": "/Users/rishic@nvidia.com/init/init_optuna_xgboost_24.10.sh"
+                "destination": "${INIT_PATH}"
             }
         }
     ],
     "runtime_engine": "STANDARD",
-    "num_workers": 8,
+    "num_workers": 4,
 }
 EOF
 )
