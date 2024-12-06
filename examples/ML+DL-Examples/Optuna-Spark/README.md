@@ -31,7 +31,7 @@ At a high level, we optimize hyperparameters in three steps:
 2. In each `trial`, suggest hyperparameters based on previous results.
 3. Create a `study` object, which executes the optimization and stores the trial results.
 
-Local example: tuning XGBoost with Optuna (from [Optuna docs](https://optuna.org/#code_examples)):
+**Local example**: tuning XGBoost with Optuna (from [Optuna docs](https://optuna.org/#code_examples)):
 ```python
 import xgboost as xgb
 import optuna
@@ -59,7 +59,7 @@ study = optuna.create_study(direction='maximize')
 study.optimize(objective, n_trials=100)
 ```
 
-In the distributed setting, we take the following steps:
+To run **distributed tuning** on Spark, we take the following steps:
 1. Each worker receives a copy of the same dataset. 
 2. Each worker runs a subset of the trials in parallel.
 3. Workers write trial results and receive new hyperparameters using a shared database. 
@@ -85,7 +85,7 @@ We provide **2 notebooks**, with differences in the backend/implementation. See 
 
 Optuna offers an RDBStorage option which allows for the persistence of experiments across different machines and processes, thereby enabling Optuna tasks to be distributed.
 
-This guide will walk you through setting up MySQL as the backend for RDBStorage in Optuna.
+This section will walk you through setting up MySQL as the backend for RDBStorage in Optuna.
 
 We highly recommend installing MySQL on the driver node. This setup eliminates concerns regarding MySQL connectivity between worker nodes and the driver, simplifying the management of database connections.  
 (For Databricks, the installation is handled by the init script).
