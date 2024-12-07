@@ -17,6 +17,7 @@ These examples demonstrate distributed hyperparameter tuning with [Optuna](https
   - [Upload Init Script and Notebook](#1-upload-init-script-and-notebook)
   - [Create Cluster](#2-create-cluster)
   - [Run Notebook](#3-run-notebook)
+- [Benchmarks](#benchmarks)
 - [How Does it Work?](#how-does-it-work)
   - [Implementation Notes](#implementation-notes)
 
@@ -209,6 +210,13 @@ The init script will install the required libraries on all nodes, including RAPI
 ### 3. Run Notebook
 
 Locate the notebook in your workspace and click on `Connect` to attach it to the cluster. The notebook is ready to run!
+
+## Benchmarks
+
+The graph below shows running times comparing distributed (8 GPUs) vs. single GPU hyperparameter tuning with 100 trials on synthetic regression datasets.  
+At larger dataset regimes, we see close to ~10x speedup.
+
+![Databricks benchmarking results](images/runtimes.png)
 
 ## How does it work?
 
