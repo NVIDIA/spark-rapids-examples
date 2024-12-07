@@ -2,8 +2,6 @@
 
 # Distributed Hyperparameter Tuning
 
-## Optuna + Spark + GPUs
-
 These examples demonstrate distributed hyperparameter tuning with [Optuna](https://optuna.readthedocs.io/en/stable/index.html) on Apache Spark, accelerated with [RAPIDS](https://rapids.ai/) on GPU. We showcase how to set up and tune XGBoost on GPU, with deployment on Spark Standalone or Databricks clusters. 
 
 ## Contents:
@@ -69,14 +67,10 @@ To run **distributed tuning** on Spark, we take the following steps:
 
 We provide **2 notebooks**, with differences in the backend/implementation. See [implementation notes](#implementation-notes) for more details.
 
-**Using JoblibSpark backend:**
 - `optuna-joblibspark.ipynb`: Uses the [Joblib Spark backend](https://github.com/joblib/joblib-spark) to distribute tasks on the Spark cluster, with a MySQL storage backend. Builds on [this Databricks example](https://docs.databricks.com/en/machine-learning/automl-hyperparam-tuning/optuna.html).
-
-**Using Spark Dataframe:**
-
 - `optuna-dataframe.ipynb`: Uses Spark dataframes to distribute tasks on the cluster, with a MySQL storage backend. In the notebook, we demonstrate two implementations: 
-  - *worker-io*, where each worker reads the full dataset from a specified filepath (e.g., distributed file system)
-  - *spark-io*, where Spark reads the dataset from a specified filepath, then duplicates and repartitions it so that each worker task is mapped onto a copy of the dataset
+  - *Worker-I/O*, where each worker reads the full dataset from a specified filepath (e.g., distributed file system)
+  - *Spark-I/O*, where Spark reads the dataset from a specified filepath, then duplicates and repartitions it so that each worker task is mapped onto a copy of the dataset
 
   Dataframe operations are accelerated on GPU with the [Spark-RAPIDS Accelerator](https://nvidia.github.io/spark-rapids/).
 
@@ -202,10 +196,10 @@ chmod +x start_cluster.sh
 Or, create a cluster via the web UI:
 - Go to `Compute > Create compute` and set the desired cluster settings.    
 - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
-- Under `Advanced Options > Spark > Environment variables`, set `LIBCUDF_CUFILE_POLICY=OFF`*.
+- Under `Advanced Options > Spark > Environment variables`, set `LIBCUDF_CUFILE_POLICY=OFF`.
 - Make sure to use a GPU cluster and include task GPU resources.
 
-The init script will install the required libraries on all nodes, including RAPIDS for GPU-accelerated ETL. On the driver, it will setup the MySQL server backend. 
+The init script will install the required libraries on all nodes, including RAPIDS and the Spark-RAPIDS plugin for GPU-accelerated ETL. On the driver, it will setup the MySQL server backend. 
 
 ### 3. Run Notebook
 
@@ -214,7 +208,6 @@ Locate the notebook in your workspace and click on `Connect` to attach it to the
 ## Benchmarks
 
 The graph below shows running times comparing distributed (8 GPUs) vs. single GPU hyperparameter tuning with 100 trials on synthetic regression datasets.  
-At larger dataset regimes, we see close to ~10x speedup.
 
 ![Databricks benchmarking results](images/runtimes.png)
 
@@ -234,14 +227,14 @@ Application parallelism with JoblibSpark:
 
 ### Implementation Notes
 
-###### Data passing in optuna-dataframes:
-Since each worker requires the full dataset to perform hyperparameter tuning, there are two strategies to enable this:
-  - **Worker I/O**: *each worker reads the dataset* from the filepath once the task has begun. In practice, this requires the dataset to be written to a distributed file system accessible to all workers prior to tuning. The `optuna-joblibspark` notebook and part *2a* of the `optuna-dataframe` notebook demonstrate this.
-  - **Spark I/O**: Spark reads the dataset and **creates a copy of the dataset for each worker**, then maps the tuning task onto each copy. In practice, this enables the code to be chained to other Dataframe operations (e.g. ETL stages) without the intermediate step of writing to DBFS, at the cost of some overhead during duplication. Part *2b* of the `optuna-dataframe` notebook demonstrates this.
+###### Data I/O:
+Since each worker requires the full dataset to perform hyperparameter tuning, there are two strategies to get the data into worker memory:
+  - **Worker I/O**: *each worker reads the dataset* from the filepath once the task has begun. In practice, this requires the dataset to be written to a distributed file system accessible to all workers prior to tuning. The `optuna-joblibspark` notebook and part 2a of the `optuna-dataframe` notebook demonstrate this.
+  - **Spark I/O**: Spark reads the dataset and **creates a copy of the dataset for each worker**, then maps the tuning task onto each copy. In practice, this enables the code to be chained to other Dataframe operations (e.g. ETL stages) without the intermediate step of writing to DBFS, at the cost of some overhead during duplication. Part 2b of the `optuna-dataframe` notebook demonstrates this.
     - To do this, we coalesce the input Dataframe to a single partition, and recursively self-union until we have the desired number of copies (number of workers). Thus each partition will contain a duplicate of the entire dataset, and the Optuna task can be mapped directly onto the partitions.
 
 
 ###### Misc:
 - Please be aware that Optuna studies will continue where they left off from previous trials; delete and recreate the study if you would like to start anew.
 - Optuna in distributed mode is **non-deterministic** (see [this link](https://optuna.readthedocs.io/en/stable/faq.html#how-can-i-obtain-reproducible-optimization-results)), as trials are executed asynchronously by executors. Deterministic behavior can be achieved using Spark barriers to coordinate reads/writes to the database.
-- *Reading data with GPU using cuDF requires disabling [GPUDirect Storage](https://docs.rapids.ai/api/cudf/nightly/user_guide/io/io/#magnum-io-gpudirect-storage-integration), i.e., setting the environment variable `LIBCUDF_CUFILE_POLICY=OFF`, to be compatible with the Databricks file system. Without GDS, cuDF will use a CPU bounce buffer when reading files, but all parsing and decoding will still be accelerated by the GPU. 
+- Reading data with GPU using cuDF requires disabling [GPUDirect Storage](https://docs.rapids.ai/api/cudf/nightly/user_guide/io/io/#magnum-io-gpudirect-storage-integration), i.e., setting the environment variable `LIBCUDF_CUFILE_POLICY=OFF`, to be compatible with the Databricks file system. Without GDS, cuDF will use a CPU bounce buffer when reading files, but all parsing and decoding will still be accelerated by the GPU. 
