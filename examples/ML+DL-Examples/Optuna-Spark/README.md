@@ -61,16 +61,20 @@ study.optimize(objective, n_trials=100)
 To run **distributed tuning** on Spark, we take the following steps:
 1. Each worker receives a copy of the same dataset. 
 2. Each worker runs a subset of the trials in parallel.
-3. Workers write trial results and receive new hyperparameters using a shared database. 
+3. Workers write trial results and receive new hyperparameters using a shared MySQL database. 
 
 ### Examples
 
 We provide **2 notebooks**, with differences in the backend/implementation. See [implementation notes](#implementation-notes) for more details.
 
-- `optuna-joblibspark.ipynb`: Uses the [Joblib Spark backend](https://github.com/joblib/joblib-spark) to distribute tasks on the Spark cluster, with a MySQL storage backend. Builds on [this Databricks example](https://docs.databricks.com/en/machine-learning/automl-hyperparam-tuning/optuna.html). Implements *Worker-I/O*, where each worker reads the full dataset from a specified filepath (e.g., distributed file system).
-- `optuna-dataframe.ipynb`: Uses Spark dataframes to distribute tasks on the cluster, with a MySQL storage backend. Implements *Spark-I/O*, where Spark reads the dataset from a specified filepath, then duplicates and repartitions it so that each worker task is mapped onto a copy of the dataset.
-
-  Dataframe operations are accelerated on GPU with the [Spark-RAPIDS Accelerator](https://nvidia.github.io/spark-rapids/).
+- `optuna-joblibspark.ipynb`: 
+  - Uses the [Joblib Spark backend](https://github.com/joblib/joblib-spark) to distribute tasks on the Spark cluster.
+  - Implements *Worker-I/O*, where each worker reads the full dataset from a specified filepath (e.g., distributed file system).
+  - Builds on [this Databricks example](https://docs.databricks.com/en/machine-learning/automl-hyperparam-tuning/optuna.html). 
+- `optuna-dataframe.ipynb`: 
+  - Uses Spark dataframes to distribute tasks on the cluster. 
+  - Implements *Spark-I/O*, where Spark reads the dataset from a specified filepath, then duplicates and repartitions it so that each worker task is mapped onto a copy of the dataset.
+  - Dataframe operations are accelerated on GPU with the [Spark-RAPIDS Accelerator](https://nvidia.github.io/spark-rapids/).
 
 ## Running Optuna on Spark Standalone
 
