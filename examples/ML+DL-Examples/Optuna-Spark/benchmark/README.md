@@ -1,1 +1,0 @@
-![Databricks Azure benchmarking results](results/running_times.png)
