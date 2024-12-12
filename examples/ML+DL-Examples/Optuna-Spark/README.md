@@ -61,7 +61,7 @@ study.optimize(objective, n_trials=100)
 To run **distributed tuning** on Spark, we take the following steps:
 1. Each worker receives a copy of the same dataset. 
 2. Each worker runs a subset of the trials in parallel.
-3. Workers write trial results and receive new hyperparameters using a shared MySQL database. 
+3. Workers write trial results and receive new hyperparameters using a shared database. 
 
 ### Examples
 
@@ -240,3 +240,4 @@ Since each worker requires the full dataset to perform hyperparameter tuning, th
 - Please be aware that Optuna studies will continue where they left off from previous trials; delete and recreate the study if you would like to start anew.
 - Optuna in distributed mode is **non-deterministic** (see [this link](https://optuna.readthedocs.io/en/stable/faq.html#how-can-i-obtain-reproducible-optimization-results)), as trials are executed asynchronously by executors. Deterministic behavior can be achieved using Spark barriers to coordinate reads/writes to the database.
 - Reading data with GPU using cuDF requires disabling [GPUDirect Storage](https://docs.rapids.ai/api/cudf/nightly/user_guide/io/io/#magnum-io-gpudirect-storage-integration), i.e., setting the environment variable `LIBCUDF_CUFILE_POLICY=OFF`, to be compatible with the Databricks file system. Without GDS, cuDF will use a CPU bounce buffer when reading files, but all parsing and decoding will still be accelerated by the GPU. 
+- Note that the storage doesn’t store the state of the instance of samplers and pruners. To resume a study with a sampler whose seed argument is specified, the sampler can be pickled and returned to the driver alongside the results. 
