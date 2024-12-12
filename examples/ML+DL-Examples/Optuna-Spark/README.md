@@ -182,7 +182,7 @@ The notebook contains instructions to attach to the standalone cluster.
     ```
 - Copy the init script ```databricks/init_optuna.sh```:
     ```shell
-    databricks workspace import /Users/someone@example.com/optuna/init_optuna.sh --format AUTO --file databricks/init_optuna_xgboost.sh
+    databricks workspace import /Users/someone@example.com/optuna/init_optuna.sh --format AUTO --file databricks/init_optuna.sh
     ```
 
 ### 2. Create Cluster
