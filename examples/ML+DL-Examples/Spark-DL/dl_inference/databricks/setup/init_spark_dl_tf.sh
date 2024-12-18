@@ -12,6 +12,28 @@ ln -s /usr/local/cuda-11.8 /usr/local/cuda
 
 # install requirements
 sudo /databricks/python3/bin/pip3 install --upgrade pip
-sudo /databricks/python3/bin/pip3 install --upgrade --force-reinstall -r REQ_PATH
+
+cat <<EOF > temp_requirements.txt
+numpy
+pandas
+matplotlib
+portalocker
+pyarrow
+pydot
+scikit-learn
+huggingface
+datasets==3.0.1
+transformers
+ipykernel
+ipywidgets
+urllib3<2
+tensorflow[and-cuda]
+tf-keras
+nvidia-pytriton
+EOF
+
+sudo /databricks/python3/bin/pip3 install --upgrade --force-reinstall -r temp_requirements.txt
+
+rm temp_requirements.txt
 
 set +x

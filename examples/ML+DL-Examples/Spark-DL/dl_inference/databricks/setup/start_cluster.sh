@@ -2,20 +2,26 @@
 # Copyright (c) 2024, NVIDIA CORPORATION.
 
 # configure arguments
-if [[ -z ${INIT_PATH} ]]; then
-    echo "Please export INIT_PATH per README.md"
+if [[ -z ${INIT_DEST} ]]; then
+    echo "Please make sure INIT_DEST is exported per README.md"
+    exit 1
+fi
+
+if [[ -z ${CLUSTER_NAME} ]]; then
+    echo "Please make sure CLUSTER_NAME is exported per README.md"
     exit 1
 fi
 
 json_config=$(cat <<EOF
 {
-    "cluster_name": "spark-dl-inference",
+    "cluster_name": "${CLUSTER_NAME}",
     "spark_version": "13.3.x-gpu-ml-scala2.12",
     "spark_conf": {
-        "spark.task.resource.gpu.amount": "0.125",
-        "spark.executor.cores": "8",
         "spark.executor.resource.gpu.amount": "1",
-        "spark.sql.execution.arrow.pyspark.enabled": "true"
+        "spark.python.worker.reuse": "true",
+        "spark.task.resource.gpu.amount": "0.125",
+        "spark.sql.execution.arrow.pyspark.enabled": "true",
+        "spark.executor.cores": "8"
     },
     "node_type_id": "Standard_NC8as_T4_v3",
     "driver_node_type_id": "Standard_NC8as_T4_v3",
@@ -24,12 +30,12 @@ json_config=$(cat <<EOF
     "init_scripts": [
         {
             "workspace": {
-                "destination": "${INIT_PATH}"
+                "destination": "${INIT_DEST}"
             }
         }
     ],
     "runtime_engine": "STANDARD",
-    "num_workers": 2
+    "num_workers": 4
 }
 EOF
 )
