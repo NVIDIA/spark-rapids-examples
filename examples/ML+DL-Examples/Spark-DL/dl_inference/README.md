@@ -76,9 +76,9 @@ conda activate spark-dl-tf
 pip install -r tf_requirements.txt
 ```
 
-#### Launch Jupyter + Spark
+#### Start Cluster
 
-For demonstration, these examples just use a local Standalone cluster with a single executor, but you may run them on any distributed Spark cluster.
+For demonstration, these examples just use a local Standalone cluster with a single executor, but you may run them on any distributed Spark cluster. The notebooks have a cell to create a Spark Session attached to the cluster.
 ```
 # setup environment variables
 export SPARK_HOME=/path/to/spark
@@ -92,16 +92,7 @@ export PYSPARK_DRIVER_PYTHON_OPTS='lab'
 # start spark standalone cluster
 ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORES_PER_WORKER} -m 16G ${MASTER}
 
-# start jupyter with pyspark
-${SPARK_HOME}/bin/pyspark --master ${MASTER} \
---driver-memory 8G \
---executor-memory 8G \
---conf spark.executor.resource.gpu.amount=1 \
---conf spark.task.resource.gpu.amount=0.125 \
---conf spark.executor.cores=8 \
---conf spark.executorEnv.LD_LIBRARY_PATH="${CONDA_PREFIX}/lib:${CONDA_PREFIX}/lib/python3.11/site-packages/nvidia_pytriton.libs:$LD_LIBRARY_PATH"
-
-# BROWSE to localhost:8888 to view/run notebooks
+# Run notebooks...
 
 # stop spark standalone cluster
 ${SPARK_HOME}/sbin/stop-worker.sh; ${SPARK_HOME}/sbin/stop-master.sh
