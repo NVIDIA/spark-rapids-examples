@@ -25,6 +25,9 @@ json_config=$(cat <<EOF
     },
     "node_type_id": "Standard_NC8as_T4_v3",
     "driver_node_type_id": "Standard_NC8as_T4_v3",
+    "spark_env_vars": {
+        "TF_GPU_ALLOCATOR": "cuda_malloc_async"
+    },
     "autotermination_minutes": 60,
     "enable_elastic_disk": true,
     "init_scripts": [
