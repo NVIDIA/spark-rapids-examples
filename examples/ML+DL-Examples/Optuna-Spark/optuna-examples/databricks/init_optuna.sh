@@ -41,7 +41,7 @@ fi
 
 
 # rapids import
-SPARK_RAPIDS_VERSION=24.10.1
+SPARK_RAPIDS_VERSION=24.12.0
 curl -L https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/${SPARK_RAPIDS_VERSION}/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}.jar -o \
     /databricks/jars/rapids-4-spark_2.12-${SPARK_RAPIDS_VERSION}.jar
 
@@ -54,7 +54,7 @@ ln -s /usr/local/cuda-11.8 /usr/local/cuda
 
 sudo /databricks/python3/bin/pip3 install \
     --extra-index-url=https://pypi.nvidia.com \
-    "cudf-cu11==24.10.*" "cuml-cu11==24.10.*"
+    "cudf-cu11==24.12.*" "cuml-cu11==24.12.*"
 
 # setup python environment
 sudo apt clean && sudo apt update --fix-missing -y
