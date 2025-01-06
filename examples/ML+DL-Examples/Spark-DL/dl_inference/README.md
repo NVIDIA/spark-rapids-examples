@@ -76,6 +76,8 @@ conda activate spark-dl-tf
 pip install -r tf_requirements.txt
 ```
 
+**NOTE:** requirements.txt requires pyspark>=3.4.0. Make sure the installed PySpark version matches the your system's Spark installation.
+
 #### Start Cluster
 
 For demonstration, these examples just use a local Standalone cluster with a single executor, but you may run them on any distributed Spark cluster. The notebooks have a cell to create a Spark Session attached to the cluster.
