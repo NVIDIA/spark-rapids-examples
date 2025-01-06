@@ -15,7 +15,7 @@ fi
 json_config=$(cat <<EOF
 {
     "cluster_name": "${CLUSTER_NAME}",
-    "spark_version": "13.3.x-gpu-ml-scala2.12",
+    "spark_version": "15.4.x-gpu-ml-scala2.12",
     "spark_conf": {
         "spark.executor.resource.gpu.amount": "1",
         "spark.python.worker.reuse": "true",

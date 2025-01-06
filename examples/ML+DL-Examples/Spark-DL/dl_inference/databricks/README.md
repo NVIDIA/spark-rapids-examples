@@ -1,13 +1,11 @@
 # Spark DL Inference on Databricks
 
-TODO: fix instructions (Any of the example notebooks can be run on databricks... set the dest and src paths, set the right requirements, etc. )
-
 ## Setup
 
 1. Install latest [databricks-cli](https://docs.databricks.com/en/dev-tools/cli/tutorial.html) and configure for your workspace.
 
 2. Specify the path to the notebook and init script (torch or tf), and the destination filepaths on Databricks:
-    The notebook and init script will be imported to your workspace, and the requirements to DBFS. As an example for a torch notebook:
+    The notebook and init script will be imported to your workspace, and the requirements to DBFS. As an example for a **torch** notebook:
     ```shell
     export NOTEBOOK_SRC=/path/to/notebook_torch.ipynb
     export NOTEBOOK_DEST=/Users/someone@example.com/spark-dl/notebook_torch.ipynb
@@ -22,7 +20,7 @@ TODO: fix instructions (Any of the example notebooks can be run on databricks...
     databricks workspace import $NOTEBOOK_DEST --format JUPYTER --file $NOTEBOOK_SRC
     ```
 
-4. Launch the cluster with the provided script (defaults to 4 node GPU cluster):
+4. For Azure users: launch the cluster with the provided script (creates 4 Azure GPU nodes):
     ```shell
     export CLUSTER_NAME=spark-dl-inference-torch
     chmod +x start_cluster.sh
@@ -37,6 +35,7 @@ TODO: fix instructions (Any of the example notebooks can be run on databricks...
             - set a value for `spark.executor.cores`
             - ensure that `spark.executor.resource.gpu.amount` = 1
     - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
+    - For Tensorflow notebooks, we recommend setting the environment variable `TF_GPU_ALLOCATOR=cuda_malloc_async` (especially for Huggingface LLM models), which enables the CUDA driver to implicity release unused memory from the pool. 
 
 5. Navigate to the notebook in your Databricks workspace. Attach the notebook to the cluster and run the cells interactively.  
 
