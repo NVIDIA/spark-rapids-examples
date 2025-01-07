@@ -2,6 +2,8 @@
 
 ## Setup
 
+#### Setup GCloud CLI
+
 1. Install the latest [gcloud-cli](https://cloud.google.com/sdk/docs/install) and configure for your workspace.
 
 2. Configure the following settings:
@@ -16,6 +18,8 @@
     gcloud config set compute/region ${COMPUTE_REGION}
     gcloud config set compute/zone ${COMPUTE_ZONE}
     ```
+
+#### Copy files to GCS
 
 3. Create a GCS bucket if you don't already have one:
     ```shell
@@ -36,6 +40,8 @@
     gcloud storage cp ${INIT_SRC} gs://${SPARK_DL_HOME}/init_spark_dl_torch.sh
     gcloud storage cp ${NOTEBOOK_SRC} gs://${SPARK_DL_HOME}/conditional_generation.ipynb
     ```
+
+#### Start cluster and run
 
 6. Launch the cluster (defaults to 4 node GPU cluster):
     ```shell
