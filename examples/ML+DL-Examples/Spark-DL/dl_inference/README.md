@@ -7,10 +7,11 @@ These notebooks also demonstrate integration with [Triton Inference Server](http
 - [Overview](#overview)
 - [Running Locally](#running-the-notebooks)
 - [Running on Cloud](#running-on-cloud-environments)
+- [Integration with Triton Inference Server](#inference-with-triton)
 
 ## Overview
 
-This directory contains notebooks for several deep learning frameworks based on their own published examples.  They demonstrate how models trained and saved on single-node machines can easily be used for large-scale distributed inference on Spark clusters.
+These notebooks demonstrate how models trained and saved on single-worker machines can easily be used for large-scale distributed inference on Spark clusters. We have examples for several deep learning frameworks based on their own published examples. 
 
 For example, a basic model trained in TensorFlow and saved on disk as "mnist_model" can be used in Spark as follows:
 ```
@@ -73,33 +74,27 @@ pip install -r tf_requirements.txt
 #### Start Cluster
 
 For demonstration, these instructions just use a local Standalone cluster with a single executor, but they can be run on any distributed Spark cluster. For cloud environments, see [below](#running-on-cloud-environments).
+
 ```shell
-# setup environment variables
+# Replace with your Spark installation path
 export SPARK_HOME=/path/to/spark
-export MASTER=spark://$(hostname):7077
-export SPARK_WORKER_INSTANCES=1
-export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 -Dspark.worker.resource.gpu.discoveryScript=$SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
-export CORES_PER_WORKER=8
-export PYSPARK_DRIVER_PYTHON=jupyter
-export PYSPARK_DRIVER_PYTHON_OPTS='lab'
 ```
 
 ```shell
-# start spark standalone cluster
+# Configure and start cluster
+export MASTER=spark://$(hostname):7077
+export SPARK_WORKER_INSTANCES=1
+export CORES_PER_WORKER=8
+export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 -Dspark.worker.resource.gpu.discoveryScript=$SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
 ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORES_PER_WORKER} -m 16G ${MASTER}
 ```
 
-Run the notebook. The notebooks have a cell to connect to the standalone cluster and create a SparkSession.
-
-```shell
-# stop spark standalone cluster
-${SPARK_HOME}/sbin/stop-worker.sh; ${SPARK_HOME}/sbin/stop-master.sh
-```
+The notebooks are ready to run! The notebooks have a cell to connect to the standalone cluster and create a SparkSession.
 
 **Notes**: 
+- Please create separate environments for PyTorch and Tensorflow notebooks as specified above. This will avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples have a `_torch` or `_tf` suffix to specify the environment used.
 - `requirements.txt` installs pyspark>=3.4.0. Make sure the installed PySpark version matches the system's Spark installation.
 - The notebooks require a GPU environment for the executors.  
-- Please create separate environments for PyTorch and Tensorflow examples as specified above. This will avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples have a `_torch` or `_tf` suffix to specify the environment used.
 - The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but as of writing it is not supported in TF==2.17.0. 
 
 **Troubleshooting:** 
@@ -112,3 +107,21 @@ ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ${CONDA_PREFIX}/lib/libstdc++.so
 
 We also provide instructions to run the notebooks on CSP Spark environments.  
 See the instructions for [Databricks](databricks/README.md) and [GCP Dataproc](dataproc/README.md).
+
+## Inference with Triton
+
+The notebooks also demonstrate integration with the [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source serving platform for deep learning models, which includes many [features and performance optimizations](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html#triton-major-features) to streamline inference.  
+We use [PyTriton](https://github.com/triton-inference-server/pytriton), a Flask-like Python framework that handles communication with the Triton server.  
+
+<img src="images/spark-pytriton.png" alt="drawing" width="1000"/>
+
+The diagram above shows how Spark distributes inference tasks to run on the Triton Inference Server, with PyTriton handling request/response communication with the server. 
+
+The process looks like this:
+- Distribute a PyTriton task across the Spark cluster, instructing each worker to launch a Triton server process.
+    - We use stage-level scheduling to ensure there is a 1:1 mapping between workers and servers.
+- Define a Triton inference function, which contains a client that binds to the local server on a given worker and sends inference requests.
+- Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
+- Finally, distribute a shutdown signal to terminate the Triton server processes on each worker.
+
+For more information on how PyTriton works, see the [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/).

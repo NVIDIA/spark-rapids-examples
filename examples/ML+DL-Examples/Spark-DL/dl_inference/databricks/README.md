@@ -4,13 +4,13 @@
 
 1. Install latest [databricks-cli](https://docs.databricks.com/en/dev-tools/cli/tutorial.html) and configure for your workspace.
 
-2. Specify the path to the notebook and init script (torch or tf), and the destination filepaths on Databricks:
-    The notebook and init script will be imported to your workspace, and the requirements to DBFS. As an example for a **torch** notebook:
+2. Specify the path to the notebook and init script (_torch or _tf), and the destination filepaths on Databricks:
+    The notebook and init script will be imported to the **Workspace**. As an example for a PyTorch notebook:
     ```shell
     export NOTEBOOK_SRC=/path/to/notebook_torch.ipynb
     export NOTEBOOK_DEST=/Users/someone@example.com/spark-dl/notebook_torch.ipynb
 
-    export INIT_SRC=/path/to/init_spark_dl_torch.sh
+    export INIT_SRC=/path/to/setup/init_spark_dl_torch.sh
     export INIT_DEST=/Users/someone@example.com/spark-dl/init_spark_dl_torch.sh
     ```
 
@@ -20,9 +20,10 @@
     databricks workspace import $NOTEBOOK_DEST --format JUPYTER --file $NOTEBOOK_SRC
     ```
 
-4. For Azure users: launch the cluster with the provided script (creates 4 Azure GPU nodes):
+4. Launch the cluster with the provided script (note that the script specifies **Azure instances**):
     ```shell
     export CLUSTER_NAME=spark-dl-inference-torch
+    cd setup
     chmod +x start_cluster.sh
     ./start_cluster.sh
     ```
@@ -38,18 +39,3 @@
     - For Tensorflow notebooks, we recommend setting the environment variable `TF_GPU_ALLOCATOR=cuda_malloc_async` (especially for Huggingface LLM models), which enables the CUDA driver to implicity release unused memory from the pool. 
 
 5. Navigate to the notebook in your Databricks workspace. Attach the notebook to the cluster and run the cells interactively.  
-
-## Inference with PyTriton 
-
-<img src="../images/spark-pytriton.png" alt="drawing" width="1000"/>
-
-The diagram above demonstrates how Spark distributes inference tasks to run on the [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), with PyTriton handling request/response communication with the server.  
-
-The process looks like this:
-- Distribute a PyTriton task across the Spark cluster, instructing each node to launch a Triton server process.
-    - Use stage-level scheduling to ensure each node is assigned a single startup task.
-- Define a Triton inference function, which contains a client that binds to the local server on a given node and sends inference requests.
-- Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
-- Finally, distribute a shutdown signal to terminate the Triton server processes on each node.
-
-For more information, see the [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/).

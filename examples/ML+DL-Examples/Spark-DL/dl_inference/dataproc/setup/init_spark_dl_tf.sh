@@ -17,8 +17,25 @@ if [[ ${SPARK_DL_HOME} == "UNSET" ]]; then
     exit 1
 fi
 
-gcloud storage cp gs://${SPARK_DL_HOME}/requirements.txt .
-pip install --upgrade --force-reinstall -r requirements.txt
+cat <<EOF > temp_requirements.txt
+numpy
+pandas
+matplotlib
+portalocker
+pyarrow
+pydot
+scikit-learn
+huggingface
+datasets==3.*
+transformers
+urllib3<2
+nvidia-pytriton
+tensorflow[and-cuda]
+tf-keras
+EOF
+
+pip install --upgrade --force-reinstall -r temp_requirements.txt
+rm temp_requirements.txt
 
 gcloud storage cp gs://${SPARK_DL_HOME}/conditional_generation.ipynb notebooks/conditional_generation.ipynb
 

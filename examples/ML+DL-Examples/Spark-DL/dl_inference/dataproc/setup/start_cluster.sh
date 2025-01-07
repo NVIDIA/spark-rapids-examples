@@ -14,6 +14,15 @@ fi
 
 SPARK_DL_HOME=${SPARK_DL_HOME:-${GCS_BUCKET}/spark-dl}
 
+if [[ $INIT_SRC == *init_spark_dl_torch.sh ]]; then
+    init_script="gs://${SPARK_DL_HOME}/init_spark_dl_torch.sh"
+elif [[ $INIT_SRC == *init_spark_dl_tf.sh ]]; then
+    init_script="gs://${SPARK_DL_HOME}/init_spark_dl_tf.sh"
+else
+    echo "Please make sure INIT_SRC is set so that the cluster knows which init script to use (_torch or _tf)."
+    exit 1
+fi
+
 gpu_args=$(cat <<EOF
 --master-accelerator type=nvidia-tesla-t4,count=1
 --worker-accelerator type=nvidia-tesla-t4,count=1
@@ -24,18 +33,16 @@ EOF
 )
 
 # start cluster if not already running
-cluster_name=${CLUSTER_NAME:-"${USER}-spark-dl-gpu"}
-
-gcloud dataproc clusters list | grep "${cluster_name}"
+gcloud dataproc clusters list | grep "${CLUSTER_NAME}"
 if [[ $? == 0 ]]; then
-    echo "WARNING: Cluster ${cluster_name} is already started."
+    echo "WARNING: Cluster ${CLUSTER_NAME} is already started."
 else
     set -x
-    gcloud dataproc clusters create ${cluster_name} \
+    gcloud dataproc clusters create ${CLUSTER_NAME} \
     --image-version=2.2-ubuntu \
     --region ${COMPUTE_REGION} \
     --master-machine-type n1-standard-16 \
-    --num-workers 2 \
+    --num-workers 4 \
     --worker-min-cpu-platform="Intel Skylake" \
     --worker-machine-type n1-standard-16 \
     --num-worker-local-ssds 4 \
