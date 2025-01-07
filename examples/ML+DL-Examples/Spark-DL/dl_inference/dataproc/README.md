@@ -1,7 +1,5 @@
 # Spark DL Inference on Dataproc
 
-TODO: fix instructions (Any of the example notebooks can be run on databricks... set the dest and src paths, set the right requirements, etc. )
-
 ## Setup
 
 1. Install the latest [gcloud-cli](https://cloud.google.com/sdk/docs/install) and configure for your workspace.
@@ -26,47 +24,34 @@ TODO: fix instructions (Any of the example notebooks can be run on databricks...
     gcloud storage buckets create gs://${GCS_BUCKET}
     ```
 
-4. `cd` into the [setup directory](setup).
-
-5. Run the setup script, which will copy files to your GCS bucket: 
+4.  Specify the paths below to the notebook and init script (_torch or _tf). As an example for a PyTorch notebook:
     ```shell
-    export SPARK_DL_HOME=${GCS_BUCKET}/spark-dl
-
-    chmod +x setup.sh
-    ./setup.sh
+    export NOTEBOOK_SRC=/path/to/notebook_torch.ipynb
+    export INIT_SRC=/path/to/setup/init_spark_dl_torch.sh
     ```
 
-6. Launch the cluster (defaults to 2 node GPU cluster):
+5. Run the commands below to copy the files to the GCS bucket:
     ```shell
+    export SPARK_DL_HOME=${GCS_BUCKET}/spark-dl
+    gcloud storage cp ${INIT_SRC} gs://${SPARK_DL_HOME}/init_spark_dl_torch.sh
+    gcloud storage cp ${NOTEBOOK_SRC} gs://${SPARK_DL_HOME}/conditional_generation.ipynb
+    ```
+
+6. Launch the cluster (defaults to 4 node GPU cluster):
+    ```shell
+    export CLUSTER_NAME=${USER}-spark-dl-inference-torch
+    cd setup
     chmod +x start_cluster.sh
     ./start_cluster.sh
     ```
-    The default cluster name will be `"${USER}-spark-dl-gpu"`.
 
-7. Attach to the Jupyter web UI. You can get the link by running this command:
+7. Browse to the Jupyter web UI. You can get the link by running this command:
     ```shell
-    export CLUSTER_NAME=${USER}-spark-dl-gpu
     gcloud dataproc clusters describe ${CLUSTER_NAME} --region=${COMPUTE_REGION}
     ```
 
-    OR, you can find the links on the GCP web UI:
-    - Go to `Dataproc` > `Clusters` > `<cluster_name>` > `Web Interfaces` > `Jupyter`
+    OR you can find the links on the GCP web UI:
+    - Go to `Dataproc` > `Clusters` > `(Cluster Name)` > `Web Interfaces` > `Jupyter`
 
 8. Open and run the notebook interactively with the Python 3 kernel.  
-The init script copies the notebook to `Local Disk` > `notebooks` > `conditional_generation.ipynb` on the master node.  
-**Note**: some notebook cells may require Dataproc-specific instructions (e.g., when setting up the Spark config).
-
-## Inference with PyTriton 
-
-<img src="../images/spark-pytriton.png" alt="drawing" width="1000"/>
-
-The diagram above demonstrates how Spark distributes inference tasks to run on the [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), with PyTriton handling request/response communication with the server.  
-
-The process looks like this:
-- Distribute a PyTriton task across the Spark cluster, instructing each node to launch a Triton server process.
-    - Use stage-level scheduling to ensure each node is assigned a single startup task.
-- Define a Triton inference function, which contains a client that binds to the local server on a given node and sends inference requests.
-- Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
-- Finally, distribute a shutdown signal to terminate the Triton server processes on each node.
-
-For more information, see the [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/).
+The init script copies the notebook to `Local Disk/notebooks` on the master node.  

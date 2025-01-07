@@ -35,7 +35,7 @@ EOF
 # start cluster if not already running
 gcloud dataproc clusters list | grep "${CLUSTER_NAME}"
 if [[ $? == 0 ]]; then
-    echo "WARNING: Cluster ${CLUSTER_NAME} is already started."
+    echo "Cluster ${CLUSTER_NAME} is already started."
 else
     set -x
     gcloud dataproc clusters create ${CLUSTER_NAME} \
