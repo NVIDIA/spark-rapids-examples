@@ -42,6 +42,12 @@ EOF
 pip install --upgrade --force-reinstall -r temp_requirements.txt
 rm temp_requirements.txt
 
-gcloud storage cp gs://${SPARK_DL_HOME}/conditional_generation.ipynb notebooks/conditional_generation.ipynb
+if gsutil -q stat gs://${SPARK_DL_HOME}/notebooks/**; then
+    mkdir spark-dl-notebooks
+    gcloud storage cp -r gs://${SPARK_DL_HOME}/notebooks spark-dl-notebooks
+else
+    echo "The directory gs://${SPARK_DL_HOME}/notebooks/ is not accessible."
+    exit 1
+fi
 
 sudo chmod -R a+rw /home/
