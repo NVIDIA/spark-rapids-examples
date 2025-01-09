@@ -44,7 +44,7 @@ rm temp_requirements.txt
 
 if gsutil -q stat gs://${SPARK_DL_HOME}/notebooks/**; then
     mkdir spark-dl-notebooks
-    gcloud storage cp -r gs://${SPARK_DL_HOME}/notebooks/* spark-dl-notebooks/
+    gcloud storage cp -r gs://${SPARK_DL_HOME}/notebooks/* spark-dl-notebooks
 else
     echo "The directory gs://${SPARK_DL_HOME}/notebooks/ is not accessible."
     exit 1
