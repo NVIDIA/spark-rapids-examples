@@ -1,7 +1,7 @@
 # Deep Learning Inference on Spark
 
 Example notebooks demonstrating **distributed deep learning inference** using the [predict_batch_udf](https://developer.nvidia.com/blog/distributed-deep-learning-made-easy-with-spark-3-4/) introduced in Spark 3.4.0.
-These notebooks also demonstrate integration with [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), an open-source, GPU-accelerated serving solution for DL.
+These notebooks also demonstrate integration with [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source, GPU-accelerated serving solution for DL.
 
 ## Contents:
 - [Overview](#overview)
@@ -11,7 +11,7 @@ These notebooks also demonstrate integration with [Triton Inference Server](http
 
 ## Overview
 
-These notebooks demonstrate how models trained and saved on single-worker machines can easily be used for large-scale distributed inference on Spark clusters. We have examples for several deep learning frameworks based on their own published examples. 
+These notebooks demonstrate how models trained on single-worker machines can easily be used for large-scale distributed inference on Spark clusters. We have examples for several deep learning frameworks based on their own published examples.
 
 For example, a basic model trained in TensorFlow and saved on disk as "mnist_model" can be used in Spark as follows:
 ```
