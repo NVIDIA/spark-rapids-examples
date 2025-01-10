@@ -97,7 +97,7 @@ else
     --optional-components=JUPYTER \
     --bucket ${GCS_BUCKET} \
     --enable-component-gateway \
-    --max-idle "120m" \
+    --max-idle "60m" \
     --subnet=default \
     --no-shielded-secure-boot
 fi

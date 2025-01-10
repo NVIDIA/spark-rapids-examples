@@ -36,7 +36,7 @@
     export SPARK_DL_HOME=${GCS_BUCKET}/spark-dl
     gcloud storage cp </path/to/notebook_name_torch.ipynb> gs://${SPARK_DL_HOME}/notebooks/
     ```
-    All notebooks under `gs://${SPARK_DL_HOME}/notebooks/` will be copied to the master node during initialization.
+    Repeat this step for any notebooks you wish to run. All notebooks under `gs://${SPARK_DL_HOME}/notebooks/` will be copied to the master node during initialization.
 
 #### Start cluster and run
 
@@ -62,4 +62,4 @@
     ```
 
 8. Open and run the notebook interactively with the Python 3 kernel.  
-The notebooks can be found under `Local Disk/spark-dl-notebooks` on the master node.  
+The notebooks can be found under `Local Disk/spark-dl-notebooks` on the master node (click the folder icon on the top left > Local Disk).
