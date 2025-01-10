@@ -44,6 +44,7 @@ pip install --upgrade --force-reinstall -r temp_requirements.txt
 rm temp_requirements.txt
 
 # copy notebooks to master
+ROLE=$(/usr/share/google/get_metadata_value attributes/dataproc-role)
 if [[ "${ROLE}" == 'Master' ]]; then
     if gsutil -q stat gs://${SPARK_DL_HOME}/notebooks/**; then
         mkdir spark-dl-notebooks

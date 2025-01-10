@@ -21,7 +21,7 @@ SPARK_DL_HOME=${SPARK_DL_HOME:-${GCS_BUCKET}/spark-dl}
 gcloud storage cp init_spark_dl.sh gs://${SPARK_DL_HOME}/init/
 INIT_PATH=gs://${SPARK_DL_HOME}/init/init_spark_dl.sh
 
-TORCH_REQUIREMENTS="numpy
+COMMON_REQUIREMENTS="numpy
 pandas
 matplotlib
 portalocker
@@ -32,7 +32,9 @@ huggingface
 datasets==3.*
 transformers
 urllib3<2
-nvidia-pytriton
+nvidia-pytriton"
+
+TORCH_REQUIREMENTS="${COMMON_REQUIREMENTS}
 torch
 torchvision --extra-index-url https://download.pytorch.org/whl/cu121
 torch-tensorrt
@@ -41,20 +43,9 @@ sentence_transformers
 sentencepiece
 nvidia-modelopt[all] --extra-index-url https://pypi.nvidia.com"
 
-TF_REQUIREMENTS="numpy
-pandas
-matplotlib
-portalocker
-pyarrow
-pydot
-scikit-learn
-huggingface
-datasets==3.*
-transformers
-urllib3<2
-nvidia-pytriton
-tensorflow
-tensorflow-gpu"
+TF_REQUIREMENTS="${COMMON_REQUIREMENTS}
+tensorflow[and-cuda]
+tf-keras"
 
 cluster_name=${USER}-spark-dl-inference-${FRAMEWORK}
 if [[ ${FRAMEWORK} == "torch" ]]; then
