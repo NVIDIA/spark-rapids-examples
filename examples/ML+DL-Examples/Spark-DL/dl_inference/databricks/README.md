@@ -20,7 +20,7 @@
     databricks workspace import $NOTEBOOK_DEST --format JUPYTER --file $NOTEBOOK_SRC
     ```
 
-4. Launch the cluster with the provided script (note that the script specifies **Azure instances**):
+4. Launch the cluster with the provided script (note that the script specifies **Azure instances** by default; change as needed):
     ```shell
     export CLUSTER_NAME=spark-dl-inference-torch
     cd setup
@@ -38,4 +38,4 @@
     - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
     - For Tensorflow notebooks, we recommend setting the environment variable `TF_GPU_ALLOCATOR=cuda_malloc_async` (especially for Huggingface LLM models), which enables the CUDA driver to implicity release unused memory from the pool. 
 
-5. Navigate to the notebook in your Databricks workspace. Attach the notebook to the cluster and run the cells interactively.  
+5. Navigate to the notebook in your Databricks workspace and attach it to the cluster.  
