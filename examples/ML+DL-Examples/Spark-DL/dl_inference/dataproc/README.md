@@ -34,6 +34,7 @@
     As an example for a torch notebook:
     ```shell
     export SPARK_DL_HOME=${GCS_BUCKET}/spark-dl
+    
     gcloud storage cp </path/to/notebook_name_torch.ipynb> gs://${SPARK_DL_HOME}/notebooks/
     ```
     Repeat this step for any notebooks you wish to run. All notebooks under `gs://${SPARK_DL_HOME}/notebooks/` will be copied to the master node during initialization.
