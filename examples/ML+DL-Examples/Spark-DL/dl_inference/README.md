@@ -37,10 +37,12 @@ predictions = df.withColumn("preds", mnist("data")).collect()
 
 In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function.  The `predict_batch_udf` will handle things behind the scenes, automatically converting the Spark DataFrame columns into batched numpy inputs.
 
-All notebooks have been saved with sample outputs for quick browsing.  
-Here is a full list of the notebooks with their original example links:
 
-|   | Category  | Notebook Name | Description | Link
+#### Notebook List
+
+Below is a full list of the notebooks with their original example links. All notebooks have been saved with sample outputs for quick browsing.  
+
+|   | Framework  | Notebook Name | Description | Link
 | ------------- | ------------- | ------------- | ------------- | ------------- 
 | 1 | PyTorch | Image Classification | Training a model to predict clothing categories in FashionMNIST, including accelerated inference with Torch-TensorRT. | [Link](https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html)
 | 2 | PyTorch | Housing Regression | Training a model to predict housing prices in the California Housing Dataset, including accelerated inference with Torch-TensorRT. | [Link](https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-create-a-neural-network-for-regression-with-pytorch.md)
@@ -54,7 +56,7 @@ Here is a full list of the notebooks with their original example links:
 
 ## Running Locally
 
-To run the notebooks locally, please follow these instructions.
+To run the notebooks locally, please follow these instructions:
 
 #### Create environment
 
@@ -73,11 +75,11 @@ pip install -r tf_requirements.txt
 
 #### Start Cluster
 
-For demonstration, these instructions just use a local Standalone cluster with a single executor, but they can be run on any distributed Spark cluster. For cloud environments, see [below](#running-on-cloud-environments).
+For demonstration, these instructions just use a local Standalone cluster with a single executor, but they can be run on any distributed Spark cluster. For cloud environments, see the [section below](#running-on-cloud-environments).
 
 ```shell
 # Replace with your Spark installation path
-export SPARK_HOME=/path/to/spark
+export SPARK_HOME=</path/to/spark>
 ```
 
 ```shell
@@ -119,7 +121,7 @@ The diagram above shows how Spark distributes inference tasks to run on the Trit
 
 The process looks like this:
 - Distribute a PyTriton task across the Spark cluster, instructing each worker to launch a Triton server process.
-    - We use stage-level scheduling to ensure there is a 1:1 mapping between workers and servers.
+    - We use stage-level scheduling to ensure there is a 1:1 mapping between worker nodes and servers.
 - Define a Triton inference function, which contains a client that binds to the local server on a given worker and sends inference requests.
 - Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
 - Finally, distribute a shutdown signal to terminate the Triton server processes on each worker.
