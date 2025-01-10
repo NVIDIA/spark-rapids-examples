@@ -21,6 +21,12 @@ if [[ ${GCS_BUCKET} == "UNSET" ]]; then
     exit 1
 fi
 
+REQUIREMENTS=$(get_metadata_attribute requirements UNSET)
+if [[ ${REQUIREMENTS} == "UNSET" ]]; then
+    echo "Please set --metadata requirements"
+    exit 1
+fi
+
 # mount gcs bucket as fuse
 export GCSFUSE_REPO=gcsfuse-`lsb_release -c -s`
 echo "deb https://packages.cloud.google.com/apt $GCSFUSE_REPO main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list
@@ -30,46 +36,22 @@ sudo apt-get install -y fuse gcsfuse
 sudo mkdir -p /mnt/gcs
 gcsfuse -o allow_other --implicit-dirs ${GCS_BUCKET} /mnt/gcs
 sudo chmod -R 777 /mnt/gcs
-# assert that /mnt/gcs has r+w permissions; if not, throw a failure message and exit
-if [ ! -w /mnt/gcs ]; then
-    echo "The /mnt/gcs directory does not have write permissions."
-    exit 1
-fi
 
 # install requirements
 pip install --upgrade pip
-cat <<EOF > temp_requirements.txt
-numpy
-pandas
-matplotlib
-portalocker
-pyarrow
-pydot
-scikit-learn
-huggingface
-datasets==3.*
-transformers
-urllib3<2
-nvidia-pytriton
-torch
-torchvision --extra-index-url https://download.pytorch.org/whl/cu121
-torch-tensorrt
-tensorrt --extra-index-url https://download.pytorch.org/whl/cu121
-sentence_transformers
-sentencepiece
-nvidia-modelopt[all] --extra-index-url https://pypi.nvidia.com
-EOF
-
+echo "${REQUIREMENTS}" > temp_requirements.txt
 pip install --upgrade --force-reinstall -r temp_requirements.txt
 rm temp_requirements.txt
 
-# copy notebooks
-if gsutil -q stat gs://${SPARK_DL_HOME}/notebooks/**; then
-    mkdir spark-dl-notebooks
-    gcloud storage cp -r gs://${SPARK_DL_HOME}/notebooks/* spark-dl-notebooks
-else
-    echo "The directory gs://${SPARK_DL_HOME}/notebooks/ is not accessible."
-    exit 1
+# copy notebooks to master
+if [[ "${ROLE}" == 'Master' ]]; then
+    if gsutil -q stat gs://${SPARK_DL_HOME}/notebooks/**; then
+        mkdir spark-dl-notebooks
+        gcloud storage cp -r gs://${SPARK_DL_HOME}/notebooks/* spark-dl-notebooks
+    else
+        echo "Failed to retrieve notebooks from gs://${SPARK_DL_HOME}/notebooks/"
+        exit 1
+    fi
 fi
 
 sudo chmod -R a+rw /home/

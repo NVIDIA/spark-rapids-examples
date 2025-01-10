@@ -7,11 +7,6 @@ if [[ -z ${GCS_BUCKET} ]]; then
     exit 1
 fi
 
-if [[ -z ${INIT_SRC} ]]; then
-    echo "Please export INIT_SRC per README.md"
-    exit 1
-fi
-
 if [[ -z ${COMPUTE_REGION} ]]; then
     COMPUTE_REGION=$(gcloud config get-value compute/region)
     if [[ -z ${COMPUTE_REGION} ]]; then
@@ -23,27 +18,63 @@ fi
 SPARK_DL_HOME=${SPARK_DL_HOME:-${GCS_BUCKET}/spark-dl}
 
 # copy init script to gcs
-gcloud storage cp ${INIT_SRC} gs://${SPARK_DL_HOME}/init/
+gcloud storage cp init_spark_dl.sh gs://${SPARK_DL_HOME}/init/
+INIT_PATH=gs://${SPARK_DL_HOME}/init/init_spark_dl.sh
 
-if [[ $(basename $INIT_SRC) == "init_spark_dl_torch.sh" ]]; then
-    init_script="gs://${SPARK_DL_HOME}/init/init_spark_dl_torch.sh"
-    cluster_name=${USER}-spark-dl-inference-torch
-    echo "=============================================================="
-    echo "=== Starting PyTorch cluster ${cluster_name} using init_spark_dl_torch.sh ==="
-    echo "=============================================================="
-elif [[ $(basename $INIT_SRC) == "init_spark_dl_tf.sh" ]]; then
-    init_script="gs://${SPARK_DL_HOME}/init/init_spark_dl_tf.sh"
-    cluster_name=${USER}-spark-dl-inference-tf
-    echo "=============================================================="
-    echo "=== Starting TensorFlow cluster ${cluster_name} using init_spark_dl_tf.sh ==="
-    echo "=============================================================="
+TORCH_REQUIREMENTS="numpy
+pandas
+matplotlib
+portalocker
+pyarrow
+pydot
+scikit-learn
+huggingface
+datasets==3.*
+transformers
+urllib3<2
+nvidia-pytriton
+torch
+torchvision --extra-index-url https://download.pytorch.org/whl/cu121
+torch-tensorrt
+tensorrt --extra-index-url https://download.pytorch.org/whl/cu121
+sentence_transformers
+sentencepiece
+nvidia-modelopt[all] --extra-index-url https://pypi.nvidia.com"
+
+TF_REQUIREMENTS="numpy
+pandas
+matplotlib
+portalocker
+pyarrow
+pydot
+scikit-learn
+huggingface
+datasets==3.*
+transformers
+urllib3<2
+nvidia-pytriton
+tensorflow
+tensorflow-gpu"
+
+cluster_name=${USER}-spark-dl-inference-${FRAMEWORK}
+if [[ ${FRAMEWORK} == "torch" ]]; then
+    requirements=${TORCH_REQUIREMENTS}
+    echo "========================================================="
+    echo "Starting PyTorch cluster ${cluster_name}"
+    echo "========================================================="
+elif [[ ${FRAMEWORK} == "tf" ]]; then
+    requirements=${TORCH_REQUIREMENTS}
+    echo "========================================================="
+    echo "Starting Tensorflow cluster ${cluster_name}"
+    echo "========================================================="
 else
-    echo "Please set INIT_SRC as /path/to/init_spark_dl_torch.sh or /path/to/init_spark_dl_tf.sh"
+    echo "Please export FRAMEWORK as 'torch' or 'tf'"
     exit 1
 fi
 
 # retrieve and upload spark-rapids initialization script to gcs
 curl -LO https://raw.githubusercontent.com/GoogleCloudDataproc/initialization-actions/master/spark-rapids/spark-rapids.sh
+# don't enable rapids plugin by default
 sed -i '/spark.plugins=com.nvidia.spark.SQLPlugin/d' spark-rapids.sh
 gcloud storage cp spark-rapids.sh gs://${SPARK_DL_HOME}/init/
 # rm spark-rapids.sh
@@ -51,8 +82,7 @@ gcloud storage cp spark-rapids.sh gs://${SPARK_DL_HOME}/init/
 # start cluster if not already running
 gcloud dataproc clusters list | grep "${cluster_name}"
 if [[ $? == 0 ]]; then
-    echo "Cluster ${cluster_name} already exists. Starting it..."
-    gcloud dataproc clusters start ${cluster_name} --region ${COMPUTE_REGION}
+    echo "Cluster ${cluster_name} already exists."
 else
     gcloud dataproc clusters create ${cluster_name} \
     --image-version=2.2-ubuntu \
@@ -63,10 +93,11 @@ else
     --worker-machine-type n1-standard-16 \
     --master-accelerator type=nvidia-tesla-t4,count=1 \
     --worker-accelerator type=nvidia-tesla-t4,count=1 \
-    --initialization-actions gs://${SPARK_DL_HOME}/init/spark-rapids.sh,${init_script} \
+    --initialization-actions gs://${SPARK_DL_HOME}/init/spark-rapids.sh,${INIT_PATH} \
     --metadata gpu-driver-provider="NVIDIA" \
     --metadata gcs-bucket=${GCS_BUCKET} \
     --metadata spark-dl-home=${SPARK_DL_HOME} \
+    --metadata requirements="${requirements}" \
     --worker-local-ssd-interface=NVME \
     --optional-components=JUPYTER \
     --bucket ${GCS_BUCKET} \
