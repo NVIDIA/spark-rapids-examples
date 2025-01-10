@@ -17,6 +17,22 @@ if [[ ${SPARK_DL_HOME} == "UNSET" ]]; then
     exit 1
 fi
 
+GCS_BUCKET=$(get_metadata_attribute gcs-bucket UNSET)
+if [[ ${GCS_BUCKET} == "UNSET" ]]; then
+    echo "Please set --metadata gcs-bucket"
+    exit 1
+fi
+
+# mount gcs bucket as fuse
+export GCSFUSE_REPO=gcsfuse-`lsb_release -c -s`
+echo "deb https://packages.cloud.google.com/apt $GCSFUSE_REPO main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install -y fuse gcsfuse
+sudo mkdir -p /mnt/gcs
+gcsfuse --implicit-dirs ${GCS_BUCKET} /mnt/gcs
+sudo chmod -R 777 /mnt/gcs
+
 cat <<EOF > temp_requirements.txt
 numpy
 pandas
@@ -44,7 +60,5 @@ else
     echo "The directory gs://${SPARK_DL_HOME}/notebooks/ is not accessible."
     exit 1
 fi
-
-ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ${CONDA_PREFIX}/lib/libstdc++.so.6
 
 sudo chmod -R a+rw /home/
