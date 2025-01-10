@@ -6,7 +6,7 @@
 
 #### Setup GCloud CLI
 
-1. Install the latest [gcloud-cli](https://cloud.google.com/sdk/docs/install) and configure for your workspace.
+1. Install the latest [gcloud-cli](https://cloud.google.com/sdk/docs/install) and initialize with `gcloud init`.
 
 2. Configure the following settings:
     ```shell
