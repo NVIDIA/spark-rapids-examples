@@ -62,4 +62,4 @@
     ```
 
 8. Open and run the notebook interactively with the Python 3 kernel.  
-The notebooks can be found under `Local Disk/spark-dl-notebooks` on the master node (click the folder icon on the top left > Local Disk).
+The notebooks can be found under `Local Disk/spark-dl-notebooks` on the master node (folder icon on the top left > Local Disk).
