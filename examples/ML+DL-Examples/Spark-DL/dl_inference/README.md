@@ -5,7 +5,7 @@ These notebooks also demonstrate integration with [Triton Inference Server](http
 
 ## Contents:
 - [Overview](#overview)
-- [Running Locally](#running-the-notebooks)
+- [Running Locally](#running-locally)
 - [Running on Cloud](#running-on-cloud-environments)
 - [Integration with Triton Inference Server](#inference-with-triton)
 
@@ -45,7 +45,7 @@ Below is a full list of the notebooks with links to the examples they are based 
 | ------------- | ------------- | ------------- | ------------- | ------------- 
 | 1 | PyTorch | Image Classification | Training a model to predict clothing categories in FashionMNIST, including accelerated inference with Torch-TensorRT. | [Link](https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html)
 | 2 | PyTorch | Housing Regression | Training a model to predict housing prices in the California Housing Dataset, including accelerated inference with Torch-TensorRT. | [Link](https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-create-a-neural-network-for-regression-with-pytorch.md)
-| 3 | Tensorflow | Image Classification | Training a model to predict hand-written digits in MNIST. | [Link](https://www.tensorflow.org/tutorials/keras/save_and_load)
+| 3 | Tensorflow | Image Classification | Training a model to predict hand-written digits in MNIST. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_load.ipynb)
 | 4 | Tensorflow | Keras Preprocessing | Training a model with preprocessing layers to predict likelihood of pet adoption in the PetFinder mini dataset. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/structured_data/preprocessing_layers.ipynb)
 | 5 | Tensorflow | Keras Resnet50 | Training ResNet-50 to perform flower recognition from flower images. | [Link](https://docs.databricks.com/en/_extras/notebooks/source/deep-learning/keras-metadata.html)
 | 6 | Tensorflow | Text Classification | Training a model to perform sentiment analysis on the IMDB dataset. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/text_classification.ipynb)
@@ -58,6 +58,8 @@ Below is a full list of the notebooks with links to the examples they are based 
 To run the notebooks locally, please follow these instructions:
 
 #### Create environment
+
+Each notebook has a suffix `_torch` or `_tf` specifying the environment used.
 
 **For PyTorch:**
 ```
@@ -74,7 +76,7 @@ pip install -r tf_requirements.txt
 
 #### Start Cluster
 
-For demonstration, these instructions just use a local Standalone cluster with a single executor, but they can be run on any distributed Spark cluster. For cloud environments, see the [section below](#running-on-cloud-environments).
+For demonstration, these instructions just use a local Standalone cluster with a single executor, but they can be run on any distributed Spark cluster. For cloud environments, see [below](#running-on-cloud-environments).
 
 ```shell
 # Replace with your Spark installation path
@@ -90,10 +92,10 @@ export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 -Dspark.worker.re
 ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORES_PER_WORKER} -m 16G ${MASTER}
 ```
 
-The notebooks are ready to run! The notebooks have a cell to connect to the standalone cluster and create a SparkSession.
+The notebooks are ready to run! Each notebook has a cell to connect to the standalone cluster and create a SparkSession.
 
 **Notes**: 
-- Please create separate environments for PyTorch and Tensorflow notebooks as specified above. This will avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples have a `_torch` or `_tf` suffix to specify the environment used.
+- Please create separate environments for PyTorch and Tensorflow notebooks as specified above. This will avoid conflicts between the CUDA libraries bundled with their respective versions. 
 - `requirements.txt` installs pyspark>=3.4.0. Make sure the installed PySpark version matches the system's Spark installation.
 - The notebooks require a GPU environment for the executors.  
 - The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but as of writing it is not supported in TF==2.17.0. 
@@ -104,7 +106,7 @@ If you encounter issues starting the Triton server, you may need to link your li
 ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ${CONDA_PREFIX}/lib/libstdc++.so.6
 ```
 
-## Running on cloud environments
+## Running on Cloud Environments
 
 We also provide instructions to run the notebooks on CSP Spark environments.  
 See the instructions for [Databricks](databricks/README.md) and [GCP Dataproc](dataproc/README.md).
@@ -112,7 +114,7 @@ See the instructions for [Databricks](databricks/README.md) and [GCP Dataproc](d
 ## Inference with Triton
 
 The notebooks also demonstrate integration with the [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source serving platform for deep learning models, which includes many [features and performance optimizations](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html#triton-major-features) to streamline inference.  
-We use [PyTriton](https://github.com/triton-inference-server/pytriton), a Flask-like Python framework that handles communication with the Triton server.  
+The notebooks use [PyTriton](https://github.com/triton-inference-server/pytriton), a Flask-like Python framework that handles communication with the Triton server.  
 
 <img src="images/spark-pytriton.png" alt="drawing" width="1000"/>
 
@@ -120,7 +122,7 @@ The diagram above shows how Spark distributes inference tasks to run on the Trit
 
 The process looks like this:
 - Distribute a PyTriton task across the Spark cluster, instructing each worker to launch a Triton server process.
-    - We use stage-level scheduling to ensure there is a 1:1 mapping between worker nodes and servers.
+    - Use stage-level scheduling to ensure there is a 1:1 mapping between worker nodes and servers.
 - Define a Triton inference function, which contains a client that binds to the local server on a given worker and sends inference requests.
 - Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
 - Finally, distribute a shutdown signal to terminate the Triton server processes on each worker.

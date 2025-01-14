@@ -51,16 +51,15 @@
     chmod +x start_cluster.sh
     ./start_cluster.sh
     ```
-    The script creates a 4 node GPU cluster by default.
-    The cluster name will default to `${USER}-spark-dl-inference-${FRAMEWORK}`.
+    By default, the script creates a 4 node GPU cluster named `${USER}-spark-dl-inference-${FRAMEWORK}`.
 
 7. Browse to the Jupyter web UI:
     - Go to `Dataproc` > `Clusters` > `(Cluster Name)` > `Web Interfaces` > `Jupyter/Lab`
     
-    Or, get the link by running this command (link is under httpPorts > Jupyter/Lab):
+    Or, get the link by running this command (under httpPorts > Jupyter/Lab):
     ```shell
     gcloud dataproc clusters describe ${CLUSTER_NAME} --region=${COMPUTE_REGION}
     ```
 
-8. Open and run the notebook interactively with the Python 3 kernel.  
+8. Open and run the notebook interactively with the **Python 3 kernel**.  
 The notebooks can be found under `Local Disk/spark-dl-notebooks` on the master node (folder icon on the top left > Local Disk).
