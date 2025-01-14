@@ -11,8 +11,7 @@ These notebooks also demonstrate integration with [Triton Inference Server](http
 
 ## Overview
 
-These notebooks demonstrate how models trained on single-worker machines can easily be used for large-scale distributed inference on Spark clusters. We have examples for several deep learning frameworks based on their own published examples.
-
+These notebooks demonstrate how models from external frameworks (Torch, Huggingface, Tensorflow) trained on single-worker machines can be used for large-scale distributed inference on Spark clusters.  
 For example, a basic model trained in TensorFlow and saved on disk as "mnist_model" can be used in Spark as follows:
 ```
 import numpy as np
@@ -40,13 +39,13 @@ In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the
 
 #### Notebook List
 
-Below is a full list of the notebooks with their original example links. All notebooks have been saved with sample outputs for quick browsing.  
+Below is a full list of the notebooks with links to the examples they are based on. All notebooks have been saved with sample outputs for quick browsing.  
 
 |   | Framework  | Notebook Name | Description | Link
 | ------------- | ------------- | ------------- | ------------- | ------------- 
 | 1 | PyTorch | Image Classification | Training a model to predict clothing categories in FashionMNIST, including accelerated inference with Torch-TensorRT. | [Link](https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html)
 | 2 | PyTorch | Housing Regression | Training a model to predict housing prices in the California Housing Dataset, including accelerated inference with Torch-TensorRT. | [Link](https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-create-a-neural-network-for-regression-with-pytorch.md)
-| 3 | Tensorflow | Image Classification | Training a model to predict hand-written digits in MNIST. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_load.ipynb)
+| 3 | Tensorflow | Image Classification | Training a model to predict hand-written digits in MNIST. | [Link](https://www.tensorflow.org/tutorials/keras/save_and_load)
 | 4 | Tensorflow | Keras Preprocessing | Training a model with preprocessing layers to predict likelihood of pet adoption in the PetFinder mini dataset. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/structured_data/preprocessing_layers.ipynb)
 | 5 | Tensorflow | Keras Resnet50 | Training ResNet-50 to perform flower recognition from flower images. | [Link](https://docs.databricks.com/en/_extras/notebooks/source/deep-learning/keras-metadata.html)
 | 6 | Tensorflow | Text Classification | Training a model to perform sentiment analysis on the IMDB dataset. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/text_classification.ipynb)
