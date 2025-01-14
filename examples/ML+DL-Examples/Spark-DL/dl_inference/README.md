@@ -35,7 +35,7 @@ df = spark.read.parquet("mnist_data")
 predictions = df.withColumn("preds", mnist("data")).collect()
 ```
 
-In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function.  The `predict_batch_udf` will handle things behind the scenes, automatically converting the Spark DataFrame columns into batched numpy inputs.
+In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function.  The `predict_batch_udf` will handle the data conversion from Spark DataFrame columns into batched numpy inputs.
 
 
 #### Notebook List
