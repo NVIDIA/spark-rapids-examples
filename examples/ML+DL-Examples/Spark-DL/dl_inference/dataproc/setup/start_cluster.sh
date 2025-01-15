@@ -71,7 +71,7 @@ elif [[ ${FRAMEWORK} == "tf" ]]; then
     echo "Starting Tensorflow cluster ${cluster_name}"
     echo "========================================================="
 else
-    echo "Please export FRAMEWORK as 'torch' or 'tf'"
+    echo "Please export FRAMEWORK as torch or tf"
     exit 1
 fi
 

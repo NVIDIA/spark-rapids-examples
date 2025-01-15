@@ -96,7 +96,7 @@ The notebooks are ready to run! Each notebook has a cell to connect to the stand
 
 **Notes**: 
 - Please create separate environments for PyTorch and Tensorflow notebooks as specified above. This will avoid conflicts between the CUDA libraries bundled with their respective versions. 
-- `requirements.txt` installs pyspark>=3.4.0. Make sure the installed PySpark version matches the system's Spark installation.
+- `requirements.txt` installs pyspark>=3.4.0. Make sure the installed PySpark version is compatible with your system's Spark installation.
 - The notebooks require a GPU environment for the executors.  
 - The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but as of writing it is not supported in TF==2.17.0. 
 

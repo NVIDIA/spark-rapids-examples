@@ -41,7 +41,7 @@
 
 #### Start cluster and run
 
-5. Specify the framework to use ('torch' or 'tf'), which will determine what libraries to install on the cluster. For example:
+5. Specify the framework to use (torch or tf), which will determine what libraries to install on the cluster. For example:
     ```shell
     export FRAMEWORK=torch
     ```
