@@ -1,11 +1,17 @@
-# Spark DL Inference Using External Frameworks
+# Deep Learning Inference on Spark
 
-Example notebooks for the [predict_batch_udf](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.functions.predict_batch_udf.html#pyspark.ml.functions.predict_batch_udf) function introduced in Spark 3.4.
+Example notebooks demonstrating **distributed deep learning inference** using the [predict_batch_udf](https://developer.nvidia.com/blog/distributed-deep-learning-made-easy-with-spark-3-4/) introduced in Spark 3.4.0.
+These notebooks also demonstrate integration with [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source, GPU-accelerated serving solution for DL.
+
+## Contents:
+- [Overview](#overview)
+- [Running Locally](#running-locally)
+- [Running on Cloud](#running-on-cloud-environments)
+- [Integration with Triton Inference Server](#inference-with-triton)
 
 ## Overview
 
-This directory contains notebooks for each DL framework (based on their own published examples).  The goal is to demonstrate how models trained and saved on single-node machines can be easily used for parallel inferencing on Spark clusters.
-
+These notebooks demonstrate how models from external frameworks (Torch, Huggingface, Tensorflow) trained on single-worker machines can be used for large-scale distributed inference on Spark clusters.  
 For example, a basic model trained in TensorFlow and saved on disk as "mnist_model" can be used in Spark as follows:
 ```
 import numpy as np
@@ -28,34 +34,32 @@ df = spark.read.parquet("mnist_data")
 predictions = df.withColumn("preds", mnist("data")).collect()
 ```
 
-In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function which operates on numpy arrays.  The `predict_batch_udf` will automatically convert the Spark DataFrame columns to the expected numpy inputs.
+In this simple case, the `predict_batch_fn` will use TensorFlow APIs to load the model and return a simple `predict` function.  The `predict_batch_udf` will handle the data conversion from Spark DataFrame columns into batched numpy inputs.
 
-All notebooks have been saved with sample outputs for quick browsing.  
-Here is a full list of the notebooks with their published example links:
 
-|   | Category  | Notebook Name | Description | Link
+#### Notebook List
+
+Below is a full list of the notebooks with links to the examples they are based on. All notebooks have been saved with sample outputs for quick browsing.  
+
+|   | Framework  | Notebook Name | Description | Link
 | ------------- | ------------- | ------------- | ------------- | ------------- 
 | 1 | PyTorch | Image Classification | Training a model to predict clothing categories in FashionMNIST, including accelerated inference with Torch-TensorRT. | [Link](https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html)
-| 2 | PyTorch | Regression | Training a model to predict housing prices in the California Housing Dataset, including accelerated inference with Torch-TensorRT. | [Link](https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-create-a-neural-network-for-regression-with-pytorch.md)
+| 2 | PyTorch | Housing Regression | Training a model to predict housing prices in the California Housing Dataset, including accelerated inference with Torch-TensorRT. | [Link](https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-create-a-neural-network-for-regression-with-pytorch.md)
 | 3 | Tensorflow | Image Classification | Training a model to predict hand-written digits in MNIST. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_load.ipynb)
-| 4 | Tensorflow | Feature Columns | Training a model with preprocessing layers to predict likelihood of pet adoption in the PetFinder mini dataset. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/structured_data/preprocessing_layers.ipynb)
-| 5 | Tensorflow | Keras Metadata | Training ResNet-50 to perform flower recognition on Databricks. | [Link](https://docs.databricks.com/en/_extras/notebooks/source/deep-learning/keras-metadata.html)
+| 4 | Tensorflow | Keras Preprocessing | Training a model with preprocessing layers to predict likelihood of pet adoption in the PetFinder mini dataset. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/structured_data/preprocessing_layers.ipynb)
+| 5 | Tensorflow | Keras Resnet50 | Training ResNet-50 to perform flower recognition from flower images. | [Link](https://docs.databricks.com/en/_extras/notebooks/source/deep-learning/keras-metadata.html)
 | 6 | Tensorflow | Text Classification | Training a model to perform sentiment analysis on the IMDB dataset. | [Link](https://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/text_classification.ipynb)
-| 7+8 | HuggingFace | Conditional Generation | Sentence translation using the T5 text-to-text transformer, with notebooks demoing both Torch and Tensorflow. | [Link](https://huggingface.co/docs/transformers/model_doc/t5#t5) 
-| 9+10 | HuggingFace | Pipelines | Sentiment analysis using Huggingface pipelines, with notebooks demoing both Torch and Tensorflow. | [Link](https://huggingface.co/docs/transformers/quicktour#pipeline-usage)
-| 11 | HuggingFace | Sentence Transformers | Sentence embeddings using the SentenceTransformers framework in Torch. | [Link](https://huggingface.co/sentence-transformers)
+| 7+8 | HuggingFace | Conditional Generation | Sentence translation using the T5 text-to-text transformer for both Torch and Tensorflow. | [Link](https://huggingface.co/docs/transformers/model_doc/t5#t5) 
+| 9+10 | HuggingFace | Pipelines | Sentiment analysis using Huggingface pipelines for both Torch and Tensorflow. | [Link](https://huggingface.co/docs/transformers/quicktour#pipeline-usage)
+| 11 | HuggingFace | Sentence Transformers | Sentence embeddings using SentenceTransformers in Torch. | [Link](https://huggingface.co/sentence-transformers)
 
-## Running the Notebooks
+## Running Locally
 
-If you want to run the notebooks yourself, please follow these instructions.
-
-**Notes**: 
-- The notebooks require a GPU environment for the executors.  
-- Please create separate environments for PyTorch and Tensorflow examples as specified below. This will avoid conflicts between the CUDA libraries bundled with their respective versions. The Huggingface examples will have a `_torch` or `_tf` suffix to specify the environment used.
-- The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but may require downgrading the TF version. 
-- For demonstration purposes, these examples just use a local Spark Standalone cluster with a single executor, but you should be able to run them on any distributed Spark cluster.
+To run the notebooks locally, please follow these instructions:
 
 #### Create environment
+
+Each notebook has a suffix `_torch` or `_tf` specifying the environment used.
 
 **For PyTorch:**
 ```
@@ -70,36 +74,57 @@ conda activate spark-dl-tf
 pip install -r tf_requirements.txt
 ```
 
-#### Launch Jupyter + Spark
+#### Start Cluster
 
+For demonstration, these instructions just use a local Standalone cluster with a single executor, but they can be run on any distributed Spark cluster. For cloud environments, see [below](#running-on-cloud-environments).
+
+```shell
+# Replace with your Spark installation path
+export SPARK_HOME=</path/to/spark>
 ```
-# setup environment variables
-export SPARK_HOME=/path/to/spark
+
+```shell
+# Configure and start cluster
 export MASTER=spark://$(hostname):7077
 export SPARK_WORKER_INSTANCES=1
 export CORES_PER_WORKER=8
-export PYSPARK_DRIVER_PYTHON=jupyter
-export PYSPARK_DRIVER_PYTHON_OPTS='lab'
-
-# start spark standalone cluster
+export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 -Dspark.worker.resource.gpu.discoveryScript=$SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
 ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORES_PER_WORKER} -m 16G ${MASTER}
-
-# start jupyter with pyspark
-${SPARK_HOME}/bin/pyspark --master ${MASTER} \
---driver-memory 8G \
---executor-memory 8G \
---conf spark.python.worker.reuse=True
-
-# BROWSE to localhost:8888 to view/run notebooks
-
-# stop spark standalone cluster
-${SPARK_HOME}/sbin/stop-worker.sh; ${SPARK_HOME}/sbin/stop-master.sh
 ```
 
-## Triton Inference Server
+The notebooks are ready to run! Each notebook has a cell to connect to the standalone cluster and create a SparkSession.
 
-The example notebooks also demonstrate integration with [Triton Inference Server](https://developer.nvidia.com/nvidia-triton-inference-server), an open-source, GPU-accelerated serving solution for DL.
+**Notes**: 
+- Please create separate environments for PyTorch and Tensorflow notebooks as specified above. This will avoid conflicts between the CUDA libraries bundled with their respective versions. 
+- `requirements.txt` installs pyspark>=3.4.0. Make sure the installed PySpark version is compatible with your system's Spark installation.
+- The notebooks require a GPU environment for the executors.  
+- The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but as of writing it is not supported in TF==2.17.0. 
 
-**Note**: Some examples may require special configuration of server as highlighted in the notebooks.
+**Troubleshooting:** 
+If you encounter issues starting the Triton server, you may need to link your libstdc++ file to the conda environment, e.g.:
+```shell
+ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ${CONDA_PREFIX}/lib/libstdc++.so.6
+```
 
-**Note**: for demonstration purposes, the Triton Inference Server integrations just launch the server in a docker container on the local host, so you will need to [install docker](https://docs.docker.com/engine/install/) on your local host.  Most real-world deployments will likely be hosted on remote machines.
+## Running on Cloud Environments
+
+We also provide instructions to run the notebooks on CSP Spark environments.  
+See the instructions for [Databricks](databricks/README.md) and [GCP Dataproc](dataproc/README.md).
+
+## Inference with Triton
+
+The notebooks also demonstrate integration with the [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source serving platform for deep learning models, which includes many [features and performance optimizations](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html#triton-major-features) to streamline inference.  
+The notebooks use [PyTriton](https://github.com/triton-inference-server/pytriton), a Flask-like Python framework that handles communication with the Triton server.  
+
+<img src="images/spark-pytriton.png" alt="drawing" width="1000"/>
+
+The diagram above shows how Spark distributes inference tasks to run on the Triton Inference Server, with PyTriton handling request/response communication with the server. 
+
+The process looks like this:
+- Distribute a PyTriton task across the Spark cluster, instructing each worker to launch a Triton server process.
+    - Use stage-level scheduling to ensure there is a 1:1 mapping between worker nodes and servers.
+- Define a Triton inference function, which contains a client that binds to the local server on a given worker and sends inference requests.
+- Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
+- Finally, distribute a shutdown signal to terminate the Triton server processes on each worker.
+
+For more information on how PyTriton works, see the [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/).
