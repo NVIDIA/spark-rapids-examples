@@ -7,6 +7,11 @@
 *.pyo
 *.swp
 *~
+*.log
+*.db
+*.pt
+*.rst
+*.tar.gz
 .DS_Store
 .cache
 .classpath
@@ -22,3 +27,21 @@
 .settings
 hs_err*.log
 target
+/examples/ML+DL-Examples/Spark-DL/dl_inference/pytriton
+/examples/ML+DL-Examples/Spark-DL/dl_inference/archive
+# /examples/ML+DL-Examples/Spark-Rapids-ML/pca
+/examples/ML+DL-Examples/Spark-DL/dl_inference/pytorch/new_ideas
+/examples/ML+DL-Examples/Spark-DL/dl_inference/databricks/torch_notebooks
+/examples/ML+DL-Examples/Spark-DL/dl_inference/databricks/tf_notebooks
+/examples/ML+DL-Examples/Spark-DL/dl_inference/pytorch/datasets
+/examples/ML+DL-Examples/Spark-DL/dl_inference/pytorch/spark-dl-datasets
+/examples/ML+DL-Examples/Spark-DL/dl_inference/pytorch/models
+**/spark-dl-datasets
+**/models
+**/predictions
+**/dl_inference/databricks/*.ipynb
+**/dl_inference/dataproc/*.ipynb
+**/dl_inference/huggingface/.ipynb_checkpoints
+/examples/ML+DL-Examples/Spark-DL/dl_inference/dataproc/spark-dl-notebooks
+/examples/ML+DL-Examples/Spark-DL/dl_inference/test.ipynb
+/examples/ML+DL-Examples/Spark-DL/dl_inference/dataproc/setup/copy_notebooks_gcp.sh
