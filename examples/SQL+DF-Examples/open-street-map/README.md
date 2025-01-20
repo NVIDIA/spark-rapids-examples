@@ -9,7 +9,10 @@ traffic flow, socioeconomic analysis, environmental analysis, route optimization
 can stray into terabytes, [Spark Rapids](https://nvidia.github.io/spark-rapids/) can speed up the
 entire analysis process.
 
+Steps to prepare the dataset:
 
 
+Performance (CPU VS GPU) and env:
+IMG
 
 
