@@ -12,6 +12,11 @@ if [[ -z ${CLUSTER_NAME} ]]; then
     exit 1
 fi
 
+if [[ -z ${FRAMEWORK} ]]; then
+    echo "Please make sure FRAMEWORK is exported to torch or tf per README.md"
+    exit 1
+fi
+
 json_config=$(cat <<EOF
 {
     "cluster_name": "${CLUSTER_NAME}",
@@ -26,7 +31,8 @@ json_config=$(cat <<EOF
     "node_type_id": "Standard_NC8as_T4_v3",
     "driver_node_type_id": "Standard_NC8as_T4_v3",
     "spark_env_vars": {
-        "TF_GPU_ALLOCATOR": "cuda_malloc_async"
+        "TF_GPU_ALLOCATOR": "cuda_malloc_async",
+        "FRAMEWORK": "${FRAMEWORK}"
     },
     "autotermination_minutes": 60,
     "enable_elastic_disk": true,
