@@ -29,7 +29,6 @@
 
 5. Launch the cluster with the provided script (note that the script specifies **Azure instances** by default; change as needed):
     ```shell
-    export CLUSTER_NAME=spark-dl-inference-$FRAMEWORK
     cd setup
     chmod +x start_cluster.sh
     ./start_cluster.sh
@@ -46,4 +45,4 @@
     - Under environment variables, set `FRAMEWORK=torch` or `FRAMEWORK=tf` based on the notebook used.
     - For Tensorflow notebooks, we recommend setting the environment variable `TF_GPU_ALLOCATOR=cuda_malloc_async` (especially for Huggingface LLM models), which enables the CUDA driver to implicity release unused memory from the pool. 
 
-6. Navigate to the notebook in your workspace and attach it to the cluster.  
+6. Navigate to the notebook in your workspace and attach it to the cluster. The default cluster name is `spark-dl-$FRAMEWORK`.  

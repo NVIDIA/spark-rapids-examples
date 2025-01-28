@@ -7,11 +7,6 @@ if [[ -z ${INIT_DEST} ]]; then
     exit 1
 fi
 
-if [[ -z ${CLUSTER_NAME} ]]; then
-    echo "Please make sure CLUSTER_NAME is exported per README.md"
-    exit 1
-fi
-
 if [[ -z ${FRAMEWORK} ]]; then
     echo "Please make sure FRAMEWORK is exported to torch or tf per README.md"
     exit 1
@@ -19,7 +14,7 @@ fi
 
 json_config=$(cat <<EOF
 {
-    "cluster_name": "${CLUSTER_NAME}",
+    "cluster_name": "spark-dl-${FRAMEWORK}",
     "spark_version": "15.4.x-gpu-ml-scala2.12",
     "spark_conf": {
         "spark.executor.resource.gpu.amount": "1",
