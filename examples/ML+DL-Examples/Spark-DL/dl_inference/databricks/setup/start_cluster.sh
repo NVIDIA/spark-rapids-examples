@@ -1,6 +1,8 @@
 #!/bin/bash
 # Copyright (c) 2025, NVIDIA CORPORATION.
 
+set -eo pipefail
+
 # configure arguments
 if [[ -z ${INIT_DEST} ]]; then
     echo "Please make sure INIT_DEST is exported per README.md"
@@ -14,7 +16,7 @@ fi
 
 json_config=$(cat <<EOF
 {
-    "cluster_name": "spark-dl-${FRAMEWORK}",
+    "cluster_name": "spark-dl-inference-${FRAMEWORK}",
     "spark_version": "15.4.x-gpu-ml-scala2.12",
     "spark_conf": {
         "spark.executor.resource.gpu.amount": "1",

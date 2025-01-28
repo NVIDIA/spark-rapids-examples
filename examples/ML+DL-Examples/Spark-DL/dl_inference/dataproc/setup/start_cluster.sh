@@ -1,6 +1,8 @@
 #!/bin/bash
 # Copyright (c) 2025, NVIDIA CORPORATION.
 
+set -eo pipefail
+
 # configure arguments
 if [[ -z ${GCS_BUCKET} ]]; then
     echo "Please export GCS_BUCKET per README.md"

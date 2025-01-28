@@ -45,4 +45,4 @@
     - Under environment variables, set `FRAMEWORK=torch` or `FRAMEWORK=tf` based on the notebook used.
     - For Tensorflow notebooks, we recommend setting the environment variable `TF_GPU_ALLOCATOR=cuda_malloc_async` (especially for Huggingface LLM models), which enables the CUDA driver to implicity release unused memory from the pool. 
 
-6. Navigate to the notebook in your workspace and attach it to the cluster. The default cluster name is `spark-dl-$FRAMEWORK`.  
+6. Navigate to the notebook in your workspace and attach it to the cluster. The default cluster name is `spark-dl-inference-$FRAMEWORK`.  
