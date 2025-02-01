@@ -39,6 +39,11 @@
     ```
     Repeat this step for any notebooks you wish to run. All notebooks under `gs://${SPARK_DL_HOME}/notebooks/` will be copied to the master node during initialization.
 
+5. Copy the utils file to the GCS bucket.
+    ```shell
+    gcloud storage cp </path/to/pytriton_utils.py> gs://${SPARK_DL_HOME}/
+    ```
+
 #### Start cluster and run
 
 5. Specify the framework to use (torch or tf), which will determine what libraries to install on the cluster. For example:

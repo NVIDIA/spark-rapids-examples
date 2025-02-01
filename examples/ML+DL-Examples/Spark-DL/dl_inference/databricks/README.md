@@ -6,28 +6,35 @@
 
 1. Install the latest [databricks-cli](https://docs.databricks.com/en/dev-tools/cli/tutorial.html) and configure for your workspace.
 
-2. Specify the path to the notebook and init script, and the destination filepaths on Databricks.
+2. Specify the path to your Databricks workspace:
+    ```shell
+    export WS_PATH=</Users/someone@example.com>
+
+    export NOTEBOOK_DEST=${WS_PATH}/spark-dl/notebook_torch.ipynb
+    export UTILS_DEST=${WS_PATH}/spark-dl/pytriton_utils.py
+    export INIT_DEST=${WS_PATH}/spark-dl/init_spark_dl.sh
+    ```
+3. Specify the local paths to the notebook you wish to run, the utils file, and the init script.
     As an example for a PyTorch notebook:
     ```shell
     export NOTEBOOK_SRC=</path/to/notebook_torch.ipynb>
-    export NOTEBOOK_DEST=</Users/someone@example.com/spark-dl/notebook_torch.ipynb>
-
+    export UTILS_SRC=</path/to/pytriton_utils.py>
     export INIT_SRC=$(pwd)/setup/init_spark_dl.sh
-    export INIT_DEST=</Users/someone@example.com/spark-dl/init_spark_dl.sh>
     ```
-3. Specify the framework to torch or tf, corresponding to the notebook you wish to run. Continuing with the PyTorch example:
+4. Specify the framework to torch or tf, corresponding to the notebook you wish to run. Continuing with the PyTorch example:
     ```shell
     export FRAMEWORK=torch
     ```
     This will tell the init script which libraries to install on the cluster.
 
-4. Copy the files to the Databricks Workspace:
+5. Copy the files to the Databricks Workspace:
     ```shell
-    databricks workspace import $INIT_DEST --format AUTO --file $INIT_SRC
     databricks workspace import $NOTEBOOK_DEST --format JUPYTER --file $NOTEBOOK_SRC
+    databricks workspace import $UTILS_DEST --format AUTO --file $UTILS_SRC
+    databricks workspace import $INIT_DEST --format AUTO --file $INIT_SRC
     ```
 
-5. Launch the cluster with the provided script (note that the script specifies **Azure instances** by default; change as needed):
+6. Launch the cluster with the provided script (note that the script specifies **Azure instances** by default; change as needed):
     ```shell
     cd setup
     chmod +x start_cluster.sh
@@ -45,4 +52,4 @@
     - Under environment variables, set `FRAMEWORK=torch` or `FRAMEWORK=tf` based on the notebook used.
     - For Tensorflow notebooks, we recommend setting the environment variable `TF_GPU_ALLOCATOR=cuda_malloc_async` (especially for Huggingface LLM models), which enables the CUDA driver to implicity release unused memory from the pool. 
 
-6. Navigate to the notebook in your workspace and attach it to the cluster. The default cluster name is `spark-dl-inference-$FRAMEWORK`.  
+7. Navigate to the notebook in your workspace and attach it to the cluster. The default cluster name is `spark-dl-inference-$FRAMEWORK`.  

@@ -49,6 +49,7 @@ if [[ "${ROLE}" == 'Master' ]]; then
     if gsutil -q stat gs://${SPARK_DL_HOME}/notebooks/**; then
         mkdir spark-dl-notebooks
         gcloud storage cp -r gs://${SPARK_DL_HOME}/notebooks/* spark-dl-notebooks
+        gcloud storage cp gs://${SPARK_DL_HOME}/pytriton_utils.py spark-dl-notebooks/
     else
         echo "Failed to retrieve notebooks from gs://${SPARK_DL_HOME}/notebooks/"
         exit 1
