@@ -108,7 +108,7 @@ def use_stage_level_scheduling(spark, rdd: RDD) -> RDD:
     task_gpus = 1.0
     treqs = TaskResourceRequests().cpus(task_cores).resource("gpu", task_gpus)
     rp = ResourceProfileBuilder().require(treqs).build
-    print(f"Reqesting stage-level resources: (cores={task_cores}, gpu={task_gpus})")
+    print(f"Requesting stage-level resources: (cores={task_cores}, gpu={task_gpus})")
 
     return rdd.withResources(rp)
 
