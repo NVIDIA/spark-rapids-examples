@@ -108,16 +108,16 @@ class TritonServerManager:
         num_nodes: Number of Triton servers to manage (= # of executors/GPUs)
         model_name: Name of the model being served
         model_path: Optional path to model files
-        server_pids: Dictionary of hostname to live server PIDs
+        server_pids: Dictionary of hostname to server process IDs
+        ports: List of ports used for HTTP, gRPC, and metrics services
 
     Example usage (4 node cluster):
     >>> server_manager = TritonServerManager(num_nodes=4, model_name="my_model", model_path="/path/to/my_model")
     >>> # Define triton_server_fn(ports, model_path) that contains PyTriton server logic
     >>> server_pids = server_manager.start_servers(triton_server_fn)
     >>> print(f"Servers started with PIDs: {server_pids}")
-    >>> ports = server_manager.ports
-    >>> http_url = f"http://localhost:{ports[0]}"
-    >>> grpc_url = f"grpc://localhost:{ports[1]}"
+    >>> http_url = server_manager.http_url
+    >>> grpc_url = server_manager.grpc_url
     >>> # Run inference...
     >>> success = server_manager.stop_servers()
     >>> print(f"Server shutdown success: {success}")
@@ -183,7 +183,7 @@ class TritonServerManager:
 
     def _use_stage_level_scheduling(self, rdd: RDD) -> RDD:
         """
-        Configure stage-level scheduling for GPU allocation.
+        Use stage-level scheduling to ensure each Triton server instance maps to 1 GPU (executor).
         From https://github.com/NVIDIA/spark-rapids-ml/blob/main/python/src/spark_rapids_ml/core.py
         """
         executor_cores = self.spark.conf.get("spark.executor.cores")
