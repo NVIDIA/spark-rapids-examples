@@ -13,7 +13,7 @@
 # limitations under the License.
 
 -r requirements.txt
-torch
+torch<=2.5.1
 torchvision
 torch-tensorrt
 tensorrt --extra-index-url https://download.pytorch.org/whl/cu121

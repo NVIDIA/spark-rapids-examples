@@ -105,6 +105,10 @@ If you encounter issues starting the Triton server, you may need to link your li
 ```shell
 ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ${CONDA_PREFIX}/lib/libstdc++.so.6
 ```
+If the issue persists with the message `libstdc++.so.6: version 'GLIBCXX_3.4.30' not found`, you may need to update libstdc++ in your conda environment:
+```shell
+conda install -c conda-forge libstdcxx-ng
+```
 
 ## Running on Cloud Environments
 
