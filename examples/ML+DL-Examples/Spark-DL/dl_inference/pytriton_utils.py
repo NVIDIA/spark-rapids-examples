@@ -139,7 +139,7 @@ class TritonServerManager:
         self.model_name = model_name
         self.model_path = model_path
         self._server_pids: Dict[str, int] = {}
-        self._ports: Optional[List[int]] = []
+        self._ports: List[int] = []
 
     @property
     def http_url(self):
