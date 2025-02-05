@@ -173,7 +173,7 @@ class TritonServerManager:
 
         # For simplicity assume that ports available on one worker are available on all workers.
         rdd = self.spark.sparkContext.parallelize([start_port], numSlices=1)
-        return rdd.map(lambda start_port: _find_ports_task(start_port)).collect()[0]
+        return rdd.map(_find_ports_task).collect()[0]
 
     def _get_node_rdd(self) -> RDD:
         """Create and configure RDD with stage-level scheduling for 1 task per node."""
