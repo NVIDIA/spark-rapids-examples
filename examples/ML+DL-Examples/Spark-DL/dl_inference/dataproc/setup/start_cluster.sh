@@ -49,7 +49,7 @@ urllib3<2
 nvidia-pytriton"
 
 TORCH_REQUIREMENTS="${COMMON_REQUIREMENTS}
-torch
+torch<=2.5.1
 torchvision --extra-index-url https://download.pytorch.org/whl/cu121
 torch-tensorrt
 tensorrt --extra-index-url https://download.pytorch.org/whl/cu121

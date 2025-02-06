@@ -63,13 +63,13 @@ Each notebook has a suffix `_torch` or `_tf` specifying the environment used.
 
 **For PyTorch:**
 ```
-conda create -n spark-dl-torch python=3.11
+conda create -n spark-dl-torch -c conda-forge python=3.11
 conda activate spark-dl-torch
 pip install -r torch_requirements.txt
 ```
 **For TensorFlow:**
 ```
-conda create -n spark-dl-tf python=3.11
+conda create -n spark-dl-tf -c conda-forge python=3.11
 conda activate spark-dl-tf
 pip install -r tf_requirements.txt
 ```
@@ -104,6 +104,10 @@ The notebooks are ready to run! Each notebook has a cell to connect to the stand
 If you encounter issues starting the Triton server, you may need to link your libstdc++ file to the conda environment, e.g.:
 ```shell
 ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ${CONDA_PREFIX}/lib/libstdc++.so.6
+```
+If the issue persists with the message `libstdc++.so.6: version 'GLIBCXX_3.4.30' not found`, you may need to update libstdc++ in your conda environment:
+```shell
+conda install -c conda-forge libstdcxx-ng
 ```
 
 ## Running on Cloud Environments
