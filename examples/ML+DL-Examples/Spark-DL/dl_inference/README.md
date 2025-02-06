@@ -63,13 +63,13 @@ Each notebook has a suffix `_torch` or `_tf` specifying the environment used.
 
 **For PyTorch:**
 ```
-conda create -n spark-dl-torch python=3.11
+conda create -n spark-dl-torch -c conda-forge python=3.11
 conda activate spark-dl-torch
 pip install -r torch_requirements.txt
 ```
 **For TensorFlow:**
 ```
-conda create -n spark-dl-tf python=3.11
+conda create -n spark-dl-tf -c conda-forge python=3.11
 conda activate spark-dl-tf
 pip install -r tf_requirements.txt
 ```
