@@ -12,7 +12,7 @@ datasets==3.*
 transformers
 urllib3<2
 nvidia-pytriton
-torch
+torch<=2.5.1
 torchvision --extra-index-url https://download.pytorch.org/whl/cu121
 torch-tensorrt
 tensorrt --extra-index-url https://download.pytorch.org/whl/cu121
