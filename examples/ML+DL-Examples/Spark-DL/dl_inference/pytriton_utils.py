@@ -81,9 +81,10 @@ def _start_triton_server(
     for _ in range(max_retries):
         try:
             client.wait_for_model(wait_timeout)
+            client.close()
             return [(hostname, (process.pid, ports))]
         except Exception:
-            print("Waiting for server to be ready...")
+            pass
 
     raise TimeoutError(
         "Failure: server startup timeout exceeded. Check the executor logs for more info."
@@ -91,7 +92,7 @@ def _start_triton_server(
 
 
 def _stop_triton_server(
-    server_pids_ports: Dict[str, int],
+    server_pids_ports: Dict[str, Tuple[int, List[int]]],
     max_retries: int = DEFAULT_WAIT_RETRIES,
     retry_delay: int = DEFAULT_WAIT_TIMEOUT,
 ) -> List[bool]:
@@ -124,14 +125,14 @@ class TritonServerManager:
         model_path: Optional path to model files
         server_pids_ports: Dictionary of hostname to (server process ID, ports)
 
-    Example usage (4 node cluster):
+    Example usage:
     >>> server_manager = TritonServerManager(num_nodes=4, model_name="my_model", model_path="/path/to/my_model")
-    >>> # Define triton_server_fn(ports, model_path) that contains PyTriton server logic
-    >>> server_pids = server_manager.start_servers(triton_server_fn)
-    >>> print(f"Servers started with PIDs: {server_pids}")
-    >>> http_url = server_manager.http_url
-    >>> grpc_url = server_manager.grpc_url
-    >>> # Run inference...
+    >>> # Define triton_server(ports, model_path) that contains PyTriton server logic
+    >>> server_pids_ports = server_manager.start_servers(triton_server)
+    >>> print(f"Servers started with PIDs/Ports: {server_pids_ports}")
+    >>> host_to_http_url = server_manager.host_to_http_url
+    >>> host_to_grpc_url = server_manager.host_to_grpc_url
+    >>> # Define Triton function and run inference...
     >>> success = server_manager.stop_servers()
     >>> print(f"Server shutdown success: {success}")
     """
@@ -151,7 +152,7 @@ class TritonServerManager:
         self.num_nodes = num_nodes
         self.model_name = model_name
         self.model_path = model_path
-        self._server_pids_ports: Dict[str, Tuple[int, int]] = {}
+        self._server_pids_ports: Dict[str, Tuple[int, List[int]]] = {}
 
     @property
     def host_to_http_url(self) -> Dict[str, str]:
@@ -219,7 +220,7 @@ class TritonServerManager:
 
         return rdd.withResources(rp)
 
-    def start_servers(self, triton_server_fn: callable) -> Dict[str, int]:
+    def start_servers(self, triton_server_fn: callable) -> Dict[str, Tuple[int, List[int]]]:
         """
         Start Triton servers across the cluster.
 
