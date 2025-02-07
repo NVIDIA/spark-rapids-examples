@@ -132,7 +132,7 @@ class TritonServerManager:
     >>> print(f"Servers started with PIDs/Ports: {server_pids_ports}")
     >>> host_to_http_url = server_manager.host_to_http_url
     >>> host_to_grpc_url = server_manager.host_to_grpc_url
-    >>> # Define Triton function and run inference...
+    >>> # Define triton_fn() and predict_batch_udf(triton_fn) and run inference...
     >>> success = server_manager.stop_servers()
     >>> print(f"Server shutdown success: {success}")
     """
@@ -220,7 +220,9 @@ class TritonServerManager:
 
         return rdd.withResources(rp)
 
-    def start_servers(self, triton_server_fn: callable) -> Dict[str, Tuple[int, List[int]]]:
+    def start_servers(
+        self, triton_server_fn: callable
+    ) -> Dict[str, Tuple[int, List[int]]]:
         """
         Start Triton servers across the cluster.
 
