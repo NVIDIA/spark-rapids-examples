@@ -20,7 +20,7 @@ import signal
 import socket
 import time
 from multiprocessing import Process
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import psutil
 from pyspark import RDD
@@ -39,7 +39,6 @@ logger = logging.getLogger("TritonManager")
 
 def _start_triton_server(
     triton_server_fn: callable,
-    ports: List[int],
     model_name: str,
     model_path: Optional[str] = None,
     max_retries: int = DEFAULT_WAIT_RETRIES,
@@ -48,6 +47,21 @@ def _start_triton_server(
     """Task to start Triton server process on a Spark executor."""
     sig = inspect.signature(triton_server_fn)
     params = sig.parameters
+
+    def _find_ports(start_port: int = 7000) -> List[int]:
+        """Find available ports for Triton's HTTP, gRPC, and metrics services."""
+        ports = []
+        conns = {conn.laddr.port for conn in psutil.net_connections(kind="inet")}
+        i = start_port
+
+        while len(ports) < 3:
+            if i not in conns:
+                ports.append(i)
+            i += 1
+
+        return ports
+
+    ports = _find_ports()
 
     if model_path is not None:
         assert (
@@ -67,7 +81,7 @@ def _start_triton_server(
     for _ in range(max_retries):
         try:
             client.wait_for_model(wait_timeout)
-            return [(hostname, process.pid)]
+            return [(hostname, (process.pid, ports))]
         except Exception:
             print("Waiting for server to be ready...")
 
@@ -77,13 +91,13 @@ def _start_triton_server(
 
 
 def _stop_triton_server(
-    server_pids: Dict[str, int],
+    server_pids_ports: Dict[str, int],
     max_retries: int = DEFAULT_WAIT_RETRIES,
     retry_delay: int = DEFAULT_WAIT_TIMEOUT,
 ) -> List[bool]:
     """Task to stop the Triton server on a Spark executor."""
     hostname = socket.gethostname()
-    pid = server_pids.get(hostname)
+    pid, _ = server_pids_ports.get(hostname)
     assert pid is not None, f"No server PID found for host {hostname}"
 
     for _ in range(max_retries):
@@ -108,8 +122,7 @@ class TritonServerManager:
         num_nodes: Number of Triton servers to manage (= # of executors/GPUs)
         model_name: Name of the model being served
         model_path: Optional path to model files
-        server_pids: Dictionary of hostname to server process IDs
-        ports: List of ports used for HTTP, gRPC, and metrics services
+        server_pids_ports: Dictionary of hostname to (server process ID, ports)
 
     Example usage (4 node cluster):
     >>> server_manager = TritonServerManager(num_nodes=4, model_name="my_model", model_path="/path/to/my_model")
@@ -138,42 +151,31 @@ class TritonServerManager:
         self.num_nodes = num_nodes
         self.model_name = model_name
         self.model_path = model_path
-        self._server_pids: Dict[str, int] = {}
-        self._ports: List[int] = []
+        self._server_pids_ports: Dict[str, Tuple[int, int]] = {}
 
     @property
-    def http_url(self):
-        """Returns client HTTP URL if ports are available (servers are running)."""
-        if not self._ports:
+    def host_to_http_url(self) -> Dict[str, str]:
+        """Map hostname to client HTTP URL for Triton server on that host."""
+        if not self._server_pids_ports:
+            logger.warning("No urls available. Start servers first.")
             return None
-        return f"http://localhost:{self._ports[0]}"
+
+        return {
+            host: f"http://{host}:{ports[0]}"
+            for host, (_, ports) in self._server_pids_ports.items()
+        }
 
     @property
-    def grpc_url(self):
-        """Returns client gRPC URL if ports are available (servers are running)."""
-        if not self._ports:
+    def host_to_grpc_url(self) -> Dict[str, str]:
+        """Map hostname to client gRPC URL for Triton server on that host."""
+        if not self._server_pids_ports:
+            logger.warning("No urls available. Start servers first.")
             return None
-        return f"grpc://localhost:{self._ports[1]}"
 
-    def _find_ports(self, start_port: int = 7000) -> List[int]:
-        """Find available ports for Triton's HTTP, gRPC, and metrics services."""
-
-        def _find_ports_task(start_port: int) -> List[int]:
-            """Task to find ports on the Spark worker."""
-            ports = []
-            conns = {conn.laddr.port for conn in psutil.net_connections(kind="inet")}
-            i = start_port
-
-            while len(ports) < 3:
-                if i not in conns:
-                    ports.append(i)
-                i += 1
-
-            return ports
-
-        # For simplicity assume that ports available on one worker are available on all workers.
-        rdd = self.spark.sparkContext.parallelize([start_port], numSlices=1)
-        return rdd.map(_find_ports_task).collect()[0]
+        return {
+            host: f"grpc://{host}:{ports[1]}"
+            for host, (_, ports) in self._server_pids_ports.items()
+        }
 
     def _get_node_rdd(self) -> RDD:
         """Create and configure RDD with stage-level scheduling for 1 task per node."""
@@ -181,7 +183,7 @@ class TritonServerManager:
         node_rdd = sc.parallelize(list(range(self.num_nodes)), self.num_nodes)
         return self._use_stage_level_scheduling(node_rdd)
 
-    def _use_stage_level_scheduling(self, rdd: RDD) -> RDD:
+    def _use_stage_level_scheduling(self, rdd: RDD, task_gpus: float = 1.0) -> RDD:
         """
         Use stage-level scheduling to ensure each Triton server instance maps to 1 GPU (executor).
         From https://github.com/NVIDIA/spark-rapids-ml/blob/main/python/src/spark_rapids_ml/core.py
@@ -209,7 +211,6 @@ class TritonServerManager:
             and "true" == spark_rapids_sql_enabled.lower()
             else (int(executor_cores) // 2) + 1
         )
-        task_gpus = 1.0
         treqs = TaskResourceRequests().cpus(task_cores).resource("gpu", task_gpus)
         rp = ResourceProfileBuilder().require(treqs).build
         logger.info(
@@ -229,20 +230,16 @@ class TritonServerManager:
             Dictionary of hostname -> server PID
         """
         node_rdd = self._get_node_rdd()
-        ports = self._find_ports()
         model_name = self.model_name
         model_path = self.model_path
 
-        logger.info(
-            f"Starting {self.num_nodes} servers using ports {ports} for HTTP, gRPC, and metrics."
-        )
+        logger.info(f"Starting {self.num_nodes} servers.")
 
-        self._server_pids = (
+        self._server_pids_ports = (
             node_rdd.barrier()
             .mapPartitions(
                 lambda _: _start_triton_server(
                     triton_server_fn=triton_server_fn,
-                    ports=ports,
                     model_name=model_name,
                     model_path=model_path,
                 )
@@ -250,9 +247,7 @@ class TritonServerManager:
             .collectAsMap()
         )
 
-        self._ports = ports
-
-        return self._server_pids
+        return self._server_pids_ports
 
     def stop_servers(self) -> List[bool]:
         """
@@ -261,22 +256,21 @@ class TritonServerManager:
         Returns:
             List of booleans indicating success/failure of stopping each server
         """
-        if not self._server_pids:
+        if not self._server_pids_ports:
             logger.warning("No servers to stop.")
             return
 
         node_rdd = self._get_node_rdd()
-        server_pids = self._server_pids
+        server_pids_ports = self._server_pids_ports
 
         stop_success = (
             node_rdd.barrier()
-            .mapPartitions(lambda _: _stop_triton_server(server_pids))
+            .mapPartitions(lambda _: _stop_triton_server(server_pids_ports))
             .collect()
         )
 
         if all(stop_success):
-            self._server_pids.clear()
-            self._ports.clear()
+            self._server_pids_ports.clear()
             logger.info(f"Sucessfully stopped {self.num_nodes} servers.")
         else:
             logger.warning(
