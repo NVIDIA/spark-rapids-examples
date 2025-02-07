@@ -99,6 +99,11 @@ The notebooks are ready to run! Each notebook has a cell to connect to the stand
 - `requirements.txt` installs pyspark>=3.4.0. Make sure the installed PySpark version is compatible with your system's Spark installation.
 - The notebooks require a GPU environment for the executors.  
 - The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but as of writing it is not supported in TF==2.17.0. 
+- Note that some Huggingface models may be gated and will require a login, e.g.,:
+    ```python
+    from huggingface_hub import login
+    login()
+    ```
 
 **Troubleshooting:** 
 If you encounter issues starting the Triton server, you may need to link your libstdc++ file to the conda environment, e.g.:
