@@ -50,7 +50,12 @@
     ```shell
     export FRAMEWORK=torch
     ```
-    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources.
+    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources. 
+    **Note:** The LLM examples (e.g. deepseek-r1, gemma-7b) require greater GPU RAM (>18GB). For these notebooks, set the following environment variable to tell the startup script to replace the default T4 GPUs with L4 GPUs.
+    ```shell
+    # For LLM examples, use L4 GPUs (24GB memory)
+    export USE_L4=true
+    ```
     ```shell
     cd setup
     chmod +x start_cluster.sh

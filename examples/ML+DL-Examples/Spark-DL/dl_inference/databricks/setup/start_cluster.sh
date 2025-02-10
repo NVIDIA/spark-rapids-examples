@@ -14,6 +14,8 @@ if [[ -z ${FRAMEWORK} ]]; then
     exit 1
 fi
 
+# For LLM examples: modify the node_type_id and driver_node_type_id below to use A10 GPUs (e.g., Standard_NV6ads_A10_v5)
+# and modify task.resource.gpu.amount and executor.cores accordingly (e.g., 0.16667 and 6 respectively)
 json_config=$(cat <<EOF
 {
     "cluster_name": "spark-dl-inference-${FRAMEWORK}",
@@ -21,8 +23,8 @@ json_config=$(cat <<EOF
     "spark_conf": {
         "spark.executor.resource.gpu.amount": "1",
         "spark.python.worker.reuse": "true",
-        "spark.task.resource.gpu.amount": "0.125",
         "spark.sql.execution.arrow.pyspark.enabled": "true",
+        "spark.task.resource.gpu.amount": "0.125",
         "spark.executor.cores": "8"
     },
     "node_type_id": "Standard_NC8as_T4_v3",
