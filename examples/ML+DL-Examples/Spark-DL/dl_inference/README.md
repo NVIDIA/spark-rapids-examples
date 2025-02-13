@@ -1,6 +1,6 @@
 # Deep Learning Inference on Spark
 
-Example notebooks demonstrating **distributed deep learning inference** using the [predict_batch_udf](https://developer.nvidia.com/blog/distributed-deep-learning-made-easy-with-spark-3-4/) introduced in Spark 3.4.0.
+Example notebooks demonstrating **distributed deep learning inference** using the [predict_batch_udf](https://developer.nvidia.com/blog/distributed-deep-learning-made-easy-with-spark-3-4/#distributed_inference) introduced in Spark 3.4.0.
 These notebooks also demonstrate integration with [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source, GPU-accelerated serving solution for DL.
 
 ## Contents:
@@ -63,13 +63,13 @@ Each notebook has a suffix `_torch` or `_tf` specifying the environment used.
 
 **For PyTorch:**
 ```
-conda create -n spark-dl-torch python=3.11
+conda create -n spark-dl-torch -c conda-forge python=3.11
 conda activate spark-dl-torch
 pip install -r torch_requirements.txt
 ```
 **For TensorFlow:**
 ```
-conda create -n spark-dl-tf python=3.11
+conda create -n spark-dl-tf -c conda-forge python=3.11
 conda activate spark-dl-tf
 pip install -r tf_requirements.txt
 ```
@@ -99,11 +99,20 @@ The notebooks are ready to run! Each notebook has a cell to connect to the stand
 - `requirements.txt` installs pyspark>=3.4.0. Make sure the installed PySpark version is compatible with your system's Spark installation.
 - The notebooks require a GPU environment for the executors.  
 - The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but as of writing it is not supported in TF==2.17.0. 
+- Note that some Huggingface models may be gated and will require a login, e.g.,:
+    ```python
+    from huggingface_hub import login
+    login()
+    ```
 
 **Troubleshooting:** 
 If you encounter issues starting the Triton server, you may need to link your libstdc++ file to the conda environment, e.g.:
 ```shell
 ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ${CONDA_PREFIX}/lib/libstdc++.so.6
+```
+If the issue persists with the message `libstdc++.so.6: version 'GLIBCXX_3.4.30' not found`, you may need to update libstdc++ in your conda environment:
+```shell
+conda install -c conda-forge libstdcxx-ng
 ```
 
 ## Running on Cloud Environments
