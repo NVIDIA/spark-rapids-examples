@@ -133,9 +133,8 @@ The notebooks use [PyTriton](https://github.com/triton-inference-server/pytriton
 The diagram above shows how Spark distributes inference tasks to run on the Triton Inference Server, with PyTriton handling request/response communication with the server. 
 
 The process looks like this:
-- Distribute a PyTriton task across the Spark cluster, instructing each worker to launch a Triton server process.
-    - Use stage-level scheduling to ensure there is a 1:1 mapping between worker nodes and servers.
-- Define a Triton inference function, which contains a client that binds to the local server on a given worker and sends inference requests.
+- Prior to inference, launch a Triton server process on each node.
+- Define a Triton predict function, which creates a client that binds to the local server and sends/receives inference requests.
 - Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
 - Finally, distribute a shutdown signal to terminate the Triton server processes on each worker.
 
