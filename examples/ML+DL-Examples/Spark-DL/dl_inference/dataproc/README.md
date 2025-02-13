@@ -50,18 +50,12 @@
     ```shell
     export FRAMEWORK=torch
     ```
-    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources. 
-    **Note:** The LLM examples (e.g. deepseek-r1, gemma-7b) require greater GPU RAM (>18GB). For these notebooks, setting the following environment variable will tell the startup script to use L4 GPUs instead of the default T4 GPUs.
-    ```shell
-    # For LLM examples, use L4 GPUs (24GB memory)
-    export USE_L4=true
-    ```
+    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources. The script will create 4 L4 worker nodes and 1 L4 driver node by default, named `${USER}-spark-dl-inference-${FRAMEWORK}`.
     ```shell
     cd setup
     chmod +x start_cluster.sh
     ./start_cluster.sh
     ```
-    By default, the script creates a 4 node GPU cluster named `${USER}-spark-dl-inference-${FRAMEWORK}`.
 
 7. Browse to the Jupyter web UI:
     - Go to `Dataproc` > `Clusters` > `(Cluster Name)` > `Web Interfaces` > `Jupyter/Lab`

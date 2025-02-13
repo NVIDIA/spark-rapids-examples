@@ -34,8 +34,7 @@
     databricks workspace import $INIT_DEST --format AUTO --file $INIT_SRC
     ```
 
-6. Launch the cluster with the provided script.
-**Note:** The LLM examples (e.g. deepseek-r1, gemma-7b) require greater GPU RAM (>18GB). For these notebooks, we recommend modifying the startup script node types to use A10 GPU instances. Note that the script specifies **Azure instances** by default; change as needed. 
+6. Launch the cluster with the provided script. By default the script will create a cluster with 4 A10 worker nodes and 1 A10 driver node. (Note that the script uses **Azure instances** by default; change as needed).
     ```shell
     cd setup
     chmod +x start_cluster.sh
@@ -45,7 +44,7 @@
 
     - Go to `Compute > Create compute` and set the desired cluster settings.
         - Integration with Triton inference server uses stage-level scheduling (Spark>=3.4.0). Make sure to:
-            - use a cluster with GPU resources (for LLM examples, make sure you have sufficient GPU RAM)
+            - use a cluster with GPU resources (for LLM examples, make sure the selected GPUs have sufficient RAM)
             - set a value for `spark.executor.cores`
             - ensure that `spark.executor.resource.gpu.amount` = 1
     - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.

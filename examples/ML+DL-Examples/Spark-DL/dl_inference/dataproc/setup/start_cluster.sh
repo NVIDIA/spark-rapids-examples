@@ -86,6 +86,8 @@ CLUSTER_PARAMS=(
     --image-version=2.2-ubuntu
     --region ${COMPUTE_REGION}
     --num-workers 4
+    --master-machine-type g2-standard-8
+    --worker-machine-type g2-standard-8
     --initialization-actions gs://${SPARK_DL_HOME}/init/spark-rapids.sh,${INIT_PATH}
     --metadata gpu-driver-provider="NVIDIA"
     --metadata gcs-bucket=${GCS_BUCKET}
@@ -100,21 +102,4 @@ CLUSTER_PARAMS=(
     --no-shielded-secure-boot
 )
 
-if [[ ${USE_L4} == "true" ]]; then
-    echo "Using L4 GPUs."
-    GPU_TYPE_PARAMS=(
-        --master-machine-type g2-standard-8
-        --worker-machine-type g2-standard-8
-    )
-else
-    echo "Using T4 GPUs."
-    GPU_TYPE_PARAMS=(
-        --master-machine-type n1-standard-16
-        --worker-machine-type n1-standard-16
-        --worker-min-cpu-platform="Intel Skylake"
-        --master-accelerator type=nvidia-tesla-t4,count=1
-        --worker-accelerator type=nvidia-tesla-t4,count=1
-    )
-fi
-
-gcloud dataproc clusters create ${cluster_name} "${CLUSTER_PARAMS[@]}" "${GPU_TYPE_PARAMS[@]}"
+gcloud dataproc clusters create ${cluster_name} "${CLUSTER_PARAMS[@]}"

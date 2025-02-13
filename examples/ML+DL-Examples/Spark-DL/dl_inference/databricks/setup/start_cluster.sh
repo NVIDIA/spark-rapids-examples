@@ -14,8 +14,9 @@ if [[ -z ${FRAMEWORK} ]]; then
     exit 1
 fi
 
-# For LLM examples: modify the node_type_id and driver_node_type_id below to use A10 GPUs (e.g., Standard_NV6ads_A10_v5)
-# and modify task.resource.gpu.amount and executor.cores accordingly (e.g., 0.16667 and 6 respectively)
+# Modify the node_type_id and driver_node_type_id below if you don't have this specific instance type. 
+# Modify executor.cores=(cores per node) and task.resource.gpu.amount=(1/executor cores) accordingly.
+# We recommend selecting A10/L4+ instances for these examples.
 json_config=$(cat <<EOF
 {
     "cluster_name": "spark-dl-inference-${FRAMEWORK}",
@@ -24,11 +25,11 @@ json_config=$(cat <<EOF
         "spark.executor.resource.gpu.amount": "1",
         "spark.python.worker.reuse": "true",
         "spark.sql.execution.arrow.pyspark.enabled": "true",
-        "spark.task.resource.gpu.amount": "0.125",
-        "spark.executor.cores": "8"
+        "spark.task.resource.gpu.amount": "0.16667",
+        "spark.executor.cores": "6"
     },
-    "node_type_id": "Standard_NC8as_T4_v3",
-    "driver_node_type_id": "Standard_NC8as_T4_v3",
+    "node_type_id": "Standard_NV12ads_A10_v5",
+    "driver_node_type_id": "Standard_NV12ads_A10_v5",
     "spark_env_vars": {
         "TF_GPU_ALLOCATOR": "cuda_malloc_async",
         "FRAMEWORK": "${FRAMEWORK}"
