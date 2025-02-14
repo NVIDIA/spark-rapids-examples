@@ -77,29 +77,29 @@ else
     exit 1
 fi
 
-# start cluster if not already running
 if gcloud dataproc clusters list | grep -q "${cluster_name}"; then
     echo "Cluster ${cluster_name} already exists."
-else
-    gcloud dataproc clusters create ${cluster_name} \
-    --image-version=2.2-ubuntu \
-    --region ${COMPUTE_REGION} \
-    --master-machine-type n1-standard-16 \
-    --num-workers 4 \
-    --worker-min-cpu-platform="Intel Skylake" \
-    --worker-machine-type n1-standard-16 \
-    --master-accelerator type=nvidia-tesla-t4,count=1 \
-    --worker-accelerator type=nvidia-tesla-t4,count=1 \
-    --initialization-actions gs://${SPARK_DL_HOME}/init/spark-rapids.sh,${INIT_PATH} \
-    --metadata gpu-driver-provider="NVIDIA" \
-    --metadata gcs-bucket=${GCS_BUCKET} \
-    --metadata spark-dl-home=${SPARK_DL_HOME} \
-    --metadata requirements="${requirements}" \
-    --worker-local-ssd-interface=NVME \
-    --optional-components=JUPYTER \
-    --bucket ${GCS_BUCKET} \
-    --enable-component-gateway \
-    --max-idle "60m" \
-    --subnet=default \
-    --no-shielded-secure-boot
+    exit 0
 fi
+
+CLUSTER_PARAMS=(
+    --image-version=2.2-ubuntu
+    --region ${COMPUTE_REGION}
+    --num-workers 4
+    --master-machine-type g2-standard-8
+    --worker-machine-type g2-standard-8
+    --initialization-actions gs://${SPARK_DL_HOME}/init/spark-rapids.sh,${INIT_PATH}
+    --metadata gpu-driver-provider="NVIDIA"
+    --metadata gcs-bucket=${GCS_BUCKET}
+    --metadata spark-dl-home=${SPARK_DL_HOME}
+    --metadata requirements="${requirements}"
+    --worker-local-ssd-interface=NVME
+    --optional-components=JUPYTER
+    --bucket ${GCS_BUCKET}
+    --enable-component-gateway
+    --max-idle "60m"
+    --subnet=default
+    --no-shielded-secure-boot
+)
+
+gcloud dataproc clusters create ${cluster_name} "${CLUSTER_PARAMS[@]}"
