@@ -50,13 +50,12 @@
     ```shell
     export FRAMEWORK=torch
     ```
-    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources.
+    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources. The script will create 4 L4 worker nodes and 1 L4 driver node by default, named `${USER}-spark-dl-inference-${FRAMEWORK}`.
     ```shell
     cd setup
     chmod +x start_cluster.sh
     ./start_cluster.sh
     ```
-    By default, the script creates a 4 node GPU cluster named `${USER}-spark-dl-inference-${FRAMEWORK}`.
 
 7. Browse to the Jupyter web UI:
     - Go to `Dataproc` > `Clusters` > `(Cluster Name)` > `Web Interfaces` > `Jupyter/Lab`

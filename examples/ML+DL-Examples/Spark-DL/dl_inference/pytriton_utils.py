@@ -20,16 +20,13 @@ import signal
 import socket
 import time
 from multiprocessing import Process
-from typing import Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 import psutil
 from pyspark import RDD
 from pyspark.sql import SparkSession
 
 from pytriton.client import ModelClient
-
-DEFAULT_WAIT_RETRIES = 10
-DEFAULT_WAIT_TIMEOUT = 5
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -38,11 +35,11 @@ logger = logging.getLogger("TritonManager")
 
 
 def _start_triton_server(
-    triton_server_fn: callable,
+    triton_server_fn: Callable,
     model_name: str,
+    wait_retries: int,
+    wait_timeout: int,
     model_path: Optional[str] = None,
-    max_retries: int = DEFAULT_WAIT_RETRIES,
-    wait_timeout: int = DEFAULT_WAIT_TIMEOUT,
 ) -> List[tuple]:
     """Task to start Triton server process on a Spark executor."""
     sig = inspect.signature(triton_server_fn)
@@ -78,7 +75,7 @@ def _start_triton_server(
 
     client = ModelClient(f"http://localhost:{ports[0]}", model_name)
 
-    for _ in range(max_retries):
+    for _ in range(wait_retries):
         try:
             client.wait_for_model(wait_timeout)
             client.close()
@@ -93,20 +90,20 @@ def _start_triton_server(
 
 def _stop_triton_server(
     server_pids_ports: Dict[str, Tuple[int, List[int]]],
-    max_retries: int = DEFAULT_WAIT_RETRIES,
-    retry_delay: int = DEFAULT_WAIT_TIMEOUT,
+    wait_retries: int,
+    wait_timeout: int,
 ) -> List[bool]:
     """Task to stop the Triton server on a Spark executor."""
     hostname = socket.gethostname()
     pid, _ = server_pids_ports.get(hostname)
     assert pid is not None, f"No server PID found for host {hostname}"
 
-    for _ in range(max_retries):
+    for _ in range(wait_retries):
         try:
             os.kill(pid, signal.SIGTERM)
         except OSError:
             return [True]
-        time.sleep(retry_delay)
+        time.sleep(wait_timeout)
 
     return [False]  # Failed to terminate or timed out
 
@@ -136,6 +133,9 @@ class TritonServerManager:
     >>> success = server_manager.stop_servers()
     >>> print(f"Server shutdown success: {success}")
     """
+
+    DEFAULT_WAIT_RETRIES = 10
+    DEFAULT_WAIT_TIMEOUT = 5
 
     def __init__(
         self, num_nodes: int, model_name: str, model_path: Optional[str] = None
@@ -221,7 +221,10 @@ class TritonServerManager:
         return rdd.withResources(rp)
 
     def start_servers(
-        self, triton_server_fn: callable
+        self,
+        triton_server_fn: Callable,
+        wait_retries: int = DEFAULT_WAIT_RETRIES,
+        wait_timeout: int = DEFAULT_WAIT_TIMEOUT,
     ) -> Dict[str, Tuple[int, List[int]]]:
         """
         Start Triton servers across the cluster.
@@ -244,6 +247,8 @@ class TritonServerManager:
                 lambda _: _start_triton_server(
                     triton_server_fn=triton_server_fn,
                     model_name=model_name,
+                    wait_retries=wait_retries,
+                    wait_timeout=wait_timeout,
                     model_path=model_path,
                 )
             )
@@ -252,7 +257,11 @@ class TritonServerManager:
 
         return self._server_pids_ports
 
-    def stop_servers(self) -> List[bool]:
+    def stop_servers(
+        self,
+        wait_retries: int = DEFAULT_WAIT_RETRIES,
+        wait_timeout: int = DEFAULT_WAIT_TIMEOUT,
+    ) -> List[bool]:
         """
         Stop all Triton servers across the cluster.
 
@@ -268,7 +277,13 @@ class TritonServerManager:
 
         stop_success = (
             node_rdd.barrier()
-            .mapPartitions(lambda _: _stop_triton_server(server_pids_ports))
+            .mapPartitions(
+                lambda _: _stop_triton_server(
+                    server_pids_ports=server_pids_ports,
+                    wait_retries=wait_retries,
+                    wait_timeout=wait_timeout,
+                )
+            )
             .collect()
         )
 
