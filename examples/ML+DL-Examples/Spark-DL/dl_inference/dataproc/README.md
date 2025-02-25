@@ -2,7 +2,8 @@
 
 ## Setup
 
-**Note**: fields in \<brackets\> require user inputs.
+**Note**: fields in \<brackets\> require user inputs.  
+Make sure you are in [this](./) directory.
 
 #### Setup GCloud CLI
 
@@ -41,7 +42,7 @@
 
 5. Copy the utils file to the GCS bucket.
     ```shell
-    gcloud storage cp </path/to/pytriton_utils.py> gs://${SPARK_DL_HOME}/
+    gcloud storage cp $(realpath ../pytriton_utils.py) gs://${SPARK_DL_HOME}/
     ```
 
 #### Start cluster and run

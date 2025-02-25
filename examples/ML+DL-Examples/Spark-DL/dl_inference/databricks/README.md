@@ -1,6 +1,7 @@
 # Spark DL Inference on Databricks
 
-**Note**: fields in \<brackets\> require user inputs.
+**Note**: fields in \<brackets\> require user inputs.  
+Make sure you are in [this](./) directory.
 
 ## Setup
 
@@ -9,16 +10,19 @@
 2. Specify the path to your Databricks workspace:
     ```shell
     export WS_PATH=</Users/someone@example.com>
+    ```
 
-    export NOTEBOOK_DEST=${WS_PATH}/spark-dl/notebook_torch.ipynb
-    export UTILS_DEST=${WS_PATH}/spark-dl/pytriton_utils.py
-    export INIT_DEST=${WS_PATH}/spark-dl/init_spark_dl.sh
+    ```shell
+    export SPARK_DL_WS=${WS_PATH}/spark-dl
+    databricks workspace mkdirs ${SPARK_DL_WS}
     ```
 3. Specify the local paths to the notebook you wish to run, the utils file, and the init script.
     As an example for a PyTorch notebook:
     ```shell
     export NOTEBOOK_SRC=</path/to/notebook_torch.ipynb>
-    export UTILS_SRC=</path/to/pytriton_utils.py>
+    ```
+    ```shell
+    export UTILS_SRC=$(realpath ../pytriton_utils.py)
     export INIT_SRC=$(pwd)/setup/init_spark_dl.sh
     ```
 4. Specify the framework to torch or tf, corresponding to the notebook you wish to run. Continuing with the PyTorch example:
@@ -29,9 +33,9 @@
 
 5. Copy the files to the Databricks Workspace:
     ```shell
-    databricks workspace import $NOTEBOOK_DEST --format JUPYTER --file $NOTEBOOK_SRC
-    databricks workspace import $UTILS_DEST --format AUTO --file $UTILS_SRC
-    databricks workspace import $INIT_DEST --format AUTO --file $INIT_SRC
+    databricks workspace import ${SPARK_DL_WS}/notebook_torch.ipynb --format JUPYTER --file $NOTEBOOK_SRC
+    databricks workspace import ${SPARK_DL_WS}/pytriton_utils.py --format AUTO --file $UTILS_SRC
+    databricks workspace import ${SPARK_DL_WS}/init_spark_dl.sh --format AUTO --file $INIT_SRC
     ```
 
 6. Launch the cluster with the provided script. By default the script will create a cluster with 4 A10 worker nodes and 1 A10 driver node. (Note that the script uses **Azure instances** by default; change as needed).
