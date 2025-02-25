@@ -26,5 +26,4 @@ huggingface
 datasets
 transformers
 ipywidgets
-urllib3<2
 nvidia-pytriton
