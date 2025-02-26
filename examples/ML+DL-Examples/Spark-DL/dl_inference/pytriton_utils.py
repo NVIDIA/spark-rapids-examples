@@ -18,6 +18,7 @@ import logging
 import os
 import signal
 import socket
+import sys
 import time
 from multiprocessing import Process
 from typing import Callable, Dict, List, Optional, Tuple
@@ -42,8 +43,31 @@ def _start_triton_server(
     model_path: Optional[str] = None,
 ) -> List[tuple]:
     """Task to start Triton server process on a Spark executor."""
-    sig = inspect.signature(triton_server_fn)
-    params = sig.parameters
+
+    def _prepare_pytriton_env():
+        """Expose PyTriton to correct libpython3.11.so and Triton bundled libraries."""
+        ld_library_paths = []
+
+        # Add nvidia_pytriton.libs to LD_LIBRARY_PATH
+        for path in sys.path:
+            if os.path.isdir(path) and "site-packages" in path:
+                libs_path = os.path.join(path, "nvidia_pytriton.libs")
+                if os.path.isdir(libs_path):
+                    ld_library_paths.append(libs_path)
+                    break
+
+        # Add ${CONDA_PREFIX}/lib to LD_LIBRARY_PATH for conda environments
+        if os.path.exists(os.path.join(sys.prefix, "conda-meta")):
+            conda_lib = os.path.join(sys.prefix, "lib")
+            if os.path.isdir(conda_lib):
+                ld_library_paths.append(conda_lib)
+
+        if "LD_LIBRARY_PATH" in os.environ:
+            ld_library_paths.append(os.environ["LD_LIBRARY_PATH"])
+
+        os.environ["LD_LIBRARY_PATH"] = ":".join(ld_library_paths)
+
+        return None
 
     def _find_ports(start_port: int = 7000) -> List[int]:
         """Find available ports for Triton's HTTP, gRPC, and metrics services."""
@@ -59,6 +83,8 @@ def _start_triton_server(
         return ports
 
     ports = _find_ports()
+    sig = inspect.signature(triton_server_fn)
+    params = sig.parameters
 
     if model_path is not None:
         assert (
@@ -69,6 +95,7 @@ def _start_triton_server(
         assert len(params) == 1, "Server function must accept (ports) argument"
         args = (ports,)
 
+    _prepare_pytriton_env()
     hostname = socket.gethostname()
     process = Process(target=triton_server_fn, args=args)
     process.start()
@@ -82,6 +109,11 @@ def _start_triton_server(
             return [(hostname, (process.pid, ports))]
         except Exception:
             pass
+
+    client.close()
+    if process.is_alive():
+        # Terminate if timeout is exceeded to avoid dangling server processes
+        process.terminate()
 
     raise TimeoutError(
         "Failure: server startup timeout exceeded. Check the executor logs for more info."
