@@ -130,14 +130,19 @@ def _stop_triton_server(
     pid, _ = server_pids_ports.get(hostname)
     assert pid is not None, f"No server PID found for host {hostname}"
 
-    for _ in range(wait_retries):
+    try:
+        process = psutil.Process(pid)
+        process.terminate()
+        process.wait(timeout=wait_timeout * wait_retries)
+        return [True]
+    except psutil.NoSuchProcess:
+        return [True]
+    except psutil.TimeoutExpired:
         try:
-            os.kill(pid, signal.SIGTERM)
-        except OSError:
+            process.kill()
             return [True]
-        time.sleep(wait_timeout)
-
-    return [False]  # Failed to terminate or timed out
+        except:
+            return [False]
 
 
 class TritonServerManager:
