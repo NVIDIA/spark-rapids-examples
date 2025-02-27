@@ -45,7 +45,6 @@ scikit-learn
 huggingface
 datasets==3.*
 transformers
-urllib3<2
 nvidia-pytriton"
 
 TORCH_REQUIREMENTS="${COMMON_REQUIREMENTS}

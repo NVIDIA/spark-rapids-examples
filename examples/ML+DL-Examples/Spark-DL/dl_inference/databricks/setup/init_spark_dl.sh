@@ -10,7 +10,6 @@ if [[ "${FRAMEWORK}" == "torch" ]]; then
     cat <<EOF > temp_requirements.txt
 datasets==3.*
 transformers
-urllib3<2
 nvidia-pytriton
 torch<=2.5.1
 torchvision --extra-index-url https://download.pytorch.org/whl/cu121
@@ -24,7 +23,6 @@ elif [[ "${FRAMEWORK}" == "tf" ]]; then
     cat <<EOF > temp_requirements.txt
 datasets==3.*
 transformers
-urllib3<2
 nvidia-pytriton
 EOF
 else
