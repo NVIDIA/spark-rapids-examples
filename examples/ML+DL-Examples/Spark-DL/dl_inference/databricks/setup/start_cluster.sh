@@ -26,7 +26,7 @@ json_config=$(cat <<EOF
         "spark.python.worker.reuse": "true",
         "spark.sql.execution.arrow.pyspark.enabled": "true",
         "spark.task.resource.gpu.amount": "0.16667",
-        "spark.executor.cores": "6"
+        "spark.executor.cores": "12"
     },
     "node_type_id": "Standard_NV12ads_A10_v5",
     "driver_node_type_id": "Standard_NV12ads_A10_v5",
