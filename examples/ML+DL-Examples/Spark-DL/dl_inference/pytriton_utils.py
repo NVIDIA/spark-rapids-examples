@@ -44,6 +44,8 @@ def _start_triton_server(
 ) -> List[tuple]:
     """Task to start Triton server process on a Spark executor."""
 
+    from pyspark import BarrierTaskContext
+
     def _prepare_pytriton_env():
         """Expose PyTriton to correct libpython3.11.so and Triton bundled libraries."""
         ld_library_paths = []
@@ -82,6 +84,7 @@ def _start_triton_server(
 
         return ports
 
+    tc = BarrierTaskContext.get()
     ports = _find_ports()
     sig = inspect.signature(triton_server_fn)
     params = sig.parameters
@@ -105,6 +108,7 @@ def _start_triton_server(
     for _ in range(wait_retries):
         try:
             client.wait_for_model(wait_timeout)
+            tc.barrier()
             client.close()
             return [(hostname, (process.pid, ports))]
         except Exception:
