@@ -158,13 +158,13 @@ class TritonServerManager:
 
     Attributes:
         spark: Active SparkSession
-        num_nodes: Number of Triton servers to manage (= # of executors/GPUs)
+        num_executors: Number of Triton servers to manage (= # of executors)
         model_name: Name of the model being served
         model_path: Optional path to model files
         server_pids_ports: Dictionary of hostname to (server process ID, ports)
 
     Example usage:
-    >>> server_manager = TritonServerManager(num_nodes=4, model_name="my_model", model_path="/path/to/my_model")
+    >>> server_manager = TritonServerManager(model_name="my_model", model_path="/path/to/my_model")
     >>> # Define triton_server(ports, model_path) that contains PyTriton server logic
     >>> server_pids_ports = server_manager.start_servers(triton_server)
     >>> print(f"Servers started with PIDs/Ports: {server_pids_ports}")
@@ -179,7 +179,7 @@ class TritonServerManager:
     DEFAULT_WAIT_TIMEOUT = 5
 
     def __init__(
-        self, num_nodes: int, model_name: str, model_path: Optional[str] = None
+        self, model_name: str, model_path: Optional[str] = None
     ):
         """
         Initialize the Triton server manager.
@@ -189,12 +189,12 @@ class TritonServerManager:
             model_path: Optional path to model file for server function to load from disk
         """
         self.spark = SparkSession.getActiveSession()
-        self.num_nodes = self._get_num_nodes()
+        self.num_executors = self._get_num_executors()
         self.model_name = model_name
         self.model_path = model_path
         self._server_pids_ports: Dict[str, Tuple[int, List[int]]] = {}
 
-    def _get_num_nodes(self) -> int:
+    def _get_num_executors(self) -> int:
         """Get the number of executors in the cluster."""
         return len([executor.host() for executor in self.spark._jsc.sc().statusTracker().getExecutorInfos()]) - 1
 
@@ -223,9 +223,9 @@ class TritonServerManager:
         }
 
     def _get_node_rdd(self) -> RDD:
-        """Create and configure RDD with stage-level scheduling for 1 task per node."""
+        """Create and configure RDD with stage-level scheduling for 1 task per executor."""
         sc = self.spark.sparkContext
-        node_rdd = sc.parallelize(list(range(self.num_nodes)), self.num_nodes)
+        node_rdd = sc.parallelize(list(range(self.num_executors)), self.num_executors)
         return self._use_stage_level_scheduling(node_rdd)
 
     def _use_stage_level_scheduling(self, rdd: RDD) -> RDD:
@@ -283,7 +283,7 @@ class TritonServerManager:
         model_name = self.model_name
         model_path = self.model_path
 
-        logger.info(f"Starting {self.num_nodes} servers.")
+        logger.info(f"Starting {self.num_executors} servers.")
 
         self._server_pids_ports = (
             node_rdd.barrier()
@@ -333,7 +333,7 @@ class TritonServerManager:
 
         if all(stop_success):
             self._server_pids_ports.clear()
-            logger.info(f"Sucessfully stopped {self.num_nodes} servers.")
+            logger.info(f"Sucessfully stopped {self.num_executors} servers.")
         else:
             logger.warning(
                 f"Server termination failed or timed out. Check executor logs."
