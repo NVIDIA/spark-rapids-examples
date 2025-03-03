@@ -185,15 +185,18 @@ class TritonServerManager:
         Initialize the Triton server manager.
 
         Args:
-            num_nodes: Number of executors (GPUs) in cluster
             model_name: Name of the model to serve
             model_path: Optional path to model file for server function to load from disk
         """
         self.spark = SparkSession.getActiveSession()
-        self.num_nodes = num_nodes
+        self.num_nodes = self._get_num_nodes()
         self.model_name = model_name
         self.model_path = model_path
         self._server_pids_ports: Dict[str, Tuple[int, List[int]]] = {}
+
+    def _get_num_nodes(self) -> int:
+        """Get the number of executors in the cluster."""
+        return len([executor.host() for executor in self.spark._jsc.sc().statusTracker().getExecutorInfos()]) - 1
 
     @property
     def host_to_http_url(self) -> Dict[str, str]:
@@ -225,20 +228,18 @@ class TritonServerManager:
         node_rdd = sc.parallelize(list(range(self.num_nodes)), self.num_nodes)
         return self._use_stage_level_scheduling(node_rdd)
 
-    def _use_stage_level_scheduling(self, rdd: RDD, task_gpus: float = 1.0) -> RDD:
+    def _use_stage_level_scheduling(self, rdd: RDD) -> RDD:
         """
-        Use stage-level scheduling to ensure each Triton server instance maps to 1 GPU (executor).
+        Use stage-level scheduling to ensure each Triton server instance maps to 1 executor.
         From https://github.com/NVIDIA/spark-rapids-ml/blob/main/python/src/spark_rapids_ml/core.py
         """
+        from pyspark.resource.profile import ResourceProfileBuilder
+        from pyspark.resource.requests import TaskResourceRequests
+        
         executor_cores = self.spark.conf.get("spark.executor.cores")
         assert executor_cores is not None, "spark.executor.cores is not set"
         executor_gpus = self.spark.conf.get("spark.executor.resource.gpu.amount")
-        assert (
-            executor_gpus is not None and int(executor_gpus) == 1
-        ), "spark.executor.resource.gpu.amount must be set and = 1"
-
-        from pyspark.resource.profile import ResourceProfileBuilder
-        from pyspark.resource.requests import TaskResourceRequests
+        assert executor_gpus is not None, "spark.executor.resource.gpu.amount is not set"
 
         spark_plugins = self.spark.conf.get("spark.plugins", " ")
         assert spark_plugins is not None
@@ -253,6 +254,8 @@ class TritonServerManager:
             and "true" == spark_rapids_sql_enabled.lower()
             else (int(executor_cores) // 2) + 1
         )
+        task_gpus = float(executor_gpus)
+
         treqs = TaskResourceRequests().cpus(task_cores).resource("gpu", task_gpus)
         rp = ResourceProfileBuilder().require(treqs).build
         logger.info(
