@@ -189,12 +189,12 @@ class TritonServerManager:
             model_path: Optional path to model file for server function to load from disk
         """
         self.spark = SparkSession.getActiveSession()
-        self.num_nodes = self._get_num_nodes()
+        self.num_executors = self._get_num_executors()
         self.model_name = model_name
         self.model_path = model_path
         self._server_pids_ports: Dict[str, Tuple[int, List[int]]] = {}
 
-    def _get_num_nodes(self) -> int:
+    def _get_num_executors(self) -> int:
         """Get the number of executors in the cluster."""
         return len([executor.host() for executor in self.spark._jsc.sc().statusTracker().getExecutorInfos()]) - 1
 
