@@ -54,7 +54,6 @@ Make sure you are in [this](./) directory.
     - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
     - Under environment variables, set:
         - `FRAMEWORK=torch` or `FRAMEWORK=tf` based on the notebook used.
-        - `HF_HOME=/dbfs/FileStore/hf_home` to cache Huggingface models in DBFS.
         - `TF_GPU_ALLOCATOR=cuda_malloc_async` to implicity release unused GPU memory in Tensorflow notebooks.
 
     
