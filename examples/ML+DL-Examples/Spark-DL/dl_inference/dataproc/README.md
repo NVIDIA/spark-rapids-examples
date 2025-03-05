@@ -47,11 +47,11 @@ Make sure you are in [this](./) directory.
 
 #### Start cluster and run
 
-5. Specify the framework to use (torch or tf), which will determine what libraries to install on the cluster. For example:
+5. Specify the framework to use (torch, tf, or vllm), which will determine what libraries to install on the cluster. For example:
     ```shell
     export FRAMEWORK=torch
     ```
-    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources. The script will create 4 L4 worker nodes and 1 L4 driver node by default, named `${USER}-spark-dl-inference-${FRAMEWORK}`.
+    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources. The script will create 2 L4 worker nodes and 1 L4 driver node by default, named `${USER}-spark-dl-inference-${FRAMEWORK}`. For vLLM examples, the worker nodes will have 2 L4s each to demo tensor parallelism.
     ```shell
     cd setup
     chmod +x start_cluster.sh
