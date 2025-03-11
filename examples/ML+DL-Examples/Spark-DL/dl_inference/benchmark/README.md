@@ -4,7 +4,7 @@ This folder contains the benchmark code to compare:
 1. [`spark_resnet.py`](spark_resnet.py): Uses predict_batch_udf to perform in-process prediction on the GPU.
 2. [`spark_resnet_triton.py`](spark_resnet_triton.py): Uses predict_batch_udf to send inference requests to Triton, which performs inference on the GPU.
 
-The key difference is Spark cannot change the task parallelism within a stage based on the resources required. Therefore, implementation (1) will limit to 1 task per GPU to enable one instance of the model on the GPU, whereas implementation (2) allows as many tasks to run in parallel as cores on the executor, while Triton occupies the GPU for inference.
+Spark cannot change the task parallelism within a stage based on the resources required (i.e., multiple CPUs for preprocessing vs. single GPU for inference). Therefore, implementation (1) will limit to 1 task per GPU to enable one instance of the model on the GPU. In contrast, implementation (2) allows as many tasks to run in parallel as cores on the executor, since Triton handles inference on the GPU.
 
 <img src="../images/benchmark_comparison.png" alt="drawing" width="1000"/>
 
