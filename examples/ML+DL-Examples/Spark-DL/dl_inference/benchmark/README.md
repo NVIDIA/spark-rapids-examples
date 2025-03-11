@@ -10,7 +10,7 @@ Spark cannot change the task parallelism within a stage based on the resources r
 
 ### Setup
 
-The worload consist of the following 4-step pipeline:
+The workload consists of the following 4-step pipeline:
 1. Read binary JPEG image data from parquet
 2. Preprocess on CPU (decompress, resize, crop, normalize)
 3. Inference on GPU
@@ -18,12 +18,11 @@ The worload consist of the following 4-step pipeline:
 
 <img src="../images/benchmark_pipeline.png" alt="drawing" width="800"/>
 
-We used the [ImageNet 2012](https://image-net.org/challenges/LSVRC/2012/2012-downloads.php#Images) validation dataset and a pre-trained ResNet-50 model for classification. The script we used to prepare the data into a binary parquet format to read with Spark can be found in [`prepare_dataset.py`](prepare_dataset.py).
+We used the [ImageNet 2012](https://image-net.org/challenges/LSVRC/2012/2012-downloads.php#Images) validation dataset containing 50,000 images, and a pre-trained [PyTorch ResNet-50](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html) model for classification. We used the [`prepare_dataset.py`](prepare_dataset.py) script to load and prepare the ImageNet data into a binary parquet format to be read with Spark.
 
 ### Environment
 
-We used the `spark-dl-torch` conda environment, setup following the [README](./README.md).
-
+We used the `spark-dl-torch` conda environment, setup following the [README](../README.md#create-environment).
 We tested on a local standalone cluster with 1 executor: 1 A6000 GPU, 16 cores, and 32GB of memory. The cluster can be started like so:
 ```shell
 conda activate spark-dl-torch
