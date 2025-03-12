@@ -158,13 +158,13 @@ class TritonServerManager:
 
     Attributes:
         spark: Active SparkSession
-        num_nodes: Number of Triton servers to manage (= # of executors/GPUs)
+        num_executors: Number of Triton servers to manage (= # of executors)
         model_name: Name of the model being served
         model_path: Optional path to model files
         server_pids_ports: Dictionary of hostname to (server process ID, ports)
 
     Example usage:
-    >>> server_manager = TritonServerManager(num_nodes=4, model_name="my_model", model_path="/path/to/my_model")
+    >>> server_manager = TritonServerManager(model_name="my_model", model_path="/path/to/my_model")
     >>> # Define triton_server(ports, model_path) that contains PyTriton server logic
     >>> server_pids_ports = server_manager.start_servers(triton_server)
     >>> print(f"Servers started with PIDs/Ports: {server_pids_ports}")
@@ -179,21 +179,24 @@ class TritonServerManager:
     DEFAULT_WAIT_TIMEOUT = 5
 
     def __init__(
-        self, num_nodes: int, model_name: str, model_path: Optional[str] = None
+        self, model_name: str, model_path: Optional[str] = None
     ):
         """
         Initialize the Triton server manager.
 
         Args:
-            num_nodes: Number of executors (GPUs) in cluster
             model_name: Name of the model to serve
             model_path: Optional path to model file for server function to load from disk
         """
         self.spark = SparkSession.getActiveSession()
-        self.num_nodes = num_nodes
+        self.num_executors = self._get_num_executors()
         self.model_name = model_name
         self.model_path = model_path
         self._server_pids_ports: Dict[str, Tuple[int, List[int]]] = {}
+
+    def _get_num_executors(self) -> int:
+        """Get the number of executors in the cluster."""
+        return len([executor.host() for executor in self.spark._jsc.sc().statusTracker().getExecutorInfos()]) - 1
 
     @property
     def host_to_http_url(self) -> Dict[str, str]:
@@ -220,25 +223,23 @@ class TritonServerManager:
         }
 
     def _get_node_rdd(self) -> RDD:
-        """Create and configure RDD with stage-level scheduling for 1 task per node."""
+        """Create and configure RDD with stage-level scheduling for 1 task per executor."""
         sc = self.spark.sparkContext
-        node_rdd = sc.parallelize(list(range(self.num_nodes)), self.num_nodes)
+        node_rdd = sc.parallelize(list(range(self.num_executors)), self.num_executors)
         return self._use_stage_level_scheduling(node_rdd)
 
-    def _use_stage_level_scheduling(self, rdd: RDD, task_gpus: float = 1.0) -> RDD:
+    def _use_stage_level_scheduling(self, rdd: RDD) -> RDD:
         """
-        Use stage-level scheduling to ensure each Triton server instance maps to 1 GPU (executor).
+        Use stage-level scheduling to ensure each Triton server instance maps to 1 executor.
         From https://github.com/NVIDIA/spark-rapids-ml/blob/main/python/src/spark_rapids_ml/core.py
         """
+        from pyspark.resource.profile import ResourceProfileBuilder
+        from pyspark.resource.requests import TaskResourceRequests
+        
         executor_cores = self.spark.conf.get("spark.executor.cores")
         assert executor_cores is not None, "spark.executor.cores is not set"
         executor_gpus = self.spark.conf.get("spark.executor.resource.gpu.amount")
-        assert (
-            executor_gpus is not None and int(executor_gpus) == 1
-        ), "spark.executor.resource.gpu.amount must be set and = 1"
-
-        from pyspark.resource.profile import ResourceProfileBuilder
-        from pyspark.resource.requests import TaskResourceRequests
+        assert executor_gpus is not None, "spark.executor.resource.gpu.amount is not set"
 
         spark_plugins = self.spark.conf.get("spark.plugins", " ")
         assert spark_plugins is not None
@@ -253,6 +254,8 @@ class TritonServerManager:
             and "true" == spark_rapids_sql_enabled.lower()
             else (int(executor_cores) // 2) + 1
         )
+        task_gpus = float(executor_gpus)
+
         treqs = TaskResourceRequests().cpus(task_cores).resource("gpu", task_gpus)
         rp = ResourceProfileBuilder().require(treqs).build
         logger.info(
@@ -280,7 +283,7 @@ class TritonServerManager:
         model_name = self.model_name
         model_path = self.model_path
 
-        logger.info(f"Starting {self.num_nodes} servers.")
+        logger.info(f"Starting {self.num_executors} servers.")
 
         self._server_pids_ports = (
             node_rdd.barrier()
@@ -330,7 +333,7 @@ class TritonServerManager:
 
         if all(stop_success):
             self._server_pids_ports.clear()
-            logger.info(f"Sucessfully stopped {self.num_nodes} servers.")
+            logger.info(f"Sucessfully stopped {self.num_executors} servers.")
         else:
             logger.warning(
                 f"Server termination failed or timed out. Check executor logs."
