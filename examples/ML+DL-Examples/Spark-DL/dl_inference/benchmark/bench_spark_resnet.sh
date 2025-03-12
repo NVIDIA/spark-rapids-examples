@@ -17,4 +17,4 @@ spark-submit \
   --conf spark.sql.adaptive.enabled=false \
   --conf spark.sql.execution.sortBeforeRepartition=false \
   --conf spark.sql.files.minPartitionNum=16 \
-  bench_spark_resnet.py
+  spark_resnet.py
