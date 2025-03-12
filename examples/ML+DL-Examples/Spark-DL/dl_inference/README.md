@@ -11,7 +11,7 @@ These notebooks also demonstrate integration with [Triton Inference Server](http
 
 ## Overview
 
-These notebooks demonstrate how models from external frameworks (Torch, Huggingface, Tensorflow) trained on single-worker machines can be used for large-scale distributed inference on Spark clusters.  
+These notebooks demonstrate how models from external frameworks (Torch, Huggingface, Tensorflow, vLLM) trained on single-worker machines can be used for large-scale distributed inference on Spark clusters.  
 For example, a basic model trained in TensorFlow and saved on disk as "mnist_model" can be used in Spark as follows:
 ```
 import numpy as np
@@ -49,12 +49,13 @@ Below is a full list of the notebooks and their links. All notebooks have been s
 | 4 | HuggingFace | Sentence Transformers | Sentence embeddings using SentenceTransformers in Torch. | [Link](huggingface/sentence_transformers_torch.ipynb)
 | 5+6 | HuggingFace | Conditional Generation | Sentence translation using the T5 text-to-text transformer (Torch and Tensorflow). | [Torch Link](huggingface/conditional_generation_torch.ipynb), [TF Link](huggingface/conditional_generation_tf.ipynb)
 | 7+8 | HuggingFace | Pipelines | Sentiment analysis using Huggingface pipelines (Torch and Tensorflow). | [Torch Link](huggingface/pipelines_torch.ipynb), [TF Link](huggingface/pipelines_tf.ipynb)
-| 9 | PyTorch | Image Classification | Training a model to predict clothing categories in FashionMNIST, and deploying with Torch-TensorRT accelerated inference. | [Link](pytorch/image_classification_torch.ipynb)
-| 10 | PyTorch | Housing Regression | Training and deploying a model to predict housing prices in the California Housing Dataset, and deploying with Torch-TensorRT accelerated inference. | [Link](pytorch/housing_regression_torch.ipynb)
-| 11 | Tensorflow | Image Classification | Training and deploying a model to predict hand-written digits in MNIST. | [Link](tensorflow/image_classification_tf.ipynb)
-| 12 | Tensorflow | Keras Preprocessing | Training and deploying a model with preprocessing layers to predict likelihood of pet adoption in the PetFinder mini dataset. | [Link](tensorflow/keras_preprocessing_tf.ipynb)
-| 13 | Tensorflow | Keras Resnet50 | Deploying ResNet-50 to perform flower recognition from flower images. | [Link](tensorflow/keras_resnet50_tf.ipynb)
-| 14 | Tensorflow | Text Classification | Training and deploying a model to perform sentiment analysis on the IMDB dataset. | [Link](tensorflow/text_classification_tf.ipynb)
+| 9 | vLLM | Qwen-2.5-14b | Tensor-parallel LLM batch inference using the Qwen-2.5-7b model to summarize unstructured text data into a structured schema. | [Link](vllm/qwen-2.5-14b_vllm.ipynb)
+| 10 | PyTorch | Image Classification | Training a model to predict clothing categories in FashionMNIST, and deploying with Torch-TensorRT accelerated inference. | [Link](pytorch/image_classification_torch.ipynb)
+| 11 | PyTorch | Housing Regression | Training and deploying a model to predict housing prices in the California Housing Dataset, and deploying with Torch-TensorRT accelerated inference. | [Link](pytorch/housing_regression_torch.ipynb)
+| 12 | Tensorflow | Image Classification | Training and deploying a model to predict hand-written digits in MNIST. | [Link](tensorflow/image_classification_tf.ipynb)
+| 13 | Tensorflow | Keras Preprocessing | Training and deploying a model with preprocessing layers to predict likelihood of pet adoption in the PetFinder mini dataset. | [Link](tensorflow/keras_preprocessing_tf.ipynb)
+| 14 | Tensorflow | Keras Resnet50 | Deploying ResNet-50 to perform flower recognition from flower images. | [Link](tensorflow/keras_resnet50_tf.ipynb)
+| 15 | Tensorflow | Text Classification | Training and deploying a model to perform sentiment analysis on the IMDB dataset. | [Link](tensorflow/text_classification_tf.ipynb)
 
 
 ## Running Locally
@@ -63,7 +64,7 @@ To run the notebooks locally, please follow these instructions:
 
 #### Create environment
 
-Each notebook has a suffix `_torch` or `_tf` specifying the environment used.
+Each notebook has a suffix `_torch`, `_tf`, or `_vllm` specifying the environment used.
 
 **For PyTorch:**
 ```
@@ -78,6 +79,13 @@ conda create -n spark-dl-tf -c conda-forge python=3.11
 conda activate spark-dl-tf
 conda install -c conda-forge libstdcxx-ng
 pip install -r tf_requirements.txt
+```
+**For vLLM:**
+```
+conda create -n spark-dl-vllm -c conda-forge python=3.11
+conda activate spark-dl-vllm
+conda install -c conda-forge libstdcxx-ng
+pip install -r vllm_requirements.txt
 ```
 
 #### Start Cluster
@@ -101,7 +109,7 @@ ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORE
 The notebooks are ready to run! Each notebook has a cell to connect to the standalone cluster and create a SparkSession.
 
 **Notes**: 
-- Please create separate environments for PyTorch and Tensorflow notebooks as specified above. This will avoid conflicts between the CUDA libraries bundled with their respective versions. 
+- Please create separate environments for different frameworks as specified above. This will avoid conflicts between the CUDA libraries bundled with their respective versions. 
 - `requirements.txt` installs pyspark>=3.4.0. Make sure the installed PySpark version is compatible with your system's Spark installation.
 - The notebooks require a GPU environment for the executors.  
 - The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but as of writing it is not supported in TF==2.17.0. 

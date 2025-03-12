@@ -25,7 +25,7 @@ Make sure you are in [this](./) directory.
     export UTILS_SRC=$(realpath ../pytriton_utils.py)
     export INIT_SRC=$(pwd)/setup/init_spark_dl.sh
     ```
-4. Specify the framework to torch or tf, corresponding to the notebook you wish to run. Continuing with the PyTorch example:
+4. Specify the framework to torch, tf, or vllm, corresponding to the notebook you wish to run. Continuing with the PyTorch example:
     ```shell
     export FRAMEWORK=torch
     ```
@@ -38,7 +38,7 @@ Make sure you are in [this](./) directory.
     databricks workspace import ${SPARK_DL_WS}/init_spark_dl.sh --format AUTO --file $INIT_SRC
     ```
 
-6. Launch the cluster with the provided script. By default the script will create a cluster with 4 A10 worker nodes and 1 A10 driver node. (Note that the script uses **Azure instances** by default; change as needed).
+6. Launch the cluster with the provided script. By default the script will create a cluster with 2 A10 worker nodes and 1 A10 driver node. For vLLM examples, the worker nodes will have 2 GPUs each to demo tensor parallelism. (Note that the script uses **Azure instances** by default; change as needed).
     ```shell
     cd setup
     chmod +x start_cluster.sh
@@ -48,12 +48,12 @@ Make sure you are in [this](./) directory.
 
     - Go to `Compute > Create compute` and set the desired cluster settings.
         - Integration with Triton inference server uses stage-level scheduling (Spark>=3.4.0). Make sure to:
-            - use a cluster with GPU resources (for LLM examples, make sure the selected GPUs have sufficient RAM)
-            - set a value for `spark.executor.cores`
-            - ensure that `spark.executor.resource.gpu.amount` = 1
+            - use GPU instances (we recommend A10/L4 for sufficient VRAM)
+            - set `spark.executor.cores` = cores per node
+            - set `spark.executor.resource.gpu.amount` = 1 for torch/tf, or = 2 for vllm
     - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
     - Under environment variables, set:
-        - `FRAMEWORK=torch` or `FRAMEWORK=tf` based on the notebook used.
+        - `FRAMEWORK=torch`, `FRAMEWORK=tf`, or `FRAMEWORK=vllm` based on the notebook used.
         - `TF_GPU_ALLOCATOR=cuda_malloc_async` to implicity release unused GPU memory in Tensorflow notebooks.
 
     
