@@ -229,22 +229,16 @@ class TritonServerManager:
         return self._use_stage_level_scheduling(node_rdd)
 
     def _use_stage_level_scheduling(self, rdd: RDD) -> RDD:
-    def _use_stage_level_scheduling(self, rdd: RDD) -> RDD:
         """
-        Use stage-level scheduling to ensure each Triton server instance maps to 1 executor.
         Use stage-level scheduling to ensure each Triton server instance maps to 1 executor.
         From https://github.com/NVIDIA/spark-rapids-ml/blob/main/python/src/spark_rapids_ml/core.py
         """
         from pyspark.resource.profile import ResourceProfileBuilder
         from pyspark.resource.requests import TaskResourceRequests
         
-        from pyspark.resource.profile import ResourceProfileBuilder
-        from pyspark.resource.requests import TaskResourceRequests
-        
         executor_cores = self.spark.conf.get("spark.executor.cores")
         assert executor_cores is not None, "spark.executor.cores is not set"
         executor_gpus = self.spark.conf.get("spark.executor.resource.gpu.amount")
-        assert executor_gpus is not None, "spark.executor.resource.gpu.amount is not set"
         assert executor_gpus is not None, "spark.executor.resource.gpu.amount is not set"
 
         spark_plugins = self.spark.conf.get("spark.plugins", " ")
@@ -260,8 +254,6 @@ class TritonServerManager:
             and "true" == spark_rapids_sql_enabled.lower()
             else (int(executor_cores) // 2) + 1
         )
-        task_gpus = float(executor_gpus)
-
         task_gpus = float(executor_gpus)
 
         treqs = TaskResourceRequests().cpus(task_cores).resource("gpu", task_gpus)
