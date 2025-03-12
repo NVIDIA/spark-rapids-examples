@@ -1,7 +1,7 @@
 import numpy as np
 import subprocess
 from datetime import datetime
-
+import os
 class GPUMonitor:
     def __init__(self, gpu_ids=[0], interval=1):
         self.gpu_ids = gpu_ids
@@ -10,6 +10,8 @@ class GPUMonitor:
         self.process = None
         
     def start(self):
+        if not os.path.exists("results"):
+            os.makedirs("results")
         with open(self.log_file, 'w') as f:
             f.write("timestamp,gpu_id,utilization\n")
 
