@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import time
+import argparse
 from functools import partial
 from typing import Iterator
 from pyspark.sql.types import ArrayType, FloatType
@@ -131,6 +132,10 @@ def triton_fn(model_name, host_to_url):
     return infer_batch
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--size', type=str, default='10k', help='Dataset size (e.g., 1k, 5k, 10k, 50k)')
+    args = parser.parse_args()
+
     spark = SparkSession.builder.appName("bench-spark-resnet-triton").getOrCreate()
     spark.sparkContext.addPyFile("pytriton_utils.py")
 
@@ -146,7 +151,7 @@ def main():
     server_manager.start_servers(triton_server, wait_timeout=24)
     host_to_grpc_url = server_manager.host_to_grpc_url
 
-    file_path = os.path.abspath("spark-dl-datasets/imagenet_10k.parquet")
+    file_path = os.path.abspath(f"spark-dl-datasets/imagenet_{args.size}.parquet")
     classify = predict_batch_udf(partial(triton_fn, model_name=model_name, host_to_url=host_to_grpc_url),
                                 return_type=ArrayType(FloatType()),
                                 input_tensor_shapes=[[3, 224, 224]],
@@ -162,7 +167,7 @@ def main():
         df = spark.read.parquet(file_path)
         preprocessed_df = df.withColumn("images", preprocess(col("value"))).drop("value")
         preds = preprocessed_df.withColumn("preds", classify(col("images")))
-        preds.write.mode("overwrite").parquet(f"spark-dl-datasets/imagenet_10k_preds.parquet")
+        preds.write.mode("overwrite").parquet(f"spark-dl-datasets/imagenet_{args.size}_preds.parquet")
 
         end_write = time.perf_counter()
 

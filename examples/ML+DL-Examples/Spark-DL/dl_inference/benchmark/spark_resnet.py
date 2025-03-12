@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import time
+import argparse
 from typing import Iterator
 from pyspark.sql.types import ArrayType, FloatType
 from pyspark import TaskContext
@@ -78,6 +79,9 @@ def preprocess(image_iter: Iterator[pd.Series]) -> Iterator[pd.Series]:
         yield pd.Series(list(flattened_batch))
     
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--size', type=str, default='50k', help='Dataset size (e.g., 1k, 5k, 10k, 50k)')
+    args = parser.parse_args()
     spark = SparkSession.builder.appName("bench-spark-resnet").getOrCreate()
 
     # Avoid OOM for image loading from raw byte arrays
@@ -85,7 +89,7 @@ def main():
     spark.conf.set("spark.sql.parquet.columnarReaderBatchSize", "1024")
     spark.conf.set("spark.sql.execution.arrow.maxRecordsPerBatch", "1024")
 
-    file_path = os.path.abspath("spark-dl-datasets/imagenet_10k.parquet")
+    file_path = os.path.abspath(f"spark-dl-datasets/imagenet_{args.size}.parquet")
     classify = predict_batch_udf(predict_batch_fn,
                                 return_type=ArrayType(FloatType()),
                                 input_tensor_shapes=[[3, 224, 224]],
@@ -101,7 +105,7 @@ def main():
         df = spark.read.parquet(file_path)
         preprocessed_df = df.withColumn("images", preprocess(col("value"))).drop("value")
         preds = preprocessed_df.withColumn("preds", classify(col("images")))
-        preds.write.mode("overwrite").parquet(f"spark-dl-datasets/imagenet_10k_preds.parquet")
+        preds.write.mode("overwrite").parquet(f"spark-dl-datasets/imagenet_{args.size}_preds.parquet")
 
         end_write = time.perf_counter()
 
