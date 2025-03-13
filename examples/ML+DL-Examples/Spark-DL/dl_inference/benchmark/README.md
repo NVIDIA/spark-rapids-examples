@@ -1,8 +1,8 @@
 # Batch Inference Benchmark
 
-This folder contains the benchmark code to compare:
-1. [`spark_resnet.py`](spark_resnet.py): Uses predict_batch_udf to perform in-process prediction on the GPU.
-2. [`spark_resnet_triton.py`](spark_resnet_triton.py): Uses predict_batch_udf to send inference requests to Triton, which performs inference on the GPU.
+This folder contains the benchmark code to assess the benefits of Spark DL inference on Triton:
+1. Use predict_batch_udf to perform in-process prediction on the GPU.
+2. Use predict_batch_udf to send inference requests to Triton, which performs inference on the GPU.
 
 Spark cannot change the task parallelism within a stage based on the resources required (i.e., multiple CPUs for preprocessing vs. single GPU for inference). Therefore, implementation (1) will limit to 1 task per GPU to enable one instance of the model on the GPU. In contrast, implementation (2) allows as many tasks to run in parallel as cores on the executor, since Triton handles inference on the GPU.
 
@@ -35,7 +35,20 @@ export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 \
 ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORES_PER_WORKER} -m 32G ${MASTER}
 ```
 
-The Spark configurations we used for the two implementations can be found under [`bench_spark_resnet.sh`](bench_spark_resnet.sh)  and [`bench_spark_resnet_triton.sh`](bench_spark_resnet_triton.sh) respectively. The only differences are in the task parallelism, i.e. `spark.task.resource.gpu.amount` and `spark.task.cpus`.
+The Spark configurations used for the two implementations can be found under the launch script [`run_bench_spark_resnet.sh`](run_bench_spark_resnet.sh). The only differences are in the task parallelism, i.e. `spark.task.resource.gpu.amount` and `spark.task.cpus`.
+
+### Running the Benchmark
+
+The script can be run like so:
+```shell
+# Implementation 1 - in-process prediction 
+./run_bench_spark_resnet.sh -t base
+# Run implementation 2 - Triton server prediction
+./run_bench_spark_resnet.sh -t triton
+```
+The batch size used in `predict_batch_udf` can be configured with `-b batch_size`. Note this corresponds to different things in the two implementations: in implementation 1, this is the batch size used in the model, and in implementation 2, this is the client's batch size in each inference request, which may be dynamically batched by the server. 
+
+By default, we use `-b 1024` for the base implementation, and `-b 256` for Triton with a server-side max batch size of 1024. We experimented with other batch sizes (e.g., smaller in-process batch sizes and larger client-side batch sizes for Triton), but these defaults gave the best results for both.
 
 ### Results
 
