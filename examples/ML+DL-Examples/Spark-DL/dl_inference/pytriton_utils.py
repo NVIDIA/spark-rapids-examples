@@ -196,7 +196,11 @@ class TritonServerManager:
 
     def _get_num_executors(self) -> int:
         """Get the number of executors in the cluster."""
-        return len([executor.host() for executor in self.spark._jsc.sc().statusTracker().getExecutorInfos()]) - 1
+        # When using spark-submit in client mode, the statusTracker excludes the driver.
+        driver_included = 1
+        if self.spark.sparkContext._conf.get("spark.submit.deployMode", None) == "client":
+            driver_included = 0
+        return len([executor.host() for executor in self.spark._jsc.sc().statusTracker().getExecutorInfos()]) - driver_included
 
     @property
     def host_to_http_url(self) -> Dict[str, str]:

@@ -137,4 +137,6 @@ The process looks like this:
 - Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
 - Finally, distribute a shutdown signal to terminate the Triton server processes on each worker.
 
+See the [benchmark directory](benchmark/README.md) for more information on how Triton on Spark can yield performance gains.
+
 For more information on how PyTriton works, see the [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/).
