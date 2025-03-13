@@ -1,4 +1,4 @@
-# Batch Inference Benchmark
+# Spark Batch Inference Benchmark
 
 This folder contains the benchmark code to assess the benefits of Spark DL inference on Triton:
 1. Use predict_batch_udf to perform in-process prediction on the GPU.
