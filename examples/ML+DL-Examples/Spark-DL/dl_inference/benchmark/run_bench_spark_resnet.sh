@@ -61,7 +61,6 @@ else
     fi
 fi
 
-# Add --use-triton flag if using triton benchmark type
 if [ "$BENCH_TYPE" = "triton" ]; then
     SCRIPT_ARGS="$BATCH_SIZE_ARG --use-triton"
 else
