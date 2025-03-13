@@ -1,10 +1,12 @@
 import os
 import pandas as pd
+import numpy as np
 import time
 import argparse
 from functools import partial
 from typing import Iterator
 from pyspark.sql.types import ArrayType, FloatType
+from pyspark import TaskContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import pandas_udf, col
 from pyspark.ml.functions import predict_batch_udf
@@ -12,6 +14,7 @@ from gpu_monitor import GPUMonitor
 from pytriton_utils import TritonServerManager
 
 def triton_server(ports):
+    """Initialize and run Triton server for inference"""
     import time
     import signal
     import numpy as np
@@ -74,13 +77,60 @@ def triton_server(ports):
         print("SERVER: Serving inference")
         triton.serve()
 
+def predict_batch_fn():
+    """Classify batch of images in-process"""
+    import torch
+    import torchvision.models as models
+
+    start_load = time.perf_counter()
+    model = models.resnet50(pretrained=True).to("cuda")
+    model.eval()
+    end_load = time.perf_counter()
+    print(f"Model loaded in {end_load - start_load:.4f} seconds")
+
+    def predict(inputs):
+        print(f"PARTITION {TaskContext.get().partitionId()}: Inferring batch of size {len(inputs)}")
+        batch_tensor = torch.from_numpy(inputs).to("cuda")
+        
+        with torch.no_grad():
+            outputs = model(batch_tensor)
+
+        _, predicted_ids = torch.max(outputs, 1)
+        probabilities = torch.nn.functional.softmax(outputs, dim=1)
+        confidences = torch.max(probabilities, dim=1)[0]
+        indices = predicted_ids.cpu().numpy()
+        scores = confidences.cpu().numpy()
+        results = np.stack([indices, scores], axis=1).astype(np.float32)
+        return results
+    
+    return predict
+
+def triton_fn(model_name, host_to_url):
+    """Send/receive batch of images to/from Triton server for inference"""
+    from pytriton.client import ModelClient
+    import socket
+    from pyspark import TaskContext
+
+    url = host_to_url.get(socket.gethostname())
+    client = ModelClient(url, model_name, inference_timeout_s=500)
+    part_id = TaskContext.get().partitionId()
+    print(f"PARTITION {part_id}: Connecting to Triton model {model_name} at {url}.")
+
+    def infer_batch(inputs):
+        print(f"PARTITION {part_id}: Inferring batch of size {len(inputs)}")
+        result_data = client.infer_batch(inputs)
+        result_data = result_data["preds"]
+        return result_data
+        
+    return infer_batch
+
 @pandas_udf(ArrayType(FloatType()))
 def preprocess(image_iter: Iterator[pd.Series]) -> Iterator[pd.Series]:
     """Preprocess images (raw JPEG bytes) into a batch of tensors"""
-    import torch
+    import io
     from PIL import Image
     from torchvision import transforms
-    import io
+    import torch
     from pyspark import TaskContext
 
     preprocess = transforms.Compose(
@@ -113,50 +163,44 @@ def preprocess(image_iter: Iterator[pd.Series]) -> Iterator[pd.Series]:
         
         yield pd.Series(list(flattened_batch))
 
-def triton_fn(model_name, host_to_url):
-    from pytriton.client import ModelClient
-    import socket
-    from pyspark import TaskContext
-
-    url = host_to_url.get(socket.gethostname())
-    client = ModelClient(url, model_name, inference_timeout_s=500)
-    part_id = TaskContext.get().partitionId()
-    print(f"PARTITION {part_id}: Connecting to Triton model {model_name} at {url}.")
-
-    def infer_batch(inputs):
-        print(f"PARTITION {part_id}: Inferring batch of size {len(inputs)}")
-        result_data = client.infer_batch(inputs)
-        result_data = result_data["preds"]
-        return result_data
-        
-    return infer_batch
-
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--size', type=str, default='10k', help='Dataset size (e.g., 1k, 5k, 10k, 50k)')
+    parser.add_argument('--dataset-size', type=str, default='50k', help='Dataset size (e.g., 1k, 5k, 10k, 50k)')
+    parser.add_argument('--batch-size', type=int, default=1024, help='Batch size used in predict_batch_udf')
+    parser.add_argument('--use-triton', action='store_true', help='Use Triton for inference')
     args = parser.parse_args()
 
-    spark = SparkSession.builder.appName("bench-spark-resnet-triton").getOrCreate()
-    spark.sparkContext.addPyFile("pytriton_utils.py")
+    spark = SparkSession.builder.appName("bench-spark-resnet").getOrCreate()
 
     # Avoid OOM for image loading from raw byte arrays
     spark.conf.set("spark.sql.execution.arrow.useLargeVarTypes", "true")
     spark.conf.set("spark.sql.parquet.columnarReaderBatchSize", "1024")
     spark.conf.set("spark.sql.execution.arrow.maxRecordsPerBatch", "1024")
 
-    # Start server
-    model_name = "resnet50"
-    num_nodes = 1
-    server_manager = TritonServerManager(num_nodes, model_name)
-    server_manager.start_servers(triton_server, wait_timeout=24)
-    host_to_grpc_url = server_manager.host_to_grpc_url
+    server_manager = None
+    predict_fn = None
+    if args.use_triton:
+        # Start server if using Triton
+        spark.sparkContext.addPyFile("pytriton_utils.py")
+        model_name = "resnet50"
+        server_manager = TritonServerManager(model_name)
+        server_manager.start_servers(triton_server)
+        host_to_grpc_url = server_manager.host_to_grpc_url
+        predict_fn = partial(triton_fn, model_name=model_name, host_to_url=host_to_grpc_url)
+    else:
+        predict_fn = predict_batch_fn
 
-    file_path = os.path.abspath(f"spark-dl-datasets/imagenet_{args.size}.parquet")
-    classify = predict_batch_udf(partial(triton_fn, model_name=model_name, host_to_url=host_to_grpc_url),
-                                return_type=ArrayType(FloatType()),
-                                input_tensor_shapes=[[3, 224, 224]],
-                                batch_size=256)
+    # Define predict_batch_udf
+    classify = predict_batch_udf(
+            predict_fn,
+            return_type=ArrayType(FloatType()),
+            input_tensor_shapes=[[3, 224, 224]],
+            batch_size=args.batch_size
+        )
     
+    # Define file path
+    file_path = os.path.abspath(f"spark-dl-datasets/imagenet_{args.dataset_size}.parquet")
+
     # Start GPU utilization monitoring
     monitor = GPUMonitor()
     monitor.start()
@@ -164,17 +208,19 @@ def main():
     try:
         start_read = time.perf_counter()
 
+        # Read -> Preprocess -> Classify -> Write
         df = spark.read.parquet(file_path)
         preprocessed_df = df.withColumn("images", preprocess(col("value"))).drop("value")
         preds = preprocessed_df.withColumn("preds", classify(col("images")))
-        preds.write.mode("overwrite").parquet(f"spark-dl-datasets/imagenet_{args.size}_preds.parquet")
+        preds.write.mode("overwrite").parquet(f"spark-dl-datasets/imagenet_{args.dataset_size}_preds.parquet")
 
         end_write = time.perf_counter()
 
         print(f"E2E read -> inference -> write time: {end_write - start_read:.4f} seconds")
     finally:
         monitor.stop()
-        server_manager.stop_servers()
+        if server_manager:
+            server_manager.stop_servers()
 
 if __name__ == "__main__":
     main()
