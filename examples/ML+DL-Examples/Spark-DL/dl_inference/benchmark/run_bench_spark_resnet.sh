@@ -3,7 +3,7 @@
 # Help function
 show_help() {
     echo "Usage: $0 [OPTIONS]"
-    echo "Run Spark ResNet predict_batch_udf benchmark with different configurations"
+    echo "Run Spark ResNet benchmark with different configurations"
     echo ""
     echo "Options:"
     echo "  -t, --type TYPE               Benchmark type: base or triton"
@@ -82,6 +82,5 @@ spark-submit \
     --conf spark.pyspark.driver.python=${CONDA_PREFIX}/bin/python \
     --conf spark.locality.wait=0s \
     --conf spark.sql.adaptive.enabled=false \
-    --conf spark.sql.execution.sortBeforeRepartition=false \
     --conf spark.sql.files.minPartitionNum=16 \
     bench_spark_resnet.py $SCRIPT_ARGS

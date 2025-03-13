@@ -1,10 +1,10 @@
 # Spark Batch Inference Benchmark
 
-This folder contains the benchmark code to assess the benefits of Spark DL inference on Triton:
+This folder contains the benchmark code to assess the benefits of Spark DL inference on Triton, comparing the following implementations:
 1. Use predict_batch_udf to perform in-process prediction on the GPU.
-2. Use predict_batch_udf to send inference requests to Triton, which performs inference on the GPU.
+2. Use predict_batch_udf to send inference requests to the Triton server, which handles inference on the GPU.
 
-Spark cannot change the task parallelism within a stage based on the resources required (i.e., multiple CPUs for preprocessing vs. single GPU for inference). Therefore, implementation (1) will limit to 1 task per GPU to enable one instance of the model on the GPU. In contrast, implementation (2) allows as many tasks to run in parallel as cores on the executor, since Triton handles inference on the GPU.
+Spark cannot change the task parallelism within a stage based on the resources required (i.e., multiple CPUs for preprocessing vs. single GPU for inference). Therefore, implementation (1) will limit to 1 task per GPU to enable one instance of the model to occupy the GPU. In contrast, implementation (2) allows as many tasks to run in parallel as cores on the executor, while Triton will handle inference on the GPU.
 
 <img src="../images/benchmark_comparison.png" alt="drawing" width="1000"/>
 
@@ -43,7 +43,7 @@ The script can be run like so:
 ```shell
 # Implementation 1 - in-process prediction 
 ./run_bench_spark_resnet.sh -t base
-# Run implementation 2 - Triton server prediction
+# Implementation 2 - Triton server prediction
 ./run_bench_spark_resnet.sh -t triton
 ```
 The batch size used in `predict_batch_udf` can be configured with `-b batch_size`. Note this corresponds to different things in the two implementations: in implementation 1, this is the batch size used in the model, and in implementation 2, this is the client's batch size in each inference request, which may be dynamically batched by the server. 
