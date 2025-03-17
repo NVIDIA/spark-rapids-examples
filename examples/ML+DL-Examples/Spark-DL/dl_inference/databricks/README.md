@@ -38,26 +38,14 @@ Make sure you are in [this](./) directory.
     databricks workspace import ${SPARK_DL_WS}/init_spark_dl.sh --format AUTO --file $INIT_SRC
     ```
 
-6. Launch the cluster with the provided script. By default the script will create a cluster with 2 A10 worker nodes and 1 A10 driver node. For vLLM examples, the worker nodes will have 2 GPUs each to demo tensor parallelism.* (Note that the script uses **Azure instances** by default; change as needed).
+6. Launch the cluster with the provided script with the argument `aws` or `azure` based on your provider. 
     ```shell
     cd setup
     chmod +x start_cluster.sh
-    ./start_cluster.sh
+    ./start_cluster.sh aws  # or ./start_cluster.sh azure
     ```
-    OR, start the cluster from the Databricks UI:  
-
-    - Go to `Compute > Create compute` and set the desired cluster settings.
-        - Integration with Triton inference server uses stage-level scheduling (Spark>=3.4.0). Make sure to:
-            - use GPU instances (we recommend A10/L4 for sufficient VRAM)
-            - set `spark.executor.cores` = cores per node
-            - set `spark.executor.resource.gpu.amount` = 1 for torch/tf, or = 2 for vllm
-    - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
-    - Under environment variables, set:
-        - `FRAMEWORK=torch`, `FRAMEWORK=tf`, or `FRAMEWORK=vllm` based on the notebook used.
-        - `TF_GPU_ALLOCATOR=cuda_malloc_async` to implicity release unused GPU memory in Tensorflow notebooks.
-
-    
+    By default the script will create a cluster with 2 A10 workers and 1 A10 driver. For `FRAMEWORK=vLLM`, the Azure worker nodes will have 2 GPUs each and the AWS workers will have 4 GPUs each (since AWS does not have an instance type with 2 GPUs) to demo tensor parallelism.* Modify the script if you do not have the specific default instance types. 
 
 7. Navigate to the notebook in your workspace and attach it to the cluster. The default cluster name is `spark-dl-inference-$FRAMEWORK`.  
 
-*Note that the RAPIDS Accelerator for Apache Spark is not applicable in the vLLM case, since [multiple GPUs per executor are not supported](https://docs.nvidia.com/spark-rapids/user-guide/latest/faq.html#why-are-multiple-gpus-per-executor-not-supported).
+*Note that the RAPIDS Accelerator for Apache Spark is not compatible with this case, since [multiple GPUs per executor are not yet supported](https://docs.nvidia.com/spark-rapids/user-guide/latest/faq.html#why-are-multiple-gpus-per-executor-not-supported).
