@@ -25,8 +25,13 @@ datasets==3.*
 transformers
 nvidia-pytriton
 EOF
+elif [[ "${FRAMEWORK}" == "vllm" ]]; then
+    cat <<EOF > temp_requirements.txt
+nvidia-pytriton
+vllm
+EOF
 else
-    echo "Please export FRAMEWORK as torch or tf per README"
+    echo "Please export FRAMEWORK as torch, tf, or vllm per README"
     exit 1
 fi
 

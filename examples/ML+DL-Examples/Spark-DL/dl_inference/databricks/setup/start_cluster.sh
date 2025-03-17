@@ -3,33 +3,40 @@
 
 set -eo pipefail
 
-# configure arguments
-if [[ -z ${INIT_DEST} ]]; then
-    echo "Please make sure INIT_DEST is exported per README.md"
-    exit 1
-fi
-
-if [[ -z ${FRAMEWORK} ]]; then
-    echo "Please make sure FRAMEWORK is exported to torch or tf per README.md"
-    exit 1
-fi
-
-# Modify the node_type_id and driver_node_type_id below if you don't have this specific instance type. 
-# Modify executor.cores=(cores per node) and task.resource.gpu.amount=(1/executor cores) accordingly.
+# Modify the node types below if your Databricks account does not have these specific instance types. 
+# Modify EXECUTOR_CORES=(cores per node) accordingly.
 # We recommend selecting A10/L4+ instances for these examples.
+DRIVER_NODE_TYPE="Standard_NV36ads_A10_v5"
+
+if [[ "${FRAMEWORK}" == "vllm" ]]; then
+    # For vLLM tensor-parallelism examples, select an instance with **two GPUs**. 
+    NODE_TYPE="Standard_NV72ads_A10_v5"
+    EXECUTOR_CORES=72
+    EXECUTOR_GPU_AMT=2
+    TASK_GPU_AMT=$(awk "BEGIN {print ${EXECUTOR_GPU_AMT}/${EXECUTOR_CORES}}")
+elif [[ "${FRAMEWORK}" == "torch" || "${FRAMEWORK}" == "tf" ]]; then
+    NODE_TYPE="Standard_NV36ads_A10_v5"
+    EXECUTOR_CORES=36
+    EXECUTOR_GPU_AMT=1
+    TASK_GPU_AMT=$(awk "BEGIN {print ${EXECUTOR_GPU_AMT}/${EXECUTOR_CORES}}")
+else
+    echo "Error: Please export FRAMEWORK as torch, tf, or vllm per README"
+    exit 1
+fi
+
 json_config=$(cat <<EOF
 {
     "cluster_name": "spark-dl-inference-${FRAMEWORK}",
     "spark_version": "15.4.x-gpu-ml-scala2.12",
     "spark_conf": {
-        "spark.executor.resource.gpu.amount": "1",
+        "spark.executor.resource.gpu.amount": "${EXECUTOR_GPU_AMT}",
         "spark.python.worker.reuse": "true",
         "spark.sql.execution.arrow.pyspark.enabled": "true",
-        "spark.task.resource.gpu.amount": "0.16667",
-        "spark.executor.cores": "12"
+        "spark.task.resource.gpu.amount": "${TASK_GPU_AMT}",
+        "spark.executor.cores": "${EXECUTOR_CORES}"
     },
-    "node_type_id": "Standard_NV12ads_A10_v5",
-    "driver_node_type_id": "Standard_NV12ads_A10_v5",
+    "node_type_id": "${NODE_TYPE}",
+    "driver_node_type_id": "${DRIVER_NODE_TYPE}",
     "spark_env_vars": {
         "TF_GPU_ALLOCATOR": "cuda_malloc_async",
         "FRAMEWORK": "${FRAMEWORK}"
@@ -39,12 +46,12 @@ json_config=$(cat <<EOF
     "init_scripts": [
         {
             "workspace": {
-                "destination": "${INIT_DEST}"
+                "destination": "${SPARK_DL_WS}/init_spark_dl.sh"
             }
         }
     ],
     "runtime_engine": "STANDARD",
-    "num_workers": 4
+    "num_workers": "2"
 }
 EOF
 )

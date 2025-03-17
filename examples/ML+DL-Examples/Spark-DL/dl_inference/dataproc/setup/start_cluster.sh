@@ -10,7 +10,7 @@ if [[ -z ${GCS_BUCKET} ]]; then
 fi
 
 if [[ -z ${FRAMEWORK} ]]; then
-    echo "Please export FRAMEWORK as 'torch' or 'tf'"
+    echo "Please export FRAMEWORK as 'torch', 'tf', or 'vllm'"
     exit 1
 fi
 
@@ -60,19 +60,30 @@ TF_REQUIREMENTS="${COMMON_REQUIREMENTS}
 tensorflow[and-cuda]
 tf-keras"
 
+VLLM_REQUIREMENTS="${COMMON_REQUIREMENTS}
+vllm"
+
 cluster_name=${USER}-spark-dl-inference-${FRAMEWORK}
 if [[ ${FRAMEWORK} == "torch" ]]; then
     requirements=${TORCH_REQUIREMENTS}
     echo "========================================================="
     echo "Starting PyTorch cluster ${cluster_name}"
     echo "========================================================="
+    MACHINE_TYPE="g2-standard-8"
 elif [[ ${FRAMEWORK} == "tf" ]]; then
     requirements=${TF_REQUIREMENTS}
     echo "========================================================="
     echo "Starting Tensorflow cluster ${cluster_name}"
     echo "========================================================="
+    MACHINE_TYPE="g2-standard-8"
+elif [[ ${FRAMEWORK} == "vllm" ]]; then
+    requirements=${VLLM_REQUIREMENTS}
+    echo "========================================================="
+    echo "Starting vLLM cluster ${cluster_name}"
+    echo "========================================================="
+    MACHINE_TYPE="g2-standard-24"
 else
-    echo "Please export FRAMEWORK as torch or tf"
+    echo "Please export FRAMEWORK as torch, tf, or vllm"
     exit 1
 fi
 
@@ -83,11 +94,11 @@ fi
 
 CLUSTER_PARAMS=(
     --image-version=2.2-ubuntu
-    --region "${COMPUTE_REGION}"
-    --num-workers 4
+    --region ${COMPUTE_REGION}
+    --num-workers 2
     --master-machine-type g2-standard-8
-    --worker-machine-type g2-standard-8
-    --initialization-actions gs://"${SPARK_DL_HOME}"/init/spark-rapids.sh,"${INIT_PATH}"
+    --worker-machine-type ${MACHINE_TYPE}
+    --initialization-actions gs://${SPARK_DL_HOME}/init/spark-rapids.sh,${INIT_PATH}
     --metadata gpu-driver-provider="NVIDIA"
     --metadata gcs-bucket="${GCS_BUCKET}"
     --metadata spark-dl-home="${SPARK_DL_HOME}"
