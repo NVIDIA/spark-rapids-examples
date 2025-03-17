@@ -16,13 +16,13 @@ if [[ "${FRAMEWORK}" != "vllm" && "${FRAMEWORK}" != "torch" && "${FRAMEWORK}" !=
 fi
 
 # Modify the node types below if your Databricks account does not have these specific instance types. 
-# Modify EXECUTOR_CORES=(cores per node) accordingly.
+# Modify EXECUTOR_CORES=(cores per node) and EXECUTOR_GPU_AMT=(GPUs per node) accordingly.
 # We recommend selecting instances with A10/L4+ GPUs for these examples.
 if [[ "${CLOUD_PROVIDER}" == "aws" ]]; then
     DRIVER_NODE_TYPE="g5.2xlarge"
     
     if [[ "${FRAMEWORK}" == "vllm" ]]; then
-        # For vLLM tensor-parallelism examples, select an instance with 4 GPUs (AWS does not have 2-GPU instances). 
+        # For vLLM tensor-parallelism examples, select an instance with 4 GPUs (AWS does not have 2-GPU A10/L4 instances). 
         NODE_TYPE="g5.12xlarge"
         EXECUTOR_CORES=48
         EXECUTOR_GPU_AMT=4
