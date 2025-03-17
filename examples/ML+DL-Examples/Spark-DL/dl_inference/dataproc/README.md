@@ -51,7 +51,7 @@ Make sure you are in [this](./) directory.
     ```shell
     export FRAMEWORK=torch
     ```
-    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources. The script will create 2 L4 worker nodes and 1 L4 driver node by default, named `${USER}-spark-dl-inference-${FRAMEWORK}`. For vLLM examples, the worker nodes will have 2 L4s each to demo tensor parallelism.
+    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources. The script will create 2 L4 worker nodes and 1 L4 driver node by default, named `${USER}-spark-dl-inference-${FRAMEWORK}`. For vLLM examples, the worker nodes will have 2 L4s each to demo tensor parallelism.*
     ```shell
     cd setup
     chmod +x start_cluster.sh
@@ -68,3 +68,5 @@ Make sure you are in [this](./) directory.
 
 8. Open and run the notebook interactively with the **Python 3 kernel**.  
 The notebooks can be found under `Local Disk/spark-dl-notebooks` on the master node (folder icon on the top left > Local Disk).
+
+*Note that the RAPIDS Accelerator for Apache Spark is not applicable in the vLLM case, since [multiple GPUs per executor are not supported](https://docs.nvidia.com/spark-rapids/user-guide/latest/faq.html#why-are-multiple-gpus-per-executor-not-supported).

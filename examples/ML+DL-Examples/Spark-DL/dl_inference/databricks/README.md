@@ -38,7 +38,7 @@ Make sure you are in [this](./) directory.
     databricks workspace import ${SPARK_DL_WS}/init_spark_dl.sh --format AUTO --file $INIT_SRC
     ```
 
-6. Launch the cluster with the provided script. By default the script will create a cluster with 2 A10 worker nodes and 1 A10 driver node. For vLLM examples, the worker nodes will have 2 GPUs each to demo tensor parallelism. (Note that the script uses **Azure instances** by default; change as needed).
+6. Launch the cluster with the provided script. By default the script will create a cluster with 2 A10 worker nodes and 1 A10 driver node. For vLLM examples, the worker nodes will have 2 GPUs each to demo tensor parallelism.* (Note that the script uses **Azure instances** by default; change as needed).
     ```shell
     cd setup
     chmod +x start_cluster.sh
@@ -59,3 +59,5 @@ Make sure you are in [this](./) directory.
     
 
 7. Navigate to the notebook in your workspace and attach it to the cluster. The default cluster name is `spark-dl-inference-$FRAMEWORK`.  
+
+*Note that the RAPIDS Accelerator for Apache Spark is not applicable in the vLLM case, since [multiple GPUs per executor are not supported](https://docs.nvidia.com/spark-rapids/user-guide/latest/faq.html#why-are-multiple-gpus-per-executor-not-supported).
