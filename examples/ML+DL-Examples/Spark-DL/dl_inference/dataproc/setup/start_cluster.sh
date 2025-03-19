@@ -3,6 +3,12 @@
 
 set -eo pipefail
 
+TENSOR_PARALLEL=false
+if [[ $# -gt 0 && "$1" == "tp" ]]; then
+    TENSOR_PARALLEL=true
+    echo "Tensor parallelism enabled - will use larger machine types with multiple GPUs"
+fi
+
 # configure arguments
 if [[ -z ${GCS_BUCKET} ]]; then
     echo "Please export GCS_BUCKET per README.md"
@@ -64,27 +70,34 @@ VLLM_REQUIREMENTS="${COMMON_REQUIREMENTS}
 vllm"
 
 cluster_name=${USER}-spark-dl-inference-${FRAMEWORK}
+if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+    cluster_name="${cluster_name}-tp"
+fi
+
 if [[ ${FRAMEWORK} == "torch" ]]; then
     requirements=${TORCH_REQUIREMENTS}
     echo "========================================================="
     echo "Starting PyTorch cluster ${cluster_name}"
     echo "========================================================="
-    MACHINE_TYPE="g2-standard-8"
 elif [[ ${FRAMEWORK} == "tf" ]]; then
     requirements=${TF_REQUIREMENTS}
     echo "========================================================="
     echo "Starting Tensorflow cluster ${cluster_name}"
     echo "========================================================="
-    MACHINE_TYPE="g2-standard-8"
 elif [[ ${FRAMEWORK} == "vllm" ]]; then
     requirements=${VLLM_REQUIREMENTS}
     echo "========================================================="
     echo "Starting vLLM cluster ${cluster_name}"
     echo "========================================================="
-    MACHINE_TYPE="g2-standard-24"
 else
     echo "Please export FRAMEWORK as torch, tf, or vllm"
     exit 1
+fi
+
+if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+    MACHINE_TYPE="g2-standard-24"  # 2 L4 GPUs per node for tensor parallelism
+else
+    MACHINE_TYPE="g2-standard-8"   # 1 L4 GPU per node
 fi
 
 if gcloud dataproc clusters list | grep -q "${cluster_name}"; then
