@@ -51,12 +51,17 @@ Make sure you are in [this](./) directory.
     ```shell
     export FRAMEWORK=torch
     ```
-    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources. The script will create 2 L4 worker nodes and 1 L4 driver node by default, named `${USER}-spark-dl-inference-${FRAMEWORK}`. For vLLM examples, the worker nodes will have 2 L4s each to demo tensor parallelism.*
+    Run the cluster startup script. The script will also retrieve and use the [spark-rapids initialization script](https://github.com/GoogleCloudDataproc/initialization-actions/blob/master/spark-rapids/spark-rapids.sh) to setup GPU resources. The script will create 2 L4 worker nodes and 1 L4 driver node by default, named `${USER}-spark-dl-inference-${FRAMEWORK}`. 
     ```shell
     cd setup
     chmod +x start_cluster.sh
     ./start_cluster.sh
     ```
+    To create a cluster capable of tensor parallelism, include the argument `tp` to acquire multiple GPUs per node:
+    ```shell
+    ./start_cluster.sh tp
+    ```
+    In this case, the worker nodes will have 2 L4s each to run the tensor parallel example.*
 
 7. Browse to the Jupyter web UI:
     - Go to `Dataproc` > `Clusters` > `(Cluster Name)` > `Web Interfaces` > `Jupyter/Lab`

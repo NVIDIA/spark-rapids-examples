@@ -33,18 +33,22 @@ Make sure you are in [this](./) directory.
 
 5. Copy the files to the Databricks Workspace:
     ```shell
-    databricks workspace import ${SPARK_DL_WS}/notebook_torch.ipynb --format JUPYTER --file $NOTEBOOK_SRC
+    databricks workspace import ${SPARK_DL_WS}/$(basename "$NOTEBOOK_SRC") --format JUPYTER --file $NOTEBOOK_SRC
     databricks workspace import ${SPARK_DL_WS}/server_utils.py --format AUTO --file $UTILS_SRC
     databricks workspace import ${SPARK_DL_WS}/init_spark_dl.sh --format AUTO --file $INIT_SRC
     ```
 
-6. Launch the cluster with the provided script with the argument `aws` or `azure` based on your provider. 
+6. Launch the cluster with the provided script with the argument `aws` or `azure` based on your provider. Modify the scripts if you do not have the specific instance types. By default the script will create a cluster with 2 A10 workers and 1 A10 driver. 
     ```shell
     cd setup
     chmod +x start_cluster.sh
     ./start_cluster.sh aws  # or ./start_cluster.sh azure
     ```
-    By default the script will create a cluster with 2 A10 workers and 1 A10 driver. For `FRAMEWORK=vLLM`, the Azure worker nodes will have 2 GPUs each and the AWS workers will have 4 GPUs each (since AWS does not have an instance type with 2 GPUs) to demo tensor parallelism.* Modify the script if you do not have the specific default instance types. 
+    To create a cluster capable of tensor parallelism, include the argument `tp` to acquire multiple GPUs per node:
+    ```shell
+    ./start_cluster.sh aws tp  # or ./start_cluster.sh azure tp
+    ```
+    In this case, the Azure worker nodes will have 2 GPUs each and the AWS workers will have 4 GPUs each (since AWS does not have an instance type with 2 GPUs) to run the tensor parallel example.* 
 
 7. Navigate to the notebook in your workspace and attach it to the cluster. The default cluster name is `spark-dl-inference-$FRAMEWORK`.  
 
