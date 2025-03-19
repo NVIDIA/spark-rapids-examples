@@ -135,7 +135,7 @@ See the instructions for [Databricks](databricks/README.md) and [GCP Dataproc](d
 The notebooks also demonstrate integration with the [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source serving platform for deep learning models, which includes many [features and performance optimizations](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html#triton-major-features) to streamline inference.  
 The notebooks use [PyTriton](https://github.com/triton-inference-server/pytriton), a Flask-like Python framework that handles communication with the Triton server.  
 
-<img src="images/spark-pytriton.png" alt="drawing" width="1000"/>
+<img src="images/spark-server.png" alt="drawing" width="1000"/>
 
 The diagram above shows how Spark distributes inference tasks to run on the Triton Inference Server, with PyTriton handling request/response communication with the server. 
 

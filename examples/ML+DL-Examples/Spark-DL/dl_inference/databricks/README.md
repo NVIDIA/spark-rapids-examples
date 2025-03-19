@@ -22,7 +22,7 @@ Make sure you are in [this](./) directory.
     export NOTEBOOK_SRC=</path/to/notebook_torch.ipynb>
     ```
     ```shell
-    export UTILS_SRC=$(realpath ../pytriton_utils.py)
+    export UTILS_SRC=$(realpath ../server_utils.py)
     export INIT_SRC=$(pwd)/setup/init_spark_dl.sh
     ```
 4. Specify the framework to torch, tf, or vllm, corresponding to the notebook you wish to run. Continuing with the PyTorch example:
@@ -34,7 +34,7 @@ Make sure you are in [this](./) directory.
 5. Copy the files to the Databricks Workspace:
     ```shell
     databricks workspace import ${SPARK_DL_WS}/notebook_torch.ipynb --format JUPYTER --file $NOTEBOOK_SRC
-    databricks workspace import ${SPARK_DL_WS}/pytriton_utils.py --format AUTO --file $UTILS_SRC
+    databricks workspace import ${SPARK_DL_WS}/server_utils.py --format AUTO --file $UTILS_SRC
     databricks workspace import ${SPARK_DL_WS}/init_spark_dl.sh --format AUTO --file $INIT_SRC
     ```
 

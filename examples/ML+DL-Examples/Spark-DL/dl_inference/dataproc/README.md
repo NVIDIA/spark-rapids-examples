@@ -42,7 +42,7 @@ Make sure you are in [this](./) directory.
 
 5. Copy the utils file to the GCS bucket.
     ```shell
-    gcloud storage cp $(realpath ../pytriton_utils.py) gs://${SPARK_DL_HOME}/
+    gcloud storage cp $(realpath ../server_utils.py) gs://${SPARK_DL_HOME}/
     ```
 
 #### Start cluster and run
