@@ -132,8 +132,6 @@ def _start_vllm_server(
     model_name: str, model_path: str, wait_retries: int, wait_timeout: int, **kwargs
 ) -> List[tuple]:
     """Task to start vLLM server process on a Spark executor."""
-    import json
-
     import requests
     from pyspark import BarrierTaskContext
 
