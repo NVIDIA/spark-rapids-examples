@@ -27,7 +27,7 @@ fi
 if [[ "${CLOUD_PROVIDER}" == "aws" ]]; then
     DRIVER_NODE_TYPE="g5.2xlarge"
     
-    if [[ "${TENSOR_PARALLEL}" == "true"]]; then
+    if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
         # For tensor-parallelism examples, select an instance with 4 GPUs (AWS does not have 2-GPU A10/L4 instances). 
         NODE_TYPE="g5.12xlarge"
         EXECUTOR_CORES=48
@@ -40,7 +40,7 @@ if [[ "${CLOUD_PROVIDER}" == "aws" ]]; then
 elif [[ "${CLOUD_PROVIDER}" == "azure" ]]; then
     DRIVER_NODE_TYPE="Standard_NV36ads_A10_v5"
     
-    if [[ "${TENSOR_PARALLEL}" == "true"]]; then
+    if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
         # For tensor-parallelism examples, we need an instance with 2 GPUs.
         NODE_TYPE="Standard_NV72ads_A10_v5"
         EXECUTOR_CORES=72
