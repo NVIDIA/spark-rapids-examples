@@ -162,10 +162,7 @@ def _start_vllm_server_task(
 
     tc = BarrierTaskContext.get()
     port = _find_ports(num_ports=1)[0]
-    hostname = socket.gethostname()
-
-    # vLLM does CUDA init at import time. Forking will try to re-initialize CUDA if vLLM was imported before and throw an error.
-    os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
+    hostname = socket.gethostname()    
 
     # Build command for vLLM server
     cmd = [
@@ -189,6 +186,9 @@ def _start_vllm_server_task(
             cmd.append(str(value))
 
     logger.info(f"Starting vLLM server with command: {' '.join(cmd)}")
+
+    # vLLM does CUDA init at import time. Forking will try to re-initialize CUDA if vLLM was imported before and throw an error.
+    os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
 
     # Start server process
     process = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr, text=True)
@@ -549,7 +549,7 @@ class VLLMServerManager(ServerManager):
             wait_timeout: Timeout in seconds for each retry
             **kwargs: Additional arguments to pass to vLLM server command line
                 e.g. tensor_parallel_size, max_num_seqs, gpu_memory_utilization, etc.
-                See https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html#vllm-serve
+                See https://docs.vllm.ai/en/stable/serving/openai_compatible_server.html#vllm-serve
 
         Returns:
             Dictionary of hostname -> (server PID, [port])
