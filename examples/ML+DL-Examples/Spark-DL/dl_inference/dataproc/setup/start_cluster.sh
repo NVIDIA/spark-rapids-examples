@@ -95,9 +95,9 @@ else
 fi
 
 if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
-    MACHINE_TYPE="g2-standard-24"  # 2 L4 GPUs per node for tensor parallelism
+    WORKER_MACHINE_TYPE="g2-standard-24"  # 2 L4 GPUs per node
 else
-    MACHINE_TYPE="g2-standard-8"   # 1 L4 GPU per node
+    WORKER_MACHINE_TYPE="g2-standard-8"   # 1 L4 GPU per node
 fi
 
 if gcloud dataproc clusters list | grep -q "${cluster_name}"; then
@@ -110,7 +110,7 @@ CLUSTER_PARAMS=(
     --region ${COMPUTE_REGION}
     --num-workers 2
     --master-machine-type g2-standard-8
-    --worker-machine-type ${MACHINE_TYPE}
+    --worker-machine-type ${WORKER_MACHINE_TYPE}
     --initialization-actions gs://${SPARK_DL_HOME}/init/spark-rapids.sh,${INIT_PATH}
     --metadata gpu-driver-provider="NVIDIA"
     --metadata gcs-bucket=${GCS_BUCKET}
