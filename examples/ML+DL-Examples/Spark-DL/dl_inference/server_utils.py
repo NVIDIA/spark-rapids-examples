@@ -21,9 +21,10 @@ import subprocess
 import sys
 import time
 from multiprocessing import Process
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
 import psutil
+import requests
 from pyspark import RDD
 from pyspark.sql import SparkSession
 
@@ -38,7 +39,7 @@ logger = logging.getLogger("ServerManager")
 
 
 def _find_ports(num_ports: int, start_port: int = 7000) -> List[int]:
-    """Find available ports for server services."""
+    """Find available ports on executor for server services."""
     ports = []
     conns = {conn.laddr.port for conn in psutil.net_connections(kind="inet")}
     i = start_port
@@ -49,6 +50,25 @@ def _find_ports(num_ports: int, start_port: int = 7000) -> List[int]:
         i += 1
 
     return ports
+
+
+def _get_valid_vllm_parameters_task() -> Set[str]:
+    """Task to get valid vLLM parameters on executor."""
+    from vllm.entrypoints.openai.cli_args import create_parser_for_docs
+
+    parser = create_parser_for_docs()
+    valid_args = set()
+    for action in parser._actions:
+        if action.dest not in [
+            "help",
+            "host",
+            "port",
+            "served-model-name",
+            "model",
+        ]:
+            valid_args.add(action.dest)
+
+    return valid_args
 
 
 def _start_triton_server_task(
@@ -88,6 +108,7 @@ def _start_triton_server_task(
 
         return None
 
+    # Setup server function arguments
     tc = BarrierTaskContext.get()
     ports = _find_ports(num_ports=3)
     sig = inspect.signature(triton_server_fn)
@@ -102,6 +123,7 @@ def _start_triton_server_task(
         assert len(params) == 1, "Server function must accept (ports) argument"
         args = (ports,)
 
+    # Start server process
     _prepare_pytriton_env()
     hostname = socket.gethostname()
     process = Process(target=triton_server_fn, args=args)
@@ -109,6 +131,7 @@ def _start_triton_server_task(
 
     client = ModelClient(f"http://localhost:{ports[0]}", model_name)
 
+    # Wait for server to start
     for _ in range(wait_retries):
         try:
             client.wait_for_model(wait_timeout)
@@ -117,6 +140,7 @@ def _start_triton_server_task(
             return [(hostname, (process.pid, ports))]
         except Exception:
             if not process.is_alive():
+                # If process terminated due to an error, stop waiting
                 break
             pass
 
@@ -134,12 +158,14 @@ def _start_vllm_server_task(
     model_name: str, model_path: str, wait_retries: int, wait_timeout: int, **kwargs
 ) -> List[tuple]:
     """Task to start vLLM server process on a Spark executor."""
-    import requests
     from pyspark import BarrierTaskContext
 
     tc = BarrierTaskContext.get()
     port = _find_ports(num_ports=1)[0]
     hostname = socket.gethostname()
+
+    # vLLM does CUDA init at import time. Forking will try to re-initialize CUDA if vLLM was imported before and throw an error.
+    os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
 
     # Build command for vLLM server
     cmd = [
@@ -178,6 +204,7 @@ def _start_vllm_server_task(
                 return [(hostname, (process.pid, [port]))]
         except Exception:
             if process.poll() is not None:
+                # If process terminated due to an error, stop waiting
                 break
             pass
 
@@ -413,7 +440,7 @@ class TritonServerManager(ServerManager):
     Example usage:
     >>> server_manager = TritonServerManager(model_name="my_model", model_path="/path/to/my_model")
     >>> # Define triton_server(ports, model_path) that contains PyTriton server logic
-    >>> server_pids_ports = server_manager.start_triton_servers(triton_server)
+    >>> server_pids_ports = server_manager.start_servers(triton_server)
     >>> print(f"Servers started with PIDs/Ports: {server_pids_ports}")
     >>> host_to_http_url = server_manager.host_to_http_url
     >>> host_to_grpc_url = server_manager.host_to_grpc_url
@@ -468,39 +495,26 @@ class VLLMServerManager(ServerManager):
 
     Example usage:
     >>> server_manager = VLLMServerManager(model_name="my_llm", model_path="/path/to/my_llm")
-    >>> server_pids_ports = server_manager.start_vllm_servers(
+    >>> server_manager.start_servers(
     >>>     tensor_parallel_size=1,
     >>>     max_num_seqs=1024,
     >>>     gpu_memory_utilization=0.85,
     >>> )
     >>> print(f"Servers started with PIDs/Ports: {server_pids_ports}")
     >>> host_to_http_url = server_manager.host_to_http_url
-    >>> # Run inference with client...
+    >>> # Define vllm_fn() and predict_batch_udf(vllm_fn) and run inference...
     >>> success = server_manager.stop_servers()
     >>> print(f"Server shutdown success: {success}")
     """
 
     def __init__(self, model_name: str, model_path: str = None):
         super().__init__(model_name, model_path)
-        self.vllm_valid_parameters = self._get_vllm_valid_parameters()
+        self.vllm_valid_parameters = self._get_valid_vllm_parameters()
 
-    def _get_vllm_valid_parameters(self):
-        from vllm.entrypoints.openai.cli_args import create_parser_for_docs
-
-        parser = create_parser_for_docs()
-
-        valid_args = set()
-        for action in parser._actions:
-            if action.dest not in [
-                "help",
-                "host",
-                "port",
-                "served-model-name",
-                "model",
-            ]:
-                valid_args.add(action.dest)
-
-        return valid_args
+    def _get_valid_vllm_parameters(self) -> List[str]:
+        """Get valid vLLM parameters on executor."""
+        rdd = self.spark.sparkContext.parallelize(list(range(1)), 1)
+        return rdd.mapPartitions(lambda _: _get_valid_vllm_parameters_task()).collect()
 
     def _validate_vllm_kwargs(self, kwargs: Dict[str, Any]):
         """Validate vLLM parameters."""
