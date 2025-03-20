@@ -51,7 +51,7 @@ def _find_ports(num_ports: int, start_port: int = 7000) -> List[int]:
     return ports
 
 
-def _start_triton_server(
+def _start_triton_server_task(
     triton_server_fn: Callable,
     model_name: str,
     wait_retries: int,
@@ -116,6 +116,8 @@ def _start_triton_server(
             client.close()
             return [(hostname, (process.pid, ports))]
         except Exception:
+            if not process.is_alive():
+                break
             pass
 
     client.close()
@@ -128,7 +130,7 @@ def _start_triton_server(
     )
 
 
-def _start_vllm_server(
+def _start_vllm_server_task(
     model_name: str, model_path: str, wait_retries: int, wait_timeout: int, **kwargs
 ) -> List[tuple]:
     """Task to start vLLM server process on a Spark executor."""
@@ -174,22 +176,20 @@ def _start_vllm_server(
             if response.status_code == 200:
                 tc.barrier()
                 return [(hostname, (process.pid, [port]))]
-        except Exception as e:
-            logger.warning(f"Waiting for vLLM server to start: {e}")
+        except Exception:
+            if process.poll() is not None:
+                break
+            pass
 
     if process.poll() is None:
         process.terminate()
-        try:
-            process.wait(timeout=wait_timeout)
-        except subprocess.TimeoutExpired:
-            process.kill()
 
     raise TimeoutError(
         "Failure: vLLM server startup timeout exceeded. Check the executor logs for more info."
     )
 
 
-def _stop_server(
+def _stop_server_task(
     server_pids_ports: Dict[str, Tuple[int, List[int]]],
     wait_retries: int,
     wait_timeout: int,
@@ -231,7 +231,7 @@ class ServerManager:
         server_pids_ports: Dictionary of hostname to (server process ID, ports)
     """
 
-    DEFAULT_WAIT_RETRIES = 10
+    DEFAULT_WAIT_RETRIES = 24
     DEFAULT_WAIT_TIMEOUT = 5
 
     def __init__(self, model_name: str, model_path: Optional[str] = None):
@@ -317,7 +317,7 @@ class ServerManager:
 
         return rdd.withResources(rp)
 
-    def _start_servers(
+    def start_servers(
         self,
         start_server_fn: Callable,
         wait_retries: int = DEFAULT_WAIT_RETRIES,
@@ -384,7 +384,7 @@ class ServerManager:
         stop_success = (
             node_rdd.barrier()
             .mapPartitions(
-                lambda _: _stop_server(
+                lambda _: _stop_server_task(
                     server_pids_ports=server_pids_ports,
                     wait_retries=wait_retries,
                     wait_timeout=wait_timeout,
@@ -454,8 +454,8 @@ class TritonServerManager(ServerManager):
         Returns:
             Dictionary of hostname -> (server PID, [ports])
         """
-        return self._start_servers(
-            start_server_fn=_start_triton_server,
+        return super().start_servers(
+            start_server_fn=_start_triton_server_task,
             wait_retries=wait_retries,
             wait_timeout=wait_timeout,
             triton_server_fn=triton_server_fn,
@@ -542,8 +542,8 @@ class VLLMServerManager(ServerManager):
         """
         self._validate_vllm_kwargs(kwargs)
 
-        return self._start_servers(
-            start_server_fn=_start_vllm_server,
+        return super().start_servers(
+            start_server_fn=_start_vllm_server_task,
             wait_retries=wait_retries,
             wait_timeout=wait_timeout,
             **kwargs,
