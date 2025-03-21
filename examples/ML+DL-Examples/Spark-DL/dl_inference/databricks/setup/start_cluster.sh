@@ -3,30 +3,70 @@
 
 set -eo pipefail
 
-# Modify the node types below if your Databricks account does not have these specific instance types. 
-# Modify EXECUTOR_CORES=(cores per node) accordingly.
-# We recommend selecting A10/L4+ instances for these examples.
-DRIVER_NODE_TYPE="Standard_NV36ads_A10_v5"
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+    echo "Usage: $0 <aws|azure> [tp]"
+    exit 1
+fi
 
-if [[ "${FRAMEWORK}" == "vllm" ]]; then
-    # For vLLM tensor-parallelism examples, select an instance with **two GPUs**. 
-    NODE_TYPE="Standard_NV72ads_A10_v5"
-    EXECUTOR_CORES=72
-    EXECUTOR_GPU_AMT=2
-    TASK_GPU_AMT=$(awk "BEGIN {print ${EXECUTOR_GPU_AMT}/${EXECUTOR_CORES}}")
-elif [[ "${FRAMEWORK}" == "torch" || "${FRAMEWORK}" == "tf" ]]; then
-    NODE_TYPE="Standard_NV36ads_A10_v5"
-    EXECUTOR_CORES=36
-    EXECUTOR_GPU_AMT=1
-    TASK_GPU_AMT=$(awk "BEGIN {print ${EXECUTOR_GPU_AMT}/${EXECUTOR_CORES}}")
-else
+CLOUD_PROVIDER=$1
+TENSOR_PARALLEL=false
+
+# Check if the second argument is "tp" for tensor parallelism
+if [ $# -eq 2 ] && [ "$2" == "tp" ]; then
+    TENSOR_PARALLEL=true
+fi
+
+if [[ "${FRAMEWORK}" != "vllm" && "${FRAMEWORK}" != "torch" && "${FRAMEWORK}" != "tf" ]]; then
     echo "Error: Please export FRAMEWORK as torch, tf, or vllm per README"
     exit 1
 fi
 
+# Modify the node types below if your Databricks account does not have these specific instance types. 
+# Modify EXECUTOR_CORES=(cores per node) and EXECUTOR_GPU_AMT=(GPUs per node) accordingly.
+# We recommend selecting instances with A10/L4+ GPUs for these examples.
+if [[ "${CLOUD_PROVIDER}" == "aws" ]]; then
+    DRIVER_NODE_TYPE="g5.2xlarge"
+    
+    if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+        # For tensor-parallelism examples, select an instance with 4 GPUs (AWS does not have 2-GPU A10/L4 instances). 
+        NODE_TYPE="g5.12xlarge"
+        EXECUTOR_CORES=48
+        EXECUTOR_GPU_AMT=4
+    else
+        NODE_TYPE="g5.4xlarge"
+        EXECUTOR_CORES=16
+        EXECUTOR_GPU_AMT=1
+    fi
+elif [[ "${CLOUD_PROVIDER}" == "azure" ]]; then
+    DRIVER_NODE_TYPE="Standard_NV36ads_A10_v5"
+    
+    if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+        # For tensor-parallelism examples, we need an instance with 2 GPUs.
+        NODE_TYPE="Standard_NV72ads_A10_v5"
+        EXECUTOR_CORES=72
+        EXECUTOR_GPU_AMT=2
+    else
+        NODE_TYPE="Standard_NV36ads_A10_v5"
+        EXECUTOR_CORES=36
+        EXECUTOR_GPU_AMT=1
+    fi
+else
+    echo "Error: Cloud provider must be either 'aws' or 'azure'"
+    exit 1
+fi
+
+# Use a descriptive cluster name to indicate tensor parallelism if enabled
+CLUSTER_SUFFIX="${FRAMEWORK}"
+if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+    CLUSTER_SUFFIX="${FRAMEWORK}-tp"
+fi
+
+# task GPU amount = executor GPU amount / executor cores
+TASK_GPU_AMT=$(awk "BEGIN {print ${EXECUTOR_GPU_AMT}/${EXECUTOR_CORES}}")
+
 json_config=$(cat <<EOF
 {
-    "cluster_name": "spark-dl-inference-${FRAMEWORK}",
+    "cluster_name": "spark-dl-inference-${CLUSTER_SUFFIX}",
     "spark_version": "15.4.x-gpu-ml-scala2.12",
     "spark_conf": {
         "spark.executor.resource.gpu.amount": "${EXECUTOR_GPU_AMT}",
