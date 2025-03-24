@@ -1,7 +1,7 @@
 # Deep Learning Inference on Spark
 
 Example notebooks demonstrating **distributed deep learning inference** using the [predict_batch_udf](https://developer.nvidia.com/blog/distributed-deep-learning-made-easy-with-spark-3-4/#distributed_inference) introduced in Spark 3.4.0.
-These notebooks also demonstrate integration with [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source, GPU-accelerated serving solution for DL.
+These notebooks also demonstrate model serving integrations with [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html) and [vLLM serve](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html).
 
 ## Contents:
 - [Overview](#overview)
@@ -90,8 +90,7 @@ pip install -r vllm_requirements.txt
 
 #### Start Cluster
 
-For demonstration, these instructions just use a local Standalone cluster with a single executor, but they can be run on any distributed Spark cluster. For cloud environments, see [below](#running-on-cloud-environments).
-If you haven't already, [install Spark](https://spark.apache.org/downloads.html) on your system. 
+For demonstration, these instructions just use a local Standalone cluster with a single executor, but they can be run on any distributed Spark cluster. If you haven't already, [install Spark](https://spark.apache.org/downloads.html) on your system. 
 ```shell
 # Replace with your Spark installation path
 export SPARK_HOME=</path/to/spark>
@@ -102,7 +101,8 @@ export SPARK_HOME=</path/to/spark>
 export MASTER=spark://$(hostname):7077
 export SPARK_WORKER_INSTANCES=1
 export CORES_PER_WORKER=8
-export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 -Dspark.worker.resource.gpu.discoveryScript=$SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
+export SPARK_WORKER_OPTS="-Dspark.worker.resource.gpu.amount=1 \
+                          -Dspark.worker.resource.gpu.discoveryScript=$SPARK_HOME/examples/src/main/scripts/getGpusResources.sh"
 ${SPARK_HOME}/sbin/start-master.sh; ${SPARK_HOME}/sbin/start-worker.sh -c ${CORES_PER_WORKER} -m 16G ${MASTER}
 ```
 
@@ -111,7 +111,7 @@ The notebooks are ready to run! Each notebook has a cell to connect to the stand
 **Notes**: 
 - Please create separate environments for different frameworks as specified above. This will avoid conflicts between the CUDA libraries bundled with their respective versions. 
 - `requirements.txt` installs pyspark>=3.4.0. Make sure the installed PySpark version is compatible with your system's Spark installation.
-- The notebooks require a GPU environment for the executors.  
+- The notebooks require an NVIDIA GPU on your system.  
 - The PyTorch notebooks include model compilation and accelerated inference with TensorRT. While not included in the notebooks, Tensorflow also supports [integration with TensorRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html), but as of writing it is not supported in TF==2.17.0. 
 - Note that some Huggingface models may be gated and will require a login, e.g.,:
     ```python
@@ -126,16 +126,19 @@ See the instructions for [Databricks](databricks/README.md) and [GCP Dataproc](d
 
 ## Inference Serving
 
-<img src="images/spark-server.png" alt="drawing" width="1000"/>
+<img src="images/spark-server.png" alt="drawing" width="900"/>
 
 The notebooks demonstrate deploying models on an inference server as a sidecar process, as shown above. The process looks like this:
 - Prior to inference, launch a server process on each node.
 - Define a predict function, which creates a client that sends/receives inference requests to the local server.
 - Wrap the predict function in a predict_batch_udf to launch parallel inference requests using Spark.
 
-This logically separates the CPU parallelism from the GPU parallelism for streamlined deployment. For instance, if we want to run a 20GB model on a 25GB vRAM GPU with `predict_batch_udf` using an in-process framework, we have have to set `spark.task.resource.gpu.amount=1`, which limits task parallelism to 1 task (i.e. model instance) per GPU for the entire application. By using an inference server, we can set `spark.task.resource.gpu.amount=(num_cores)` to leverage all the executor CPUs, while the server will occupy the GPU for inference.
+This logically separates the CPU parallelism from the GPU parallelism for streamlined deployment. 
+For instance, say we want to run a 20GB model on a GPU with 25GB of memory.
+- With `predict_batch_udf` using an in-process framework, we must set `spark.task.resource.gpu.amount=1`, which limits parallelism to 1 task (i.e. model instance) per GPU for the entire application due to memory constraints. 
+- Using an inference server, we can set `spark.task.resource.gpu.amount=(num_cores)` to leverage all the executor CPUs for Dataframe operations (reading/preprocessing/writing), while the server loads 1 instance of the model on the GPU for inference.
 
-See [`server_utils.py`](server_utils.py) to understand how we manage servers on the Spark cluster, which currently supports serving with Triton and vLLM. 
+See [`server_utils.py`](server_utils.py) for more details on how we manage servers on the Spark cluster.
 
 ### Triton Inference Server
 

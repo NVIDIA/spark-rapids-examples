@@ -55,13 +55,12 @@ else
     exit 1
 fi
 
-# Use a descriptive cluster name to indicate tensor parallelism if enabled
 CLUSTER_SUFFIX="${FRAMEWORK}"
 if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
     CLUSTER_SUFFIX="${FRAMEWORK}-tp"
 fi
 
-# task GPU amount = executor GPU amount / executor cores
+# Task GPU amount = Executor GPU amount / Executor cores
 TASK_GPU_AMT=$(awk "BEGIN {print ${EXECUTOR_GPU_AMT}/${EXECUTOR_CORES}}")
 
 json_config=$(cat <<EOF
