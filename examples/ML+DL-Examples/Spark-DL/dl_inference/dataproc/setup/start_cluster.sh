@@ -66,7 +66,7 @@ TF_REQUIREMENTS="${COMMON_REQUIREMENTS}
 tensorflow[and-cuda]
 tf-keras"
 
-VLLM_REQUIREMENTS="${COMMON_REQUIREMENTS}
+VLLM_REQUIREMENTS="datasets==3.*
 vllm"
 
 cluster_name=${USER}-spark-dl-inference-${FRAMEWORK}
