@@ -151,7 +151,7 @@ def _start_triton_server_task(
         process.terminate()
 
     raise TimeoutError(
-        "Failure: Triton server startup timeout exceeded. Check the executor logs for more info."
+        "Failure: Triton server startup failed or timed out. Check the executor logs for more info."
     )
 
 
@@ -214,10 +214,11 @@ def _start_vllm_server_task(
             pass
 
     if process.poll() is None:
+        # Terminate if timeout is exceeded to avoid dangling server processes
         process.terminate()
 
     raise TimeoutError(
-        "Failure: vLLM server startup timeout exceeded. Check the executor logs for more info."
+        "Failure: vLLM server startup failed or timed out. Check the executor logs for more info."
     )
 
 
@@ -280,18 +281,6 @@ class ServerManager:
         self.model_path = model_path
         self._server_pids_ports: Dict[str, Tuple[int, List[int]]] = {}
 
-    @property
-    def host_to_http_url(self) -> Dict[str, str]:
-        """Map hostname to client HTTP URL for server on that host."""
-        if not self._server_pids_ports:
-            logger.warning("No urls available. Start servers first.")
-            return None
-
-        return {
-            host: f"http://{host}:{ports[0]}"
-            for host, (_, ports) in self._server_pids_ports.items()
-        }
-
     def _get_num_executors(self) -> int:
         """Get the number of executors in the cluster."""
         return (
@@ -306,6 +295,18 @@ class ServerManager:
             - 1
         )
 
+    @property
+    def host_to_http_url(self) -> Dict[str, str]:
+        """Map hostname to client HTTP URL for server on that host."""
+        if not self._server_pids_ports:
+            logger.warning("No urls available. Start servers first.")
+            return None
+
+        return {
+            host: f"http://{host}:{ports[0]}"
+            for host, (_, ports) in self._server_pids_ports.items()
+        }
+
     def _get_node_rdd(self) -> RDD:
         """Create and configure RDD with stage-level scheduling for 1 task per executor."""
         sc = self.spark.sparkContext
@@ -315,6 +316,7 @@ class ServerManager:
     def _use_stage_level_scheduling(self, rdd: RDD) -> RDD:
         """
         Use stage-level scheduling to ensure each server instance maps to 1 executor.
+        Adapted from https://github.com/NVIDIA/spark-rapids-ml/blob/main/python/src/spark_rapids_ml/core.py
         """
         from pyspark.resource.profile import ResourceProfileBuilder
         from pyspark.resource.requests import TaskResourceRequests
