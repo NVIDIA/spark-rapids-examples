@@ -77,6 +77,7 @@ def _start_triton_server_task(
     wait_retries: int,
     wait_timeout: int,
     model_path: Optional[str] = None,
+    env: Optional[Dict[str, str]] = None,
 ) -> List[tuple]:
     """Task to start Triton server process on a Spark executor."""
 
@@ -122,9 +123,16 @@ def _start_triton_server_task(
     else:
         assert len(params) == 1, "Server function must accept (ports) argument"
         args = (ports,)
+    
+    # Apply user-provided environment variables
+    if env:
+        for key, value in env.items():
+            os.environ[key] = str(value)
 
-    # Start server process
+    # Prepare library links
     _prepare_pytriton_env()
+    
+    # Start server process
     hostname = socket.gethostname()
     process = Process(target=triton_server_fn, args=args)
     process.start()
@@ -155,7 +163,12 @@ def _start_triton_server_task(
 
 
 def _start_vllm_server_task(
-    model_name: str, model_path: str, wait_retries: int, wait_timeout: int, **kwargs
+    model_name: str,
+    model_path: str,
+    wait_retries: int,
+    wait_timeout: int,
+    env: Optional[Dict[str, str]] = None,
+    **kwargs,
 ) -> List[tuple]:
     """Task to start vLLM server process on a Spark executor."""
     from pyspark import BarrierTaskContext
@@ -186,6 +199,11 @@ def _start_vllm_server_task(
             cmd.append(str(value))
 
     logger.info(f"Starting vLLM server with command: {' '.join(cmd)}")
+
+    # Apply user-provided environment variables
+    if env:
+        for key, value in env.items():
+            os.environ[key] = str(value)
 
     # vLLM does CUDA init at import time. Forking will try to re-initialize CUDA if vLLM was imported before and throw an error.
     os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
@@ -349,6 +367,7 @@ class ServerManager:
         start_server_fn: Callable,
         wait_retries: int = DEFAULT_WAIT_RETRIES,
         wait_timeout: int = DEFAULT_WAIT_TIMEOUT,
+        env: Optional[Dict[str, str]] = None,
         **kwargs,
     ) -> Dict[str, Tuple[int, List[int]]]:
         """
@@ -375,6 +394,9 @@ class ServerManager:
             "wait_retries": wait_retries,
             "wait_timeout": wait_timeout,
         }
+
+        if env is not None:
+            start_args["env"] = env
 
         if model_path is not None:
             start_args["model_path"] = model_path
@@ -469,6 +491,7 @@ class TritonServerManager(ServerManager):
         triton_server_fn: Callable,
         wait_retries: int = ServerManager.DEFAULT_WAIT_RETRIES,
         wait_timeout: int = ServerManager.DEFAULT_WAIT_TIMEOUT,
+        env: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Tuple[int, List[int]]]:
         """
         Start Triton servers across the cluster.
@@ -477,6 +500,7 @@ class TritonServerManager(ServerManager):
             triton_server_fn: PyTriton server function defining the model and inference logic
             wait_retries: Number of retries for waiting for server startup
             wait_timeout: Timeout in seconds for each retry
+            env: Optional dictionary of environment variables to set for the server process
 
         Returns:
             Dictionary of hostname -> (server PID, [ports])
@@ -486,6 +510,7 @@ class TritonServerManager(ServerManager):
             wait_retries=wait_retries,
             wait_timeout=wait_timeout,
             triton_server_fn=triton_server_fn,
+            env=env,
         )
 
 
@@ -539,6 +564,7 @@ class VLLMServerManager(ServerManager):
         self,
         wait_retries: int = ServerManager.DEFAULT_WAIT_RETRIES,
         wait_timeout: int = ServerManager.DEFAULT_WAIT_TIMEOUT,
+        env: Optional[Dict[str, str]] = None,
         **kwargs,
     ) -> Dict[str, Tuple[int, List[int]]]:
         """
@@ -550,6 +576,7 @@ class VLLMServerManager(ServerManager):
             **kwargs: Additional arguments to pass to vLLM server command line
                 e.g. tensor_parallel_size, max_num_seqs, gpu_memory_utilization, etc.
                 See https://docs.vllm.ai/en/stable/serving/openai_compatible_server.html#vllm-serve
+            env: Optional dictionary of environment variables to set for the server process
 
         Returns:
             Dictionary of hostname -> (server PID, [port])
@@ -560,5 +587,6 @@ class VLLMServerManager(ServerManager):
             start_server_fn=_start_vllm_server_task,
             wait_retries=wait_retries,
             wait_timeout=wait_timeout,
+            env=env,
             **kwargs,
         )
