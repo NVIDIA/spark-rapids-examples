@@ -7,7 +7,7 @@ These notebooks also demonstrate integration with [Triton Inference Server](http
 - [Overview](#overview)
 - [Running Locally](#running-locally)
 - [Running on Cloud](#running-on-cloud-environments)
-- [Integration with Triton Inference Server](#inference-with-triton)
+- [Inference Serving Integration](#inference-serving)
 
 ## Overview
 
@@ -49,7 +49,7 @@ Below is a full list of the notebooks and their links. All notebooks have been s
 | 4 | HuggingFace | Sentence Transformers | Sentence embeddings using SentenceTransformers in Torch. | [Link](huggingface/sentence_transformers_torch.ipynb)
 | 5+6 | HuggingFace | Conditional Generation | Sentence translation using the T5 text-to-text transformer (Torch and Tensorflow). | [Torch Link](huggingface/conditional_generation_torch.ipynb), [TF Link](huggingface/conditional_generation_tf.ipynb)
 | 7+8 | HuggingFace | Pipelines | Sentiment analysis using Huggingface pipelines (Torch and Tensorflow). | [Torch Link](huggingface/pipelines_torch.ipynb), [TF Link](huggingface/pipelines_tf.ipynb)
-| 9 | vLLM | Qwen-2.5-14b | Tensor-parallel LLM batch inference using the Qwen-2.5-14b model to summarize unstructured text data into a structured schema, using vLLM serve. | [Link](vllm/qwen-2.5-14b-tensor-parallel_vllm.ipynb)
+| 9 | vLLM | Qwen-2.5-14b-tensor-parallel | Tensor-parallel LLM batch inference using the Qwen-2.5-14b model to summarize unstructured text data into a structured schema, using vLLM serve. | [Link](vllm/qwen-2.5-14b-tensor-parallel_vllm.ipynb)
 | 10 | vLLM | Qwen-2.5-7b | LLM batch inference using the Qwen-2.5-7b model to summarize for text summarization, using vLLM serve. | [Link](vllm/qwen-2.5-7b_vllm.ipynb)
 | 11 | PyTorch | Image Classification | Training a model to predict clothing categories in FashionMNIST, and deploying with Torch-TensorRT accelerated inference. | [Link](pytorch/image_classification_torch.ipynb)
 | 12 | PyTorch | Housing Regression | Training and deploying a model to predict housing prices in the California Housing Dataset, and deploying with Torch-TensorRT accelerated inference. | [Link](pytorch/housing_regression_torch.ipynb)
@@ -85,7 +85,6 @@ pip install -r tf_requirements.txt
 ```
 conda create -n spark-dl-vllm -c conda-forge python=3.11
 conda activate spark-dl-vllm
-conda install -c conda-forge libstdcxx-ng
 pip install -r vllm_requirements.txt
 ```
 
@@ -120,30 +119,30 @@ The notebooks are ready to run! Each notebook has a cell to connect to the stand
     login()
     ```
 
-**Troubleshooting:** 
-If you encounter issues starting the Triton server, you may need to link your libstdc++ file to the conda environment, e.g.:
-```shell
-ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 ${CONDA_PREFIX}/lib/libstdc++.so.6
-```
-
 ## Running on Cloud Environments
 
 We also provide instructions to run the notebooks on CSP Spark environments.  
 See the instructions for [Databricks](databricks/README.md) and [GCP Dataproc](dataproc/README.md).
 
-## Inference with Triton
-
-The notebooks also demonstrate integration with the [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source serving platform for deep learning models, which includes many [features and performance optimizations](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html#triton-major-features) to streamline inference.  
-The notebooks use [PyTriton](https://github.com/triton-inference-server/pytriton), a Flask-like Python framework that handles communication with the Triton server.  
+## Inference Serving
 
 <img src="images/spark-server.png" alt="drawing" width="1000"/>
 
-The diagram above shows how Spark distributes inference tasks to run on the Triton Inference Server, with PyTriton handling request/response communication with the server. 
+The notebooks demonstrate deploying models on an inference server as a sidecar process, as shown above. The process looks like this:
+- Prior to inference, launch a server process on each node.
+- Define a predict function, which creates a client that sends/receives inference requests to the local server.
+- Wrap the predict function in a predict_batch_udf to launch parallel inference requests using Spark.
 
-The process looks like this:
-- Prior to inference, launch a Triton server process on each node.
-- Define a Triton predict function, which creates a client that binds to the local server and sends/receives inference requests.
-- Wrap the Triton inference function in a predict_batch_udf to launch parallel inference requests using Spark.
-- Finally, distribute a shutdown signal to terminate the Triton server processes on each worker.
+This logically separates the CPU parallelism from the GPU parallelism for streamlined deployment. For instance, if we want to run a 20GB model on a 25GB vRAM GPU with `predict_batch_udf` using an in-process framework, we have have to set `spark.task.resource.gpu.amount=1`, which limits task parallelism to 1 task (i.e. model instance) per GPU for the entire application. By using an inference server, we can set `spark.task.resource.gpu.amount=(num_cores)` to leverage all the executor CPUs, while the server will occupy the GPU for inference.
 
-For more information on how PyTriton works, see the [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/).
+See [`server_utils.py`](server_utils.py) to understand how we manage servers on the Spark cluster, which currently supports serving with Triton and vLLM. 
+
+### Triton Inference Server
+
+Each notebook contains a section that demonstrates serving with [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source serving platform for deep learning models, which includes many [features and performance optimizations](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html#triton-major-features) to streamline inference. To leverage Triton through Python, we use [PyTriton](https://github.com/triton-inference-server/pytriton), a Flask-like framework that handles communication with the Triton server.  
+
+Triton allows you to define a Python function that encapsulates the inference logic, including model ensembles or concurrent execution. For more information on how PyTriton works, see the [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/).
+
+### vLLM Server
+
+The vLLM notebooks demonstrate serving with [vLLM serve](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html), an OpenAI-compatible HTTP server to deploy vLLM models. If you do not need the custom inference logic provided by Triton, this provides a straightforward alternative to deploy a vLLM-compatible LLM.
