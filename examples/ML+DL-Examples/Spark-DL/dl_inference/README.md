@@ -142,10 +142,10 @@ See [`server_utils.py`](server_utils.py) for more details on how we manage serve
 
 ### Triton Inference Server
 
-Each notebook contains a section that demonstrates serving with [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source serving platform for deep learning models, which includes many [features and performance optimizations](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html#triton-major-features) to streamline inference. To leverage Triton through Python, we use [PyTriton](https://github.com/triton-inference-server/pytriton), a Flask-like framework that handles communication with the Triton server.  
+Each notebook has a section that demonstrates model serving with [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html), an open-source serving platform for deep learning models, which includes many [major features](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html#triton-major-features) to streamline inference. To leverage Triton through Python, we use [PyTriton](https://github.com/triton-inference-server/pytriton), a Flask-like framework that handles communication with the Triton server.  
 
-Triton allows you to define a Python function that encapsulates the inference logic, including model ensembles or concurrent execution. For more information on how PyTriton works, see the [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/).
+Triton allows you to define a Python function encapsulating the inference logic, including complex pipelines such as model ensembles or concurrent execution. For more information on how PyTriton works, see the [PyTriton docs](https://triton-inference-server.github.io/pytriton/latest/high_level_design/).
 
 ### vLLM Server
 
-The vLLM notebooks demonstrate serving with [vLLM serve](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html), an OpenAI-compatible HTTP server to deploy vLLM models. If you do not need the custom inference logic provided by Triton, this provides a straightforward alternative to deploy a vLLM-compatible LLM.
+The vLLM notebooks demonstrate serving with [vLLM serve](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html), an OpenAI-compatible HTTP server to deploy vLLM models. If you do not need the custom inference logic provided by Triton, vLLM serve is a straightforward alternative to deploy a vLLM-compatible LLM.
