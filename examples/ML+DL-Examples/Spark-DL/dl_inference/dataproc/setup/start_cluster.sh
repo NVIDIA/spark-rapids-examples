@@ -3,6 +3,12 @@
 
 set -eo pipefail
 
+TENSOR_PARALLEL=false
+if [[ $# -gt 0 && "$1" == "tp" ]]; then
+    TENSOR_PARALLEL=true
+    echo "Tensor parallelism enabled - will use larger machine types with multiple GPUs"
+fi
+
 # configure arguments
 if [[ -z ${GCS_BUCKET} ]]; then
     echo "Please export GCS_BUCKET per README.md"
@@ -60,31 +66,38 @@ TF_REQUIREMENTS="${COMMON_REQUIREMENTS}
 tensorflow[and-cuda]
 tf-keras"
 
-VLLM_REQUIREMENTS="${COMMON_REQUIREMENTS}
+VLLM_REQUIREMENTS="datasets==3.*
 vllm"
 
 cluster_name=${USER}-spark-dl-inference-${FRAMEWORK}
+if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+    cluster_name="${cluster_name}-tp"
+fi
+
 if [[ ${FRAMEWORK} == "torch" ]]; then
     requirements=${TORCH_REQUIREMENTS}
     echo "========================================================="
     echo "Starting PyTorch cluster ${cluster_name}"
     echo "========================================================="
-    MACHINE_TYPE="g2-standard-8"
 elif [[ ${FRAMEWORK} == "tf" ]]; then
     requirements=${TF_REQUIREMENTS}
     echo "========================================================="
     echo "Starting Tensorflow cluster ${cluster_name}"
     echo "========================================================="
-    MACHINE_TYPE="g2-standard-8"
 elif [[ ${FRAMEWORK} == "vllm" ]]; then
     requirements=${VLLM_REQUIREMENTS}
     echo "========================================================="
     echo "Starting vLLM cluster ${cluster_name}"
     echo "========================================================="
-    MACHINE_TYPE="g2-standard-24"
 else
     echo "Please export FRAMEWORK as torch, tf, or vllm"
     exit 1
+fi
+
+if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+    WORKER_MACHINE_TYPE="g2-standard-24"  # 2 L4 GPUs per node
+else
+    WORKER_MACHINE_TYPE="g2-standard-8"   # 1 L4 GPU per node
 fi
 
 if gcloud dataproc clusters list | grep -q "${cluster_name}"; then
@@ -97,7 +110,7 @@ CLUSTER_PARAMS=(
     --region ${COMPUTE_REGION}
     --num-workers 2
     --master-machine-type g2-standard-8
-    --worker-machine-type ${MACHINE_TYPE}
+    --worker-machine-type ${WORKER_MACHINE_TYPE}
     --initialization-actions gs://${SPARK_DL_HOME}/init/spark-rapids.sh,${INIT_PATH}
     --metadata gpu-driver-provider="NVIDIA"
     --metadata gcs-bucket=${GCS_BUCKET}
