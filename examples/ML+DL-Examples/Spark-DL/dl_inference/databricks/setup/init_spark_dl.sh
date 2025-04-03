@@ -27,7 +27,6 @@ nvidia-pytriton
 EOF
 elif [[ "${FRAMEWORK}" == "vllm" ]]; then
     cat <<EOF > temp_requirements.txt
-nvidia-pytriton
 vllm
 EOF
 else

@@ -3,12 +3,18 @@
 
 set -eo pipefail
 
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <aws|azure>"
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+    echo "Usage: $0 <aws|azure> [tp]"
     exit 1
 fi
 
 CLOUD_PROVIDER=$1
+TENSOR_PARALLEL=false
+
+# Check if the second argument is "tp" for tensor parallelism
+if [ $# -eq 2 ] && [ "$2" == "tp" ]; then
+    TENSOR_PARALLEL=true
+fi
 
 if [[ "${FRAMEWORK}" != "vllm" && "${FRAMEWORK}" != "torch" && "${FRAMEWORK}" != "tf" ]]; then
     echo "Error: Please export FRAMEWORK as torch, tf, or vllm per README"
@@ -21,12 +27,12 @@ fi
 if [[ "${CLOUD_PROVIDER}" == "aws" ]]; then
     DRIVER_NODE_TYPE="g5.2xlarge"
     
-    if [[ "${FRAMEWORK}" == "vllm" ]]; then
-        # For vLLM tensor-parallelism examples, select an instance with 4 GPUs (AWS does not have 2-GPU A10/L4 instances). 
+    if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+        # For tensor-parallelism examples, we default to the g5.12xlarge with 4 A10 GPUs (AWS does not have 2-GPU instances). 
         NODE_TYPE="g5.12xlarge"
         EXECUTOR_CORES=48
         EXECUTOR_GPU_AMT=4
-    elif [[ "${FRAMEWORK}" == "torch" || "${FRAMEWORK}" == "tf" ]]; then
+    else
         NODE_TYPE="g5.4xlarge"
         EXECUTOR_CORES=16
         EXECUTOR_GPU_AMT=1
@@ -34,12 +40,12 @@ if [[ "${CLOUD_PROVIDER}" == "aws" ]]; then
 elif [[ "${CLOUD_PROVIDER}" == "azure" ]]; then
     DRIVER_NODE_TYPE="Standard_NV36ads_A10_v5"
     
-    if [[ "${FRAMEWORK}" == "vllm" ]]; then
-        # For vLLM tensor-parallelism examples, we need an instance with 2 GPUs.
+    if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+        # For tensor-parallelism examples, we default to the Standard_NV72ads_A10_v5 with 2 A10 GPUs.
         NODE_TYPE="Standard_NV72ads_A10_v5"
         EXECUTOR_CORES=72
         EXECUTOR_GPU_AMT=2
-    elif [[ "${FRAMEWORK}" == "torch" || "${FRAMEWORK}" == "tf" ]]; then
+    else
         NODE_TYPE="Standard_NV36ads_A10_v5"
         EXECUTOR_CORES=36
         EXECUTOR_GPU_AMT=1
@@ -49,12 +55,17 @@ else
     exit 1
 fi
 
-# task GPU amount = executor GPU amount / executor cores
+CLUSTER_SUFFIX="${FRAMEWORK}"
+if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+    CLUSTER_SUFFIX="${FRAMEWORK}-tp"
+fi
+
+# Task GPU amount = Executor GPU amount / Executor cores
 TASK_GPU_AMT=$(awk "BEGIN {print ${EXECUTOR_GPU_AMT}/${EXECUTOR_CORES}}")
 
 json_config=$(cat <<EOF
 {
-    "cluster_name": "spark-dl-inference-${FRAMEWORK}",
+    "cluster_name": "spark-dl-inference-${CLUSTER_SUFFIX}",
     "spark_version": "15.4.x-gpu-ml-scala2.12",
     "spark_conf": {
         "spark.executor.resource.gpu.amount": "${EXECUTOR_GPU_AMT}",
