@@ -16,3 +16,4 @@ pyspark>=3.4.0
 datasets
 vllm
 ipywidgets
+jupyterlab
