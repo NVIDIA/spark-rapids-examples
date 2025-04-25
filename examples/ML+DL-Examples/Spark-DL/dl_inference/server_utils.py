@@ -303,7 +303,7 @@ class ServerManager:
             return None
 
         return {
-            host: f"http://{host}:{ports[0]}"
+            host: f"http://localhost:{ports[0]}"
             for host, (_, ports) in self._server_pids_ports.items()
         }
 
@@ -467,7 +467,7 @@ class TritonServerManager(ServerManager):
             return None
 
         return {
-            host: f"grpc://{host}:{ports[1]}"
+            host: f"grpc://localhost:{ports[1]}"
             for host, (_, ports) in self._server_pids_ports.items()
         }
 
