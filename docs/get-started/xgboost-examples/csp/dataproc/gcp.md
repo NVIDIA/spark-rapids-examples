@@ -188,3 +188,4 @@ gcloud dataproc clusters create $CLUSTER_NAME  \
 ```
 
 The new cluster should be up and running within 3-4 minutes!
+
