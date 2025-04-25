@@ -40,7 +40,7 @@ export SPARK_DOCKER_IMAGE=<gpu spark docker image repo and name>
 export SPARK_DOCKER_TAG=<spark docker image tag>
 
 pushd ${SPARK_HOME}
-wget https://github.com/NVIDIA/spark-rapids-examples/raw/branch-25.02/dockerfile/Dockerfile
+wget https://github.com/NVIDIA/spark-rapids-examples/raw/branch-25.04/dockerfile/Dockerfile
 
 # Optionally install additional jars into ${SPARK_HOME}/jars/
 
