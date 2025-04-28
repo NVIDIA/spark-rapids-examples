@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2025, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ RUN dnf --enablerepo=powertools install -y \
   && alternatives --set python /usr/bin/python3
 
 # 3.22.3: CUDA architecture 'native' support + flexible CMAKE_<LANG>_*_LAUNCHER for ccache
-ARG CMAKE_VERSION=3.28.6
+ARG CMAKE_VERSION=3.30.4
 # default x86_64 from x86 build, aarch64 cmake for arm build
 ARG CMAKE_ARCH=x86_64
 RUN cd /usr/local && wget --quiet https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-${CMAKE_ARCH}.tar.gz && \
