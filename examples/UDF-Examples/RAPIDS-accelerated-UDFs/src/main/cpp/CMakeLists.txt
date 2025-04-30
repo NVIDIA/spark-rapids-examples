@@ -14,7 +14,8 @@
 # limitations under the License.
 #=============================================================================
 
-cmake_minimum_required(VERSION 3.28.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
+set(rapids-cmake-version "25.06")
 
 file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/branch-25.06/RAPIDS.cmake
      ${CMAKE_BINARY_DIR}/RAPIDS.cmake)
