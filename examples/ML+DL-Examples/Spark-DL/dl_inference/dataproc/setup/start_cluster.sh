@@ -67,7 +67,7 @@ tensorflow[and-cuda]
 tf-keras"
 
 VLLM_REQUIREMENTS="datasets==3.*
-vllm"
+vllm==0.8.2"
 
 cluster_name=${USER}-spark-dl-inference-${FRAMEWORK}
 if [[ "${TENSOR_PARALLEL}" == "true" ]]; then

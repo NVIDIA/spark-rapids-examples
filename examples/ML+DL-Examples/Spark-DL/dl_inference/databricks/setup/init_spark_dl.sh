@@ -27,7 +27,7 @@ nvidia-pytriton
 EOF
 elif [[ "${FRAMEWORK}" == "vllm" ]]; then
     cat <<EOF > temp_requirements.txt
-vllm
+vllm==0.8.2
 EOF
 else
     echo "Please export FRAMEWORK as torch, tf, or vllm per README"
