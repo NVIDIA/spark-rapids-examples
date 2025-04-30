@@ -14,7 +14,11 @@
 # limitations under the License.
 #=============================================================================
 
+# Keep the same with https://github.com/NVIDIA/spark-rapids-jni/blob/main/src/branch-xx.xx/cpp/CMakeLists.txt
+# the branch-xx.xx in the above line is the branch version
 cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
+
+# set to the cuDF version
 set(rapids-cmake-version "25.06")
 
 file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/branch-25.06/RAPIDS.cmake
