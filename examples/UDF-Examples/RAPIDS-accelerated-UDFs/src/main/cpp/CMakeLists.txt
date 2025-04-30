@@ -14,7 +14,7 @@
 # limitations under the License.
 #=============================================================================
 
-# Keep the same with https://github.com/NVIDIA/spark-rapids-jni/blob/main/src/branch-xx.xx/cpp/CMakeLists.txt
+# Keep the same with https://github.com/rapidsai/rapids-cmake/blob/branch-xx.yy/RAPIDS.cmake
 # the branch-xx.xx in the above line is the branch version
 cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
 
