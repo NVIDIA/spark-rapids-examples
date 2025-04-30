@@ -18,10 +18,10 @@
 # the branch-xx.xx in the above line is the branch version
 cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
 
-# set to the cuDF version
+# set to the rapids-cmake version
 set(rapids-cmake-version "25.06")
 
-file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/branch-25.06/RAPIDS.cmake
+file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/branch-${rapids-cmake-version}/RAPIDS.cmake
      ${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 include(${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 
