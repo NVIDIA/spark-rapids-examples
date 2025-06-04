@@ -15,7 +15,7 @@
 #
 
 # A container that can be used to build UDF native code against libcudf
-ARG CUDA_VERSION=11.8.0
+ARG CUDA_VERSION=12.8.0
 ARG LINUX_VERSION=rockylinux8
 
 FROM nvidia/cuda:${CUDA_VERSION}-devel-${LINUX_VERSION}
@@ -50,7 +50,7 @@ RUN cd /usr/local && wget --quiet https://github.com/Kitware/CMake/releases/down
 ENV PATH /usr/local/cmake-${CMAKE_VERSION}-linux-${CMAKE_ARCH}/bin:$PATH
 
 # ccache for interactive builds
-ARG CCACHE_VERSION=4.6
+ARG CCACHE_VERSION=4.11.2
 RUN cd /tmp && wget --quiet https://github.com/ccache/ccache/releases/download/v${CCACHE_VERSION}/ccache-${CCACHE_VERSION}.tar.gz && \
    tar zxf ccache-${CCACHE_VERSION}.tar.gz && \
    rm ccache-${CCACHE_VERSION}.tar.gz && \

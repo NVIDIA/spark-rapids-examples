@@ -34,7 +34,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.sourceEncoding>UTF-8</project.reporting.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <cuda.version>cuda11</cuda.version>
+        <cuda.version>cuda12</cuda.version>
         <scala.binary.version>2.12</scala.binary.version>
         <!-- Depends on release version, Snapshot version is not published to the Maven Central -->
         <rapids4spark.version>25.04.0</rapids4spark.version>
