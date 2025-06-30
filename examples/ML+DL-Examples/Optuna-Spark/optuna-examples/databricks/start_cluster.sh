@@ -1,5 +1,19 @@
 #!/bin/bash
-# Copyright (c) 2024, NVIDIA CORPORATION.
+#
+# Copyright (c) 2025, NVIDIA CORPORATION.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 if [[ -z ${INIT_PATH} ]]; then
     echo "Please export INIT_PATH per README.md"
@@ -12,7 +26,7 @@ json_config=$(cat <<EOF
     "spark_version": "13.3.x-gpu-ml-scala2.12",
     "spark_conf": {
         "spark.task.resource.gpu.amount": "1",
-        "spark.executorEnv.PYTHONPATH": "/databricks/jars/rapids-4-spark_2.12-25.04.0.jar:/databricks/spark/python:/databricks/python3",
+        "spark.executorEnv.PYTHONPATH": "/databricks/jars/rapids-4-spark_2.12-25.06.0.jar:/databricks/spark/python:/databricks/python3",
         "spark.executor.cores": "8",
         "spark.rapids.memory.gpu.minAllocFraction": "0.0001",
         "spark.plugins": "com.nvidia.spark.SQLPlugin",
