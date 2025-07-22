@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  ~ Copyright (c) 2019-2024, NVIDIA CORPORATION. All rights reserved.
+  ~ Copyright (c) 2019-2025, NVIDIA CORPORATION. All rights reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@
 
     <properties>
         <encoding>UTF-8</encoding>
-        <xgboost.version>2.2.0-SNAPSHOT</xgboost.version>
+        <xgboost.version>3.1.0-SNAPSHOT</xgboost.version>
         <spark.version>3.5.0</spark.version>
         <scala.version>2.12.8</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
