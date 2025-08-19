@@ -28,7 +28,7 @@ jobs:
     - name: checkout code
       uses: NVIDIA/spark-rapids-common/checkout@main
     - name: markdown link check
-      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      uses: NVIDIA/spark-rapids-common/markdown-link-check@main
       with:
         max-depth: -1
         use-verbose-mode: 'yes'
