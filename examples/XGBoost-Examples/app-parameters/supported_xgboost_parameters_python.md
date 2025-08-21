@@ -4,7 +4,7 @@ Supported Parameters
 This is a description of all the parameters available when you are running examples in this repo:
 
 1. All [xgboost parameters](https://xgboost.readthedocs.io/en/latest/parameter.html) are supported.
-   * Please use the `camelCase`, e.g., `--treeMethod=gpu_hist`.
+   * Please use the `camelCase`, e.g., `--treeMethod=hist`.
    * `lambda` is replaced with `lambda_`, because `lambda` is a keyword in Python.
 2. `--mainClass=[app class]`: The entry class of the application to be started. Available value is one of the below classes.
    * com.nvidia.spark.examples.agaricus.main
