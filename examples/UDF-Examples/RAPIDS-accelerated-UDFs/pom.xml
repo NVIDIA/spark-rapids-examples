@@ -233,4 +233,16 @@
             </build>
         </profile>
     </profiles>
+    <repositories>
+        <repository>
+            <id>urm</id>
+            <url>https://edge.urm.nvidia.com/artifactory/sw-spark-maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
