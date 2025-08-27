@@ -92,7 +92,7 @@ rapids_cpm_init()
 rapids_cpm_find(cudf 25.06.00
         CPM_ARGS
         GIT_REPOSITORY  https://github.com/rapidsai/cudf.git
-        GIT_TAG         branch-25.06
+        GIT_TAG         main
         GIT_SHALLOW     TRUE
         SOURCE_SUBDIR   cpp
         OPTIONS         "BUILD_TESTS OFF"
