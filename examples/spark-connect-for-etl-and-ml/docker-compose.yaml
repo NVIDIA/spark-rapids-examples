@@ -1,0 +1,99 @@
+# YAML anchors for shared configurations
+x-spark-common: &spark-common
+  networks:
+    - spark-network
+ 
+x-spark-common-env: &spark-common-env
+  SPARK_NO_DAEMONIZE: "1"
+
+services:
+  # Spark Master Node
+  spark-master:
+    <<: *spark-common
+    image: apache/spark:4.0.0
+    container_name: spark-master
+    hostname: spark-master
+    environment:
+      <<: *spark-common-env
+    ports:
+      - "8080:8080"   # Spark Master Web UI
+      - "7077:7077"   # Spark Master Port
+    command: /opt/spark/sbin/start-master.sh
+
+  # Spark Worker Node (GPU-enabled)
+  spark-worker:
+    <<: *spark-common
+    image: apache/spark:4.0.0
+    container_name: spark-worker
+    hostname: spark-worker
+    environment:
+      <<: *spark-common-env
+      SPARK_WORKER_OPTS: >
+        -Dspark.worker.resource.gpu.amount=$GPU_COUNT 
+        -Dspark.worker.resource.gpu.discoveryScript=/opt/spark/examples/src/main/scripts/getGpusResources.sh
+    ports:
+      - "8081:8081"   # Spark Worker Web UI
+    depends_on:
+      - spark-master
+    command: /opt/spark/sbin/start-worker.sh spark://spark-master:7077
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+
+  # Spark Connect Server
+  spark-connect-server:
+    <<: *spark-common
+    image: dais25/spark-connect-server
+    build: 
+      context: ./connect
+      dockerfile: Dockerfile
+    container_name: spark-connect-server
+    hostname: spark-connect-server
+    environment:
+      <<: *spark-common-env
+    ports:
+      - "4040:4040"   # Spark Master Port
+      - "15002:15002"  # Spark Connect Server Port
+    depends_on:
+      - spark-master
+      - spark-worker
+    command: > 
+      bash -c "
+      /opt/spark/sbin/start-connect-server.sh
+      --master spark://spark-master:7077
+      --jars /tmp/rapids-4-spark_2.13-25.08.0.jar 
+      --conf spark.plugins=com.nvidia.spark.SQLPlugin"
+
+  # Jupyter Lab
+  jupyter:
+    <<: *spark-common
+    image: dais25/spark-connect-client
+    group_add: 
+      - "users"
+    build: 
+      context: ./jupyter
+      dockerfile: Dockerfile
+    container_name: spark-connect-client
+    hostname: spark-connect-client
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - CHOWN_HOME=yes
+      - PYDEVD_DISABLE_FILE_VALIDATION=1 
+    ports:
+      - "8888:8888"   # Jupyter Lab Port
+    volumes:
+      - ./jupyter/requirements.txt:/tmp/requirements.txt
+      - ./notebooks:/home/jovyan/work
+    depends_on:
+      - spark-connect-server
+    command: >
+      bash -c "
+      start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
+      "
+
+networks:
+  spark-network:
+    driver: bridge
