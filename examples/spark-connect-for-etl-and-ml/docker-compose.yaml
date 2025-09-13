@@ -2,9 +2,11 @@
 x-spark-common: &spark-common
   networks:
     - spark-network
- 
+  volumes:
+    - /tmp/spark/work:/opt/spark/work-dir
 x-spark-common-env: &spark-common-env
   SPARK_NO_DAEMONIZE: "1"
+  SPARK_WORKER_DIR: /opt/spark/work-dir
 
 services:
   # Spark Master Node
@@ -29,10 +31,10 @@ services:
     environment:
       <<: *spark-common-env
       SPARK_WORKER_OPTS: >
-        -Dspark.worker.resource.gpu.amount=$GPU_COUNT 
+        -Dspark.worker.resource.gpu.amount=${GPU_COUNT:-1}
         -Dspark.worker.resource.gpu.discoveryScript=/opt/spark/examples/src/main/scripts/getGpusResources.sh
     ports:
-      - "8081:8081"   # Spark Worker Web UI
+      - "8081:8081"   # Spark Worker WebUI
     depends_on:
       - spark-master
     command: /opt/spark/sbin/start-worker.sh spark://spark-master:7077
@@ -47,52 +49,48 @@ services:
   spark-connect-server:
     <<: *spark-common
     image: dais25/spark-connect-server
-    build: 
-      context: ./connect
+    build:
+      context: ./spark-connect-server
       dockerfile: Dockerfile
     container_name: spark-connect-server
     hostname: spark-connect-server
     environment:
       <<: *spark-common-env
     ports:
-      - "4040:4040"   # Spark Master Port
-      - "15002:15002"  # Spark Connect Server Port
+      - "4040:4040"               # Spark Driver WebUI
+      - "15002:15002"             # Spark Connect grpc
     depends_on:
       - spark-master
       - spark-worker
-    command: > 
+    command: >
       bash -c "
       /opt/spark/sbin/start-connect-server.sh
       --master spark://spark-master:7077
-      --jars /tmp/rapids-4-spark_2.13-25.08.0.jar 
-      --conf spark.plugins=com.nvidia.spark.SQLPlugin"
+      --jars /tmp/rapids-4-spark_2.13-25.08.0.jar
+      --conf spark.plugins=com.nvidia.spark.SQLPlugin
+      --conf spark.executor.resource.gpu.amount=1
+      "
 
-  # Jupyter Lab
-  jupyter:
+  spark-connect-client:
     <<: *spark-common
     image: dais25/spark-connect-client
-    group_add: 
+    group_add:
       - "users"
-    build: 
-      context: ./jupyter
+    build:
+      context: ./spark-connect-client
       dockerfile: Dockerfile
     container_name: spark-connect-client
     hostname: spark-connect-client
     environment:
-      - JUPYTER_ENABLE_LAB=yes
       - CHOWN_HOME=yes
-      - PYDEVD_DISABLE_FILE_VALIDATION=1 
+      - PYDEVD_DISABLE_FILE_VALIDATION=1
     ports:
       - "8888:8888"   # Jupyter Lab Port
-    volumes:
-      - ./jupyter/requirements.txt:/tmp/requirements.txt
-      - ./notebooks:/home/jovyan/work
     depends_on:
       - spark-connect-server
     command: >
-      bash -c "
       start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
-      "
+      
 
 networks:
   spark-network:
