@@ -1,0 +1,6 @@
+  spark-rapids-ml==25.8.0
+  scikit-learn>=1.2.1
+  pandas==2.2.3
+  packaging==23.1
+  psutil
+  pyarrow
