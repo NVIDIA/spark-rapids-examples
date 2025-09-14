@@ -7,4 +7,5 @@ COPY spark-defaults.conf /opt/spark/conf/spark-defaults.conf
 USER root
 RUN pip3 install --extra-index-url https://pypi.anaconda.org/rapidsai-wheels-nightly/simple --pre \
   spark-rapids-ml==25.8.0
-  
+
+USER spark
