@@ -5,7 +5,7 @@ x-spark-common: &spark-common
   volumes:
     - /tmp/spark/work:/opt/spark/work-dir
 x-spark-common-env: &spark-common-env
-  SPARK_NO_DAEMONIZE: "1"
+  SPARK_NO_DAEMONIZE: "1" 
   SPARK_WORKER_DIR: /opt/spark/work-dir
 
 services:
@@ -25,14 +25,14 @@ services:
   # Spark Worker Node (GPU-enabled)
   spark-worker:
     <<: *spark-common
-    image: apache/spark:4.0.0
+    image: dais25/spark-worker
+    build:
+      context: ./spark-worker
+      dockerfile: Dockerfile
     container_name: spark-worker
     hostname: spark-worker
     environment:
       <<: *spark-common-env
-      SPARK_WORKER_OPTS: >
-        -Dspark.worker.resource.gpu.amount=${GPU_COUNT:-1}
-        -Dspark.worker.resource.gpu.discoveryScript=/opt/spark/examples/src/main/scripts/getGpusResources.sh
     ports:
       - "8081:8081"   # Spark Worker WebUI
     depends_on:
