@@ -62,14 +62,7 @@ services:
     depends_on:
       - spark-master
       - spark-worker
-    command: >
-      bash -c "
-      /opt/spark/sbin/start-connect-server.sh
-      --master spark://spark-master:7077
-      --jars /tmp/rapids-4-spark_2.13-25.08.0.jar
-      --conf spark.plugins=com.nvidia.spark.SQLPlugin
-      --conf spark.executor.resource.gpu.amount=1
-      "
+    command: /opt/spark/sbin/start-connect-server.sh
 
   spark-connect-client:
     <<: *spark-common
