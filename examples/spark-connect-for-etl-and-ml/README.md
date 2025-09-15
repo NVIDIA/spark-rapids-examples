@@ -107,6 +107,7 @@ spark = (
 
 **GPU acceleration test:**
 ```python
+spark.conf.set('spark.rapids.sql.enabled', True)
 df = (
   spark.range(2 ** 35)
     .withColumn('mod10', col('id') % lit(10))
@@ -121,6 +122,8 @@ df.explain(mode='extended')  # Shows GPU operations in physical plan
 from pyspark.ml import Pipeline
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.feature import VectorAssembler, FeatureHasher
+
+spark.conf.set('spark.connect.ml.backend.classes', 'com.nvidia.rapids.ml.Plugin')
 
 # Feature preparation
 hasher = FeatureHasher(inputCols=categorical_cols, outputCol='hashed_categorical')
