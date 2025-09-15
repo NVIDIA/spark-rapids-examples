@@ -1,279 +1,193 @@
 # GPU-Accelerated Spark Connect for ETL and ML (Spark 4.0)
 
-This project provides a complete Docker Compose setup for Apache Spark 4.0 with GPU acceleration, showcasing the capabilities demonstrated in the [Data and AI Summit 2025 session: "GPU Accelerated Spark Connect"](https://www.databricks.com/dataaisummit/session/gpu-accelerated-spark-connect).
+This project demonstrates a complete GPU-accelerated ETL and Machine Learning pipeline using Apache Spark 4.0 with Spark Connect, featuring the NVIDIA RAPIDS Accelerator. The example showcases the capabilities presented in the Data and AI Summit 2025 session: [GPU Accelerated Spark Connect](https://www.databricks.com/dataaisummit/session/gpu-accelerated-spark-connect).
 
-## Key Features
+## 🚀 Key Features
 
-- **Apache Spark 4.0** with latest Spark Connect capabilities
-- **MLlib over Spark Connect** (new in Spark 4.0)
-- **NVIDIA RAPIDS GPU acceleration** for up to 9x performance improvement at 80% cost reduction
-- **No-code change GPU acceleration** via plugin interface
-- **End-to-end ETL and ML workflows** with Jupyter Lab integration
+- **Apache Spark 4.0** with cutting-edge Spark Connect capabilities
+- **GPU acceleration** via NVIDIA RAPIDS Accelerator (up to 9x performance improvement)
+- **MLlib over Spark Connect** - new in Spark 4.0
+- **Zero-code-change acceleration** - existing Spark applications automatically benefit
+- **Complete ETL and ML pipeline** demonstration with mortgage data
+- **Jupyter Lab integration** for interactive development
+- **Docker Compose** setup for easy deployment
 
-## Architecture
+## 📊 Performance Highlights
 
-The setup consists of three main services with GPU acceleration:
+The included demonstration shows:
+- **Comprehensive ETL pipeline** processing mortgage data with complex transformations
+- **Machine Learning workflow** using Logistic Regression with Feature Hashing
+- **GPU vs CPU performance comparison** with visualization
+- **Automatic fallback** to CPU when GPU operations aren't supported
 
-1. **Spark Standalone Cluster** - GPU-enabled Master and Worker nodes for distributed processing
-2. **Spark Connect Server** - gRPC-based interface with RAPIDS GPU plugin integration
-3. **Jupyter Lab** - Interactive development environment with PySpark 4.0 and ML libraries
+## 🏗️ Architecture
 
-## Prerequisites
+The setup consists of four Docker services:
+
+1. **Spark Master** (`spark-master`) - Cluster coordination and job scheduling
+2. **Spark Worker** (`spark-worker`) - GPU-enabled worker node for task execution
+3. **Spark Connect Server** (`spark-connect-server`) - gRPC interface with RAPIDS integration
+4. **Jupyter Lab Client** (`spark-connect-client`) - Interactive development environment
+
+## 📋 Prerequisites
 
 ### Required
-- Docker and Docker Compose installed
-- At least 6GB of available RAM (increased for GPU workloads)
-- Ports 8080, 8081, 8888, 7077, and 15002 available
+- Docker and Docker Compose
+- At least 8GB of available RAM
+- Available ports: 8080, 8081, 8888, 7077, 4040, 15002
 
-### For GPU Acceleration (Optional)
-- NVIDIA GPU with CUDA support (compute capability 6.0+)
-- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed
-- CUDA 11.x or 12.x drivers
+### For GPU Acceleration
+- NVIDIA GPU with CUDA compute capability supported by RAPIDS
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+- CUDA 12.x drivers
 
-*Note: The setup works without GPU - operations will fall back to CPU execution*
+## 🚀 Quick Start
 
-## Quick Start
+1. **Clone and navigate to the project:**
+   ```bash
+   cd spark-connect-for-etl-and-ml
+   ```
 
-1. **Start the services:**
+2. **Set up data directory (if needed):**
+   ```bash
+   export WORK_DIR=$(pwd)/work
+   export DATA_DIR=$(pwd)/data/mortgage.input.csv
+   mkdir -p work data
+   chmod 777 work
+   ```
+   Download a few quarters worth of the [Mortgage Dataset](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
+   to the `$DATA_DIR` location. 
+
+3. **Start all services:**
    ```bash
    docker-compose up -d
    ```
 
-2. **Access the interfaces:**
+4. **Access the interfaces:**
    - **Jupyter Lab**: http://localhost:8888 (no password required)
    - **Spark Master UI**: http://localhost:8080
    - **Spark Worker UI**: http://localhost:8081
+   - **Spark Driver UI**: http://localhost:4040 (when jobs are running)
 
-3. **Connect to GPU-accelerated Spark from Jupyter:**
-   ```python
-   from pyspark.sql import SparkSession
-   
-   # Using Spark Connect 4.0 with GPU acceleration
-   spark = SparkSession.builder \
-       .remote("sc://localhost:15002") \
-       .appName("GPU-ETL-ML-Example") \
-       .getOrCreate()
-   
-   # Test GPU-accelerated operations
-   from pyspark.sql.functions import *
-   df = spark.range(100000).toDF("number")
-   df = df.withColumn("squared", col("number") ** 2)
-   df.show()
-   
-   # Check for GPU acceleration
-   spark.sql("SHOW FUNCTIONS").filter(col("function").contains("gpu")).show()
-   ```
+5. **Open the demo notebook:**
+   - Navigate to `work/spark-connect-demo.ipynb` in Jupyter Lab 
+   - You can also open it in VS Code by selecting http://localhost:8888 as the 
+     existing notebook server connection
+   - Run the complete ETL and ML pipeline demonstration
 
-## Service Details
+## 📝 Demo Notebook Overview
 
-### Spark Master & Worker (GPU-enabled)
-- **Master**: Coordinates the cluster and schedules jobs with GPU awareness
-- **Worker**: Executes tasks with 2 cores, 4GB memory, and GPU resource management
-- **GPU Support**: NVIDIA Container Runtime integration for GPU task scheduling
-- **UI Access**: Monitor jobs, GPU utilization, and cluster status via web interfaces
+The `spark-connect-demo.ipynb` notebook demonstrates:
 
-### Spark Connect Server (GPU-accelerated)
-- **Port**: 15002 (gRPC)
-- **Protocol**: Arrow-optimized for fast data transfer
-- **GPU Plugin**: RAPIDS Accelerator integrated for transparent acceleration
-- **Features**: 
-  - Remote Spark session management
-  - GPU-accelerated DataFrame operations
-  - MLlib over Spark Connect (Spark 4.0 feature)
+### ETL Pipeline
+- **Data ingestion** from CSV with custom schema
+- **Complex transformations** including date parsing and delinquency calculations
+- **String-to-numeric encoding** for categorical features
+- **Data joins and aggregations** with mortgage performance data
 
-### Jupyter Lab (Spark 4.0)
-- **Environment**: Pre-configured with PySpark 4.0 and ML libraries
-- **Features**: Full MLlib support over Spark Connect
-- **Volumes**: 
-  - `./notebooks` → `/home/jovyan/work` (your notebooks)
-  - `./data` → `/home/jovyan/data` (datasets)
+### Machine Learning Workflow
+- **Feature engineering** with FeatureHasher and VectorAssembler
+- **Logistic Regression** training for multi-class prediction
+- **Model evaluation** with performance metrics
+- **GPU vs CPU timing comparisons**
 
-## GPU Acceleration Details
+### Key Code Examples
 
-This setup implements the architecture described in the [Data and AI Summit session](https://www.databricks.com/dataaisummit/session/gpu-accelerated-spark-connect), providing:
-
-- **Transparent GPU acceleration** via RAPIDS plugin interface
-- **No code changes required** - existing Spark applications automatically accelerated
-- **Up to 9x performance improvement** on supported operations
-- **80% cost reduction** through faster execution times
-- **Automatic fallback** to CPU when GPU operations aren't supported
-
-## Directory Structure
-
-```
-spark-connect-for-etl-and-ml/
-├── docker-compose.yaml      # Main orchestration file
-├── spark-defaults.conf      # Spark configuration
-├── requirements.txt         # Python dependencies
-├── data/                   # Shared data directory
-├── notebooks/              # Jupyter notebooks
-└── README.md               # This file
-```
-
-## Example Workflows
-
-### ETL Pipeline Example
-
+**Connecting to Spark with GPU acceleration:**
 ```python
-# In Jupyter Lab
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import *
 
-# Connect to Spark
-spark = SparkSession.builder.remote("sc://localhost:15002").getOrCreate()
-
-# Read data
-df = spark.read.parquet("/home/jovyan/data/input.parquet")
-
-# Transform
-transformed_df = df \
-    .filter(col("status") == "active") \
-    .withColumn("processed_date", current_timestamp()) \
-    .groupBy("category") \
-    .agg(count("*").alias("count"))
-
-# Write results
-transformed_df.write \
-    .mode("overwrite") \
-    .parquet("/home/jovyan/data/output.parquet")
-```
-
-### ML Workflow Example
-
-```python
-from pyspark.ml.feature import VectorAssembler
-from pyspark.ml.regression import LinearRegression
-from pyspark.ml import Pipeline
-
-# Prepare features
-assembler = VectorAssembler(
-    inputCols=["feature1", "feature2", "feature3"],
-    outputCol="features"
+spark = (
+  SparkSession.builder
+    .remote('sc://spark-connect-server')
+    .appName('GPU-Accelerated-ETL-ML-Demo') 
+    .getOrCreate()
 )
-
-# Create model
-lr = LinearRegression(featuresCol="features", labelCol="target")
-
-# Build pipeline
-pipeline = Pipeline(stages=[assembler, lr])
-
-# Train model
-model = pipeline.fit(training_df)
-
-# Make predictions
-predictions = model.transform(test_df)
 ```
 
-## Configuration
-
-### Spark Configuration
-Edit `spark-defaults.conf` to customize:
-- Memory allocation
-- Connect server settings
-- Performance tuning
-- Logging levels
-
-### Python Dependencies
-Modify `requirements.txt` to add additional packages:
-```bash
-# Add to requirements.txt
-tensorflow>=2.13.0
-torch>=2.0.0
-```
-
-Then rebuild:
-```bash
-docker-compose down
-docker-compose up --build -d
-```
-
-## Data Management
-
-### Adding Data
-Place your datasets in the `data/` directory:
-```bash
-cp your-dataset.csv data/
-cp your-parquet-files.parquet data/
-```
-
-### Accessing Data in Notebooks
+**GPU acceleration test:**
 ```python
-# Read CSV
-df = spark.read.option("header", "true").csv("/home/jovyan/data/your-dataset.csv")
-
-# Read Parquet
-df = spark.read.parquet("/home/jovyan/data/your-parquet-files.parquet")
+df = (
+  spark.range(2 ** 35)
+    .withColumn('mod10', col('id') % lit(10))
+    .groupBy('mod10').agg(count('*'))
+    .orderBy('mod10')
+)
+df.explain(mode='extended')  # Shows GPU operations in physical plan
 ```
 
-## Monitoring and Debugging
+**Machine Learning with GPU acceleration:**
+```python
+from pyspark.ml import Pipeline
+from pyspark.ml.classification import LogisticRegression
+from pyspark.ml.feature import VectorAssembler, FeatureHasher
 
-### Check Service Health
-```bash
-# View logs
-docker-compose logs spark-master
-docker-compose logs spark-connect
-docker-compose logs jupyter
+# Feature preparation
+hasher = FeatureHasher(inputCols=categorical_cols, outputCol='hashed_categorical')
+assembler = VectorAssembler().setInputCols(numerical_cols + ['hashed_categorical']).setOutputCol('features')
 
-# Check service status
-docker-compose ps
+# Model training
+logistic = LogisticRegression().setFeaturesCol('features').setLabelCol('delinquency_12')
+pipeline = Pipeline().setStages([hasher, assembler, logistic])
+model = pipeline.fit(training_data)
 ```
 
-### Performance Monitoring
-- **Spark UI**: http://localhost:8080 - Monitor jobs, stages, and executors
-- **Worker UI**: http://localhost:8081 - View worker resource usage
+## 🐳 Service Details
 
-### Common Issues
+### Spark Master
+- **Image**: `apache/spark:4.0.0`
+- **Ports**: 8080 (Web UI), 7077 (Master)
+- **Role**: Cluster coordination and resource management
 
-1. **Port conflicts**: Ensure ports 8080, 8081, 8888, 7077, 15002 are available
-2. **Memory issues**: Increase Docker memory allocation or reduce Spark worker memory
-3. **Connection timeouts**: Check network connectivity between containers
+### Spark Worker (GPU-enabled)
+- **Image**: Custom build based on `apache/spark:4.0.0`
+- **GPU**: NVIDIA GPU support via Docker Compose deploy configuration
+- **Ports**: 8081 (Web UI)
+- **Features**: GPU resource discovery and task execution
 
-## Scaling
+### Spark Connect Server
+- **Image**: Custom build with RAPIDS JAR integration
+- **RAPIDS Version**: 25.08.0 for CUDA 12
+- **Ports**: 15002 (gRPC), 4040 (Driver UI)
+- **Configuration**: Optimized for GPU acceleration with memory management
 
-### Add More Workers
-Modify `docker-compose.yaml` to add additional worker services:
-```yaml
-spark-worker-2:
-  # Copy spark-worker configuration
-  # Change container_name and ports
-```
+### Jupyter Lab Client
+- **Image**: Based on `jupyter/minimal-notebook:latest`
+- **Environment**: Pre-configured with PySpark and ML libraries
+- **Ports**: 8888 (Jupyter Lab)
+- **Volumes**: Notebooks and work directory mounted
 
-### Increase Resources
-Adjust memory and CPU allocation in the compose file:
-```yaml
-environment:
-  - SPARK_WORKER_MEMORY=4G
-  - SPARK_WORKER_CORES=4
-```
+## 📊 Performance Monitoring
 
-## Cleanup
+You can use tools like nvtop or jupyterlab_nvdashboard running on the GPU host(s)
+
+## 🧹 Cleanup
 
 Stop and remove all services:
 ```bash
 docker-compose down -v
 ```
 
-## Advanced Usage
-
-### Custom Spark Applications
-Submit standalone applications:
+Remove built images:
 ```bash
-docker exec spark-master /opt/spark/bin/spark-submit \
-  --master spark://spark-master:7077 \
-  --class MySparkApp \
-  /path/to/your-app.jar
+docker-compose down --rmi all -v
 ```
 
-### Integration with External Systems
-- Configure database connections in `spark-defaults.conf`
-- Mount credential files via Docker volumes
-- Use environment variables for sensitive configuration
+## Troubleshooting
 
-## Support
+Repeated executions of the notebook sometimes results in unexpected side effects
+such as a `FileNotFoundException`. To mitigate restart the spark-connect-server
+service
 
-For issues and questions:
-1. Check the logs: `docker-compose logs [service-name]`
-2. Verify configuration files
-3. Ensure adequate system resources
-4. Review Spark documentation for advanced configuration
+```bash
+$ WORK_DIR=~/work DATA_DIR=~/dais-2025/data/mortgage/raw docker compose restart spark-connect-server
+```
 
+and/or restart the Jupyter kernel  
+
+## 📖 Additional Resources
+
+- [Apache Spark 4.0 Documentation](https://spark.apache.org/docs/latest/)
+- [Spark Connect Guide](https://spark.apache.org/docs/latest/spark-connect-overview.html)
+- [NVIDIA RAPIDS Accelerator](https://nvidia.github.io/spark-rapids/)
+- [Data and AI Summit Session](https://www.databricks.com/dataaisummit/session/gpu-accelerated-spark-connect)

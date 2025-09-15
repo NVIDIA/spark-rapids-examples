@@ -1,0 +1,2 @@
+matplotlib
+pyspark-client==4.0.0
