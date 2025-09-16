@@ -49,7 +49,7 @@ if [[ "$MIG_AS_GPU_ENABLED" == "1" ]]; then
                         # found the device id constructed in mig2gpu.sh with the original nvidia-smi enumeration
                         # gpu index, mig index
                         *"<_mig2gpu_device_id>"*)
-                            current_gpu_idx=$(($current_gpu_idx+1))
+                            current_gpu_idx=$((current_gpu_idx+1))
                             if [[ "$deviceArgWithLeadingTrailingComma" =~ ",${current_gpu_idx}," && "$line" =~ '<_mig2gpu_device_id>'(.*)'</_mig2gpu_device_id>' ]]; then
                                 nvcli_migDeviceIds+=("${BASH_REMATCH[1]}")
                             fi
