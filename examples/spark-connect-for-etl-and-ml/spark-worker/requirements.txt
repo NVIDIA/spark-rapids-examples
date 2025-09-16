@@ -15,11 +15,5 @@
 # limitations under the License.
 
 
-cudf-cu12~=25.8.0
 cuml-cu12~=25.8.0
-packaging==23.1
-pandas==2.2.3
-psutil
-pyarrow
-scikit-learn>=1.2.1
 spark-rapids-ml==25.8.0
