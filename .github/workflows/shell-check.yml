@@ -31,7 +31,7 @@ jobs:
       - name: Run ShellCheck
         uses: NVIDIA/spark-rapids-common/shell-check@main
         with:
-          exlucded_codes:
+          excluded_codes:
             SC2164,
             SC2076,
             SC2054
@@ -40,4 +40,3 @@ jobs:
           # SC2164: Use 'cd ... || exit' or 'cd ... || return' in case cd fails.
           # SC2076: Remove quotes from right-hand side of =~ to match as a regex rather than literally.
           # SC2054: Use spaces, not commas, to separate array elements.
-          
