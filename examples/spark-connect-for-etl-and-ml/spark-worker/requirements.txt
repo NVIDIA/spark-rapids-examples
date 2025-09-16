@@ -17,7 +17,6 @@
 
 cudf-cu12~=25.8.0
 cuml-cu12~=25.8.0
-jupyterlab-nvdashboard
 packaging==23.1
 pandas==2.2.3
 psutil
