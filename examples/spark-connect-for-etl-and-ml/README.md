@@ -1,24 +1,28 @@
 # GPU-Accelerated Spark Connect for ETL and ML (Spark 4.0)
 
-This project demonstrates a complete GPU-accelerated ETL and Machine Learning pipeline using Apache Spark 4.0 with Spark Connect, featuring the NVIDIA RAPIDS Accelerator. The example showcases the capabilities presented in the Data and AI Summit 2025 session: [GPU Accelerated Spark Connect](https://www.databricks.com/dataaisummit/session/gpu-accelerated-spark-connect).
+This project demonstrates a complete GPU-accelerated ETL and Machine Learning pipeline using Apache Spark 4.0 with Spark Connect, featuring the RAPIDS Accelerator. The example showcases the capabilities presented in the Data and AI Summit 2025 session:
+[GPU Accelerated Spark Connect](https://www.databricks.com/dataaisummit/session/gpu-accelerated-spark-connect).
+It is similar to the XGBoost example in this repo.
+The key difference is that it uses Spark Connect thus the notebook server node has no heavy dependencies and it uses
+LogisticRegression to demonstrate accelerated Spark MLlib functionality
 
 ## 🚀 Key Features
 
 - **Apache Spark 4.0** with cutting-edge Spark Connect capabilities
-- **GPU acceleration** via NVIDIA RAPIDS Accelerator (up to 9x performance improvement)
+- **GPU acceleration** via RAPIDS Accelerator (up to 9x performance improvement)
 - **MLlib over Spark Connect** - new in Spark 4.0
 - **Zero-code-change acceleration** - existing Spark applications automatically benefit
 - **Complete ETL and ML pipeline** demonstration with mortgage data
 - **Jupyter Lab integration** for interactive development
-- **Docker Compose** setup for easy deployment
+- **Docker Compose** setup for easy deployment with clear distinction what dependencies are
+required by what service and where GPUs are really used
 
 ## 📊 Performance Highlights
 
 The included demonstration shows:
-- **Comprehensive ETL pipeline** processing mortgage data with complex transformations
+- **Comprehensive ETL pipeline** processing mortgage data with complex transformations for feature engineering
 - **Machine Learning workflow** using Logistic Regression with Feature Hashing
-- **GPU vs CPU performance comparison** with visualization
-- **Automatic fallback** to CPU when GPU operations aren't supported
+- **GPU vs CPU performance comparison** with visualization of the speedup achieved on the hardware the demo is run
 
 ## 🏗️ Architecture
 
@@ -56,7 +60,7 @@ The setup consists of four Docker services:
    chmod 777 work
    ```
    Download a few quarters worth of the [Mortgage Dataset](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
-   to the `$DATA_DIR` location. 
+   to the `$DATA_DIR` location.
 
 3. **Start all services:**
    ```bash
@@ -67,11 +71,12 @@ The setup consists of four Docker services:
    - **Jupyter Lab**: http://localhost:8888 (no password required)
    - **Spark Master UI**: http://localhost:8080
    - **Spark Worker UI**: http://localhost:8081
+   - **Spark Worker NVdashboard**: http://localhost:8889 
    - **Spark Driver UI**: http://localhost:4040 (when jobs are running)
 
 5. **Open the demo notebook:**
-   - Navigate to `work/spark-connect-demo.ipynb` in Jupyter Lab 
-   - You can also open it in VS Code by selecting http://localhost:8888 as the 
+   - Navigate to `work/spark-connect-demo.ipynb` in Jupyter Lab
+   - You can also open it in VS Code by selecting http://localhost:8888 as the
      existing notebook server connection
    - Run the complete ETL and ML pipeline demonstration
 
@@ -100,7 +105,7 @@ from pyspark.sql import SparkSession
 spark = (
   SparkSession.builder
     .remote('sc://spark-connect-server')
-    .appName('GPU-Accelerated-ETL-ML-Demo') 
+    .appName('GPU-Accelerated-ETL-ML-Demo')
     .getOrCreate()
 )
 ```
@@ -142,27 +147,28 @@ model = pipeline.fit(training_data)
 - **Ports**: 8080 (Web UI), 7077 (Master)
 - **Role**: Cluster coordination and resource management
 
-### Spark Worker (GPU-enabled)
+### Spark Worker (the only GPU node role)
 - **Image**: Custom build based on `apache/spark:4.0.0`
 - **GPU**: NVIDIA GPU support via Docker Compose deploy configuration
 - **Ports**: 8081 (Web UI)
 - **Features**: GPU resource discovery and task execution
 
 ### Spark Connect Server
-- **Image**: Custom build with RAPIDS JAR integration
+- **Image**: Custom build based on `apache/spark:4.0.0` with Spark RAPIDS ETL and ML Plugins
 - **RAPIDS Version**: 25.08.0 for CUDA 12
 - **Ports**: 15002 (gRPC), 4040 (Driver UI)
 - **Configuration**: Optimized for GPU acceleration with memory management
 
-### Jupyter Lab Client
+### JupyterLab - Spark Connect Client
 - **Image**: Based on `jupyter/minimal-notebook:latest`
-- **Environment**: Pre-configured with PySpark and ML libraries
+- **Environment**: Pre-configured with PySpark Connect Client
 - **Ports**: 8888 (Jupyter Lab)
 - **Volumes**: Notebooks and work directory mounted
 
 ## 📊 Performance Monitoring
 
 You can use tools like nvtop or jupyterlab_nvdashboard running on the GPU host(s)
+
 
 ## 🧹 Cleanup
 
@@ -186,7 +192,7 @@ service
 $ WORK_DIR=~/work DATA_DIR=~/dais-2025/data/mortgage/raw docker compose restart spark-connect-server
 ```
 
-and/or restart the Jupyter kernel  
+and/or restart the Jupyter kernel
 
 ## 📖 Additional Resources
 

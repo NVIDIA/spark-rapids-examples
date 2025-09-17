@@ -23,7 +23,7 @@ x-spark-common: &spark-common
     - ${WORK_DIR}:/opt/spark/work-dir
     - ${DATA_DIR}:/data/mortgage.input.csv
 x-spark-common-env: &spark-common-env
-  SPARK_NO_DAEMONIZE: "1" 
+  SPARK_NO_DAEMONIZE: "1"
   SPARK_WORKER_DIR: /opt/spark/work-dir
 
 services:
@@ -53,9 +53,12 @@ services:
       <<: *spark-common-env
     ports:
       - "8081:8081"   # Spark Worker WebUI
+      - "8889:8889"   # Jupyter Lab Port for nvdashboard
     depends_on:
       - spark-master
-    command: /opt/spark/sbin/start-worker.sh spark://spark-master:7077
+    command: >
+      bash -c '/opt/spark/sbin/start-worker.sh spark://spark-master:7077  &
+      jupyter-lab --port 8889 --no-browser --IdentityProvider.token="" --ServerApp.password="" --ServerApp.ip='0.0.0.0' --ServerApp.allow_origin='*' /home/spark/work/README.ipynb'
     deploy:
       resources:
         reservations:
@@ -104,7 +107,7 @@ services:
       - spark-connect-server
     command: >
       start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
-      
+
 
 networks:
   spark-network:

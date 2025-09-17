@@ -16,4 +16,7 @@
 
 
 cuml-cu12~=25.8.0
+jupyterlab
+jupyterlab-nvdashboard
+numpy~=1.0
 spark-rapids-ml==25.8.0
