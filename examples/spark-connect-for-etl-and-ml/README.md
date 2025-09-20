@@ -9,7 +9,7 @@ LogisticRegression to demonstrate accelerated Spark MLlib functionality
 ## 🚀 Key Features
 
 - **Apache Spark 4.0** with cutting-edge Spark Connect capabilities
-- **GPU acceleration** via RAPIDS Accelerator (up to 9x performance improvement)
+- **GPU acceleration** via RAPIDS Accelerator
 - **MLlib over Spark Connect** - new in Spark 4.0
 - **Zero-code-change acceleration** - existing Spark applications automatically benefit
 - **Complete ETL and ML pipeline** demonstration with mortgage data
@@ -29,7 +29,7 @@ The included demonstration shows:
 The setup consists of four Docker services:
 
 1. **Spark Master** (`spark-master`) - Cluster coordination and job scheduling
-2. **Spark Worker** (`spark-worker`) - GPU-enabled worker node for task execution
+2. **Spark Worker** (`spark-worker`) - GPU-enabled worker node for task execution. 
 3. **Spark Connect Server** (`spark-connect-server`) - gRPC interface with RAPIDS integration
 4. **Jupyter Lab Client** (`spark-connect-client`) - Interactive development environment
 
@@ -71,7 +71,6 @@ The setup consists of four Docker services:
    - **Jupyter Lab**: http://localhost:8888 (no password required)
    - **Spark Master UI**: http://localhost:8080
    - **Spark Worker UI**: http://localhost:8081
-   - **Spark Worker NVdashboard**: http://localhost:8889 
    - **Spark Driver UI**: http://localhost:4040 (when jobs are running)
 
 5. **Open the demo notebook:**

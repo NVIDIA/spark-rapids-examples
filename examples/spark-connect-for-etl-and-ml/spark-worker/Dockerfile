@@ -23,9 +23,6 @@ RUN pip3 install --extra-index-url=https://pypi.nvidia.com -r /tmp/requirements.
 
 # TODO hack to avoid configuring cupy compiler path
 RUN mkdir -p /home/spark
-RUN mkdir -p /home/spark/work
-COPY README.ipynb /home/spark/work/README.ipynb
-
 RUN chown -R spark:spark /home/spark
 RUN usermod -d /home/spark spark
 
