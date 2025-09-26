@@ -89,6 +89,17 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -w --expt-extended-lambda --expt-relax
 set(CUDA_USE_STATIC_CUDA_RUNTIME ON)
 
 rapids_cpm_init()
+
+# Pre-fetch spdlog to avoid deprecated rapids_cpm_spdlog usage
+rapids_cpm_find(spdlog 1.12.0
+        CPM_ARGS
+        GIT_REPOSITORY  https://github.com/gabime/spdlog.git
+        GIT_TAG         v1.12.0
+        GIT_SHALLOW     TRUE
+        OPTIONS         "SPDLOG_FMT_EXTERNAL ON"
+                        "SPDLOG_BUILD_SHARED OFF"
+)
+
 rapids_cpm_find(cudf 25.10.00
         CPM_ARGS
         GIT_REPOSITORY  https://github.com/rapidsai/cudf.git
