@@ -90,11 +90,19 @@ set(CUDA_USE_STATIC_CUDA_RUNTIME ON)
 
 rapids_cpm_init()
 
-# Pre-fetch spdlog to avoid deprecated rapids_cpm_spdlog usage
-rapids_cpm_find(spdlog 1.12.0
+# Pre-fetch fmt and spdlog to avoid deprecated rapids_cpm_spdlog usage
+rapids_cpm_find(fmt 11.0.2
+        CPM_ARGS
+        GIT_REPOSITORY  https://github.com/fmtlib/fmt.git
+        GIT_TAG         11.0.2
+        GIT_SHALLOW     TRUE
+        OPTIONS         "FMT_INSTALL OFF"
+)
+
+rapids_cpm_find(spdlog 1.14.1
         CPM_ARGS
         GIT_REPOSITORY  https://github.com/gabime/spdlog.git
-        GIT_TAG         v1.12.0
+        GIT_TAG         v1.14.1
         GIT_SHALLOW     TRUE
         OPTIONS         "SPDLOG_FMT_EXTERNAL ON"
                         "SPDLOG_BUILD_SHARED OFF"
