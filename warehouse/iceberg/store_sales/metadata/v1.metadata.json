@@ -1,0 +1,183 @@
+{
+  "format-version" : 2,
+  "table-uuid" : "53d6520f-5c00-4ec1-82e3-5dd50f3f74f8",
+  "location" : "/home/gshegalov/gits/NVIDIA/spark-rapids-examples/warehouse/iceberg/store_sales",
+  "last-sequence-number" : 1,
+  "last-updated-ms" : 1759337984501,
+  "last-column-id" : 23,
+  "current-schema-id" : 0,
+  "schemas" : [ {
+    "type" : "struct",
+    "schema-id" : 0,
+    "fields" : [ {
+      "id" : 1,
+      "name" : "ss_sold_date_sk",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 2,
+      "name" : "ss_sold_time_sk",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 3,
+      "name" : "ss_item_sk",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 4,
+      "name" : "ss_customer_sk",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 5,
+      "name" : "ss_cdemo_sk",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 6,
+      "name" : "ss_hdemo_sk",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 7,
+      "name" : "ss_addr_sk",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 8,
+      "name" : "ss_store_sk",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 9,
+      "name" : "ss_promo_sk",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 10,
+      "name" : "ss_ticket_number",
+      "required" : false,
+      "type" : "long"
+    }, {
+      "id" : 11,
+      "name" : "ss_quantity",
+      "required" : false,
+      "type" : "int"
+    }, {
+      "id" : 12,
+      "name" : "ss_wholesale_cost",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 13,
+      "name" : "ss_list_price",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 14,
+      "name" : "ss_sales_price",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 15,
+      "name" : "ss_ext_discount_amt",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 16,
+      "name" : "ss_ext_sales_price",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 17,
+      "name" : "ss_ext_wholesale_cost",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 18,
+      "name" : "ss_ext_list_price",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 19,
+      "name" : "ss_ext_tax",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 20,
+      "name" : "ss_coupon_amt",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 21,
+      "name" : "ss_net_paid",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 22,
+      "name" : "ss_net_paid_inc_tax",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    }, {
+      "id" : 23,
+      "name" : "ss_net_profit",
+      "required" : false,
+      "type" : "decimal(7, 2)"
+    } ]
+  } ],
+  "default-spec-id" : 0,
+  "partition-specs" : [ {
+    "spec-id" : 0,
+    "fields" : [ ]
+  } ],
+  "last-partition-id" : 999,
+  "default-sort-order-id" : 0,
+  "sort-orders" : [ {
+    "order-id" : 0,
+    "fields" : [ ]
+  } ],
+  "properties" : {
+    "owner" : "gshegalov",
+    "write.parquet.compression-codec" : "zstd"
+  },
+  "current-snapshot-id" : 3661770478457812755,
+  "refs" : {
+    "main" : {
+      "snapshot-id" : 3661770478457812755,
+      "type" : "branch"
+    }
+  },
+  "snapshots" : [ {
+    "sequence-number" : 1,
+    "snapshot-id" : 3661770478457812755,
+    "timestamp-ms" : 1759337984501,
+    "summary" : {
+      "operation" : "append",
+      "spark.app.id" : "local-1759337967001",
+      "added-data-files" : "10",
+      "added-records" : "28800501",
+      "added-files-size" : "1015406287",
+      "changed-partition-count" : "1",
+      "total-records" : "28800501",
+      "total-files-size" : "1015406287",
+      "total-data-files" : "10",
+      "total-delete-files" : "0",
+      "total-position-deletes" : "0",
+      "total-equality-deletes" : "0",
+      "engine-version" : "3.5.5",
+      "app-id" : "local-1759337967001",
+      "engine-name" : "spark",
+      "iceberg-version" : "Apache Iceberg 1.6.1 (commit 8e9d59d299be42b0bca9461457cd1e95dbaad086)"
+    },
+    "manifest-list" : "/home/gshegalov/gits/NVIDIA/spark-rapids-examples/warehouse/iceberg/store_sales/metadata/snap-3661770478457812755-1-0ef6f0b4-e95c-466b-bae0-a7e34da176e3.avro",
+    "schema-id" : 0
+  } ],
+  "statistics" : [ ],
+  "partition-statistics" : [ ],
+  "snapshot-log" : [ {
+    "timestamp-ms" : 1759337984501,
+    "snapshot-id" : 3661770478457812755
+  } ],
+  "metadata-log" : [ ]
+}

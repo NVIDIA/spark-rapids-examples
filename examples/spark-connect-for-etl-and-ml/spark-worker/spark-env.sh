@@ -24,5 +24,6 @@ export SPARK_WORKER_OPTS="
 "
 
 # workaround for wheels installation not setting the correct LD_LIBRARY_PATH
-#https://github.com/rapidsai/cuml/issues/5300#issuecomment-2084646729
-export LD_LIBRARY_PATH=$(find /usr/local/lib/python3.10/dist-packages/nvidia -name lib -type d | xargs printf '%s:'):$LD_LIBRARY_PATH
+# https://github.com/rapidsai/cuml/issues/5300#issuecomment-2084646729
+LD_LIBRARY_PATH=$(find /usr/local/lib/python3.10/dist-packages/nvidia -name lib -type d | xargs printf '%s:'):$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH

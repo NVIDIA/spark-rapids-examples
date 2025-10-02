@@ -16,4 +16,4 @@
 
 
 matplotlib
-pyspark-client==4.0.0
+pyspark[connect]==4.0.0
