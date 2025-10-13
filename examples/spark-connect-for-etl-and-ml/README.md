@@ -72,15 +72,14 @@ The setup consists of four Docker services:
 4. **Access the interfaces:**
    - **Jupyter Lab**: http://localhost:8888 (no password required)
    - **Spark Master UI**: http://localhost:8080
-   - **Spark Worker UI**: http://localhost:8081
-   - **Spark Driver UI**: http://localhost:4040 (when jobs are running)
+   - **Spark Worker UI**: access from Master UI link
+   - **Spark Driver UI**: access from Master UI link (`Name` column of `Running Applications`)
    - If demo containers are run on a headless host, to access above URLs:
      - First, set up a port-forwarding ssh tunnel from your local host/laptop to the host running docker compose:
        ```bash
        ssh <user@docker-compose-host> -L 8888:localhost:8888 -L 8080:localhost:8080 -L 8081:localhost:8081 -L 4040:localhost:4040
        ```
      - Second, to avoid some broken UI links from the local web browser, add the line `127.0.0.1 spark-master` to your local `/etc/hosts` file (note, modifying the `hosts` file may need local sudo access)
-     - You can now navigate to above links from your local browser and all Spark UI links should work
 
 5. **Open the demo notebook:**
    - Navigate to `work/spark-connect-demo.ipynb` in Jupyter Lab
