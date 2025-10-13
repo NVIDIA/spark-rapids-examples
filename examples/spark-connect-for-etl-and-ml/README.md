@@ -36,28 +36,29 @@ The setup consists of four Docker services:
 ## 📋 Prerequisites
 
 ### Required
-- Docker and Docker Compose
+- [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/linux)
 - At least 8GB of available RAM
 - Available ports: 8080, 8081, 8888, 7077, 4040, 15002
 
 ### For GPU Acceleration
 - NVIDIA GPU with CUDA compute capability supported by RAPIDS
 - [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+- Docker Compose version should be `2.30.x` or newer to avoid an NVIDIA Container Toolkit related bug.  [Update](https://docs.docker.com/compose/install/linux) if necessary
 - CUDA 12.x drivers
 
 ## 🚀 Quick Start
 
 1. **Clone and navigate to the project:**
    ```bash
-   cd spark-connect-for-etl-and-ml
+   cd examples/spark-connect-for-etl-and-ml
    ```
 
 2. **Set up data directory (if needed):**
    ```bash
    export WORK_DIR=$(pwd)/work
    export DATA_DIR=$(pwd)/data/mortgage.input.csv
-   mkdir -p work data
-   chmod 777 work
+   mkdir -p $WORK_DIR $DATA_DIR
+   chmod 777 $WORK_DIR
    ```
    Download a few quarters worth of the [Mortgage Dataset](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
    to the `$DATA_DIR` location.
@@ -66,18 +67,27 @@ The setup consists of four Docker services:
    ```bash
    docker-compose up -d
    ```
+   (`docker compose` can be used in place of `docker-compose` here and throughout)
 
 4. **Access the interfaces:**
    - **Jupyter Lab**: http://localhost:8888 (no password required)
    - **Spark Master UI**: http://localhost:8080
    - **Spark Worker UI**: http://localhost:8081
    - **Spark Driver UI**: http://localhost:4040 (when jobs are running)
+   - If demo containers are run on a headless host, to access above URLs:
+     - First, set up a port-forwarding ssh tunnel from your local host/laptop to the host running docker compose:
+       ```bash
+       ssh <user@docker-compose-host> -L 8888:localhost:8888 -L 8080:localhost:8080 -L 8081:localhost:8081 -L 4040:localhost:4040
+       ```
+     - Second, to avoid some broken UI links from the local web browser, add the line `127.0.0.1 spark-master` to your local `/etc/hosts` file (note, modifying the `hosts` file may need local sudo access)
+     - You can now navigate to above links from your local browser and all Spark UI links should work
 
 5. **Open the demo notebook:**
    - Navigate to `work/spark-connect-demo.ipynb` in Jupyter Lab
    - You can also open it in VS Code by selecting http://localhost:8888 as the
      existing notebook server connection
    - Run the complete ETL and ML pipeline demonstration
+
 
 ## 📝 Demo Notebook Overview
 
@@ -192,6 +202,17 @@ $ WORK_DIR=~/work DATA_DIR=~/dais-2025/data/mortgage/raw docker compose restart 
 ```
 
 and/or restart the Jupyter kernel
+
+### Logs
+Logs for the spark driver/connect server, standalone master, standalone worker, and jupyter server can be viewed using the respective commands:
+```bash
+docker logs spark-connect-server
+docker logs spark-master
+docker logs spark-worker
+docker logs spark-connect-client
+```
+
+Spark executor logs can be accessed via the Spark UI as usual.
 
 ## 📖 Additional Resources
 

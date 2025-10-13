@@ -30,7 +30,10 @@ services:
   # Spark Master Node
   spark-master:
     <<: *spark-common
-    image: apache/spark:4.0.0
+    image: dais25/spark-master
+    build:
+      context: ./spark-master
+      dockerfile: Dockerfile
     container_name: spark-master
     hostname: spark-master
     environment:

@@ -17,15 +17,5 @@
 
 FROM apache/spark:4.0.0
 
-USER root
-COPY requirements.txt /tmp/requirements.txt
-RUN pip3 install --extra-index-url=https://pypi.nvidia.com -r /tmp/requirements.txt
-
-# TODO hack to avoid configuring cupy compiler path
-RUN mkdir -p /home/spark
-RUN chown -R spark:spark /home/spark
-RUN usermod -d /home/spark spark
-
 USER spark
-COPY spark-env.sh /opt/spark/conf/spark-env.sh
 COPY spark-defaults.conf /opt/spark/conf/spark-defaults.conf
