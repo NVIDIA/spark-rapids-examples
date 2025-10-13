@@ -77,7 +77,7 @@ The setup consists of four Docker services:
    - If demo containers are run on a headless host, to access above URLs:
      - First, set up a port-forwarding ssh tunnel from your local host/laptop to the host running docker compose:
        ```bash
-       ssh <user@docker-compose-host> -L 8888:localhost:8888 -L 8080:localhost:8080 -L 8081:localhost:8081 -L 4040:localhost:4040
+       ssh <user@docker-compose-host> -L 8888:localhost:8888 -L 8080:localhost:8080
        ```
      - Second, to avoid some broken UI links from the local web browser, add the line `127.0.0.1 spark-master` to your local `/etc/hosts` file (note, modifying the `hosts` file may need local sudo access)
 
