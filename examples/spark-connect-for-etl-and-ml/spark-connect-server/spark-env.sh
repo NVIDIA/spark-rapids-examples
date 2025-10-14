@@ -16,6 +16,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [[ "${USE_LOCALHOST_UI}" == "1" ]]; then
-  export SPARK_PUBLIC_DNS=localhost
-fi
+export SPARK_PUBLIC_DNS=$(hostname)

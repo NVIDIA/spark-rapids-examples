@@ -16,11 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# If SPARK_PUBLIC_DNS is empty, unset it
-if [[ "${USE_LOCALHOST_UI}" == "1" ]]; then
-  export SPARK_PUBLIC_DNS=localhost
-fi
-
+export SPARK_PUBLIC_DNS=$(hostname)
 GPU_COUNT_MAX=$(nvidia-smi -L | wc -l)
 export SPARK_WORKER_OPTS="
   -Dspark.worker.resource.gpu.amount=${GPU_COUNT_MAX}
