@@ -114,11 +114,11 @@ services:
       --ip=0.0.0.0
       --port=8888
 
-  nginx_proxy:
+  proxy-service:
     build:
-      context: ./nginx-proxy
+      context: ./proxy-service
       dockerfile: Dockerfile
-    container_name: nginx_proxy
+    container_name: proxy-service
     ports:
       - "2080:2080"
     networks:
