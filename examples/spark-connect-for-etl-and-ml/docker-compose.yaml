@@ -20,8 +20,8 @@ x-spark-common: &spark-common
   networks:
     - spark-network
   volumes:
-    - ${WORK_DIR}:/opt/spark/work-dir
-    - ${DATA_DIR}:/data/mortgage.input.csv
+    - ${WORK_DIR:-/tmp/spark/work}:/opt/spark/work-dir
+    - ${DATA_DIR:-/tmp/data/mortgage}:/data/mortgage.input.csv
 x-spark-common-env: &spark-common-env
   USE_LOCALHOST_UI: "${USE_LOCALHOST_UI:-1}"
   SPARK_NO_DAEMONIZE: "1"
@@ -106,17 +106,20 @@ services:
     command: >
       start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
 
-  # SOCKS5 Proxy for remote access
-  socks5-proxy:
-    image: serjs/go-socks5-proxy
-    container_name: socks5-proxy
-    hostname: socks5-proxy
-    environment:
-      - REQUIRE_AUTH=false
+  nginx_proxy:
+    build:
+      context: ./nginx-proxy
+      dockerfile: Dockerfile
+    container_name: nginx_proxy
+    ports:
+      - "2080:2080"
     networks:
       - spark-network
-    ports:
-      - "1080:1080"   # SOCKS5 Proxy Port
+    depends_on:
+      - spark-master
+      - spark-worker
+      - spark-connect-server
+      - spark-connect-client
     restart: unless-stopped
 
 networks:
