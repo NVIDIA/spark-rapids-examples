@@ -31,14 +31,14 @@ The setup consists of four Docker services:
 1. **Spark Master** (`spark-master`) - Cluster coordination and job scheduling
 2. **Spark Worker** (`spark-worker`) - GPU-enabled worker node for task execution. 
 3. **Spark Connect Server** (`spark-connect-server`) - gRPC interface with RAPIDS integration
-4. **Jupyter Lab Client** (`spark-connect-client`) - Interactive development environment
+4. **Jupyter Lab - Spark Connect Client** (`spark-connect-client`) - Interactive development environment
 
 ## 📋 Prerequisites
 
 ### Required
 - [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/linux)
 - At least 8GB of available RAM
-- Available ports: 8080, 8081, 8888, 7077, 4040, 15002
+- Available ports: 2080, 8080, 8081, 8888, 7077, 4040, 15002
 
 ### For GPU Acceleration
 - NVIDIA GPU with CUDA compute capability supported by RAPIDS
