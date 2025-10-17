@@ -69,17 +69,25 @@ The setup consists of four Docker services:
    ```
    (`docker compose` can be used in place of `docker-compose` here and throughout)
 
-4. **Access the interfaces:**
-   - **Jupyter Lab**: http://localhost:8888 (no password required)
-   - **Spark Master UI**: http://localhost:8080
-   - **Spark Worker UI**: access from Master UI link
-   - **Spark Driver UI**: access from Master UI link (`Name` column of `Running Applications`)
-   - If demo containers are run on a headless host, to access above URLs:
-     - First, set up a port-forwarding ssh tunnel from your local host/laptop to the host running docker compose:
-       ```bash
-       ssh <user@docker-compose-host> -L 8888:localhost:8888 -L 8080:localhost:8080
-       ```
-     - Second, to avoid some broken UI links from the local web browser, add the line `127.0.0.1 spark-master` to your local `/etc/hosts` file (note, modifying the `hosts` file may need local sudo access)
+4. **Access the Web UI interfaces:**
+
+     If you configure your browser with a proxy configuration you can access all web apps but Jupyter Lab 
+     using corresponding container host names:
+
+     ```bash
+     google-chrome --user-data-dir="/tmp/chrome-proxy-profile" --proxy-server="http://localhost:2080"
+     ```
+
+   - **Jupyter Lab**: http://localhost:8888 (no password required) - Interactive notebook environment
+   - **Spark Master UI**: http://spark-master:8080 - Cluster coordination and resource management
+   - **Spark Worker UI**: http://spark-worker:8081 - GPU-enabled worker node status and tasks
+   - **Spark Driver UI**: http://spark-connect-server:4040 - Application monitoring and SQL queries
+ 
+   For headless hosts (remote access): forward ports for the proxy and Jupyter Lab:
+     ```bash
+     ssh <user@gpu-host> -L 2080:localhost:2080 -L 8888:localhost:8888 
+     ```
+
 
 5. **Open the demo notebook:**
    - Navigate to `work/spark-connect-demo.ipynb` in Jupyter Lab
