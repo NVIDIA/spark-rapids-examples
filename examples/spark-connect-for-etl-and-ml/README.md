@@ -65,10 +65,6 @@ The setup consists of four Docker services:
    
 ```bash
 $ du -h *
-4.7G	2022Q1.csv
-2.9G	2022Q2.csv
-1.6G	2022Q3.csv
-909M	2022Q4.csv
 503M	2023Q1.csv
 412M	2023Q2.csv
 162M	2023Q3.csv
