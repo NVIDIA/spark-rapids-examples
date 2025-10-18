@@ -23,7 +23,7 @@ x-spark-common: &spark-common
     - ${WORK_DIR:-/tmp/spark/work}:/opt/spark/work-dir
     - ${DATA_DIR:-/tmp/data/mortgage}:/data/mortgage.input.csv
 x-spark-common-env: &spark-common-env
-  USE_LOCALHOST_UI: "${USE_LOCALHOST_UI:-1}"
+  SPARK_PUBLIC_DNS: "${SPARK_PUBLIC_DNS:-localhost}"
   SPARK_NO_DAEMONIZE: "1"
   SPARK_WORKER_DIR: /opt/spark/work-dir
 
@@ -31,7 +31,10 @@ services:
   # Spark Master Node
   spark-master:
     <<: *spark-common
-    image: apache/spark:4.0.0
+    image: spark-master-image
+    build:
+      context: ./spark-master
+      dockerfile: Dockerfile
     container_name: spark-master
     hostname: spark-master
     environment:
@@ -44,7 +47,7 @@ services:
   # Spark Worker Node (GPU-enabled)
   spark-worker:
     <<: *spark-common
-    image: dais25/spark-worker
+    image: spark-worker-image
     build:
       context: ./spark-worker
       dockerfile: Dockerfile
@@ -67,7 +70,7 @@ services:
   # Spark Connect Server
   spark-connect-server:
     <<: *spark-common
-    image: dais25/spark-connect-server
+    image: spark-connect-server-image
     build:
       context: ./spark-connect-server
       dockerfile: Dockerfile
@@ -85,7 +88,7 @@ services:
 
   spark-connect-client:
     <<: *spark-common
-    image: dais25/spark-connect-client
+    image: spark-connect-client-image
     # hack same uid as spark
     user: "185:185"
     group_add:

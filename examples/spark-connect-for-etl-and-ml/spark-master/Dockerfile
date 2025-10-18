@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Copyright (c) 2025, NVIDIA CORPORATION. All rights reserved.
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -16,9 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [[ "$SPARK_PUBLIC_DNS" == "container-hostname" ]]; then
-  export SPARK_PUBLIC_DNS=$(hostname)
-elif [[ "$SPARK_PUBLIC_DNS" != "" ]]; then
-  # handles default localhost or any other custom value
-  export SPARK_PUBLIC_DNS
-fi
+
+FROM apache/spark:4.0.0
+
+COPY spark-env.sh /opt/spark/conf/spark-env.sh

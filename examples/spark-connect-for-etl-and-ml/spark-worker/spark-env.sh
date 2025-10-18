@@ -16,7 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-export SPARK_PUBLIC_DNS=$(hostname)
+
+if [[ "$SPARK_PUBLIC_DNS" == "container-hostname" ]]; then
+  export SPARK_PUBLIC_DNS=$(hostname)
+elif [[ "$SPARK_PUBLIC_DNS" != "" ]]; then
+  # handles default localhost or any other custom value
+  export SPARK_PUBLIC_DNS
+fi
+
 GPU_COUNT_MAX=$(nvidia-smi -L | wc -l)
 export SPARK_WORKER_OPTS="
   -Dspark.worker.resource.gpu.amount=${GPU_COUNT_MAX}

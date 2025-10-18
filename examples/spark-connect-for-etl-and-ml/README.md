@@ -61,32 +61,83 @@ The setup consists of four Docker services:
    chmod 1777 $WORK_DIR
    ```
    Download a few quarters worth of the [Mortgage Dataset](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
-   to the `$DATA_DIR` location.
+   to the `$DATA_DIR` location. This demo at Data+AI Summit'25 uses the following quarters
+   
+```bash
+$ du -h *
+4.7G	2022Q1.csv
+2.9G	2022Q2.csv
+1.6G	2022Q3.csv
+909M	2022Q4.csv
+503M	2023Q1.csv
+412M	2023Q2.csv
+162M	2023Q3.csv
+```
 
 3. **Start all services:**
-   ```bash
-   docker-compose up -d
-   ```
+
+
+```bash
+$ docker compose up -d
+```
+
    (`docker compose` can be used in place of `docker-compose` here and throughout)
 
 4. **Access the Web UI interfaces:**
 
-     If you configure your browser with a proxy configuration you can access all web apps but Jupyter Lab 
-     using corresponding container host names:
+  ***Option 1 (default)***
 
-     ```bash
-     google-chrome --user-data-dir="/tmp/chrome-proxy-profile" --proxy-server="http://localhost:2080"
-     ```
+  All containers' webUI are available using localhost URI's by default
 
+   - **Jupyter Lab**: http://localhost:8888 (no password required) - Interactive notebook environment
+   - **Spark Master UI**: http://localhost:8080 - Cluster coordination and resource management
+   - **Spark Worker UI**: http://localhost:8081 - GPU-enabled worker node status and tasks
+   - **Spark Driver UI**: http://localhost:4040 - Application monitoring and SQL queries
+    
+  ***Option 2***
+
+  if you launch docker compose in the environment with SPARK_PUBLIC_DNS=container-hostname, all containers'
+  web UI but Jupyter Lab is available using the corresponding container host names such as spark-master
+  
    - **Jupyter Lab**: http://localhost:8888 (no password required) - Interactive notebook environment
    - **Spark Master UI**: http://spark-master:8080 - Cluster coordination and resource management
    - **Spark Worker UI**: http://spark-worker:8081 - GPU-enabled worker node status and tasks
    - **Spark Driver UI**: http://spark-connect-server:4040 - Application monitoring and SQL queries
- 
-   For headless hosts (remote access): forward ports for the proxy and Jupyter Lab:
-     ```bash
-     ssh <user@gpu-host> -L 2080:localhost:2080 -L 8888:localhost:8888 
-     ```
+   
+  Docker DNS names require configuring your browser an http proxy on the Docker network exposed at
+  http://localhost:2080. 
+  
+  Here are examples of launching Google Chrome with a temporary user profile without making persistent changes on the browser 
+
+  ***Linux***
+
+  ```bash
+  $ google-chrome --user-data-dir="/tmp/chrome-proxy-profile" --proxy-server="http=http://localhost:2080"
+  ```
+
+  ***macOS***
+
+  ```bash
+  $ open -n -a "Google Chrome" --args --user-data-dir="/tmp/chrome-proxy-profile" --proxy-server="http=http://localhost:2080"
+  ```
+
+  ***Launching containers on a remote machine***
+
+  Your local machine might not have a GPU, and it is common in this case to use a 
+  remote machine/cluster with GPUs residing in a remote Cloud or on-prem environment
+
+  If you followed the default Option 1 make sure to create local port forwards for
+  every webUI port
+
+  ```bash
+  ssh <user@gpu-host> -L 8888:localhost:8888 -L 8888:localhost:8080 -L 8081:localhost:8081 -L 4040:localhost:4040 
+  ```
+
+  if you used Option 2 it is sufficient to forward ports only for the HTTP proxy and the Notebook app:
+  
+  ```bash
+  ssh <user@gpu-host> -L 2080:localhost:2080 -L 8888:localhost:8888 
+  ```
 
 
 5. **Open the demo notebook:**
@@ -183,7 +234,7 @@ model = pipeline.fit(training_data)
 
 ## 📊 Performance Monitoring
 
-You can use tools like nvtop or jupyterlab_nvdashboard running on the GPU host(s)
+You can use tools like nvtop, nvitop, btop or jupyterlab_nvdashboard running on the GPU host(s)
 
 
 ## 🧹 Cleanup
