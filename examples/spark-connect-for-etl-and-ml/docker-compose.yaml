@@ -84,7 +84,10 @@ services:
     depends_on:
       - spark-master
       - spark-worker
-    command: /opt/spark/sbin/start-connect-server.sh --driver-memory 4G
+    command: >
+      /opt/spark/sbin/start-connect-server.sh
+        --driver-memory=16G
+        --conf spark.executor.memory=16G
 
   spark-connect-client:
     <<: *spark-common
