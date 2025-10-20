@@ -21,7 +21,10 @@ USER root
 COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install -r /tmp/requirements.txt
 
+RUN mkdir -p /opt/spark-rapids/jars
+RUN chown -R spark:spark /opt/spark-rapids
+
 USER spark
-RUN wget -q -P /tmp https://edge.urm.nvidia.com/artifactory/sw-spark-maven/com/nvidia/rapids-4-spark_2.13/25.08.0/rapids-4-spark_2.13-25.08.0-cuda12.jar
+RUN wget -q -P /opt/spark-rapids/jars https://edge.urm.nvidia.com/artifactory/sw-spark-maven/com/nvidia/rapids-4-spark_2.13/25.08.0/rapids-4-spark_2.13-25.08.0-cuda12.jar
 COPY spark-defaults.conf /opt/spark/conf/spark-defaults.conf
 COPY spark-env.sh /opt/spark/conf/spark-env.sh

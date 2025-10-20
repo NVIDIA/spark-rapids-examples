@@ -55,13 +55,12 @@ The setup consists of four Docker services:
 
 2. **Set up data directory (if needed):**
    ```bash
-   export WORK_DIR=$(pwd)/work
-   export DATA_DIR=$(pwd)/data/mortgage.input.csv
-   mkdir -p $WORK_DIR $DATA_DIR
-   chmod 1777 $WORK_DIR
+   mkdir -p $(pwd)/data/mortgage.input.csv
+   export DATA_DIR=$(pwd)/data
+   mkdir $DATA_DIR/preprocessed
    ```
    Download a few quarters worth of the [Mortgage Dataset](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
-   to the `$DATA_DIR` location. This demo at Data+AI Summit'25 uses the following quarters
+   to the `$DATA_DIR/mortgage.input.csv` location. The demo at the Data+AI Summit'25 used the following quarters
    
 ```bash
 $ du -h *
@@ -244,18 +243,6 @@ Remove built images:
 ```bash
 docker-compose down --rmi all -v
 ```
-
-## Troubleshooting
-
-Repeated executions of the notebook sometimes results in unexpected side effects
-such as a `FileNotFoundException`. To mitigate restart the spark-connect-server
-service
-
-```bash
-$ WORK_DIR=~/work DATA_DIR=~/dais-2025/data/mortgage/raw docker compose restart spark-connect-server
-```
-
-and/or restart the Jupyter kernel
 
 ### Logs
 Logs for the spark driver/connect server, standalone master, standalone worker, and jupyter server can be viewed using the respective commands:

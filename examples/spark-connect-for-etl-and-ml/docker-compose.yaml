@@ -20,12 +20,10 @@ x-spark-common: &spark-common
   networks:
     - spark-network
   volumes:
-    - ${WORK_DIR:-/tmp/spark/work}:/opt/spark/work-dir
-    - ${DATA_DIR:-/tmp/data/mortgage}:/data/mortgage.input.csv
+    - ${DATA_DIR}:/data
 x-spark-common-env: &spark-common-env
   SPARK_PUBLIC_DNS: "${SPARK_PUBLIC_DNS:-localhost}"
   SPARK_NO_DAEMONIZE: "1"
-  SPARK_WORKER_DIR: /opt/spark/work-dir
 
 services:
   # Spark Master Node
@@ -104,7 +102,7 @@ services:
     environment:
       - CHOWN_HOME=yes
       - PYDEVD_DISABLE_FILE_VALIDATION=1
-      - MPLCONFIGDIR=/opt/spark/work-dir/mpl
+      - MPLCONFIGDIR=/tmp/mplconfigdir
     ports:
       - "8888:8888"   # Jupyter Lab Port
     depends_on:
