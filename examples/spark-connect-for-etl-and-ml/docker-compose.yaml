@@ -72,6 +72,10 @@ services:
     build:
       context: ./spark-connect-server
       dockerfile: Dockerfile
+      args:
+        - CUDA_VERSION=${CUDA_VERSION:-12}
+        - RAPIDS_VERSION=${RAPIDS_VERSION:-25.08.0}
+        - REPO_URL=${REPO_URL:-https://edge.urm.nvidia.com/artifactory/sw-spark-maven}
     container_name: spark-connect-server
     hostname: spark-connect-server
     environment:

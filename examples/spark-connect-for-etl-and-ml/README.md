@@ -57,6 +57,7 @@ The setup consists of four Docker services:
    ```bash
    mkdir -p $(pwd)/data/mortgage.input.csv
    export DATA_DIR=$(pwd)/data
+   chmod 1777 $DATA_DIR
    mkdir $DATA_DIR/preprocessed
    ```
    Download a few quarters worth of the [Mortgage Dataset](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
