@@ -16,4 +16,6 @@
 
 
 matplotlib
-pyspark[connect]==4.0.0
+# https://spark.apache.org/docs/latest/api/python/getting_started/install.html#python-spark-connect-client
+# ... pure Python library
+pyspark-client==4.0.0
