@@ -208,7 +208,7 @@ model = pipeline.fit(training_data)
 
 ### Results 
 
-This demo was tested on a machine with a 24GiB Quadro RTX 600
+This demo was tested on a machine with a 6GiB RTX A3000 Laptop GPU 
 
 ```bash
 $ nvidia-smi
@@ -219,13 +219,15 @@ $ nvidia-smi
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  Quadro RTX 6000                Off |   00000000:01:00.0 Off |                  Off |
-| 33%   25C    P8              7W /  260W |   10354MiB /  24576MiB |      0%      Default |
+|   0  NVIDIA RTX A3000 Laptop GPU    Off |   00000000:01:00.0 Off |                  N/A |
+| N/A   56C    P8             13W /   60W |    1353MiB /   6144MiB |      1%      Default |
 |                                         |                        |                  N/A |
 +-----------------------------------------+------------------------+----------------------+
 ```
 
-and a 64-vcore CPU
+and a 2x8-core CPU
+
+![GPU Acceleration Results](example-acceleration-chart.png)
 
 ## 🐳 Service Details
 
