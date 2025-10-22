@@ -107,11 +107,11 @@ fi
 
 CLUSTER_PARAMS=(
     --image-version=2.2-ubuntu
-    --region ${COMPUTE_REGION}
+    --region "${COMPUTE_REGION}"
     --num-workers 2
     --master-machine-type g2-standard-8
-    --worker-machine-type ${WORKER_MACHINE_TYPE}
-    --initialization-actions gs://${SPARK_DL_HOME}/init/spark-rapids.sh,${INIT_PATH}
+    --worker-machine-type "${WORKER_MACHINE_TYPE}"
+    --initialization-actions gs://"${SPARK_DL_HOME}"/init/spark-rapids.sh,"${INIT_PATH}"
     --metadata gpu-driver-provider="NVIDIA"
     --metadata gcs-bucket="${GCS_BUCKET}"
     --metadata spark-dl-home="${SPARK_DL_HOME}"
