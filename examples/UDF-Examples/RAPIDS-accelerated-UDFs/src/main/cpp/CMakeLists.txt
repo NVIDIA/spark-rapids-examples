@@ -14,14 +14,13 @@
 # limitations under the License.
 #=============================================================================
 
-# Keep the same with https://github.com/rapidsai/rapids-cmake/blob/branch-xx.yy/RAPIDS.cmake
-# the branch-xx.xx in the above line is the branch version
+# Keep the same with https://github.com/rapidsai/rapids-cmake/blob/main/RAPIDS.cmake
 cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
 
-# set to the rapids-cmake version
-set(rapids-cmake-version "25.12")
+# set to the rapids-cmake-branch
+set(rapids-cmake-branch "main")
 
-file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/branch-${rapids-cmake-version}/RAPIDS.cmake
+file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/main/RAPIDS.cmake
      ${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 include(${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 
