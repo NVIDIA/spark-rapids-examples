@@ -17,6 +17,8 @@
 
 FROM jupyter/minimal-notebook:latest
 
-COPY notebooks /home/jovyan/work
+COPY requirements.txt /home/jovyan/requirements.txt
+RUN pip install -r /home/jovyan/requirements.txt
 
-RUN pip install -r /home/jovyan/work/requirements.txt
+COPY work /home/jovyan/work
+COPY spark-connect-demo.ipynb /home/jovyan/spark-connect-demo.ipynb 

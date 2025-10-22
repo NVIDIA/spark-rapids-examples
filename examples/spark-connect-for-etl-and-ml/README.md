@@ -55,19 +55,22 @@ The setup consists of four Docker services:
 
 2. **Set up data directory (if needed):**
    ```bash
-   mkdir -p $(pwd)/data/mortgage.input.csv
    export DATA_DIR=$(pwd)/data
-   chmod 1777 $DATA_DIR
-   mkdir $DATA_DIR/preprocessed
+   mkdir -p $DATA_DIR/mortgage.input.csv $DATA_DIR/spark-events 
+   chmod 1777 $DATA_DIR $DATA_DIR/spark-events 
+   
    ```
    Download a few quarters worth of the [Mortgage Dataset](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
    to the `$DATA_DIR/mortgage.input.csv` location. The demo at the Data+AI Summit'25 used the following quarters
    
 ```bash
 $ du -h *
-503M	2023Q1.csv
-412M	2023Q2.csv
-162M	2023Q3.csv
+503M    2023Q1.csv
+412M    2023Q2.csv
+162M    2023Q3.csv
+1.1G    2023Q4.csv
+
+
 ```
 
 3. **Start all services:**
@@ -202,6 +205,27 @@ logistic = LogisticRegression().setFeaturesCol('features').setLabelCol('delinque
 pipeline = Pipeline().setStages([hasher, assembler, logistic])
 model = pipeline.fit(training_data)
 ```
+
+### Results 
+
+This demo was tested on a machine with a 24GiB Quadro RTX 600
+
+```bash
+$ nvidia-smi
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 560.35.05              Driver Version: 560.35.05      CUDA Version: 12.6     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Quadro RTX 6000                Off |   00000000:01:00.0 Off |                  Off |
+| 33%   25C    P8              7W /  260W |   10354MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+```
+
+and a 64-vcore CPU
 
 ## 🐳 Service Details
 

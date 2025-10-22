@@ -88,7 +88,7 @@ services:
       - spark-worker
     command: >
       /opt/spark/sbin/start-connect-server.sh
-        --driver-memory=16G
+        --driver-memory=24G
         --conf spark.executor.memory=16G
 
   spark-connect-client:
@@ -104,6 +104,7 @@ services:
     container_name: spark-connect-client
     hostname: spark-connect-client
     environment:
+      - SPARK_REMOTE=sc://spark-connect-server
       - CHOWN_HOME=yes
       - PYDEVD_DISABLE_FILE_VALIDATION=1
       - MPLCONFIGDIR=/tmp/mplconfigdir
