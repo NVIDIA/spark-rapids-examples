@@ -24,7 +24,7 @@ Here is the list of notebooks in this repo:
 | 4 | XGBoost | Mortgage (Scala) | End-to-end ETL + XGBoost example to predict mortgage default with [Fannie Mae Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
 | 5 | XGBoost | Taxi (Scala) | End-to-end ETL + XGBoost example to predict taxi trip fare amount with [NYC taxi trips data set](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
 | 6 | ML/DL | PCA | [Spark-Rapids-ML](https://github.com/NVIDIA/spark-rapids-ml) based PCA example to train and transform with a synthetic dataset
-| 7 | ML/DL | DL Inference | 11 notebooks demonstrating distributed model inference on Spark using the `predict_batch_udf` across various frameworks: PyTorch, HuggingFace, and TensorFlow
+| 7 | ML/DL | DL Inference | Several notebooks demonstrating distributed model inference on Spark using the `predict_batch_udf` across various frameworks: PyTorch, HuggingFace, vLLM, and TensorFlow
 
 Here is the list of Apache Spark applications (Scala and PySpark) that 
 can be built for running on GPU with RAPIDS Accelerator in this repo:

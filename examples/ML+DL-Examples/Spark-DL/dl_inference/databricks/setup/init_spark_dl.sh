@@ -10,7 +10,6 @@ if [[ "${FRAMEWORK}" == "torch" ]]; then
     cat <<EOF > temp_requirements.txt
 datasets==3.*
 transformers
-urllib3<2
 nvidia-pytriton
 torch<=2.5.1
 torchvision --extra-index-url https://download.pytorch.org/whl/cu121
@@ -24,11 +23,14 @@ elif [[ "${FRAMEWORK}" == "tf" ]]; then
     cat <<EOF > temp_requirements.txt
 datasets==3.*
 transformers
-urllib3<2
 nvidia-pytriton
 EOF
+elif [[ "${FRAMEWORK}" == "vllm" ]]; then
+    cat <<EOF > temp_requirements.txt
+vllm==0.8.2
+EOF
 else
-    echo "Please export FRAMEWORK as torch or tf per README"
+    echo "Please export FRAMEWORK as torch, tf, or vllm per README"
     exit 1
 fi
 
