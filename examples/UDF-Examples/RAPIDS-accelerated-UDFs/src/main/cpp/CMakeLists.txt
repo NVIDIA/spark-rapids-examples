@@ -14,14 +14,13 @@
 # limitations under the License.
 #=============================================================================
 
-# Keep the same with https://github.com/rapidsai/rapids-cmake/blob/branch-xx.yy/RAPIDS.cmake
-# the branch-xx.xx in the above line is the branch version
+# Keep the same with https://github.com/rapidsai/rapids-cmake/blob/main/RAPIDS.cmake
 cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
 
-# set to the rapids-cmake version
-set(rapids-cmake-version "25.10")
+# set to the rapids-cmake-branch
+set(rapids-cmake-branch "main")
 
-file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/branch-${rapids-cmake-version}/RAPIDS.cmake
+file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/main/RAPIDS.cmake
      ${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 include(${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 
@@ -37,7 +36,7 @@ if(DEFINED GPU_ARCHS)
 endif()
 rapids_cuda_init_architectures(UDFEXAMPLESJNI)
 
-project(UDFEXAMPLESJNI VERSION 25.10.0 LANGUAGES C CXX CUDA)
+project(UDFEXAMPLESJNI VERSION 25.12.0 LANGUAGES C CXX CUDA)
 
 option(PER_THREAD_DEFAULT_STREAM "Build with per-thread default stream" OFF)
 option(BUILD_UDF_BENCHMARKS "Build the benchmarks" OFF)
@@ -89,10 +88,10 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -w --expt-extended-lambda --expt-relax
 set(CUDA_USE_STATIC_CUDA_RUNTIME ON)
 
 rapids_cpm_init()
-rapids_cpm_find(cudf 25.10.00
+rapids_cpm_find(cudf 25.12.00
         CPM_ARGS
         GIT_REPOSITORY  https://github.com/rapidsai/cudf.git
-        GIT_TAG         branch-25.10
+        GIT_TAG         main
         GIT_SHALLOW     TRUE
         SOURCE_SUBDIR   cpp
         OPTIONS         "BUILD_TESTS OFF"

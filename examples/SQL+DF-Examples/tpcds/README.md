@@ -18,11 +18,11 @@ This notebook can be opened and executed using standard
 It can also be opened and evaluated on hosted Notebook environments. Use the link below to launch on
 Google Colab and connect it to a [GPU instance](https://research.google.com/colaboratory/faq.html).
 
- <a target="_blank" href="https://colab.research.google.com/github/NVIDIA/spark-rapids-examples/blob/branch-25.10/examples/SQL%2BDF-Examples/tpcds/notebooks/TPCDS-SF10.ipynb">
+ <a target="_blank" href="https://colab.research.google.com/github/NVIDIA/spark-rapids-examples/blob/main/examples/SQL%2BDF-Examples/tpcds/notebooks/TPCDS-SF10.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
 Here is the bar chart from a recent execution on Google Colab's T4 High RAM instance using
-RAPIDS Spark 25.08.0 with Apache Spark 3.5.0
+RAPIDS Spark 25.10.0 with Apache Spark 3.5.0
 
 ![tpcds-speedup](/docs/img/guides/tpcds.png)

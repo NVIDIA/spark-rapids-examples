@@ -1,6 +1,7 @@
 # Spark DL Inference on Databricks
 
-**Note**: fields in \<brackets\> require user inputs.
+**Note**: fields in \<brackets\> require user inputs.  
+Make sure you are in [this](./) directory.
 
 ## Setup
 
@@ -9,50 +10,42 @@
 2. Specify the path to your Databricks workspace:
     ```shell
     export WS_PATH=</Users/someone@example.com>
-
-    export NOTEBOOK_DEST=${WS_PATH}/spark-dl/notebook_torch.ipynb
-    export UTILS_DEST=${WS_PATH}/spark-dl/pytriton_utils.py
-    export INIT_DEST=${WS_PATH}/spark-dl/init_spark_dl.sh
     ```
-3. Specify the local paths to the notebook you wish to run, the utils file, and the init script.
+
+    ```shell
+    export SPARK_DL_WS=${WS_PATH}/spark-dl
+    databricks workspace mkdirs ${SPARK_DL_WS}
+    ```
+3. Specify the local paths to the notebook you wish to run.
     As an example for a PyTorch notebook:
     ```shell
     export NOTEBOOK_SRC=</path/to/notebook_torch.ipynb>
-    export UTILS_SRC=</path/to/pytriton_utils.py>
-    export INIT_SRC=$(pwd)/setup/init_spark_dl.sh
     ```
-4. Specify the framework to torch or tf, corresponding to the notebook you wish to run. Continuing with the PyTorch example:
+4. Specify the framework to torch, tf, or vllm, corresponding to the notebook you wish to run. Continuing with the PyTorch example:
     ```shell
     export FRAMEWORK=torch
     ```
     This will tell the init script which libraries to install on the cluster.
 
-5. Copy the files to the Databricks Workspace:
+5. Copy the notebook, the utils file, and the init script to the Databricks Workspace:
     ```shell
-    databricks workspace import $NOTEBOOK_DEST --format JUPYTER --file $NOTEBOOK_SRC
-    databricks workspace import $UTILS_DEST --format AUTO --file $UTILS_SRC
-    databricks workspace import $INIT_DEST --format AUTO --file $INIT_SRC
+    databricks workspace import ${SPARK_DL_WS}/$(basename "$NOTEBOOK_SRC") --format JUPYTER --file $NOTEBOOK_SRC
+    databricks workspace import ${SPARK_DL_WS}/server_utils.py --format AUTO --file $(realpath ../server_utils.py)
+    databricks workspace import ${SPARK_DL_WS}/init_spark_dl.sh --format AUTO --file $(pwd)/setup/init_spark_dl.sh
     ```
 
-6. Launch the cluster with the provided script. By default the script will create a cluster with 4 A10 worker nodes and 1 A10 driver node. (Note that the script uses **Azure instances** by default; change as needed).
+6. Launch the cluster with the provided script with the argument `aws` or `azure` based on your provider. Modify the scripts if you do not have the specific instance types. By default the script will create a cluster with 2 A10 workers and 1 A10 driver. 
     ```shell
     cd setup
     chmod +x start_cluster.sh
-    ./start_cluster.sh
+    ./start_cluster.sh aws  # or ./start_cluster.sh azure
     ```
-    OR, start the cluster from the Databricks UI:  
-
-    - Go to `Compute > Create compute` and set the desired cluster settings.
-        - Integration with Triton inference server uses stage-level scheduling (Spark>=3.4.0). Make sure to:
-            - use a cluster with GPU resources (for LLM examples, make sure the selected GPUs have sufficient RAM)
-            - set a value for `spark.executor.cores`
-            - ensure that `spark.executor.resource.gpu.amount` = 1
-    - Under `Advanced Options > Init Scripts`, upload the init script from your workspace.
-    - Under environment variables, set:
-        - `FRAMEWORK=torch` or `FRAMEWORK=tf` based on the notebook used.
-        - `HF_HOME=/dbfs/FileStore/hf_home` to cache Huggingface models in DBFS.
-        - `TF_GPU_ALLOCATOR=cuda_malloc_async` to implicity release unused GPU memory in Tensorflow notebooks.
-
-    
+    To create a cluster capable of tensor parallelism, include the argument `tp` to acquire multiple GPUs per node:
+    ```shell
+    ./start_cluster.sh aws tp  # or ./start_cluster.sh azure tp
+    ```
+    In this case, the Azure worker nodes will have 2 GPUs each and the AWS workers will have 4 GPUs each (since AWS does not have an instance type with 2 GPUs) to run the tensor parallel example.* 
 
 7. Navigate to the notebook in your workspace and attach it to the cluster. The default cluster name is `spark-dl-inference-$FRAMEWORK`.  
+
+*Note that the RAPIDS Accelerator for Apache Spark is not compatible with this case, since [multiple GPUs per executor are not yet supported](https://docs.nvidia.com/spark-rapids/user-guide/latest/faq.html#why-are-multiple-gpus-per-executor-not-supported).
