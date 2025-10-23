@@ -3,6 +3,12 @@
 
 set -eo pipefail
 
+TENSOR_PARALLEL=false
+if [[ $# -gt 0 && "$1" == "tp" ]]; then
+    TENSOR_PARALLEL=true
+    echo "Tensor parallelism enabled - will use larger machine types with multiple GPUs"
+fi
+
 # configure arguments
 if [[ -z ${GCS_BUCKET} ]]; then
     echo "Please export GCS_BUCKET per README.md"
@@ -10,7 +16,7 @@ if [[ -z ${GCS_BUCKET} ]]; then
 fi
 
 if [[ -z ${FRAMEWORK} ]]; then
-    echo "Please export FRAMEWORK as 'torch' or 'tf'"
+    echo "Please export FRAMEWORK as 'torch', 'tf', or 'vllm'"
     exit 1
 fi
 
@@ -45,7 +51,6 @@ scikit-learn
 huggingface
 datasets==3.*
 transformers
-urllib3<2
 nvidia-pytriton"
 
 TORCH_REQUIREMENTS="${COMMON_REQUIREMENTS}
@@ -61,7 +66,14 @@ TF_REQUIREMENTS="${COMMON_REQUIREMENTS}
 tensorflow[and-cuda]
 tf-keras"
 
+VLLM_REQUIREMENTS="datasets==3.*
+vllm==0.8.2"
+
 cluster_name=${USER}-spark-dl-inference-${FRAMEWORK}
+if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+    cluster_name="${cluster_name}-tp"
+fi
+
 if [[ ${FRAMEWORK} == "torch" ]]; then
     requirements=${TORCH_REQUIREMENTS}
     echo "========================================================="
@@ -72,9 +84,20 @@ elif [[ ${FRAMEWORK} == "tf" ]]; then
     echo "========================================================="
     echo "Starting Tensorflow cluster ${cluster_name}"
     echo "========================================================="
+elif [[ ${FRAMEWORK} == "vllm" ]]; then
+    requirements=${VLLM_REQUIREMENTS}
+    echo "========================================================="
+    echo "Starting vLLM cluster ${cluster_name}"
+    echo "========================================================="
 else
-    echo "Please export FRAMEWORK as torch or tf"
+    echo "Please export FRAMEWORK as torch, tf, or vllm"
     exit 1
+fi
+
+if [[ "${TENSOR_PARALLEL}" == "true" ]]; then
+    WORKER_MACHINE_TYPE="g2-standard-24"  # 2 L4 GPUs per node
+else
+    WORKER_MACHINE_TYPE="g2-standard-8"   # 1 L4 GPU per node
 fi
 
 if gcloud dataproc clusters list | grep -q "${cluster_name}"; then
@@ -84,18 +107,18 @@ fi
 
 CLUSTER_PARAMS=(
     --image-version=2.2-ubuntu
-    --region ${COMPUTE_REGION}
-    --num-workers 4
+    --region "${COMPUTE_REGION}"
+    --num-workers 2
     --master-machine-type g2-standard-8
-    --worker-machine-type g2-standard-8
-    --initialization-actions gs://${SPARK_DL_HOME}/init/spark-rapids.sh,${INIT_PATH}
+    --worker-machine-type "${WORKER_MACHINE_TYPE}"
+    --initialization-actions gs://"${SPARK_DL_HOME}"/init/spark-rapids.sh,"${INIT_PATH}"
     --metadata gpu-driver-provider="NVIDIA"
-    --metadata gcs-bucket=${GCS_BUCKET}
-    --metadata spark-dl-home=${SPARK_DL_HOME}
+    --metadata gcs-bucket="${GCS_BUCKET}"
+    --metadata spark-dl-home="${SPARK_DL_HOME}"
     --metadata requirements="${requirements}"
     --worker-local-ssd-interface=NVME
     --optional-components=JUPYTER
-    --bucket ${GCS_BUCKET}
+    --bucket "${GCS_BUCKET}"
     --enable-component-gateway
     --max-idle "60m"
     --subnet=default

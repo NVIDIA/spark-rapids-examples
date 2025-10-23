@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2022, NVIDIA CORPORATION.
+# Copyright (c) 2022-2025, NVIDIA CORPORATION.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ set -ex
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 cd "$SCRIPTPATH"
 
-if [[ $( echo ${SKIP_TESTS} | tr [:upper:] [:lower:] ) == "true" ]];
+if [[ $( echo ${SKIP_TESTS} | tr '[:upper:]' '[:lower:]' ) == "true" ]];
 then
     echo "PYTHON INTEGRATION TESTS SKIPPED..."
     exit 0

@@ -66,7 +66,7 @@ Make sure you have prepared the necessary packages and dataset by following this
 
 #### Note: 
 1. Mortgage and Taxi jobs have ETLs to generate the processed data.
-2. For convenience, a subset of [Taxi](/datasets/) dataset is made available in this repo that can be readily used for launching XGBoost job. Use [ETL](#etl) to generate larger datasets for trainig and testing. 
+2. For convenience, a subset of [Taxi](/datasets/) dataset is made available in this repo that can be readily used for launching XGBoost job. Use [ETL](standalone-python.md#launch-mortgage-or-taxi-etl-part) to generate larger datasets for training and testing.
 3. Agaricus does not have an ETL process, it is combined with XGBoost as there is just a filter operation.
 
 
