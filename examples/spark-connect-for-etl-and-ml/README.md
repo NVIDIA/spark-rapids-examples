@@ -28,16 +28,42 @@ The included demonstration shows:
 
 The setup consists of four Docker services:
 
-1. **Spark Master** (`spark-master`) - Cluster coordination and job scheduling
-2. **Spark Worker** (`spark-worker`) - GPU-enabled worker node for task execution. 
-3. **Spark Connect Server** (`spark-connect-server`) - gRPC interface with RAPIDS integration
+### Apache Spark Standalone Cluster 
+1. **Spark Master** (`spark-master`) - Cluster coordination and job scheduling. This container does 
+not have GPU capability
+
+2. **Spark Worker** (`spark-worker`) - GPU-enabled worker node for task execution. This is the only 
+service requiring and having access to the host GPUs 
+
+### Middle Tier 
+3. **Spark Connect Server** (`spark-connect-server`) - gRPC interface with the RAPIDS integration
+
+### Frontend Server 
 4. **Jupyter Lab - Spark Connect Client** (`spark-connect-client`) - Interactive development environment
+
+### Proxy Service
+5. nginx configured as provide access to various Apache Spark WebUI using the Docker network
+
+### Frontend Web Browser
+6. To use the Notebook App from 4. and review WebUI for 
+the Spark Connect Server and the Spark Standalone Cluster 
+
+To reduce the complexity of the demo, no services for global storage is included.
+The demo relies on the DATA_DIR location mounted from the host in place of a storage 
+service. This location is also used for convenience to preserve metrics and 
+Spark event logs beyond the container life cycle for analysis or debugging.
+
+When the DATA_DIR is accessed in a way that would normally require a global access
+we indicate this by using the `global_` prefix for the variable storing the complete 
+path. Otherwise, we use variables starting with `local_`.
 
 ## 📋 Prerequisites
 
 ### Required
 - [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/linux)
-- At least 8GB of available RAM
+- At least 8GB of available RAM, you might need to scale down or up the memory setting
+for the Driver and the Executor in the CPU runs depending on how many quarters 
+worth of CSV the demo runs with.  
 - Available ports: 2080, 8080, 8081, 8888, 7077, 4040, 15002
 
 ### For GPU Acceleration
@@ -176,17 +202,9 @@ spark = (
 )
 ```
 
-**GPU acceleration test:**
-```python
-spark.conf.set('spark.rapids.sql.enabled', True)
-df = (
-  spark.range(2 ** 35)
-    .withColumn('mod10', col('id') % lit(10))
-    .groupBy('mod10').agg(count('*'))
-    .orderBy('mod10')
-)
-df.explain(mode='extended')  # Shows GPU operations in physical plan
-```
+In the actual demo code we find it handier to use the `SPARK_REMOTE` environment variable instead 
+of having it in the code 
+so it is easy to run it in a Spark Classic way as well. 
 
 **Machine Learning with GPU acceleration:**
 ```python
