@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Copyright (c) 2025, NVIDIA CORPORATION. All rights reserved.
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+if [[ "$SPARK_PUBLIC_DNS" == "container-hostname" ]]; then
+  export SPARK_PUBLIC_DNS=$(hostname)
+elif [[ "$SPARK_PUBLIC_DNS" != "" ]]; then
+  # handles default localhost or any other custom value
+  export SPARK_PUBLIC_DNS
+fi
+
+GPU_COUNT_MAX=$(nvidia-smi -L | wc -l)
+export SPARK_WORKER_OPTS="
+  -Dspark.worker.resource.gpu.amount=${GPU_COUNT_MAX}
+  -Dspark.worker.resource.gpu.discoveryScript=/opt/spark/examples/src/main/scripts/getGpusResources.sh
+"
+
+# workaround for wheels installation not setting the correct LD_LIBRARY_PATH
+# https://github.com/rapidsai/cuml/issues/5300#issuecomment-2084646729
+LD_LIBRARY_PATH=$(find /usr/local/lib/python3.10/dist-packages/nvidia -name lib -type d | xargs printf '%s:'):$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH

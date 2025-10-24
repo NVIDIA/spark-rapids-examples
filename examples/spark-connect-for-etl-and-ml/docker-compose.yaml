@@ -1,0 +1,144 @@
+# Copyright (c) 2025, NVIDIA CORPORATION. All rights reserved.
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# YAML anchors for shared configurations
+x-spark-common: &spark-common
+  networks:
+    - spark-network
+  volumes:
+    - ${DATA_DIR}:/data
+x-spark-common-env: &spark-common-env
+  SPARK_PUBLIC_DNS: "${SPARK_PUBLIC_DNS:-localhost}"
+  SPARK_NO_DAEMONIZE: "1"
+
+services:
+  # Spark Master Node
+  spark-master:
+    <<: *spark-common
+    image: spark-master-image
+    build:
+      context: ./spark-master
+      dockerfile: Dockerfile
+    container_name: spark-master
+    hostname: spark-master
+    environment:
+      <<: *spark-common-env
+    ports:
+      - "8080:8080"   # Spark Master Web UI
+      - "7077:7077"   # Spark Master Port
+    command: /opt/spark/sbin/start-master.sh
+
+  # Spark Worker Node (GPU-enabled)
+  spark-worker:
+    <<: *spark-common
+    image: spark-worker-image
+    build:
+      context: ./spark-worker
+      dockerfile: Dockerfile
+    container_name: spark-worker
+    hostname: spark-worker
+    environment:
+      <<: *spark-common-env
+    ports:
+      - "8081:8081"   # Spark Worker WebUI
+    depends_on:
+      - spark-master
+    command: /opt/spark/sbin/start-worker.sh spark://spark-master:7077
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+
+  # Spark Connect Server
+  spark-connect-server:
+    <<: *spark-common
+    image: spark-connect-server-image
+    build:
+      context: ./spark-connect-server
+      dockerfile: Dockerfile
+      args:
+        - CUDA_VERSION=${CUDA_VERSION:-12}
+        - RAPIDS_VERSION=${RAPIDS_VERSION:-25.08.0}
+        - REPO_URL=${REPO_URL:-https://edge.urm.nvidia.com/artifactory/sw-spark-maven}
+    container_name: spark-connect-server
+    hostname: spark-connect-server
+    environment:
+      <<: *spark-common-env
+    ports:
+      - "4040:4040"               # Spark Driver WebUI
+      - "15002:15002"             # Spark Connect grpc
+    depends_on:
+      - spark-master
+      - spark-worker
+    command: >
+      /opt/spark/sbin/start-connect-server.sh
+        --driver-memory=24G
+        --conf spark.executor.memory=16G
+
+  spark-connect-client:
+    <<: *spark-common
+    image: spark-connect-client-image
+    # hack same uid as spark
+    user: "185:185"
+    group_add:
+      - "users"
+    build:
+      context: ./spark-connect-client
+      dockerfile: Dockerfile
+    container_name: spark-connect-client
+    hostname: spark-connect-client
+    environment:
+      - SPARK_REMOTE=sc://spark-connect-server
+      - CHOWN_HOME=yes
+      - PYDEVD_DISABLE_FILE_VALIDATION=1
+      - MPLCONFIGDIR=/tmp/mplconfigdir
+    ports:
+      - "8888:8888"   # Jupyter Lab Port
+    depends_on:
+      - spark-connect-server
+    command: >
+      start-notebook.sh
+      --NotebookApp.token=''
+      --NotebookApp.password=''
+      --NotebookApp.allow_origin='*'
+      --NotebookApp.allow_remote_access=True
+      --NotebookApp.disable_check_xsrf=True
+      --NotebookApp.allow_root=True
+      --ip=0.0.0.0
+      --port=8888
+
+  proxy-service:
+    build:
+      context: ./proxy-service
+      dockerfile: Dockerfile
+    container_name: proxy-service
+    ports:
+      - "2080:2080"
+    networks:
+      - spark-network
+    depends_on:
+      - spark-master
+      - spark-worker
+      - spark-connect-server
+      - spark-connect-client
+    restart: unless-stopped
+
+networks:
+  spark-network:
+    driver: bridge
