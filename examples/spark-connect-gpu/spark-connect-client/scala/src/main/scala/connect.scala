@@ -41,7 +41,7 @@ object connect extends Serializable {
 
     // Enable GPU accelerating
     spark.conf.set("spark.rapids.sql.enabled", "true")
-    print("--------------- GPU running by enabling spark.rapids.sql.enabled ---------------")
+    println("--------------- GPU running by enabling spark.rapids.sql.enabled ---------------")
     explain(df)
     df.show()
 
