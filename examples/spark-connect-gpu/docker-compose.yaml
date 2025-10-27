@@ -89,7 +89,7 @@ services:
     command: >
       /opt/spark/sbin/start-connect-server.sh
         --driver-memory=24G
-        --conf spark.executor.memory=30G
+        --conf spark.executor.memory=28G
         --conf spark.executor.cores=8
 
   spark-connect-client:
