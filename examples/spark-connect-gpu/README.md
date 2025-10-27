@@ -262,7 +262,7 @@ and a 2x8-core CPU
 
 ### Spark Connect Server
 - **Image**: Custom build based on `apache/spark:4.0.0` with Spark RAPIDS ETL and ML Plugins
-- **RAPIDS Version**: 25.08.0 for CUDA 12
+- **RAPIDS Version**: 25.10.0 for CUDA 12
 - **Ports**: 15002 (gRPC), 4040 (Driver UI)
 - **Configuration**: Optimized for GPU acceleration with memory management
 
