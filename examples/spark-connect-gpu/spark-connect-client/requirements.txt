@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+jupyterlab
 matplotlib
 # https://spark.apache.org/docs/latest/api/python/getting_started/install.html#python-spark-connect-client
 # ... pure Python library
