@@ -17,7 +17,6 @@
 # Keep the same with https://github.com/rapidsai/rapids-cmake/blob/main/RAPIDS.cmake
 cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
 
-# Define the default branch for all rapids repositories
 set(DEFAULT_BRANCH "main")
 
 # set to the rapids-cmake-branch
