@@ -20,7 +20,7 @@ x-spark-common: &spark-common
   networks:
     - spark-network
   volumes:
-    - ${DATA_DIR}:/data
+    - ${DATA_DIR:-${PWD}/data}:/data
 x-spark-common-env: &spark-common-env
   SPARK_PUBLIC_DNS: "${SPARK_PUBLIC_DNS:-localhost}"
   SPARK_NO_DAEMONIZE: "1"
@@ -89,15 +89,12 @@ services:
     command: >
       /opt/spark/sbin/start-connect-server.sh
         --driver-memory=24G
-        --conf spark.executor.memory=16G
+        --conf spark.executor.memory=28G
+        --conf spark.executor.cores=8
 
   spark-connect-client:
     <<: *spark-common
     image: spark-connect-client-image
-    # hack same uid as spark
-    user: "185:185"
-    group_add:
-      - "users"
     build:
       context: ./spark-connect-client
       dockerfile: Dockerfile
@@ -105,23 +102,20 @@ services:
     hostname: spark-connect-client
     environment:
       - SPARK_REMOTE=sc://spark-connect-server
-      - CHOWN_HOME=yes
-      - PYDEVD_DISABLE_FILE_VALIDATION=1
-      - MPLCONFIGDIR=/tmp/mplconfigdir
+
     ports:
       - "8888:8888"   # Jupyter Lab Port
     depends_on:
       - spark-connect-server
     command: >
-      start-notebook.sh
-      --NotebookApp.token=''
-      --NotebookApp.password=''
-      --NotebookApp.allow_origin='*'
-      --NotebookApp.allow_remote_access=True
-      --NotebookApp.disable_check_xsrf=True
-      --NotebookApp.allow_root=True
-      --ip=0.0.0.0
-      --port=8888
+      bash -c
+      'jupyter-lab
+      --port 8888
+      --no-browser
+      --IdentityProvider.token=""
+      --ServerApp.password=""
+      --ServerApp.ip='0.0.0.0'
+      --ServerApp.allow_origin='*' '
 
   proxy-service:
     build:

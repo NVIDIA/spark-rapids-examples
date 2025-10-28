@@ -1,10 +1,7 @@
 # GPU-Accelerated Spark Connect for ETL and ML (Spark 4.0)
 
-This project demonstrates a complete GPU-accelerated ETL and Machine Learning pipeline using Apache Spark 4.0 with Spark Connect, featuring the RAPIDS Accelerator. The example showcases the capabilities presented in the Data and AI Summit 2025 session:
-[GPU Accelerated Spark Connect](https://www.databricks.com/dataaisummit/session/gpu-accelerated-spark-connect).
-It is similar to the XGBoost example in this repo.
-The key difference is that it uses Spark Connect thus the notebook server node has no heavy dependencies and it uses
-LogisticRegression to demonstrate accelerated Spark MLlib functionality
+This project demonstrates some python/scala batch jobs and a complete GPU-accelerated ETL and
+Machine Learning pipeline using Apache Spark 4.0 with Spark Connect, featuring the RAPIDS Accelerator.
 
 ## 🚀 Key Features
 
@@ -16,13 +13,6 @@ LogisticRegression to demonstrate accelerated Spark MLlib functionality
 - **Jupyter Lab integration** for interactive development
 - **Docker Compose** setup for easy deployment with clear distinction what dependencies are
 required by what service and where GPUs are really used
-
-## 📊 Performance Highlights
-
-The included demonstration shows:
-- **Comprehensive ETL pipeline** processing mortgage data with complex transformations for feature engineering
-- **Machine Learning workflow** using Logistic Regression with Feature Hashing
-- **GPU vs CPU performance comparison** with visualization of the speedup achieved on the hardware the demo is run
 
 ## 🏗️ Architecture
 
@@ -49,21 +39,19 @@ service requiring and having access to the host GPUs
 the Spark Connect Server and the Spark Standalone Cluster 
 
 To reduce the complexity of the demo, no services for global storage is included.
-The demo relies on the DATA_DIR location mounted from the host in place of a storage 
-service. This location is also used for convenience to preserve metrics and 
+The demo relies on the **DATA_DIR** location mounted from the host in place of a storage
+service. This location is also used for convenience to preserve metrics and
 Spark event logs beyond the container life cycle for analysis or debugging.
 
-When the DATA_DIR is accessed in a way that would normally require a global access
-we indicate this by using the `global_` prefix for the variable storing the complete 
+When the **DATA_DIR** is accessed in a way that would normally require a global access
+we indicate this by using the `global_` prefix for the variable storing the complete
 path. Otherwise, we use variables starting with `local_`.
 
 ## 📋 Prerequisites
 
 ### Required
 - [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/linux)
-- At least 8GB of available RAM, you might need to scale down or up the memory setting
-for the Driver and the Executor in the CPU runs depending on how many quarters 
-worth of CSV the demo runs with.  
+- At least 8GB of available RAM
 - Available ports: 2080, 8080, 8081, 8888, 7077, 4040, 15002
 
 ### For GPU Acceleration
@@ -76,7 +64,7 @@ worth of CSV the demo runs with.
 
 1. **Clone and navigate to the project:**
    ```bash
-   cd examples/spark-connect-for-etl-and-ml
+   cd examples/spark-connect-gpu
    ```
 
 2. **Set up data directory (if needed):**
@@ -87,20 +75,9 @@ worth of CSV the demo runs with.
    
    ```
    Download a few quarters worth of the [Mortgage Dataset](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
-   to the `$DATA_DIR/mortgage.input.csv` location. The demo at the Data+AI Summit'25 used the following quarters
-   
-```bash
-$ du -h *
-503M    2023Q1.csv
-412M    2023Q2.csv
-162M    2023Q3.csv
-1.1G    2023Q4.csv
-
-
-```
+   to the `$DATA_DIR/mortgage.input.csv` location. More details can refer to [How to download the Mortgage dataset](https://github.com/NVIDIA/spark-rapids-examples/blob/main/docs/get-started/xgboost-examples/dataset/mortgage.md)
 
 3. **Start all services:**
-
 
 ```bash
 $ docker compose up -d
@@ -121,7 +98,7 @@ $ docker compose up -d
     
   ***Option 2***
 
-  if you launch docker compose in the environment with SPARK_PUBLIC_DNS=container-hostname, all containers'
+  if you launch docker compose in the environment with `SPARK_PUBLIC_DNS=container-hostname`, all containers'
   web UI but Jupyter Lab is available using the corresponding container host names such as spark-master
   
    - **Jupyter Lab**: http://localhost:8888 (no password required) - Interactive notebook environment
@@ -164,88 +141,21 @@ $ docker compose up -d
   ssh <user@gpu-host> -L 2080:localhost:2080 -L 8888:localhost:8888 
   ```
 
-
-5. **Open the demo notebook:**
-   - Navigate to `work/spark-connect-demo.ipynb` in Jupyter Lab
+5. **Run the demo notebook:**
+   - Navigate to `notebook/spark-connect-gpu-etl-ml.ipynb` in Jupyter Lab
    - You can also open it in VS Code by selecting http://localhost:8888 as the
      existing notebook server connection
    - Run the complete ETL and ML pipeline demonstration
 
+6. **Run the demo python batch job:**
+   - Create a Terminal in the Jupyter Lab
+   - Navigate to `/home/spark/demo/python`
+   - Execute `python batch-job.py`
 
-## 📝 Demo Notebook Overview
-
-The `spark-connect-demo.ipynb` notebook demonstrates:
-
-### ETL Pipeline
-- **Data ingestion** from CSV with custom schema
-- **Complex transformations** including date parsing and delinquency calculations
-- **String-to-numeric encoding** for categorical features
-- **Data joins and aggregations** with mortgage performance data
-
-### Machine Learning Workflow
-- **Feature engineering** with FeatureHasher and VectorAssembler
-- **Logistic Regression** training for multi-class prediction
-- **Model evaluation** with performance metrics
-- **GPU vs CPU timing comparisons**
-
-### Key Code Examples
-
-**Connecting to Spark with GPU acceleration:**
-```python
-from pyspark.sql import SparkSession
-
-spark = (
-  SparkSession.builder
-    .remote('sc://spark-connect-server')
-    .appName('GPU-Accelerated-ETL-ML-Demo')
-    .getOrCreate()
-)
-```
-
-In the actual demo code we find it handier to use the `SPARK_REMOTE` environment variable instead 
-of having it in the code 
-so it is easy to run it in a Spark Classic way as well. 
-
-**Machine Learning with GPU acceleration:**
-```python
-from pyspark.ml import Pipeline
-from pyspark.ml.classification import LogisticRegression
-from pyspark.ml.feature import VectorAssembler, FeatureHasher
-
-spark.conf.set('spark.connect.ml.backend.classes', 'com.nvidia.rapids.ml.Plugin')
-
-# Feature preparation
-hasher = FeatureHasher(inputCols=categorical_cols, outputCol='hashed_categorical')
-assembler = VectorAssembler().setInputCols(numerical_cols + ['hashed_categorical']).setOutputCol('features')
-
-# Model training
-logistic = LogisticRegression().setFeaturesCol('features').setLabelCol('delinquency_12')
-pipeline = Pipeline().setStages([hasher, assembler, logistic])
-model = pipeline.fit(training_data)
-```
-
-### Results 
-
-This demo was tested on a machine with a 6GiB RTX A3000 Laptop GPU 
-
-```bash
-$ nvidia-smi
-+-----------------------------------------------------------------------------------------+
-| NVIDIA-SMI 560.35.05              Driver Version: 560.35.05      CUDA Version: 12.6     |
-|-----------------------------------------+------------------------+----------------------+
-| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
-| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
-|                                         |                        |               MIG M. |
-|=========================================+========================+======================|
-|   0  NVIDIA RTX A3000 Laptop GPU    Off |   00000000:01:00.0 Off |                  N/A |
-| N/A   56C    P8             13W /   60W |    1353MiB /   6144MiB |      1%      Default |
-|                                         |                        |                  N/A |
-+-----------------------------------------+------------------------+----------------------+
-```
-
-and a 2x8-core CPU
-
-![GPU Acceleration Results](example-acceleration-chart.png)
+7. **Run the demo scala batch job:**
+   - Create a Terminal in the Jupyter Lab
+   - Navigate to `/home/spark/demo/scala`
+   - Execute `./run.sh`
 
 ## 🐳 Service Details
 
@@ -267,7 +177,7 @@ and a 2x8-core CPU
 - **Configuration**: Optimized for GPU acceleration with memory management
 
 ### JupyterLab - Spark Connect Client
-- **Image**: Based on `jupyter/minimal-notebook:latest`
+- **Image**: Based on `apache/spark:4.0.0`
 - **Environment**: Pre-configured with PySpark Connect Client
 - **Ports**: 8888 (Jupyter Lab)
 - **Volumes**: Notebooks and work directory mounted

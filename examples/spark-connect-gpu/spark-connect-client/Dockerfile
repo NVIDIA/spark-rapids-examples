@@ -14,11 +14,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Build stage
+FROM maven:3.8-openjdk-17 AS builder
+# Set platform to linux/amd64
+ENV DOCKER_DEFAULT_PLATFORM=linux/amd64
+# Copy the entire project
+COPY scala /build
+WORKDIR /build
+# Build all modules
+RUN mvn clean install -DskipTests
 
-FROM jupyter/minimal-notebook:latest
+# Spark connect client image
+FROM apache/spark:4.0.0
 
-COPY requirements.txt /home/jovyan/requirements.txt
-RUN pip install -r /home/jovyan/requirements.txt
+USER root
+COPY requirements.txt /tmp/requirements.txt
+RUN pip3 install -r /tmp/requirements.txt
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
-COPY work /home/jovyan/work
-COPY spark-connect-demo.ipynb /home/jovyan/spark-connect-demo.ipynb 
+RUN mkdir -p /home/spark/demo
+
+COPY notebook /home/spark/demo/notebook
+COPY scala /home/spark/demo/scala
+COPY python /home/spark/demo/python
+COPY --from=builder /build/target/*-jar-with-dependencies.jar /home/spark/demo/scala/
+
+RUN chown -R spark:spark /home/spark
+RUN chown -R spark:spark /home/spark/demo
+RUN usermod -d /home/spark spark
+
+USER spark
+WORKDIR /home/spark/demo
+
+SHELL [ "/bin/bash", "-c" ]
+ENV SHELL=/bin/bash
