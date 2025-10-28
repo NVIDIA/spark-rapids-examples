@@ -70,78 +70,79 @@ path. Otherwise, we use variables starting with `local_`.
 2. **Set up data directory (if needed):**
    ```bash
    export DATA_DIR=$(pwd)/data
-   mkdir -p $DATA_DIR/mortgage.input.csv $DATA_DIR/spark-events 
+   mkdir -p $DATA_DIR/mortgage.input.csv $DATA_DIR/spark-events $DATA_DIR/nds
    chmod 1777 $DATA_DIR $DATA_DIR/spark-events 
-   
    ```
    Download a few quarters worth of the [Mortgage Dataset](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
    to the `$DATA_DIR/mortgage.input.csv` location. More details can refer to [How to download the Mortgage dataset](https://github.com/NVIDIA/spark-rapids-examples/blob/main/docs/get-started/xgboost-examples/dataset/mortgage.md)
 
+   To run NDS (see [NDS v20 Automation](https://github.com/NVIDIA/spark-rapids-benchmarks/tree/dev/nds#nds-v20-automation)),
+   generate the dataset and place it in "$DATA_DIR/nds". For more details,
+   refer to [NDS Data Generation](https://github.com/NVIDIA/spark-rapids-benchmarks/tree/dev/nds#data-generation).
+
 3. **Start all services:**
 
-```bash
-$ docker compose up -d
-```
-
+   ```bash
+   $ docker compose up -d
+   ```
    (`docker compose` can be used in place of `docker-compose` here and throughout)
 
 4. **Access the Web UI interfaces:**
 
-  ***Option 1 (default)***
+   ***Option 1 (default)***
 
-  All containers' webUI are available using localhost URI's by default
+   All containers' webUI are available using localhost URI's by default
 
    - **Jupyter Lab**: http://localhost:8888 (no password required) - Interactive notebook environment
    - **Spark Master UI**: http://localhost:8080 - Cluster coordination and resource management
    - **Spark Worker UI**: http://localhost:8081 - GPU-enabled worker node status and tasks
    - **Spark Driver UI**: http://localhost:4040 - Application monitoring and SQL queries
     
-  ***Option 2***
+   ***Option 2***
 
-  if you launch docker compose in the environment with `SPARK_PUBLIC_DNS=container-hostname`, all containers'
-  web UI but Jupyter Lab is available using the corresponding container host names such as spark-master
+   if you launch docker compose in the environment with `SPARK_PUBLIC_DNS=container-hostname`, all containers'
+   web UI but Jupyter Lab is available using the corresponding container host names such as spark-master
   
    - **Jupyter Lab**: http://localhost:8888 (no password required) - Interactive notebook environment
    - **Spark Master UI**: http://spark-master:8080 - Cluster coordination and resource management
    - **Spark Worker UI**: http://spark-worker:8081 - GPU-enabled worker node status and tasks
    - **Spark Driver UI**: http://spark-connect-server:4040 - Application monitoring and SQL queries
    
-  Docker DNS names require configuring your browser an http proxy on the Docker network exposed at
-  http://localhost:2080. 
+   Docker DNS names require configuring your browser an http proxy on the Docker network exposed at http://localhost:2080.
   
-  Here are examples of launching Google Chrome with a temporary user profile without making persistent changes on the browser 
+   Here are examples of launching Google Chrome with a temporary user profile without making persistent changes on the browser
 
-  ***Linux***
+   ***Linux***
 
-  ```bash
-  $ google-chrome --user-data-dir="/tmp/chrome-proxy-profile" --proxy-server="http=http://localhost:2080"
-  ```
+   ```bash
+   $ google-chrome --user-data-dir="/tmp/chrome-proxy-profile" --proxy-server="http=http://localhost:2080"
+   ```
 
-  ***macOS***
+   ***macOS***
 
-  ```bash
-  $ open -n -a "Google Chrome" --args --user-data-dir="/tmp/chrome-proxy-profile" --proxy-server="http=http://localhost:2080"
-  ```
+   ```bash
+   $ open -n -a "Google Chrome" --args --user-data-dir="/tmp/chrome-proxy-profile" --proxy-server="http=http://localhost:2080"
+   ```
 
-  ***Launching containers on a remote machine***
+   ***Launching containers on a remote machine***
 
-  Your local machine might not have a GPU, and it is common in this case to use a 
-  remote machine/cluster with GPUs residing in a remote Cloud or on-prem environment
+   Your local machine might not have a GPU, and it is common in this case to use a
+   remote machine/cluster with GPUs residing in a remote Cloud or on-prem environment
 
-  If you followed the default Option 1 make sure to create local port forwards for
-  every webUI port
+   If you followed the default Option 1 make sure to create local port forwards for
+   every webUI port
 
-  ```bash
-  ssh <user@gpu-host> -L 8888:localhost:8888 -L 8888:localhost:8080 -L 8081:localhost:8081 -L 4040:localhost:4040 
-  ```
+   ```bash
+   ssh <user@gpu-host> -L 8888:localhost:8888 -L 8888:localhost:8080 -L 8081:localhost:8081 -L 4040:localhost:4040
+   ```
 
-  if you used Option 2 it is sufficient to forward ports only for the HTTP proxy and the Notebook app:
+   if you used Option 2 it is sufficient to forward ports only for the HTTP proxy and the Notebook app:
   
-  ```bash
-  ssh <user@gpu-host> -L 2080:localhost:2080 -L 8888:localhost:8888 
-  ```
+   ```bash
+   ssh <user@gpu-host> -L 2080:localhost:2080 -L 8888:localhost:8888
+   ```
 
-5. **Run the demo notebook:**
+5. **Run the demo ETL + ML notebook:**
    - Navigate to `notebook/spark-connect-gpu-etl-ml.ipynb` in Jupyter Lab
    - You can also open it in VS Code by selecting http://localhost:8888 as the
      existing notebook server connection
@@ -156,6 +157,10 @@ $ docker compose up -d
    - Create a Terminal in the Jupyter Lab
    - Navigate to `/home/spark/demo/scala`
    - Execute `./run.sh`
+
+8. **Run the demo NDS notebook:**
+   - Navigate to `nds/nds.ipynb` in Jupyter Lab
+   - Run the nds demonstration
 
 ## Advanced GPU Configurations
 
