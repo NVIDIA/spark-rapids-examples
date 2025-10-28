@@ -17,10 +17,13 @@
 # Keep the same with https://github.com/rapidsai/rapids-cmake/blob/main/RAPIDS.cmake
 cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
 
-# set to the rapids-cmake-branch
-set(rapids-cmake-branch "main")
+# Define the default branch for all rapids repositories
+set(DEFAULT_BRANCH "main")
 
-file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/main/RAPIDS.cmake
+# set to the rapids-cmake-branch
+set(rapids-cmake-branch "${DEFAULT_BRANCH}")
+
+file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/${DEFAULT_BRANCH}/RAPIDS.cmake
      ${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 include(${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 
@@ -91,7 +94,7 @@ rapids_cpm_init()
 rapids_cpm_find(cudf 25.12.00
         CPM_ARGS
         GIT_REPOSITORY  https://github.com/rapidsai/cudf.git
-        GIT_TAG         main
+        GIT_TAG         ${DEFAULT_BRANCH}
         GIT_SHALLOW     TRUE
         SOURCE_SUBDIR   cpp
         OPTIONS         "BUILD_TESTS OFF"
