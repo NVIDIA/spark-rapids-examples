@@ -11,6 +11,18 @@
     },
     {
       "pattern": "/examples"
+    },
+    {
+      "pattern": "^http://localhost"
+    },
+    {
+      "pattern": "^http://spark-master"
+    },
+    {
+      "pattern": "^http://spark-worker"
+    },
+    {
+      "pattern": "^http://spark-connect-server"
     }
   ],
   "timeout": "15s",
