@@ -157,6 +157,16 @@ $ docker compose up -d
    - Navigate to `/home/spark/demo/scala`
    - Execute `./run.sh`
 
+## Advanced GPU Configurations
+
+Most users won't need to adjust the GPU configurations. However, if you'd like
+to tune your GPU for better performance, refer to the
+[advanced GPU configurations documentation](https://nvidia.github.io/spark-rapids/docs/additional-functionality/advanced_configs.html).
+
+**Note**: Configurations prefixed with spark.rapids.sql are session-specific
+and can be set safely. However, those marked as **startup** will not take
+effect in Spark Connect.
+
 ## 🐳 Service Details
 
 ### Spark Master
