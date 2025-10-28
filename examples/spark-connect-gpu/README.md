@@ -76,7 +76,7 @@ path. Otherwise, we use variables starting with `local_`.
    Download a few quarters worth of the [Mortgage Dataset](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data)
    to the `$DATA_DIR/mortgage.input.csv` location. More details can refer to [How to download the Mortgage dataset](https://github.com/NVIDIA/spark-rapids-examples/blob/main/docs/get-started/xgboost-examples/dataset/mortgage.md)
 
-   To run NDS (see [NDS v20 Automation](https://github.com/NVIDIA/spark-rapids-benchmarks/tree/dev/nds#nds-v20-automation)),
+   To run NDS (see [NDS v2.0 Automation](https://github.com/NVIDIA/spark-rapids-benchmarks/tree/dev/nds#nds-v20-automation)),
    generate the dataset and place it in "$DATA_DIR/nds". For more details,
    refer to [NDS Data Generation](https://github.com/NVIDIA/spark-rapids-benchmarks/tree/dev/nds#data-generation).
 
