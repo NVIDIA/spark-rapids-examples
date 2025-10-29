@@ -37,6 +37,7 @@ RUN mkdir -p /home/spark/demo
 COPY notebook /home/spark/demo/notebook
 COPY scala /home/spark/demo/scala
 COPY python /home/spark/demo/python
+COPY nds /home/spark/demo/nds
 COPY --from=builder /build/target/*-jar-with-dependencies.jar /home/spark/demo/scala/
 
 RUN chown -R spark:spark /home/spark
