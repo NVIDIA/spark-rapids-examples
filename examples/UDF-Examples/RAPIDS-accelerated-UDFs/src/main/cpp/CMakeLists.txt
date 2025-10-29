@@ -20,7 +20,7 @@ cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
 # set to the rapids-cmake-branch
 set(rapids-cmake-branch "main")
 
-file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/main/RAPIDS.cmake
+file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/${rapids-cmake-branch}/RAPIDS.cmake
      ${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 include(${CMAKE_BINARY_DIR}/RAPIDS.cmake)
 
@@ -91,7 +91,7 @@ rapids_cpm_init()
 rapids_cpm_find(cudf 25.12.00
         CPM_ARGS
         GIT_REPOSITORY  https://github.com/rapidsai/cudf.git
-        GIT_TAG         main
+        GIT_TAG         ${rapids-cmake-branch}
         GIT_SHALLOW     TRUE
         SOURCE_SUBDIR   cpp
         OPTIONS         "BUILD_TESTS OFF"
