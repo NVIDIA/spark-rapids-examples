@@ -42,7 +42,7 @@ def test_java_udaf_integer_average_groupby():
 @pytest.mark.rapids_udf_example_native
 def test_java_udaf_integer_average_reduction():
     def int_col_table(spark):
-        load_java_udaf(spark, "int_avg", "com.nvidia.spark.rapids.udf.java.IntegerAverage")
+        load_java_udaf(spark, "int_avg", "com.nvidia.spark.rapids.udaf.java.IntegerAverage")
         int_value_gen = IntegerGen(min_val=-100, max_val=100)  # avoid integer overflow
         return unary_op_df(spark, int_value_gen)
 
