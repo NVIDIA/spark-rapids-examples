@@ -18,7 +18,7 @@ from asserts import assert_gpu_and_cpu_are_equal_sql
 from data_gen import *
 from rapids_udf_test import drop_udf
 
-def load_java_udaf(spark, udf_ame, udf_class):
+def load_java_udaf(spark, udf_name, udf_class):
     drop_udf(spark, udf_ame)
     spark.udf.registerJavaUDAF(udf_ame, udf_class)
 
