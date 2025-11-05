@@ -133,7 +133,7 @@ path. Otherwise, we use variables starting with `local_`.
    every webUI port
 
    ```bash
-   ssh <user@gpu-host> -L 8888:localhost:8888 -L 8888:localhost:8080 -L 8081:localhost:8081 -L 4040:localhost:4040
+   ssh <user@gpu-host> -L 8888:localhost:8888 -L 8080:localhost:8080 -L 8081:localhost:8081 -L 4040:localhost:4040
    ```
 
    if you used Option 2 it is sufficient to forward ports only for the HTTP proxy and the Notebook app:
