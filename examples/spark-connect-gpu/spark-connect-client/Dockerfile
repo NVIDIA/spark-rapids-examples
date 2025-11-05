@@ -28,6 +28,10 @@ RUN mvn clean install -DskipTests
 FROM apache/spark:4.0.0
 
 USER root
+
+RUN set -x  \
+    && apt -q update -y && apt-get install -y vim git
+
 COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install -r /tmp/requirements.txt
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
@@ -36,8 +40,18 @@ RUN mkdir -p /home/spark/demo
 
 COPY notebook /home/spark/demo/notebook
 COPY scala /home/spark/demo/scala
-COPY python /home/spark/demo/python
 COPY --from=builder /build/target/*-jar-with-dependencies.jar /home/spark/demo/scala/
+COPY python /home/spark/demo/python
+
+# Prepare NDS, make NDS as a package.
+COPY nds /home/spark/demo/nds
+RUN git clone --depth 1 -b dev https://github.com/NVIDIA/spark-rapids-benchmarks /tmp/spark-rapids-benchmarks && \
+    cp /tmp/spark-rapids-benchmarks/nds/nds_power.py \
+       /tmp/spark-rapids-benchmarks/nds/check.py \
+       /tmp/spark-rapids-benchmarks/nds/nds_schema.py \
+       /tmp/spark-rapids-benchmarks/nds/PysparkBenchReport.py \
+       /home/spark/demo/nds/ && \
+    rm -rf /tmp/spark-rapids-benchmarks
 
 RUN chown -R spark:spark /home/spark
 RUN chown -R spark:spark /home/spark/demo
