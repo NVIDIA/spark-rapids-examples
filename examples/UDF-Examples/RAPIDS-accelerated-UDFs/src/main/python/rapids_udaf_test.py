@@ -20,7 +20,7 @@ from rapids_udf_test import drop_udf
 
 def load_java_udaf(spark, udf_name, udf_class):
     drop_udf(spark, udf_name)
-    spark.udf.registerJavaUDAF(udf_ame, udf_class)
+    spark.udf.registerJavaUDAF(udf_name, udf_class)
 
 
 @pytest.mark.ignore_order(local=True)
