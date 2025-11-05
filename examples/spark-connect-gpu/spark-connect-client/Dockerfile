@@ -45,7 +45,7 @@ COPY python /home/spark/demo/python
 
 # Prepare NDS, make NDS as a package.
 COPY nds /home/spark/demo/nds
-RUN git clone --depth 1 -b spark-connect https://github.com/wbo4958/spark-rapids-benchmarks /tmp/spark-rapids-benchmarks && \
+RUN git clone --depth 1 -b dev https://github.com/NVIDIA/spark-rapids-benchmarks /tmp/spark-rapids-benchmarks && \
     cp /tmp/spark-rapids-benchmarks/nds/nds_power.py \
        /tmp/spark-rapids-benchmarks/nds/check.py \
        /tmp/spark-rapids-benchmarks/nds/nds_schema.py \
