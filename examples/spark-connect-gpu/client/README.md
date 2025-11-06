@@ -9,7 +9,7 @@ The setup consists of four Docker services:
 
 ### GPU-accelerated Spark Connect Server
 
-The first step is to setup GPU-accerated Spark connect Server, more details can be fount at [here](../server/README.md)
+The first step is to setup GPU-accerated Spark connect Server, more details can be found at [here](../server/README.md)
 
 ### Client side
 
