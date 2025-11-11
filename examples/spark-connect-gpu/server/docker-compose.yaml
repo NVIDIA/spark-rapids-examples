@@ -92,31 +92,6 @@ services:
         --conf spark.executor.memory=28G
         --conf spark.executor.cores=8
 
-  spark-connect-client:
-    <<: *spark-common
-    image: spark-connect-client-image
-    build:
-      context: ./spark-connect-client
-      dockerfile: Dockerfile
-    container_name: spark-connect-client
-    hostname: spark-connect-client
-    environment:
-      - SPARK_REMOTE=sc://spark-connect-server
-
-    ports:
-      - "8888:8888"   # Jupyter Lab Port
-    depends_on:
-      - spark-connect-server
-    command: >
-      bash -c
-      'jupyter-lab
-      --port 8888
-      --no-browser
-      --IdentityProvider.token=""
-      --ServerApp.password=""
-      --ServerApp.ip='0.0.0.0'
-      --ServerApp.allow_origin='*' '
-
   proxy-service:
     build:
       context: ./proxy-service
@@ -130,7 +105,6 @@ services:
       - spark-master
       - spark-worker
       - spark-connect-server
-      - spark-connect-client
     restart: unless-stopped
 
 networks:

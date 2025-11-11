@@ -1,7 +1,7 @@
-# GPU-Accelerated Spark Connect for ETL and ML (Spark 4.0)
+# GPU-Accelerated Spark Connect Server
 
-This project demonstrates some python/scala batch jobs and a complete GPU-accelerated ETL and
-Machine Learning pipeline using Apache Spark 4.0 with Spark Connect, featuring the RAPIDS Accelerator.
+This project demonstrates how to set up a GPU-accelerated Spark server using Apache Spark 4.0
+with Spark Connect, featuring the RAPIDS Accelerator.
 
 ## 🚀 Key Features
 
@@ -9,7 +9,6 @@ Machine Learning pipeline using Apache Spark 4.0 with Spark Connect, featuring t
 - **GPU acceleration** via RAPIDS Accelerator
 - **MLlib over Spark Connect** - new in Spark 4.0
 - **Zero-code-change acceleration** - existing Spark applications automatically benefit
-- **Complete ETL and ML pipeline** demonstration with mortgage data
 - **Jupyter Lab integration** for interactive development
 - **Docker Compose** setup for easy deployment with clear distinction what dependencies are
 required by what service and where GPUs are really used
@@ -28,15 +27,11 @@ service requiring and having access to the host GPUs
 ### Middle Tier 
 3. **Spark Connect Server** (`spark-connect-server`) - gRPC interface with the RAPIDS integration
 
-### Frontend Server 
-4. **Jupyter Lab - Spark Connect Client** (`spark-connect-client`) - Interactive development environment
-
 ### Proxy Service
-5. nginx configured as provide access to various Apache Spark WebUI using the Docker network
+4. nginx configured as provide access to various Apache Spark WebUI using the Docker network
 
 ### Frontend Web Browser
-6. To use the Notebook App from 4. and review WebUI for 
-the Spark Connect Server and the Spark Standalone Cluster 
+5. WebUI for the Spark Connect Server and the Spark Standalone Cluster
 
 To reduce the complexity of the demo, no services for global storage is included.
 The demo relies on the **DATA_DIR** location mounted from the host in place of a storage
@@ -64,7 +59,7 @@ path. Otherwise, we use variables starting with `local_`.
 
 1. **Clone and navigate to the project:**
    ```bash
-   cd examples/spark-connect-gpu
+   cd examples/spark-connect-gpu/server
    ```
 
 2. **Set up data directory (if needed):**
@@ -93,7 +88,6 @@ path. Otherwise, we use variables starting with `local_`.
 
    All containers' webUI are available using localhost URI's by default
 
-   - **Jupyter Lab**: http://localhost:8888 (no password required) - Interactive notebook environment
    - **Spark Master UI**: http://localhost:8080 - Cluster coordination and resource management
    - **Spark Worker UI**: http://localhost:8081 - GPU-enabled worker node status and tasks
    - **Spark Driver UI**: http://localhost:4040 - Application monitoring and SQL queries
@@ -103,7 +97,6 @@ path. Otherwise, we use variables starting with `local_`.
    if you launch docker compose in the environment with `SPARK_PUBLIC_DNS=container-hostname`, all containers'
    web UI but Jupyter Lab is available using the corresponding container host names such as spark-master
   
-   - **Jupyter Lab**: http://localhost:8888 (no password required) - Interactive notebook environment
    - **Spark Master UI**: http://spark-master:8080 - Cluster coordination and resource management
    - **Spark Worker UI**: http://spark-worker:8081 - GPU-enabled worker node status and tasks
    - **Spark Driver UI**: http://spark-connect-server:4040 - Application monitoring and SQL queries
@@ -142,36 +135,6 @@ path. Otherwise, we use variables starting with `local_`.
    ssh <user@gpu-host> -L 2080:localhost:2080 -L 8888:localhost:8888
    ```
 
-5. **Run the demo ETL + ML notebook:**
-   - Navigate to `notebook/spark-connect-gpu-etl-ml.ipynb` in Jupyter Lab
-   - You can also open it in VS Code by selecting http://localhost:8888 as the
-     existing notebook server connection
-   - Run the complete ETL and ML pipeline demonstration
-
-6. **Run the demo python batch job:**
-   - Create a Terminal in the Jupyter Lab
-   - Navigate to `/home/spark/demo/python`
-   - Execute `python batch-job.py`
-
-7. **Run the demo scala batch job:**
-   - Create a Terminal in the Jupyter Lab
-   - Navigate to `/home/spark/demo/scala`
-   - Execute `./run.sh`
-
-8. **Run the demo NDS notebook:**
-   - Navigate to `nds/nds.ipynb` in Jupyter Lab
-   - Run the nds demonstration
-
-## Advanced GPU Configurations
-
-Most users won't need to adjust the GPU configurations. However, if you'd like
-to tune your GPU for better performance, refer to the
-[advanced GPU configurations documentation](https://nvidia.github.io/spark-rapids/docs/additional-functionality/advanced_configs.html).
-
-**Note**: Configurations prefixed with spark.rapids.sql are session-specific
-and can be set safely. However, those marked as **startup** will not take
-effect in Spark Connect.
-
 ## 🐳 Service Details
 
 ### Spark Master
@@ -190,12 +153,6 @@ effect in Spark Connect.
 - **RAPIDS Version**: 25.10.0 for CUDA 12
 - **Ports**: 15002 (gRPC), 4040 (Driver UI)
 - **Configuration**: Optimized for GPU acceleration with memory management
-
-### JupyterLab - Spark Connect Client
-- **Image**: Based on `apache/spark:4.0.0`
-- **Environment**: Pre-configured with PySpark Connect Client
-- **Ports**: 8888 (Jupyter Lab)
-- **Volumes**: Notebooks and work directory mounted
 
 ## 📊 Performance Monitoring
 
@@ -220,7 +177,6 @@ Logs for the spark driver/connect server, standalone master, standalone worker, 
 docker logs spark-connect-server
 docker logs spark-master
 docker logs spark-worker
-docker logs spark-connect-client
 ```
 
 Spark executor logs can be accessed via the Spark UI as usual.
