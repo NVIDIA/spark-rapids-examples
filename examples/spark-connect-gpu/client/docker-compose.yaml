@@ -19,11 +19,6 @@ x-spark-common: &spark-common
   volumes:
     - ${DATA_DIR:-${PWD}/data}:/data
 
-networks:
-  # use the server network
-  server_spark-network:
-    external: true
-
 services:
   spark-connect-client:
     <<: *spark-common
@@ -34,7 +29,7 @@ services:
     container_name: spark-connect-client
     hostname: spark-connect-client
     environment:
-      - SPARK_REMOTE=sc://spark-connect-server
+      - SPARK_REMOTE=${SPARK_REMOTE:-sc://localhost}
     ports:
       - "8888:8888"   # Jupyter Lab Port
     command: >
@@ -46,5 +41,3 @@ services:
       --ServerApp.password=""
       --ServerApp.ip='0.0.0.0'
       --ServerApp.allow_origin='*' '
-    networks:
-      - server_spark-network

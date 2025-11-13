@@ -20,7 +20,6 @@ from pyspark.sql.functions import *
 
 spark = (SparkSession
          .builder
-         .remote("sc://spark-connect-server")
          .getOrCreate()
          )
 
