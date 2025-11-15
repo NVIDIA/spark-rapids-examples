@@ -169,8 +169,3 @@ Limitations
     [Issue-3098](https://github.com/NVIDIA/spark-rapids/issues/3098) is one example of this.  We run
     regular integration tests on the Databricks environment to catch these issues and fix them once
     detected.
-   
-5. In Databricks 11.3, an incorrect result is returned for window frames defined by a range in case 
-   of DecimalTypes with precision greater than 38. There is a bug filed in Apache Spark for it 
-   [here](https://issues.apache.org/jira/browse/SPARK-41793), whereas when using the plugin the 
-   correct result will be returned.
