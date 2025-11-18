@@ -18,7 +18,7 @@
 cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
 
 # set to the rapids-cmake-branch
-set(rapids-cmake-branch "main")
+set(rapids-cmake-branch "release/25.12")
 
 file(DOWNLOAD https://raw.githubusercontent.com/rapidsai/rapids-cmake/${rapids-cmake-branch}/RAPIDS.cmake
      ${CMAKE_BINARY_DIR}/RAPIDS.cmake)
