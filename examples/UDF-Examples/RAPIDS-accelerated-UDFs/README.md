@@ -90,8 +90,8 @@ example:
 
 ```
 export SPARK_HOME=path-to-spark
-pip install pytest
-pip install sre_yield
+pip install pytest              # If running in the docker container, please use pip3
+pip install sre_yield           # If running in the docker container, please use pip3
 ```
 
 Run the following command to build and run tests
