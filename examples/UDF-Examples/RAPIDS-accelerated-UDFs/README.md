@@ -90,8 +90,8 @@ example:
 
 ```
 export SPARK_HOME=path-to-spark
-pip install pytest
-pip install sre_yield
+pip3 install pytest
+pip3 install sre_yield
 ```
 
 Run the following command to build and run tests
