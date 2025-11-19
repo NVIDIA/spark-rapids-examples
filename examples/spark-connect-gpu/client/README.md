@@ -30,7 +30,8 @@ found [here](../server/README.md).
 
    Set the `SPARK_REMOTE` environment variable to point to your spark-connect-gpu server. By default
    this is "sc://172.17.0.1" (for same node deployments). If the client and server are on `different nodes`,
-   override it with the server's accessible IP address:
+   you can either establish an SSH tunnel with port 15002 forwarded (e.g., `ssh -g -L 15002:localhost:15002 -N CONNECT_SERVER_IP`)
+   and use the default `SPARK_REMOTE` value (`sc://172.17.0.1`), or override it with the server’s accessible IP address:
 
    ``` bash
    export SPARK_REMOTE=sc://CONNECT_SERVER_IP
