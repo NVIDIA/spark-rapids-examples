@@ -29,7 +29,7 @@ services:
     container_name: spark-connect-client
     hostname: spark-connect-client
     environment:
-      - SPARK_REMOTE=${SPARK_REMOTE:-sc://localhost}
+      - SPARK_REMOTE=${SPARK_REMOTE:-sc://172.17.0.1}
     ports:
       - "8888:8888"   # Jupyter Lab Port
     command: >
