@@ -28,10 +28,9 @@ services:
       dockerfile: Dockerfile
     container_name: spark-connect-client
     hostname: spark-connect-client
+    network_mode: host
     environment:
-      - SPARK_REMOTE=${SPARK_REMOTE:-sc://172.17.0.1}
-    ports:
-      - "8888:8888"   # Jupyter Lab Port
+      - SPARK_REMOTE=${SPARK_REMOTE:-sc://localhost}
     command: >
       bash -c
       'jupyter-lab
