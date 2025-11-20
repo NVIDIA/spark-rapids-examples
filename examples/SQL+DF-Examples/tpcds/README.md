@@ -41,8 +41,8 @@ export NUM_GPUS=1
 export NUM_WORKERS=2
 
 PROPERTIES=(
-    "spark:spark.history.fs.logDirectory=gs://mybucket/eventlog/"
-    "spark:spark.eventLog.dir=gs://mybucket/eventlog/"
+    "spark:spark.history.fs.logDirectory=gs://$GCS_BUCKET/eventlog/"
+    "spark:spark.eventLog.dir=gs://$GCS_BUCKET/eventlog/"
     "spark:spark.history.fs.gs.outputstream.type=FLUSHABLE_COMPOSITE"
     "spark:spark.history.fs.gs.outputstream.sync.min.interval.ms=60000"
     "spark:spark.driver.memory=20g"
@@ -77,6 +77,8 @@ gcloud dataproc clusters create $CLUSTER_NAME  \
     --enable-component-gateway
 
 ```
+
+Note: Please adjust the value of `spark.shuffle.manager` based on the Spark version of the Dataproc cluster version.
 
 ### 2. Execute the example notebook in Jupyter lab
 
