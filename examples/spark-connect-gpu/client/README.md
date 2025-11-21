@@ -28,6 +28,16 @@ found [here](../server/README.md).
 
 2. **Start all services:**
 
+   Set the `SPARK_REMOTE` environment variable to point to your spark-connect-gpu server. By default
+   this is `sc://localhost` (for same node deployments). If the client and server are on `different nodes`,
+   you can either establish an SSH tunnel with port 15002 forwarded (e.g., `ssh -g -L 15002:localhost:15002 -N CONNECT_SERVER_IP`)
+   and use the default `SPARK_REMOTE` value (`sc://localhost`), or override it with the server’s accessible IP address:
+
+   ``` bash
+   export SPARK_REMOTE=sc://CONNECT_SERVER_IP
+   ```
+   Then start the client service:
+
    ```bash
    $ docker compose up -d
    ```

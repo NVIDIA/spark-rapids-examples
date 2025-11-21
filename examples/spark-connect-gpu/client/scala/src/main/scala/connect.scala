@@ -27,7 +27,7 @@ object connect extends Serializable {
   }
 
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder().remote("sc://spark-connect-server").getOrCreate()
+    val spark = SparkSession.builder().getOrCreate()
     val df = spark.range(1L << 12)
       .withColumn("mod10", col("id") % lit(10))
       .groupBy("mod10").agg(count("*"))
