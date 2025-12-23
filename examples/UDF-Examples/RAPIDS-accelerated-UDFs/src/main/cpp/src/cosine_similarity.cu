@@ -111,7 +111,7 @@ std::unique_ptr<cudf::column> cosine_similarity(cudf::lists_column_view const& l
     thrust::all_of(rmm::exec_policy(stream),
                    thrust::make_counting_iterator<cudf::size_type>(0),
                    thrust::make_counting_iterator<cudf::size_type>(row_count),
-                   [d_lists1, d_lists2] __device__(cudf::size_type idx) {
+                   [d_lists1, d_lists2] __host__ __device__(cudf::size_type idx) -> bool {
                      auto ldv1 = cudf::list_device_view(d_lists1, idx);
                      auto ldv2 = cudf::list_device_view(d_lists2, idx);
                      return ldv1.is_null() || ldv2.is_null() || ldv1.size() == ldv2.size();

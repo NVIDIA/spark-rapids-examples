@@ -87,7 +87,9 @@ std::unique_ptr<cudf::column> string_word_count(cudf::column_view const& strs) {
     thrust::make_counting_iterator<cudf::size_type>(0),
     thrust::make_counting_iterator<cudf::size_type>(strings_count),
     result->mutable_view().data<cudf::size_type>(),
-    [d_strs_view] __device__(cudf::size_type idx) { return count_words(d_strs_view, idx); });
+    [d_strs_view] __host__ __device__(cudf::size_type idx) -> cudf::size_type {
+      return count_words(d_strs_view, idx);
+    });
 
   return result;
 }
