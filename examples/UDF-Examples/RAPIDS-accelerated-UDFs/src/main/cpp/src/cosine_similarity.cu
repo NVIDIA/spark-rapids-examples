@@ -116,13 +116,13 @@ std::unique_ptr<cudf::column> cosine_similarity(cudf::lists_column_view const& l
                    thrust::make_counting_iterator<cudf::size_type>(0),
                    thrust::make_counting_iterator<cudf::size_type>(row_count),
                    [lv1_offsets_ptr, lv2_offsets_ptr, lv1_null_mask, lv2_null_mask]
-                   __host__ __device__(cudf::size_type idx) -> bool {
+                   __device__(cudf::size_type idx) -> bool {
                      // Check if either list is null - if so, consider valid
                      // Use cudf::bit_is_set() for proper bitmask handling
                      bool lv1_is_null = lv1_null_mask != nullptr && !cudf::bit_is_set(lv1_null_mask, idx);
                      bool lv2_is_null = lv2_null_mask != nullptr && !cudf::bit_is_set(lv2_null_mask, idx);
                      if (lv1_is_null || lv2_is_null) return true;
-
+                     
                      // Both are valid, check sizes
                      auto lv1_size = lv1_offsets_ptr[idx + 1] - lv1_offsets_ptr[idx];
                      auto lv2_size = lv2_offsets_ptr[idx + 1] - lv2_offsets_ptr[idx];
