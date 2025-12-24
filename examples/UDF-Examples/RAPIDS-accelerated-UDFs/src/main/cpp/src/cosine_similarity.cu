@@ -118,11 +118,9 @@ std::unique_ptr<cudf::column> cosine_similarity(cudf::lists_column_view const& l
                    [lv1_offsets_ptr, lv2_offsets_ptr, lv1_null_mask, lv2_null_mask]
                    __host__ __device__(cudf::size_type idx) -> bool {
                      // Check if either list is null - if so, consider valid
-                     // Bit is set means valid, not set means null
-                     bool lv1_is_null = lv1_null_mask != nullptr &&
-                                        !(lv1_null_mask[idx / 32] & (1u << (idx % 32)));
-                     bool lv2_is_null = lv2_null_mask != nullptr &&
-                                        !(lv2_null_mask[idx / 32] & (1u << (idx % 32)));
+                     // Use cudf::bit_is_set() for proper bitmask handling
+                     bool lv1_is_null = lv1_null_mask != nullptr && !cudf::bit_is_set(lv1_null_mask, idx);
+                     bool lv2_is_null = lv2_null_mask != nullptr && !cudf::bit_is_set(lv2_null_mask, idx);
                      if (lv1_is_null || lv2_is_null) return true;
 
                      // Both are valid, check sizes
