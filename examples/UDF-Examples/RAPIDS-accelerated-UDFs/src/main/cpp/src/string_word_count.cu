@@ -30,8 +30,8 @@
 namespace {
 
 // count the words separated by whitespace characters
-__host__ __device__ cudf::size_type count_words(cudf::column_device_view const& d_strings,
-                                                 cudf::size_type idx) {
+__device__ cudf::size_type count_words(cudf::column_device_view const& d_strings,
+                                       cudf::size_type idx) {
   if (d_strings.is_null(idx)) return 0;
   cudf::string_view const d_str = d_strings.element<cudf::string_view>(idx);
   cudf::size_type word_count    = 0;
@@ -87,7 +87,7 @@ std::unique_ptr<cudf::column> string_word_count(cudf::column_view const& strs) {
     thrust::make_counting_iterator<cudf::size_type>(0),
     thrust::make_counting_iterator<cudf::size_type>(strings_count),
     result->mutable_view().data<cudf::size_type>(),
-    [d_strs_view] __host__ __device__(cudf::size_type idx) -> cudf::size_type {
+    [d_strs_view] __device__(cudf::size_type idx) -> cudf::size_type {
       return count_words(d_strs_view, idx);
     });
 
