@@ -23,6 +23,7 @@
 #include <cudf/lists/lists_column_view.hpp>
 #include <cudf/null_mask.hpp>
 #include <cudf/table/table_view.hpp>
+#include <cudf/utilities/bit.hpp>
 
 #include <rmm/cuda_stream_view.hpp>
 #include <rmm/device_buffer.hpp>
@@ -103,18 +104,31 @@ std::unique_ptr<cudf::column> cosine_similarity(cudf::lists_column_view const& l
   }
 
   auto const stream = rmm::cuda_stream_default;
-  auto d_view1_ptr = cudf::column_device_view::create(lv1.parent());
-  auto d_lists1 = cudf::detail::lists_column_device_view(*d_view1_ptr);
-  auto d_view2_ptr = cudf::column_device_view::create(lv2.parent());
-  auto d_lists2 = cudf::detail::lists_column_device_view(*d_view2_ptr);
+
+  // Check if list sizes match by comparing offsets differences
+  // Need to handle null lists: if either list is null, consider it valid (will be null in output)
+  auto const lv1_offsets_ptr = lv1.offsets().data<int32_t>();
+  auto const lv2_offsets_ptr = lv2.offsets().data<int32_t>();
+  auto const lv1_null_mask = lv1.parent().null_mask();
+  auto const lv2_null_mask = lv2.parent().null_mask();
   bool const are_offsets_equal =
     thrust::all_of(rmm::exec_policy(stream),
                    thrust::make_counting_iterator<cudf::size_type>(0),
                    thrust::make_counting_iterator<cudf::size_type>(row_count),
-                   [d_lists1, d_lists2] __host__ __device__(cudf::size_type idx) -> bool {
-                     auto ldv1 = cudf::list_device_view(d_lists1, idx);
-                     auto ldv2 = cudf::list_device_view(d_lists2, idx);
-                     return ldv1.is_null() || ldv2.is_null() || ldv1.size() == ldv2.size();
+                   [lv1_offsets_ptr, lv2_offsets_ptr, lv1_null_mask, lv2_null_mask]
+                   __host__ __device__(cudf::size_type idx) -> bool {
+                     // Check if either list is null - if so, consider valid
+                     // Bit is set means valid, not set means null
+                     bool lv1_is_null = lv1_null_mask != nullptr &&
+                                        !(lv1_null_mask[idx / 32] & (1u << (idx % 32)));
+                     bool lv2_is_null = lv2_null_mask != nullptr &&
+                                        !(lv2_null_mask[idx / 32] & (1u << (idx % 32)));
+                     if (lv1_is_null || lv2_is_null) return true;
+
+                     // Both are valid, check sizes
+                     auto lv1_size = lv1_offsets_ptr[idx + 1] - lv1_offsets_ptr[idx];
+                     auto lv2_size = lv2_offsets_ptr[idx + 1] - lv2_offsets_ptr[idx];
+                     return lv1_size == lv2_size;
                    });
   if (not are_offsets_equal) {
     throw std::invalid_argument("input list lengths do not match for every row");
