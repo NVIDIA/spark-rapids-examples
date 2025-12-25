@@ -224,7 +224,6 @@
                                             <echo message="========================================================"/>
                                             <echo message="USE_PREBUILT_CUDF=OFF detected"/>
                                             <echo message="Skipping extraction, will build cuDF from source"/>
-                                            <echo message="This will take 30+ minutes"/>
                                             <echo message="========================================================"/>
                                             <echo message=""/>
                                             <!-- Create marker to skip extraction -->
@@ -313,7 +312,6 @@
                                             <echo message="     mvn clean install -DskipTests" level="warning"/>
                                             <echo message="" level="warning"/>
                                             <echo message="FALLING BACK to building cuDF from source..." level="warning"/>
-                                            <echo message="This will take 30+ minutes." level="warning"/>
                                             <echo message="========================================================" level="warning"/>
                                             <echo message="" level="warning"/>
 
