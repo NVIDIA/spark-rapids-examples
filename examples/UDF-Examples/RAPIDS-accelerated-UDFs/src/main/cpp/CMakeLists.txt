@@ -86,8 +86,13 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -w --expt-extended-lambda --expt-relax
 
 option(USE_PREBUILT_CUDF "Use prebuilt libcudf.so from rapids-4-spark jar" ON)
 
-# Check if Maven created a marker to force source build
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/USE_SOURCE_BUILD")
+# Check if user explicitly set USE_PREBUILT_CUDF via command line
+# This is important to respect user's explicit choice
+get_property(USE_PREBUILT_CUDF_EXPLICIT CACHE USE_PREBUILT_CUDF PROPERTY VALUE)
+message(STATUS "USE_PREBUILT_CUDF is set to: ${USE_PREBUILT_CUDF}")
+
+# Check if Maven created a marker to force source build (only if not explicitly set)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/USE_SOURCE_BUILD" AND USE_PREBUILT_CUDF)
     message(STATUS "Found USE_SOURCE_BUILD marker file, forcing source build")
     set(USE_PREBUILT_CUDF OFF CACHE BOOL "Forcing source build due to missing jar" FORCE)
 endif()
@@ -100,10 +105,11 @@ if(USE_PREBUILT_CUDF)
     message(STATUS "Attempting to use prebuilt libcudf.so from rapids-4-spark jar")
     message(STATUS "Looking for libcudf.so in: ${CUDF_LIB_DIR}")
     
-    # Check if directory and library exist
+    # Only do auto-fallback if prebuilt was chosen by default (not explicitly by user)
+    # Check if prebuilt components are available
     set(PREBUILT_AVAILABLE TRUE)
     if(NOT EXISTS "${CUDF_LIB_DIR}")
-        message(WARNING "Directory ${CUDF_LIB_DIR} does not exist")
+        message(STATUS "Directory ${CUDF_LIB_DIR} does not exist")
         set(PREBUILT_AVAILABLE FALSE)
     else()
         # Try to find the library
@@ -113,12 +119,13 @@ if(USE_PREBUILT_CUDF)
             NO_DEFAULT_PATH
         )
         if(NOT CUDF_LIBRARY_CHECK)
-            message(WARNING "libcudf.so not found in ${CUDF_LIB_DIR}")
+            message(STATUS "libcudf.so not found in ${CUDF_LIB_DIR}")
             set(PREBUILT_AVAILABLE FALSE)
         endif()
     endif()
     
-    # Auto-fallback to source build if prebuilt not available
+    # Auto-fallback to source build only if components not available
+    # This provides a smooth experience when jar isn't present
     if(NOT PREBUILT_AVAILABLE)
         message(WARNING 
             "\n"
@@ -131,8 +138,7 @@ if(USE_PREBUILT_CUDF)
             "  1. For SNAPSHOT versions: Build and install rapids-4-spark\n"
             "     cd /path/to/spark-rapids\n"
             "     mvn clean install -DskipTests\n"
-            "  2. Run: ./extract-cudf-libs.sh\n"
-            "  3. Then build: mvn clean package -Pudf-native-examples\n"
+            "  2. Run: mvn clean package -Pudf-native-examples\n"
             "================================================================\n")
         set(USE_PREBUILT_CUDF OFF)
     endif()

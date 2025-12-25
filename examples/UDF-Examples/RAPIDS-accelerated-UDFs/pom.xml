@@ -48,6 +48,7 @@
         <PER_THREAD_DEFAULT_STREAM>ON</PER_THREAD_DEFAULT_STREAM>
         <CPP_PARALLEL_LEVEL>10</CPP_PARALLEL_LEVEL>
         <CUDF_ENABLE_ARROW_S3>OFF</CUDF_ENABLE_ARROW_S3>
+        <USE_PREBUILT_CUDF>ON</USE_PREBUILT_CUDF>
         <target.classifier/>
     </properties>
 
@@ -206,37 +207,56 @@
                                 <id>extract-cudf-dependencies</id>
                                 <phase>generate-sources</phase>
                                 <configuration>
+                                    <skip>${skipCudfExtraction}</skip>
                                     <target>
                                         <echo message="================================================"/>
                                         <echo message="Extracting libcudf.so from rapids-4-spark jar..."/>
+                                        <echo message="USE_PREBUILT_CUDF=${USE_PREBUILT_CUDF}"/>
                                         <echo message="================================================"/>
+
+                                        <!-- Skip if user explicitly wants source build -->
+                                        <condition property="use.source.build">
+                                            <equals arg1="${USE_PREBUILT_CUDF}" arg2="OFF"/>
+                                        </condition>
+
+                                        <sequential if:set="use.source.build" xmlns:if="ant:if">
+                                            <echo message=""/>
+                                            <echo message="========================================================"/>
+                                            <echo message="USE_PREBUILT_CUDF=OFF detected"/>
+                                            <echo message="Skipping extraction, will build cuDF from source"/>
+                                            <echo message="This will take 30+ minutes"/>
+                                            <echo message="========================================================"/>
+                                            <echo message=""/>
+                                            <!-- Create marker to skip extraction -->
+                                            <touch file="${project.build.directory}/SKIP_EXTRACTION"/>
+                                        </sequential>
                                         <mkdir dir="${project.build.directory}/native-deps"/>
                                         <mkdir dir="${project.build.directory}/cudf-repo"/>
                                         <mkdir dir="${project.build.directory}/temp-extract"/>
-                                        
+
                                         <!-- Try multiple jar naming patterns -->
                                         <!-- Pattern 1: With classifier (release versions) -->
                                         <property name="rapids.jar.maven.with.classifier" 
                                                   value="${settings.localRepository}/com/nvidia/rapids-4-spark_${scala.binary.version}/${rapids4spark.version}/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}-${cuda.version}.jar"/>
-                                        
+
                                         <!-- Pattern 2: Without classifier (snapshot versions) -->
                                         <property name="rapids.jar.maven.no.classifier" 
                                                   value="${settings.localRepository}/com/nvidia/rapids-4-spark_${scala.binary.version}/${rapids4spark.version}/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}.jar"/>
-                                        
+
                                         <!-- Also try the downloaded location -->
                                         <property name="rapids.jar.downloaded.path" 
                                                   value="${project.build.directory}/rapids-jar/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}-${cuda.version}.jar"/>
-                                        
+
                                         <echo message="Looking for rapids-4-spark jar..."/>
                                         <echo message="  Pattern 1 (with classifier): ${rapids.jar.maven.with.classifier}"/>
                                         <echo message="  Pattern 2 (no classifier):   ${rapids.jar.maven.no.classifier}"/>
                                         <echo message="  Pattern 3 (downloaded):      ${rapids.jar.downloaded.path}"/>
-                                        
+
                                         <!-- Check all locations -->
                                         <available file="${rapids.jar.maven.with.classifier}" property="rapids.jar.maven.with.classifier.exists"/>
                                         <available file="${rapids.jar.maven.no.classifier}" property="rapids.jar.maven.no.classifier.exists"/>
                                         <available file="${rapids.jar.downloaded.path}" property="rapids.jar.downloaded.exists"/>
-                                        
+
                                         <!-- Set the actual path to use (try in order) -->
                                         <condition property="rapids.jar.path" value="${rapids.jar.maven.with.classifier}">
                                             <isset property="rapids.jar.maven.with.classifier.exists"/>
@@ -253,7 +273,7 @@
                                                 <isset property="rapids.jar.downloaded.exists"/>
                                             </and>
                                         </condition>
-                                        
+
                                         <!-- Verify we have the jar -->
                                         <condition property="rapids.jar.exists">
                                             <or>
@@ -262,12 +282,20 @@
                                                 <isset property="rapids.jar.downloaded.exists"/>
                                             </or>
                                         </condition>
-                                        
+
+                                        <!-- Skip all extraction if user wants source build -->
+                                        <condition property="should.skip.extraction">
+                                            <isset property="use.source.build"/>
+                                        </condition>
+
+                                        <!-- Only proceed if not skipping -->
+                                        <sequential unless:set="should.skip.extraction" xmlns:unless="ant:unless">
+
                                         <!-- Create inverse property for jar NOT found -->
                                         <condition property="rapids.jar.not.found">
                                             <not><isset property="rapids.jar.exists"/></not>
                                         </condition>
-                                        
+
                                         <!-- Show warning if jar not found -->
                                         <sequential if:set="rapids.jar.not.found" xmlns:if="ant:if">
                                             <echo message="" level="warning"/>
@@ -288,16 +316,16 @@
                                             <echo message="This will take 30+ minutes." level="warning"/>
                                             <echo message="========================================================" level="warning"/>
                                             <echo message="" level="warning"/>
-                                            
+
                                             <!-- Create a marker file to tell CMake to use source build -->
                                             <touch file="${project.build.directory}/USE_SOURCE_BUILD"/>
                                         </sequential>
-                                        
+
                                         <!-- Extract if jar was found -->
                                         <sequential if:set="rapids.jar.exists" xmlns:if="ant:if">
                                             <echo message="✓ Found jar at: ${rapids.jar.path}"/>
                                             <echo message="✓ Extracting libraries..."/>
-                                            
+
                                             <!-- Extract libcudf.so from rapids-4-spark jar -->
                                             <unzip src="${rapids.jar.path}" 
                                                    dest="${project.build.directory}/temp-extract">
@@ -307,43 +335,45 @@
                                                     <include name="**/libnvcomp.so*"/>
                                                 </patternset>
                                             </unzip>
-                                            
+
                                             <!-- Move extracted libraries to native-deps (flatten structure) -->
                                             <copy todir="${project.build.directory}/native-deps" flatten="true">
                                                 <fileset dir="${project.build.directory}/temp-extract">
                                                     <include name="**/*.so*"/>
                                                 </fileset>
                                             </copy>
-                                            
+
                                             <!-- Clean up temp directory -->
                                             <delete dir="${project.build.directory}/temp-extract"/>
-                                            
+
                                             <!-- Verify extraction -->
                                             <available file="${project.build.directory}/native-deps/libcudf.so" 
                                                        property="libcudf.extracted"/>
                                             <fail unless="libcudf.extracted" 
                                                   message="Failed to extract libcudf.so from jar"/>
-                                            
+
                                             <echo message="✓ libcudf.so extracted to: ${project.build.directory}/native-deps"/>
-                                            
+
                                             <!-- Clone cuDF repo for headers only (shallow clone) -->
                                             <exec executable="bash" failonerror="true">
                                                 <arg value="-c"/>
                                                 <arg value="if [ ! -d ${project.build.directory}/cudf-repo/.git ]; then echo 'Cloning cuDF repository (${cudf.git.branch} branch)...'; git clone --depth 1 --branch ${cudf.git.branch} https://github.com/rapidsai/cudf.git ${project.build.directory}/cudf-repo || exit 1; else echo 'cuDF repo already exists, skipping clone'; fi"/>
                                             </exec>
-                                            
+
                                             <!-- Verify cuDF headers -->
                                             <available file="${project.build.directory}/cudf-repo/cpp/include" 
                                                        type="dir" 
                                                        property="cudf.headers.exist"/>
                                             <fail unless="cudf.headers.exist" 
                                                   message="Failed to clone cuDF repository for headers from branch ${cudf.git.branch}. Please check if the branch exists or set -Dcudf.git.branch=main"/>
-                                            
+
                                             <echo message="✓ cuDF headers available at: ${project.build.directory}/cudf-repo"/>
                                             <echo message="================================================"/>
                                             <echo message="Dependencies ready! Will use FAST BUILD mode"/>
                                             <echo message="================================================"/>
                                         </sequential>
+
+                                        </sequential><!-- End of: unless should.skip.extraction -->
                                     </target>
                                 </configuration>
                                 <goals>
@@ -365,7 +395,7 @@
                                             <arg value="-DGPU_ARCHS=${GPU_ARCHS}"/>
                                             <arg value="-DPER_THREAD_DEFAULT_STREAM=${PER_THREAD_DEFAULT_STREAM}"/>
                                             <arg value="-DCUDF_ENABLE_ARROW_S3=${CUDF_ENABLE_ARROW_S3}"/>
-                                            <arg value="-DUSE_PREBUILT_CUDF=ON"/>
+                                            <arg value="-DUSE_PREBUILT_CUDF=${USE_PREBUILT_CUDF}"/>
                                         </exec>
                                         <exec failonerror="true"
                                               executable="cmake">
