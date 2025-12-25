@@ -30,6 +30,16 @@ include(rapids-cuda)
 include(rapids-export)
 include(rapids-find)
 
+# Get the rapids-cmake directory for later use
+# After include(rapids-cmake), CPM will download rapids-cmake to _deps
+# We can get it from the CPM cache
+get_property(rapids-cmake-dir GLOBAL PROPERTY rapids-cmake-dir)
+if(NOT rapids-cmake-dir)
+    # Fallback: rapids-cmake is downloaded by CPM to _deps
+    set(rapids-cmake-dir "${CMAKE_BINARY_DIR}/_deps/rapids-cmake-src")
+endif()
+message(STATUS "rapids-cmake directory: ${rapids-cmake-dir}")
+
 # Use GPU_ARCHS if it is defined
 if(DEFINED GPU_ARCHS)
   set(CMAKE_CUDA_ARCHITECTURES "${GPU_ARCHS}")
@@ -86,15 +96,16 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -w --expt-extended-lambda --expt-relax
 
 option(USE_PREBUILT_CUDF "Use prebuilt libcudf.so from rapids-4-spark jar" ON)
 
-# Check if user explicitly set USE_PREBUILT_CUDF via command line
-# This is important to respect user's explicit choice
-get_property(USE_PREBUILT_CUDF_EXPLICIT CACHE USE_PREBUILT_CUDF PROPERTY VALUE)
 message(STATUS "USE_PREBUILT_CUDF is set to: ${USE_PREBUILT_CUDF}")
 
-# Check if Maven created a marker to force source build (only if not explicitly set)
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/USE_SOURCE_BUILD" AND USE_PREBUILT_CUDF)
-    message(STATUS "Found USE_SOURCE_BUILD marker file, forcing source build")
-    set(USE_PREBUILT_CUDF OFF CACHE BOOL "Forcing source build due to missing jar" FORCE)
+# Check if Maven created a marker to force source build
+# This happens when jar is not found and user didn't explicitly set USE_PREBUILT_CUDF=OFF
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/USE_SOURCE_BUILD")
+    message(STATUS "Found USE_SOURCE_BUILD marker file from Maven")
+    if(USE_PREBUILT_CUDF)
+        message(STATUS "Auto-fallback: Switching to source build due to missing jar")
+        set(USE_PREBUILT_CUDF OFF CACHE BOOL "Forcing source build due to missing jar" FORCE)
+    endif()
 endif()
 
 if(USE_PREBUILT_CUDF)
@@ -140,7 +151,8 @@ if(USE_PREBUILT_CUDF)
             "     mvn clean install -DskipTests\n"
             "  2. Run: mvn clean package -Pudf-native-examples\n"
             "================================================================\n")
-        set(USE_PREBUILT_CUDF OFF)
+        # Update cache to ensure subsequent CMake runs respect this decision
+        set(USE_PREBUILT_CUDF OFF CACHE BOOL "Auto-fallback to source build" FORCE)
     endif()
 endif()
 
@@ -180,14 +192,18 @@ if(USE_PREBUILT_CUDF)
     set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
     set(BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
     
-    # Use rapids-cpm to get CCCL - this is what cuDF uses
+    # Use rapids-cmake's helper scripts to get CCCL and RMM
+    # These scripts use versions defined in rapids-cmake (avoiding duplicate version definitions)
+    message(STATUS "Using rapids-cmake helper scripts for CCCL and RMM")
+
+    # Get CCCL (Thrust, libcudacxx, CUB) - version defined in rapids-cmake
     include(${rapids-cmake-dir}/cpm/cccl.cmake)
     rapids_cpm_cccl()
-    
+
     # Use rapids-cpm to get RMM - this is what cuDF uses  
     include(${rapids-cmake-dir}/cpm/rmm.cmake)
     rapids_cpm_rmm()
-    
+
     # After rapids_cpm_rmm(), the rmm::rmm target should be available
     # Verify it exists
     if(NOT TARGET rmm::rmm)
@@ -197,7 +213,7 @@ if(USE_PREBUILT_CUDF)
     # Get RMM include directory from the target
     get_target_property(RMM_INCLUDE_DIR rmm::rmm INTERFACE_INCLUDE_DIRECTORIES)
     message(STATUS "RMM include directories: ${RMM_INCLUDE_DIR}")
-    
+
     # Now create our own imported target for cudf using the prebuilt library
     add_library(cudf_imported SHARED IMPORTED GLOBAL)
     set_target_properties(cudf_imported PROPERTIES

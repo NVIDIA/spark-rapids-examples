@@ -78,7 +78,7 @@ fi
 
 # Extract libcudf.so and dependencies
 echo "Extracting native libraries..."
-unzip -q -o "$JAR_PATH" "*/libcudf.so*" "*/librmm.so*" "*/libnvcomp.so*" -d "$TARGET_DIR/temp" || true
+unzip -q -o "$JAR_PATH" "*/libcudf.so*" "*/libnvcomp.so*" -d "$TARGET_DIR/temp"
 
 # Move libraries to native-deps directory
 find "$TARGET_DIR/temp" -name "*.so*" -exec mv {} "$NATIVE_DEPS_DIR/" \;

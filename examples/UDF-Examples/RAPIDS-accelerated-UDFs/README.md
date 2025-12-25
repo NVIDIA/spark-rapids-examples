@@ -155,7 +155,7 @@ The build will automatically:
 mvn clean package -Pudf-native-examples
 ```
 
-This approach typically reduces build time for native cuDF which is almost **2 hours**!
+This approach typically reduces the native cuDF build time by almost **2 hours**!
 
 #### Option 2: Build cuDF from Source (Slow but Complete)
 
