@@ -91,6 +91,12 @@
                         <phase>none</phase>
                     </execution>
                 </executions>
+                <configuration>
+                    <!-- Include native libraries in the jar -->
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
@@ -165,11 +171,6 @@
         <profile>
             <id>udf-native-examples</id>
             <build>
-                <resources>
-                    <resource>
-                        <directory>${project.build.directory}/native-deps/</directory>
-                    </resource>
-                </resources>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -351,7 +352,7 @@
                                                   message="Failed to extract libcudf.so from jar"/>
 
                                             <echo message="✓ libcudf.so extracted to: ${project.build.directory}/native-deps"/>
-
+                                            
                                             <!-- Clone cuDF repo for headers only (shallow clone) -->
                                             <exec executable="bash" failonerror="true">
                                                 <arg value="-c"/>
@@ -415,14 +416,35 @@
                         <version>3.2.0</version>
                         <executions>
                             <execution>
-                                <id>copy-native-libs</id>
-                                <phase>package</phase>
+                                <id>copy-native-libs-to-deps</id>
+                                <phase>process-classes</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
                                     <overwrite>true</overwrite>
                                     <outputDirectory>${project.build.directory}/native-deps/${os.arch}/${os.name}
+                                    </outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${udf.native.build.path}</directory>
+                                            <includes>
+                                                <include>libudfexamplesjni.so</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-native-libs-to-classes</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <overwrite>true</overwrite>
+                                    <!-- Copy to classes directory so it gets included in jar -->
+                                    <outputDirectory>${project.build.outputDirectory}/${os.arch}/${os.name}
                                     </outputDirectory>
                                     <resources>
                                         <resource>
