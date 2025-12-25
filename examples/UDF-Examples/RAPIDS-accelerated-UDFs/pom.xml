@@ -41,6 +41,7 @@
         <spark.version>3.1.1</spark.version>
         <scala.version>2.12.15</scala.version>
         <udf.native.build.path>${project.build.directory}/cpp-build</udf.native.build.path>
+        <cudf.git.branch>main</cudf.git.branch>
         <BUILD_UDF_BENCHMARKS>OFF</BUILD_UDF_BENCHMARKS>
         <CMAKE_CXX_FLAGS/>
         <GPU_ARCHS>RAPIDS</GPU_ARCHS>
@@ -170,11 +171,188 @@
                 </resources>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>download-rapids-jar</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.nvidia</groupId>
+                                            <artifactId>rapids-4-spark_${scala.binary.version}</artifactId>
+                                            <version>${rapids4spark.version}</version>
+                                            <classifier>${cuda.version}</classifier>
+                                            <type>jar</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.build.directory}/rapids-jar</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <!-- Don't fail if jar can't be downloaded, let extraction phase handle it -->
+                                    <skip>false</skip>
+                                    <ignoreMissingArtifact>true</ignoreMissingArtifact>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>extract-cudf-dependencies</id>
+                                <phase>generate-sources</phase>
+                                <configuration>
+                                    <target>
+                                        <echo message="================================================"/>
+                                        <echo message="Extracting libcudf.so from rapids-4-spark jar..."/>
+                                        <echo message="================================================"/>
+                                        <mkdir dir="${project.build.directory}/native-deps"/>
+                                        <mkdir dir="${project.build.directory}/cudf-repo"/>
+                                        <mkdir dir="${project.build.directory}/temp-extract"/>
+                                        
+                                        <!-- Try multiple jar naming patterns -->
+                                        <!-- Pattern 1: With classifier (release versions) -->
+                                        <property name="rapids.jar.maven.with.classifier" 
+                                                  value="${settings.localRepository}/com/nvidia/rapids-4-spark_${scala.binary.version}/${rapids4spark.version}/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}-${cuda.version}.jar"/>
+                                        
+                                        <!-- Pattern 2: Without classifier (snapshot versions) -->
+                                        <property name="rapids.jar.maven.no.classifier" 
+                                                  value="${settings.localRepository}/com/nvidia/rapids-4-spark_${scala.binary.version}/${rapids4spark.version}/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}.jar"/>
+                                        
+                                        <!-- Also try the downloaded location -->
+                                        <property name="rapids.jar.downloaded.path" 
+                                                  value="${project.build.directory}/rapids-jar/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}-${cuda.version}.jar"/>
+                                        
+                                        <echo message="Looking for rapids-4-spark jar..."/>
+                                        <echo message="  Pattern 1 (with classifier): ${rapids.jar.maven.with.classifier}"/>
+                                        <echo message="  Pattern 2 (no classifier):   ${rapids.jar.maven.no.classifier}"/>
+                                        <echo message="  Pattern 3 (downloaded):      ${rapids.jar.downloaded.path}"/>
+                                        
+                                        <!-- Check all locations -->
+                                        <available file="${rapids.jar.maven.with.classifier}" property="rapids.jar.maven.with.classifier.exists"/>
+                                        <available file="${rapids.jar.maven.no.classifier}" property="rapids.jar.maven.no.classifier.exists"/>
+                                        <available file="${rapids.jar.downloaded.path}" property="rapids.jar.downloaded.exists"/>
+                                        
+                                        <!-- Set the actual path to use (try in order) -->
+                                        <condition property="rapids.jar.path" value="${rapids.jar.maven.with.classifier}">
+                                            <isset property="rapids.jar.maven.with.classifier.exists"/>
+                                        </condition>
+                                        <condition property="rapids.jar.path" value="${rapids.jar.maven.no.classifier}">
+                                            <and>
+                                                <not><isset property="rapids.jar.path"/></not>
+                                                <isset property="rapids.jar.maven.no.classifier.exists"/>
+                                            </and>
+                                        </condition>
+                                        <condition property="rapids.jar.path" value="${rapids.jar.downloaded.path}">
+                                            <and>
+                                                <not><isset property="rapids.jar.path"/></not>
+                                                <isset property="rapids.jar.downloaded.exists"/>
+                                            </and>
+                                        </condition>
+                                        
+                                        <!-- Verify we have the jar -->
+                                        <condition property="rapids.jar.exists">
+                                            <or>
+                                                <isset property="rapids.jar.maven.with.classifier.exists"/>
+                                                <isset property="rapids.jar.maven.no.classifier.exists"/>
+                                                <isset property="rapids.jar.downloaded.exists"/>
+                                            </or>
+                                        </condition>
+                                        
+                                        <!-- Create inverse property for jar NOT found -->
+                                        <condition property="rapids.jar.not.found">
+                                            <not><isset property="rapids.jar.exists"/></not>
+                                        </condition>
+                                        
+                                        <!-- Show warning if jar not found -->
+                                        <sequential if:set="rapids.jar.not.found" xmlns:if="ant:if">
+                                            <echo message="" level="warning"/>
+                                            <echo message="========================================================" level="warning"/>
+                                            <echo message="WARNING: rapids-4-spark jar not found!" level="warning"/>
+                                            <echo message="========================================================" level="warning"/>
+                                            <echo message="Tried locations:" level="warning"/>
+                                            <echo message="  With classifier: ${rapids.jar.maven.with.classifier}" level="warning"/>
+                                            <echo message="  No classifier:   ${rapids.jar.maven.no.classifier}" level="warning"/>
+                                            <echo message="  Downloaded:      ${rapids.jar.downloaded.path}" level="warning"/>
+                                            <echo message="" level="warning"/>
+                                            <echo message="For SNAPSHOT versions (26.02.0-SNAPSHOT):" level="warning"/>
+                                            <echo message="  1. Build spark-rapids locally:" level="warning"/>
+                                            <echo message="     cd /path/to/spark-rapids" level="warning"/>
+                                            <echo message="     mvn clean install -DskipTests" level="warning"/>
+                                            <echo message="" level="warning"/>
+                                            <echo message="FALLING BACK to building cuDF from source..." level="warning"/>
+                                            <echo message="This will take 30+ minutes." level="warning"/>
+                                            <echo message="========================================================" level="warning"/>
+                                            <echo message="" level="warning"/>
+                                            
+                                            <!-- Create a marker file to tell CMake to use source build -->
+                                            <touch file="${project.build.directory}/USE_SOURCE_BUILD"/>
+                                        </sequential>
+                                        
+                                        <!-- Extract if jar was found -->
+                                        <sequential if:set="rapids.jar.exists" xmlns:if="ant:if">
+                                            <echo message="✓ Found jar at: ${rapids.jar.path}"/>
+                                            <echo message="✓ Extracting libraries..."/>
+                                            
+                                            <!-- Extract libcudf.so from rapids-4-spark jar -->
+                                            <unzip src="${rapids.jar.path}" 
+                                                   dest="${project.build.directory}/temp-extract">
+                                                <patternset>
+                                                    <include name="**/libcudf.so*"/>
+                                                    <include name="**/librmm.so*"/>
+                                                    <include name="**/libnvcomp.so*"/>
+                                                </patternset>
+                                            </unzip>
+                                            
+                                            <!-- Move extracted libraries to native-deps (flatten structure) -->
+                                            <copy todir="${project.build.directory}/native-deps" flatten="true">
+                                                <fileset dir="${project.build.directory}/temp-extract">
+                                                    <include name="**/*.so*"/>
+                                                </fileset>
+                                            </copy>
+                                            
+                                            <!-- Clean up temp directory -->
+                                            <delete dir="${project.build.directory}/temp-extract"/>
+                                            
+                                            <!-- Verify extraction -->
+                                            <available file="${project.build.directory}/native-deps/libcudf.so" 
+                                                       property="libcudf.extracted"/>
+                                            <fail unless="libcudf.extracted" 
+                                                  message="Failed to extract libcudf.so from jar"/>
+                                            
+                                            <echo message="✓ libcudf.so extracted to: ${project.build.directory}/native-deps"/>
+                                            
+                                            <!-- Clone cuDF repo for headers only (shallow clone) -->
+                                            <exec executable="bash" failonerror="true">
+                                                <arg value="-c"/>
+                                                <arg value="if [ ! -d ${project.build.directory}/cudf-repo/.git ]; then echo 'Cloning cuDF repository (${cudf.git.branch} branch)...'; git clone --depth 1 --branch ${cudf.git.branch} https://github.com/rapidsai/cudf.git ${project.build.directory}/cudf-repo || exit 1; else echo 'cuDF repo already exists, skipping clone'; fi"/>
+                                            </exec>
+                                            
+                                            <!-- Verify cuDF headers -->
+                                            <available file="${project.build.directory}/cudf-repo/cpp/include" 
+                                                       type="dir" 
+                                                       property="cudf.headers.exist"/>
+                                            <fail unless="cudf.headers.exist" 
+                                                  message="Failed to clone cuDF repository for headers from branch ${cudf.git.branch}. Please check if the branch exists or set -Dcudf.git.branch=main"/>
+                                            
+                                            <echo message="✓ cuDF headers available at: ${project.build.directory}/cudf-repo"/>
+                                            <echo message="================================================"/>
+                                            <echo message="Dependencies ready! Will use FAST BUILD mode"/>
+                                            <echo message="================================================"/>
+                                        </sequential>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
                                 <id>cmake</id>
-                                <phase>validate</phase>
+                                <phase>compile</phase>
                                 <configuration>
                                     <target>
                                         <mkdir dir="${udf.native.build.path}"/>
@@ -187,6 +365,7 @@
                                             <arg value="-DGPU_ARCHS=${GPU_ARCHS}"/>
                                             <arg value="-DPER_THREAD_DEFAULT_STREAM=${PER_THREAD_DEFAULT_STREAM}"/>
                                             <arg value="-DCUDF_ENABLE_ARROW_S3=${CUDF_ENABLE_ARROW_S3}"/>
+                                            <arg value="-DUSE_PREBUILT_CUDF=ON"/>
                                         </exec>
                                         <exec failonerror="true"
                                               executable="cmake">
@@ -209,7 +388,7 @@
                         <executions>
                             <execution>
                                 <id>copy-native-libs</id>
-                                <phase>validate</phase>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
@@ -242,6 +421,17 @@
             </releases>
             <snapshots>
                 <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
     </repositories>

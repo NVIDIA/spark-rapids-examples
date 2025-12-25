@@ -84,25 +84,161 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -w --expt-extended-lambda --expt-relax
 ####################################################################################################
 # - cudf -------------------------------------------------------------------------------------------
 
-# Ensure CUDA runtime is dynamic despite statically linking Arrow in libcudf
-set(CUDA_USE_STATIC_CUDA_RUNTIME ON)
+option(USE_PREBUILT_CUDF "Use prebuilt libcudf.so from rapids-4-spark jar" ON)
 
-rapids_cpm_init()
-rapids_cpm_find(cudf 26.02.00
-        CPM_ARGS
-        GIT_REPOSITORY  https://github.com/rapidsai/cudf.git
-        GIT_TAG         ${rapids-cmake-branch}
-        GIT_SHALLOW     TRUE
-        SOURCE_SUBDIR   cpp
-        OPTIONS         "BUILD_TESTS OFF"
-                        "BUILD_BENCHMARKS OFF"
-                        "CUDF_USE_ARROW_STATIC ON"
-                        "JITIFY_USE_CACHE ON"
-                        "CUDA_STATIC_RUNTIME ${CUDA_USE_STATIC_CUDA_RUNTIME}"
-                        "DISABLE_DEPRECATION_WARNING ON"
-                        "AUTO_DETECT_CUDA_ARCHITECTURES OFF"
-                        "CUDF_KVIKIO_REMOTE_IO OFF"
+# Check if Maven created a marker to force source build
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/USE_SOURCE_BUILD")
+    message(STATUS "Found USE_SOURCE_BUILD marker file, forcing source build")
+    set(USE_PREBUILT_CUDF OFF CACHE BOOL "Forcing source build due to missing jar" FORCE)
+endif()
+
+if(USE_PREBUILT_CUDF)
+    # Set paths for prebuilt library and headers
+    set(CUDF_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/native-deps" CACHE PATH "Path to directory containing libcudf.so")
+    set(CUDF_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/cudf-repo/cpp/include" CACHE PATH "Path to cudf headers")
+    
+    message(STATUS "Attempting to use prebuilt libcudf.so from rapids-4-spark jar")
+    message(STATUS "Looking for libcudf.so in: ${CUDF_LIB_DIR}")
+    
+    # Check if directory and library exist
+    set(PREBUILT_AVAILABLE TRUE)
+    if(NOT EXISTS "${CUDF_LIB_DIR}")
+        message(WARNING "Directory ${CUDF_LIB_DIR} does not exist")
+        set(PREBUILT_AVAILABLE FALSE)
+    else()
+        # Try to find the library
+        find_library(CUDF_LIBRARY_CHECK
+            NAMES cudf
+            PATHS ${CUDF_LIB_DIR}
+            NO_DEFAULT_PATH
+        )
+        if(NOT CUDF_LIBRARY_CHECK)
+            message(WARNING "libcudf.so not found in ${CUDF_LIB_DIR}")
+            set(PREBUILT_AVAILABLE FALSE)
+        endif()
+    endif()
+    
+    # Auto-fallback to source build if prebuilt not available
+    if(NOT PREBUILT_AVAILABLE)
+        message(WARNING 
+            "\n"
+            "================================================================\n"
+            "Prebuilt libcudf.so not available.\n"
+            "Automatically falling back to building cuDF from source.\n"
+            "This will take 30+ minutes.\n"
+            "\n"
+            "To use fast build mode in future:\n"
+            "  1. For SNAPSHOT versions: Build and install rapids-4-spark\n"
+            "     cd /path/to/spark-rapids\n"
+            "     mvn clean install -DskipTests\n"
+            "  2. Run: ./extract-cudf-libs.sh\n"
+            "  3. Then build: mvn clean package -Pudf-native-examples\n"
+            "================================================================\n")
+        set(USE_PREBUILT_CUDF OFF)
+    endif()
+endif()
+
+if(USE_PREBUILT_CUDF)
+    # At this point, PREBUILT_AVAILABLE check has passed
+    message(STATUS "✓ Using FAST BUILD mode with prebuilt libcudf.so")
+    
+    # Find the prebuilt libcudf.so (should succeed based on earlier check)
+    find_library(CUDF_LIBRARY
+        NAMES cudf
+        PATHS ${CUDF_LIB_DIR}
+        NO_DEFAULT_PATH
+        REQUIRED
     )
+    
+    message(STATUS "✓ Found libcudf: ${CUDF_LIBRARY}")
+    message(STATUS "✓ cuDF include directory: ${CUDF_INCLUDE_DIR}")
+    
+    # Verify cuDF source directory exists (cloned by Maven)
+    set(CUDF_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/cudf-repo/cpp")
+    if(NOT EXISTS "${CUDF_SOURCE_DIR}/CMakeLists.txt")
+        message(FATAL_ERROR 
+            "cuDF source directory not found: ${CUDF_SOURCE_DIR}\n"
+            "The cuDF repository should have been cloned by Maven.\n"
+            "Check if target/cudf-repo/ exists.")
+    endif()
+    
+    message(STATUS "✓ Found cuDF source at: ${CUDF_SOURCE_DIR}")
+    
+    # We'll use cuDF's dependency fetching mechanism but create our own target
+    # First, let rapids-cpm fetch the dependencies that cuDF needs
+    message(STATUS "Fetching cuDF dependencies (this may take a few minutes)...")
+    
+    rapids_cpm_init()
+    
+    # Set options to avoid building unnecessary components
+    set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
+    
+    # Use rapids-cpm to get CCCL - this is what cuDF uses
+    include(${rapids-cmake-dir}/cpm/cccl.cmake)
+    rapids_cpm_cccl()
+    
+    # Use rapids-cpm to get RMM - this is what cuDF uses  
+    include(${rapids-cmake-dir}/cpm/rmm.cmake)
+    rapids_cpm_rmm()
+    
+    # After rapids_cpm_rmm(), the rmm::rmm target should be available
+    # Verify it exists
+    if(NOT TARGET rmm::rmm)
+        message(FATAL_ERROR "rmm::rmm target not created by rapids_cpm_rmm()")
+    endif()
+    
+    # Get RMM include directory from the target
+    get_target_property(RMM_INCLUDE_DIR rmm::rmm INTERFACE_INCLUDE_DIRECTORIES)
+    message(STATUS "RMM include directories: ${RMM_INCLUDE_DIR}")
+    
+    # Now create our own imported target for cudf using the prebuilt library
+    add_library(cudf_imported SHARED IMPORTED GLOBAL)
+    set_target_properties(cudf_imported PROPERTIES
+        IMPORTED_LOCATION ${CUDF_LIBRARY}
+    )
+    
+    # Add include directories to the imported target
+    # Include cuDF headers and RMM headers
+    target_include_directories(cudf_imported INTERFACE
+        ${CUDF_INCLUDE_DIR}
+        ${RMM_INCLUDE_DIR}
+    )
+    
+    # Link against RMM to get other dependencies
+    target_link_libraries(cudf_imported INTERFACE rmm::rmm)
+    
+    # Create an alias to match expected name
+    add_library(cudf::cudf ALIAS cudf_imported)
+    
+    message(STATUS "✓ Prebuilt cuDF configured with all dependencies")
+    message(STATUS "  Prebuilt library: ${CUDF_LIBRARY}")
+    message(STATUS "  cuDF headers: ${CUDF_INCLUDE_DIR}")
+    message(STATUS "  Dependencies: CCCL, RMM (via rapids-cpm)")
+    
+else()
+    message(STATUS "Building cuDF from source (this will take a long time)")
+    
+    # Ensure CUDA runtime is dynamic despite statically linking Arrow in libcudf
+    set(CUDA_USE_STATIC_CUDA_RUNTIME ON)
+    
+    rapids_cpm_init()
+    rapids_cpm_find(cudf 26.02.00
+            CPM_ARGS
+            GIT_REPOSITORY  https://github.com/rapidsai/cudf.git
+            GIT_TAG         ${rapids-cmake-branch}
+            GIT_SHALLOW     TRUE
+            SOURCE_SUBDIR   cpp
+            OPTIONS         "BUILD_TESTS OFF"
+                            "BUILD_BENCHMARKS OFF"
+                            "CUDF_USE_ARROW_STATIC ON"
+                            "JITIFY_USE_CACHE ON"
+                            "CUDA_STATIC_RUNTIME ${CUDA_USE_STATIC_CUDA_RUNTIME}"
+                            "DISABLE_DEPRECATION_WARNING ON"
+                            "AUTO_DETECT_CUDA_ARCHITECTURES OFF"
+                            "CUDF_KVIKIO_REMOTE_IO OFF"
+        )
+endif()
 
 ###################################################################################################
 # - benchmarks ------------------------------------------------------------------------------------
