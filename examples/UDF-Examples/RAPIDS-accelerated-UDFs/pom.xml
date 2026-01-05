@@ -229,9 +229,6 @@
                                             <echo message="========================================================"/>
                                             <echo message=""/>
                                         </sequential>
-                                        <mkdir dir="${project.build.directory}/native-deps"/>
-                                        <mkdir dir="${project.build.directory}/cudf-repo"/>
-                                        <mkdir dir="${project.build.directory}/temp-extract"/>
 
                                         <!-- Try multiple jar naming patterns -->
                                         <!-- Normalize paths for cross-platform compatibility (Windows/Linux/macOS) -->
@@ -303,6 +300,11 @@
 
                                         <!-- Only proceed if not skipping -->
                                         <sequential unless:set="should.skip.extraction" xmlns:unless="ant:unless">
+
+                                        <!-- Create necessary directories for extraction -->
+                                        <mkdir dir="${project.build.directory}/native-deps"/>
+                                        <mkdir dir="${project.build.directory}/cudf-repo"/>
+                                        <mkdir dir="${project.build.directory}/temp-extract"/>
 
                                         <!-- Create inverse property for jar NOT found -->
                                         <condition property="rapids.jar.not.found">
