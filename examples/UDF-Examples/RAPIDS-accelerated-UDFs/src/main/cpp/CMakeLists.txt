@@ -115,7 +115,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/USE_SOURCE_BUILD")
     if(USE_PREBUILT_CUDF)
         if(USER_SET_USE_PREBUILT_CUDF)
             # User explicitly requested prebuilt mode, but jar is missing - warn but respect user's choice
-            message(WARNING
+            message(WARNING 
                 "\n"
                 "================================================================\n"
                 "WARNING: rapids-4-spark jar not found, but USE_PREBUILT_CUDF=ON\n"
@@ -130,7 +130,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/USE_SOURCE_BUILD")
                 "     mvn clean install -DskipTests\n"
                 "  3. Explicitly use source build: -DUSE_PREBUILT_CUDF=OFF\n"
                 "================================================================\n")
-        else
+        else()
             # Not explicitly set by user - safe to auto-fallback
             message(STATUS "Auto-fallback: Switching to source build due to missing jar")
             set(USE_PREBUILT_CUDF OFF CACHE BOOL "Auto-fallback to source build (jar not found)" FORCE)
