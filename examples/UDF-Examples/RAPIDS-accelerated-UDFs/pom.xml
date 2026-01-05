@@ -228,8 +228,6 @@
                                             <echo message="Skipping extraction, will build cuDF from source"/>
                                             <echo message="========================================================"/>
                                             <echo message=""/>
-                                            <!-- Create marker to skip extraction -->
-                                            <touch file="${project.build.directory}/SKIP_EXTRACTION"/>
                                         </sequential>
                                         <mkdir dir="${project.build.directory}/native-deps"/>
                                         <mkdir dir="${project.build.directory}/cudf-repo"/>
@@ -356,7 +354,7 @@
                                             <!-- Clone cuDF repo for headers only (shallow clone) -->
                                             <exec executable="bash" failonerror="true">
                                                 <arg value="-c"/>
-                                                <arg value="set -e; if [ ! -d '${project.build.directory}/cudf-repo/.git' ]; then echo 'Cloning cuDF repository (${cudf.git.branch} branch)...'; git clone --depth 1 --branch ${cudf.git.branch} https://github.com/rapidsai/cudf.git '${project.build.directory}/cudf-repo'; else echo 'cuDF repo already exists, skipping clone'; fi"/>
+                                                <arg value="set -e; if [ ! -d '${project.build.directory}/cudf-repo/.git' ]; then echo 'Cloning cuDF repository (${cudf.git.branch} branch)...'; git clone --depth 1 --branch '${cudf.git.branch}' https://github.com/rapidsai/cudf.git '${project.build.directory}/cudf-repo'; else echo 'cuDF repo already exists, skipping clone'; fi"/>
                                             </exec>
 
                                             <!-- Verify cuDF headers -->
