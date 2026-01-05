@@ -356,7 +356,7 @@
                                             <!-- Clone cuDF repo for headers only (shallow clone) -->
                                             <exec executable="bash" failonerror="true">
                                                 <arg value="-c"/>
-                                                <arg value="if [ ! -d ${project.build.directory}/cudf-repo/.git ]; then echo 'Cloning cuDF repository (${cudf.git.branch} branch)...'; git clone --depth 1 --branch ${cudf.git.branch} https://github.com/rapidsai/cudf.git ${project.build.directory}/cudf-repo || exit 1; else echo 'cuDF repo already exists, skipping clone'; fi"/>
+                                                <arg value="set -e; if [ ! -d '${project.build.directory}/cudf-repo/.git' ]; then echo 'Cloning cuDF repository (${cudf.git.branch} branch)...'; git clone --depth 1 --branch ${cudf.git.branch} https://github.com/rapidsai/cudf.git '${project.build.directory}/cudf-repo'; else echo 'cuDF repo already exists, skipping clone'; fi"/>
                                             </exec>
 
                                             <!-- Verify cuDF headers -->
