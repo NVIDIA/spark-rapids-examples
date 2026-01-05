@@ -384,19 +384,10 @@
                                             <available file="${project.build.directory}/cudf-repo/cpp/include" 
                                                        type="dir" 
                                                        property="cudf.headers.exist"/>
-                                            <fail unless="cudf.headers.exist">
-                                                <message>
-                                                    Failed to obtain cuDF headers from branch ${cudf.git.branch}.
-                                                    The directory ${project.build.directory}/cudf-repo/cpp/include does not exist.
-
-                                                    Please check:
-                                                      1) Network connectivity to GitHub
-                                                      2) Branch '${cudf.git.branch}' exists in cuDF repository
-                                                      3) Try with -Dcudf.git.branch=main
-
-                                                    For more information, see README.md
-                                                </message>
-                                            </fail>
+                                            <!-- Note: <fail> only supports 'message' as attribute, not nested element -->
+                                            <!-- Multi-line message using ${line.separator} for readability in output -->
+                                            <fail unless="cudf.headers.exist"
+                                                  message="Failed to obtain cuDF headers from branch ${cudf.git.branch}.${line.separator}The directory ${project.build.directory}/cudf-repo/cpp/include does not exist.${line.separator}${line.separator}Please check:${line.separator}  1) Network connectivity to GitHub${line.separator}  2) Branch '${cudf.git.branch}' exists in cuDF repository${line.separator}  3) Try with -Dcudf.git.branch=main${line.separator}${line.separator}For more information, see README.md"/>
 
                                             <echo message="✓ cuDF headers available at: ${project.build.directory}/cudf-repo"/>
                                             <echo message="================================================"/>
