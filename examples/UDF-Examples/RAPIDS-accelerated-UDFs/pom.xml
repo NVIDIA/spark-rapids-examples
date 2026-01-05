@@ -366,18 +366,13 @@
                                             <echo message="✓ libcudf.so extracted to: ${project.build.directory}/native-deps"/>
                                             
                                             <!-- Clone cuDF repo for headers only (shallow clone) -->
-                                            <!-- NOTE: This bash script must be on a single line (semicolon-separated) -->
-                                            <!-- because XML's multiline formatting in <arg value="..."/> causes bash parsing errors. -->
-                                            <!-- Script logic (for readability):
-                                                 1. Set error handling: set -e; set -o pipefail
-                                                 2. Set variables: CUDF_DIR, BRANCH
-                                                 3. If repo doesn't exist: git clone with error handling
-                                                 4. If repo exists: verify branch, fetch/checkout if needed
-                                                 5. Echo completion message
-                                            -->
-                                            <exec executable="bash" failonerror="true">
-                                                <arg value="-c"/>
-                                                <arg value="set -e; set -o pipefail; CUDF_DIR='${project.build.directory}/cudf-repo'; BRANCH='${cudf.git.branch}'; if [ ! -d &quot;$CUDF_DIR/.git&quot; ]; then echo &quot;Cloning cuDF repository ($BRANCH branch)...&quot;; git clone --depth 1 --branch &quot;$BRANCH&quot; https://github.com/rapidsai/cudf.git &quot;$CUDF_DIR&quot; || { echo &quot;ERROR: Failed to clone cuDF from branch $BRANCH&quot; >&amp;2; exit 1; }; else echo &quot;cuDF repo exists, verifying branch...&quot;; cd &quot;$CUDF_DIR&quot; || exit 1; CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo &quot;unknown&quot;); if [ &quot;$CURRENT_BRANCH&quot; != &quot;$BRANCH&quot; ]; then echo &quot;Branch mismatch: current=$CURRENT_BRANCH, expected=$BRANCH&quot;; echo &quot;Fetching and switching to $BRANCH...&quot;; git fetch --depth 1 origin &quot;$BRANCH&quot; || { echo &quot;ERROR: Failed to fetch branch $BRANCH&quot; >&amp;2; exit 1; }; git checkout &quot;$BRANCH&quot; || { echo &quot;ERROR: Failed to checkout branch $BRANCH&quot; >&amp;2; exit 1; }; git reset --hard &quot;origin/$BRANCH&quot; || exit 1; echo &quot;✓ Switched to branch $BRANCH&quot;; else echo &quot;✓ Already on correct branch ($BRANCH)&quot;; fi; fi; echo &quot;✓ cuDF repository ready&quot;"/>
+                                            <!-- Ensure script is executable -->
+                                            <chmod file="${basedir}/clone-cudf-repo.sh" perm="755"/>
+                                            
+                                            <!-- Execute script to clone/update cuDF repository -->
+                                            <exec executable="${basedir}/clone-cudf-repo.sh" failonerror="true">
+                                                <arg value="${project.build.directory}/cudf-repo"/>
+                                                <arg value="${cudf.git.branch}"/>
                                             </exec>
 
                                             <!-- Verify cuDF headers exist after clone/update -->
