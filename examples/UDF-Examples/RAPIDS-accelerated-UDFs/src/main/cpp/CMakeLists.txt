@@ -94,17 +94,47 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -w --expt-extended-lambda --expt-relax
 ####################################################################################################
 # - cudf -------------------------------------------------------------------------------------------
 
+# Check if USE_PREBUILT_CUDF was explicitly set by user (e.g., via -DUSE_PREBUILT_CUDF=...)
+# This must be done BEFORE the option() command
+if(DEFINED USE_PREBUILT_CUDF)
+    set(USER_SET_USE_PREBUILT_CUDF TRUE)
+    message(STATUS "USE_PREBUILT_CUDF explicitly set by user to: ${USE_PREBUILT_CUDF}")
+else()
+    set(USER_SET_USE_PREBUILT_CUDF FALSE)
+endif()
+
 option(USE_PREBUILT_CUDF "Use prebuilt libcudf.so from rapids-4-spark jar" ON)
 
 message(STATUS "USE_PREBUILT_CUDF is set to: ${USE_PREBUILT_CUDF}")
 
 # Check if Maven created a marker to force source build
-# This happens when jar is not found and user didn't explicitly set USE_PREBUILT_CUDF=OFF
+# This happens when rapids-4-spark jar is not found
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/USE_SOURCE_BUILD")
-    message(STATUS "Found USE_SOURCE_BUILD marker file from Maven")
+    message(STATUS "Found USE_SOURCE_BUILD marker file from Maven (rapids-4-spark jar not found)")
+
     if(USE_PREBUILT_CUDF)
-        message(STATUS "Auto-fallback: Switching to source build due to missing jar")
-        set(USE_PREBUILT_CUDF OFF CACHE BOOL "Forcing source build due to missing jar" FORCE)
+        if(USER_SET_USE_PREBUILT_CUDF)
+            # User explicitly requested prebuilt mode, but jar is missing - warn but respect user's choice
+            message(WARNING
+                "\n"
+                "================================================================\n"
+                "WARNING: rapids-4-spark jar not found, but USE_PREBUILT_CUDF=ON\n"
+                "was explicitly set by the user.\n"
+                "\n"
+                "The build will likely FAIL because prebuilt libraries are not available.\n"
+                "\n"
+                "Solutions:\n"
+                "  1. Remove -DUSE_PREBUILT_CUDF=ON to allow automatic fallback\n"
+                "  2. Build and install rapids-4-spark:\n"
+                "     cd /path/to/spark-rapids\n"
+                "     mvn clean install -DskipTests\n"
+                "  3. Explicitly use source build: -DUSE_PREBUILT_CUDF=OFF\n"
+                "================================================================\n")
+        else
+            # Not explicitly set by user - safe to auto-fallback
+            message(STATUS "Auto-fallback: Switching to source build due to missing jar")
+            set(USE_PREBUILT_CUDF OFF CACHE BOOL "Auto-fallback to source build (jar not found)" FORCE)
+        endif()
     endif()
 endif()
 

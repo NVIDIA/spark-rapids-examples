@@ -234,17 +234,28 @@
                                         <mkdir dir="${project.build.directory}/temp-extract"/>
 
                                         <!-- Try multiple jar naming patterns -->
+                                        <!-- Normalize paths for cross-platform compatibility (Windows/Linux/macOS) -->
+                                        <property name="maven.repo.base" value="${settings.localRepository}"/>
+                                        <pathconvert property="maven.repo.normalized" dirsep="/">
+                                            <path location="${maven.repo.base}"/>
+                                        </pathconvert>
+
+                                        <property name="project.target.base" value="${project.build.directory}"/>
+                                        <pathconvert property="project.target.normalized" dirsep="/">
+                                            <path location="${project.target.base}"/>
+                                        </pathconvert>
+
                                         <!-- Pattern 1: With classifier (release versions) -->
                                         <property name="rapids.jar.maven.with.classifier" 
-                                                  value="${settings.localRepository}/com/nvidia/rapids-4-spark_${scala.binary.version}/${rapids4spark.version}/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}-${cuda.version}.jar"/>
+                                                  value="${maven.repo.normalized}/com/nvidia/rapids-4-spark_${scala.binary.version}/${rapids4spark.version}/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}-${cuda.version}.jar"/>
 
                                         <!-- Pattern 2: Without classifier (snapshot versions) -->
                                         <property name="rapids.jar.maven.no.classifier" 
-                                                  value="${settings.localRepository}/com/nvidia/rapids-4-spark_${scala.binary.version}/${rapids4spark.version}/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}.jar"/>
+                                                  value="${maven.repo.normalized}/com/nvidia/rapids-4-spark_${scala.binary.version}/${rapids4spark.version}/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}.jar"/>
 
-                                        <!-- Also try the downloaded location -->
+                                        <!-- Pattern 3: Downloaded location -->
                                         <property name="rapids.jar.downloaded.path" 
-                                                  value="${project.build.directory}/rapids-jar/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}-${cuda.version}.jar"/>
+                                                  value="${project.target.normalized}/rapids-jar/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}-${cuda.version}.jar"/>
 
                                         <echo message="Looking for rapids-4-spark jar..."/>
                                         <echo message="  Pattern 1 (with classifier): ${rapids.jar.maven.with.classifier}"/>
@@ -252,9 +263,12 @@
                                         <echo message="  Pattern 3 (downloaded):      ${rapids.jar.downloaded.path}"/>
 
                                         <!-- Check all locations -->
-                                        <available file="${rapids.jar.maven.with.classifier}" property="rapids.jar.maven.with.classifier.exists"/>
-                                        <available file="${rapids.jar.maven.no.classifier}" property="rapids.jar.maven.no.classifier.exists"/>
-                                        <available file="${rapids.jar.downloaded.path}" property="rapids.jar.downloaded.exists"/>
+                                        <available file="${rapids.jar.maven.with.classifier}" 
+                                                   property="rapids.jar.maven.with.classifier.exists"/>
+                                        <available file="${rapids.jar.maven.no.classifier}" 
+                                                   property="rapids.jar.maven.no.classifier.exists"/>
+                                        <available file="${rapids.jar.downloaded.path}" 
+                                                   property="rapids.jar.downloaded.exists"/>
 
                                         <!-- Set the actual path to use (try in order) -->
                                         <condition property="rapids.jar.path" value="${rapids.jar.maven.with.classifier}">
@@ -354,15 +368,68 @@
                                             <!-- Clone cuDF repo for headers only (shallow clone) -->
                                             <exec executable="bash" failonerror="true">
                                                 <arg value="-c"/>
-                                                <arg value="set -e; if [ ! -d '${project.build.directory}/cudf-repo/.git' ]; then echo 'Cloning cuDF repository (${cudf.git.branch} branch)...'; git clone --depth 1 --branch '${cudf.git.branch}' https://github.com/rapidsai/cudf.git '${project.build.directory}/cudf-repo'; else echo 'cuDF repo already exists, skipping clone'; fi"/>
+                                                <arg value="
+                                                    set -e
+                                                    set -o pipefail
+
+                                                    CUDF_DIR='${project.build.directory}/cudf-repo'
+                                                    BRANCH='${cudf.git.branch}'
+
+                                                    if [ ! -d &quot;$CUDF_DIR/.git&quot; ]; then
+                                                        echo 'Cloning cuDF repository ($BRANCH branch)...'
+                                                        git clone --depth 1 --branch &quot;$BRANCH&quot; \
+                                                            https://github.com/rapidsai/cudf.git &quot;$CUDF_DIR&quot; || {
+                                                            echo 'ERROR: Failed to clone cuDF from branch $BRANCH' >&amp;2
+                                                            exit 1
+                                                        }
+                                                    else
+                                                        echo 'cuDF repo exists, verifying branch...'
+                                                        cd &quot;$CUDF_DIR&quot; || exit 1
+
+                                                        CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'unknown')
+
+                                                        if [ &quot;$CURRENT_BRANCH&quot; != &quot;$BRANCH&quot; ]; then
+                                                            echo 'Branch mismatch: current=$CURRENT_BRANCH, expected=$BRANCH'
+                                                            echo 'Fetching and switching to $BRANCH...'
+
+                                                            git fetch --depth 1 origin &quot;$BRANCH&quot; || {
+                                                                echo 'ERROR: Failed to fetch branch $BRANCH' >&amp;2
+                                                                exit 1
+                                                            }
+
+                                                            git checkout &quot;$BRANCH&quot; || {
+                                                                echo 'ERROR: Failed to checkout branch $BRANCH' >&amp;2
+                                                                exit 1
+                                                            }
+
+                                                            git reset --hard &quot;origin/$BRANCH&quot; || exit 1
+                                                            echo '✓ Switched to branch $BRANCH'
+                                                        else
+                                                            echo '✓ Already on correct branch ($BRANCH)'
+                                                        fi
+                                                    fi
+
+                                                    echo '✓ cuDF repository ready'
+                                                "/>
                                             </exec>
 
-                                            <!-- Verify cuDF headers -->
+                                            <!-- Verify cuDF headers exist after clone/update -->
                                             <available file="${project.build.directory}/cudf-repo/cpp/include" 
                                                        type="dir" 
                                                        property="cudf.headers.exist"/>
-                                            <fail unless="cudf.headers.exist" 
-                                                  message="Failed to clone cuDF repository for headers from branch ${cudf.git.branch}. Please check if the branch exists or set -Dcudf.git.branch=main"/>
+                                            <fail unless="cudf.headers.exist">
+                                                <message>
+                                                    Failed to obtain cuDF headers from branch ${cudf.git.branch}.
+                                                    The directory ${project.build.directory}/cudf-repo/cpp/include does not exist.
+
+                                                    Please check:
+                                                      1) Network connectivity to GitHub
+                                                      2) Branch '${cudf.git.branch}' exists in cuDF repository
+                                                      3) Try with -Dcudf.git.branch=main
+
+                                                    For more information, see README.md
+                                                </message>
+                                            </fail>
 
                                             <echo message="✓ cuDF headers available at: ${project.build.directory}/cudf-repo"/>
                                             <echo message="================================================"/>
