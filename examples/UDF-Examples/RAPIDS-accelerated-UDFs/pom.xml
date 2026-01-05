@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2020-2025, NVIDIA CORPORATION.
+  Copyright (c) 2020-2026, NVIDIA CORPORATION.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@
         <scala.version>2.12.15</scala.version>
         <udf.native.build.path>${project.build.directory}/cpp-build</udf.native.build.path>
         <cudf.git.branch>main</cudf.git.branch>
+        <skipCudfExtraction>false</skipCudfExtraction>
         <BUILD_UDF_BENCHMARKS>OFF</BUILD_UDF_BENCHMARKS>
         <CMAKE_CXX_FLAGS/>
         <GPU_ARCHS>RAPIDS</GPU_ARCHS>
@@ -330,7 +331,6 @@
                                                    dest="${project.build.directory}/temp-extract">
                                                 <patternset>
                                                     <include name="**/libcudf.so*"/>
-                                                    <include name="**/librmm.so*"/>
                                                     <include name="**/libnvcomp.so*"/>
                                                 </patternset>
                                             </unzip>
