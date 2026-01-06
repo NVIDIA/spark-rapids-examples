@@ -80,8 +80,36 @@ fi
 echo "Extracting native libraries..."
 unzip -q -o "$JAR_PATH" "*/libcudf.so*" "*/libnvcomp.so*" -d "$TARGET_DIR/temp"
 
-# Move libraries to native-deps directory
-find "$TARGET_DIR/temp" -name "*.so*" -exec mv {} "$NATIVE_DEPS_DIR/" \;
+# Move libraries to native-deps directory, detecting conflicts
+echo "Moving extracted libraries..."
+CONFLICT_COUNT=0
+
+# Use process substitution to avoid subshell issues
+while IFS= read -r source_file; do
+    filename=$(basename "$source_file")
+    dest_file="$NATIVE_DEPS_DIR/$filename"
+    
+    if [ -f "$dest_file" ]; then
+        # File already exists - check if it's the same
+        if ! cmp -s "$source_file" "$dest_file"; then
+            echo "WARNING: Conflicting library detected: $filename" >&2
+            echo "  Existing: $dest_file" >&2
+            echo "  New:      $source_file" >&2
+            echo "  Keeping existing file, skipping new one" >&2
+            CONFLICT_COUNT=$((CONFLICT_COUNT + 1))
+        fi
+        # Remove the duplicate source file
+        rm -f "$source_file"
+    else
+        # No conflict, move the file
+        mv "$source_file" "$dest_file"
+    fi
+done < <(find "$TARGET_DIR/temp" -name "*.so*")
+
+if [ "$CONFLICT_COUNT" -gt 0 ]; then
+    echo "WARNING: $CONFLICT_COUNT library file(s) had conflicts. Review the warnings above." >&2
+fi
+
 rm -rf "$TARGET_DIR/temp"
 
 if [ ! -f "$NATIVE_DEPS_DIR/libcudf.so" ]; then
