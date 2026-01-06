@@ -135,8 +135,53 @@ else
 fi
 
 # Extract libcudf.so and dependencies
-echo "Extracting native libraries..."
-unzip -q -o "$JAR_PATH" "*/libcudf.so*" "*/libnvcomp.so*" -d "$TARGET_DIR/temp"
+echo "Extracting native libraries from jar..."
+echo "  Jar: $JAR_PATH"
+echo "  Looking for: */libcudf.so*, */libnvcomp.so*"
+
+# Use unzip without -q to capture output, but redirect to log for debugging
+UNZIP_OUTPUT=$(unzip -o "$JAR_PATH" "*/libcudf.so*" "*/libnvcomp.so*" -d "$TARGET_DIR/temp" 2>&1)
+UNZIP_EXIT_CODE=$?
+
+# Check unzip exit code
+if [ $UNZIP_EXIT_CODE -ne 0 ]; then
+    echo "ERROR: Failed to extract libraries from jar" >&2
+    echo "unzip exit code: $UNZIP_EXIT_CODE" >&2
+    
+    # Provide helpful diagnostics
+    case $UNZIP_EXIT_CODE in
+        11)
+            echo "Reason: No matching files found in jar" >&2
+            echo "" >&2
+            echo "The jar may not contain native libraries for your platform." >&2
+            echo "Expected patterns: */libcudf.so*, */libnvcomp.so*" >&2
+            echo "" >&2
+            echo "Listing jar contents:" >&2
+            unzip -l "$JAR_PATH" | grep -E '\.(so|dylib|dll)' || echo "  No native libraries found" >&2
+            ;;
+        *)
+            echo "Reason: unzip command failed" >&2
+            echo "Output: $UNZIP_OUTPUT" >&2
+            ;;
+    esac
+    
+    echo "" >&2
+    echo "Falling back to source build..." >&2
+    exit 1
+fi
+
+# Verify that we actually extracted some files
+EXTRACTED_COUNT=$(find "$TARGET_DIR/temp" -name "*.so*" 2>/dev/null | wc -l)
+echo "Extracted $EXTRACTED_COUNT library file(s)"
+
+if [ "$EXTRACTED_COUNT" -eq 0 ]; then
+    echo "ERROR: No library files were extracted from jar" >&2
+    echo "This usually means the jar doesn't contain native libraries." >&2
+    echo "" >&2
+    echo "Listing jar contents:" >&2
+    unzip -l "$JAR_PATH" | head -20 >&2
+    exit 1
+fi
 
 # Move libraries to native-deps directory, detecting conflicts
 echo "Moving extracted libraries..."
@@ -170,12 +215,21 @@ fi
 
 rm -rf "$TARGET_DIR/temp"
 
+# Verify that libcudf.so was successfully moved to final location
 if [ ! -f "$NATIVE_DEPS_DIR/libcudf.so" ]; then
-    echo "ERROR: Failed to extract libcudf.so from jar"
+    echo "ERROR: libcudf.so not found in $NATIVE_DEPS_DIR" >&2
+    echo "" >&2
+    echo "This could mean:" >&2
+    echo "  1. The jar didn't contain libcudf.so" >&2
+    echo "  2. Extraction succeeded but moving files failed" >&2
+    echo "  3. Wrong architecture (jar might be for a different platform)" >&2
+    echo "" >&2
+    echo "Contents of $NATIVE_DEPS_DIR:" >&2
+    ls -lh "$NATIVE_DEPS_DIR" >&2 || echo "  Directory is empty or doesn't exist" >&2
     exit 1
 fi
 
-echo "✓ Extracted libraries to: $NATIVE_DEPS_DIR"
+echo "✓ Successfully extracted libraries to: $NATIVE_DEPS_DIR"
 ls -lh "$NATIVE_DEPS_DIR"
 
 # Clone cuDF repo for headers (shallow clone)

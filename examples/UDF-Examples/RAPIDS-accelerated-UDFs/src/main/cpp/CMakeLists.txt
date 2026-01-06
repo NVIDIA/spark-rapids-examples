@@ -163,14 +163,19 @@ if(USE_PREBUILT_CUDF AND NOT USER_SET_USE_PREBUILT_CUDF)
         set(PREBUILT_AVAILABLE FALSE)
     else()
         # Try to find the library
+        # Note: find_library sets variable to <var>-NOTFOUND on failure, not undefined
         find_library(CUDF_LIBRARY_CHECK
             NAMES cudf
             PATHS ${CUDF_LIB_DIR}
             NO_DEFAULT_PATH
         )
-        if(NOT CUDF_LIBRARY_CHECK)
+        
+        # Proper check: find_library failure results in <VAR>-NOTFOUND string
+        if(CUDF_LIBRARY_CHECK MATCHES "-NOTFOUND$")
             message(STATUS "libcudf.so not found in ${CUDF_LIB_DIR}")
             set(PREBUILT_AVAILABLE FALSE)
+        else()
+            message(STATUS "Found libcudf at: ${CUDF_LIBRARY_CHECK}")
         endif()
     endif()
     
