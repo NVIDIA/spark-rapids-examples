@@ -37,7 +37,19 @@ get_property(rapids-cmake-dir GLOBAL PROPERTY rapids-cmake-dir)
 if(NOT rapids-cmake-dir)
     # Fallback: rapids-cmake is downloaded by CPM to _deps
     set(rapids-cmake-dir "${CMAKE_BINARY_DIR}/_deps/rapids-cmake-src")
+    message(STATUS "rapids-cmake property not set, using fallback path")
 endif()
+
+# Verify rapids-cmake directory exists
+if(NOT EXISTS "${rapids-cmake-dir}")
+    message(FATAL_ERROR 
+        "rapids-cmake directory not found: ${rapids-cmake-dir}\n"
+        "This usually means rapids-cmake wasn't properly fetched by CPM.\n"
+        "Try deleting the build directory and reconfiguring:\n"
+        "  rm -rf ${CMAKE_BINARY_DIR}\n"
+        "  cmake ..")
+endif()
+
 message(STATUS "rapids-cmake directory: ${rapids-cmake-dir}")
 
 # Use GPU_ARCHS if it is defined
@@ -248,11 +260,25 @@ if(SHOULD_USE_PREBUILT)
     message(STATUS "Using rapids-cmake helper scripts for CCCL and RMM")
 
     # Get CCCL (Thrust, libcudacxx, CUB) - version defined in rapids-cmake
-    include(${rapids-cmake-dir}/cpm/cccl.cmake)
+    set(CCCL_CMAKE_FILE "${rapids-cmake-dir}/cpm/cccl.cmake")
+    if(NOT EXISTS "${CCCL_CMAKE_FILE}")
+        message(FATAL_ERROR 
+            "rapids-cmake CCCL helper script not found: ${CCCL_CMAKE_FILE}\n"
+            "Expected location: ${rapids-cmake-dir}/cpm/cccl.cmake\n"
+            "This indicates rapids-cmake directory structure is incomplete or incorrect.")
+    endif()
+    include(${CCCL_CMAKE_FILE})
     rapids_cpm_cccl()
 
     # Use rapids-cpm to get RMM - this is what cuDF uses  
-    include(${rapids-cmake-dir}/cpm/rmm.cmake)
+    set(RMM_CMAKE_FILE "${rapids-cmake-dir}/cpm/rmm.cmake")
+    if(NOT EXISTS "${RMM_CMAKE_FILE}")
+        message(FATAL_ERROR 
+            "rapids-cmake RMM helper script not found: ${RMM_CMAKE_FILE}\n"
+            "Expected location: ${rapids-cmake-dir}/cpm/rmm.cmake\n"
+            "This indicates rapids-cmake directory structure is incomplete or incorrect.")
+    endif()
+    include(${RMM_CMAKE_FILE})
     rapids_cpm_rmm()
 
     # After rapids_cpm_rmm(), the rmm::rmm target should be available
