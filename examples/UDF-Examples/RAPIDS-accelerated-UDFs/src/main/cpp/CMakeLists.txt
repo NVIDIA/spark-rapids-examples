@@ -143,15 +143,19 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/USE_SOURCE_BUILD")
     endif()
 endif()
 
-if(USE_PREBUILT_CUDF)
+# Check prebuilt availability before making final decision
+# This avoids modifying cache variables within conditional blocks
+set(SHOULD_USE_PREBUILT ${USE_PREBUILT_CUDF})
+
+if(USE_PREBUILT_CUDF AND NOT USER_SET_USE_PREBUILT_CUDF)
+    # User didn't explicitly set the option - check if prebuilt components are available
     # Set paths for prebuilt library and headers
-    set(CUDF_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/native-deps" CACHE PATH "Path to directory containing libcudf.so")
-    set(CUDF_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/cudf-repo/cpp/include" CACHE PATH "Path to cudf headers")
+    set(CUDF_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/native-deps")
+    set(CUDF_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/cudf-repo/cpp/include")
     
-    message(STATUS "Attempting to use prebuilt libcudf.so from rapids-4-spark jar")
-    message(STATUS "Looking for libcudf.so in: ${CUDF_LIB_DIR}")
+    message(STATUS "Checking for prebuilt libcudf.so from rapids-4-spark jar")
+    message(STATUS "Looking in: ${CUDF_LIB_DIR}")
     
-    # Only do auto-fallback if prebuilt was chosen by default (not explicitly by user)
     # Check if prebuilt components are available
     set(PREBUILT_AVAILABLE TRUE)
     if(NOT EXISTS "${CUDF_LIB_DIR}")
@@ -170,8 +174,7 @@ if(USE_PREBUILT_CUDF)
         endif()
     endif()
     
-    # Auto-fallback to source build only if components not available
-    # This provides a smooth experience when jar isn't present
+    # Auto-fallback to source build if components not available
     if(NOT PREBUILT_AVAILABLE)
         message(WARNING 
             "\n"
@@ -185,14 +188,22 @@ if(USE_PREBUILT_CUDF)
             "     cd /path/to/spark-rapids\n"
             "     mvn clean install -DskipTests\n"
             "  2. Run: mvn clean package -Pudf-native-examples\n"
+            "\n"
+            "NOTE: If you need to reset this decision, delete:\n"
+            "      ${CMAKE_BINARY_DIR}/CMakeCache.txt\n"
             "================================================================\n")
-        # Update cache to ensure subsequent CMake runs respect this decision
+        set(SHOULD_USE_PREBUILT FALSE)
+        # Update cache for subsequent runs
         set(USE_PREBUILT_CUDF OFF CACHE BOOL "Auto-fallback to source build" FORCE)
     endif()
 endif()
 
-if(USE_PREBUILT_CUDF)
-    # At this point, PREBUILT_AVAILABLE check has passed
+# Now use the final decision consistently
+if(SHOULD_USE_PREBUILT)
+    # Set paths as cache variables for user customization
+    set(CUDF_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/native-deps" CACHE PATH "Path to directory containing libcudf.so")
+    set(CUDF_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../target/cudf-repo/cpp/include" CACHE PATH "Path to cudf headers")
+    
     message(STATUS "✓ Using FAST BUILD mode with prebuilt libcudf.so")
     
     # Find the prebuilt libcudf.so (should succeed based on earlier check)

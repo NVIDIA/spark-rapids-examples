@@ -15,28 +15,86 @@
 # limitations under the License.
 #
 
-set -e
+###############################################################################
+# Extract libcudf.so from rapids-4-spark jar
+#
+# This script extracts prebuilt cuDF libraries from the rapids-4-spark jar
+# to enable faster builds by avoiding building cuDF from source.
+#
+# Configuration values are read from pom.xml by default, but can be overridden
+# using environment variables:
+#
+# Usage:
+#   ./extract-cudf-libs.sh
+#
+# Environment Variables (optional, will use pom.xml values if not set):
+#   RAPIDS4SPARK_VERSION - rapids-4-spark version (e.g., 25.12.0 or 26.02.0-SNAPSHOT)
+#   SCALA_VERSION        - Scala binary version (e.g., 2.12, 2.13)
+#   CUDA_VERSION         - CUDA version (e.g., cuda11, cuda12)
+#   CUDF_BRANCH          - cuDF git branch for headers (e.g., main, branch-25.12)
+#
+# Example with overrides:
+#   RAPIDS4SPARK_VERSION=25.12.0 CUDA_VERSION=cuda11 ./extract-cudf-libs.sh
+###############################################################################
 
-# Script to extract libcudf.so from rapids-4-spark jar
-# This allows faster builds by avoiding building cuDF from source
+set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_DIR="$SCRIPT_DIR/target"
 NATIVE_DEPS_DIR="$TARGET_DIR/native-deps"
 CUDF_REPO_DIR="$TARGET_DIR/cudf-repo"
+POM_FILE="$SCRIPT_DIR/pom.xml"
 
-RAPIDS4SPARK_VERSION="${RAPIDS4SPARK_VERSION:-26.02.0-SNAPSHOT}"
-SCALA_VERSION="${SCALA_VERSION:-2.12}"
-CUDA_VERSION="${CUDA_VERSION:-cuda12}"
-CUDF_BRANCH="${CUDF_BRANCH:-main}"
+# Function to extract property value from pom.xml
+# Usage: extract_pom_property "property_name"
+extract_pom_property() {
+    local property_name="$1"
+    local value
+    
+    # Use xmllint if available (more reliable)
+    if command -v xmllint >/dev/null 2>&1; then
+        value=$(xmllint --xpath "string(//*[local-name()='project']/*[local-name()='properties']/*[local-name()='${property_name}'])" "$POM_FILE" 2>/dev/null)
+    else
+        # Fallback to grep/sed (less robust but widely available)
+        value=$(grep -A 1 "<${property_name}>" "$POM_FILE" | grep -v "^--$" | sed -n "s/.*<${property_name}>\(.*\)<\/${property_name}>.*/\1/p" | head -1 | xargs)
+    fi
+    
+    echo "$value"
+}
 
 echo "=================================================="
 echo "Extract cuDF Dependencies for UDF Examples"
 echo "=================================================="
-echo "RAPIDS4SPARK_VERSION: $RAPIDS4SPARK_VERSION"
-echo "SCALA_VERSION: $SCALA_VERSION"
-echo "CUDA_VERSION: $CUDA_VERSION"
-echo "CUDF_BRANCH: $CUDF_BRANCH"
+echo "Reading configuration from pom.xml..."
+
+# Read defaults from pom.xml
+POM_RAPIDS4SPARK_VERSION=$(extract_pom_property "rapids4spark.version")
+POM_SCALA_VERSION=$(extract_pom_property "scala.binary.version")
+POM_CUDA_VERSION=$(extract_pom_property "cuda.version")
+POM_CUDF_BRANCH=$(extract_pom_property "cudf.git.branch")
+
+# Use environment variables if set, otherwise use pom.xml values
+RAPIDS4SPARK_VERSION="${RAPIDS4SPARK_VERSION:-${POM_RAPIDS4SPARK_VERSION}}"
+SCALA_VERSION="${SCALA_VERSION:-${POM_SCALA_VERSION}}"
+CUDA_VERSION="${CUDA_VERSION:-${POM_CUDA_VERSION}}"
+CUDF_BRANCH="${CUDF_BRANCH:-${POM_CUDF_BRANCH}}"
+
+# Validate that we have all required values
+if [ -z "$RAPIDS4SPARK_VERSION" ] || [ -z "$SCALA_VERSION" ] || [ -z "$CUDA_VERSION" ] || [ -z "$CUDF_BRANCH" ]; then
+    echo "ERROR: Failed to read required properties from pom.xml" >&2
+    echo "Please ensure pom.xml exists and contains all required properties:" >&2
+    echo "  - rapids4spark.version" >&2
+    echo "  - scala.binary.version" >&2
+    echo "  - cuda.version" >&2
+    echo "  - cudf.git.branch" >&2
+    exit 1
+fi
+
+echo "Configuration:"
+echo "  RAPIDS4SPARK_VERSION: $RAPIDS4SPARK_VERSION"
+echo "  SCALA_VERSION: $SCALA_VERSION"
+echo "  CUDA_VERSION: $CUDA_VERSION"
+echo "  CUDF_BRANCH: $CUDF_BRANCH"
 echo "=================================================="
 
 # Create directories
@@ -127,7 +185,7 @@ if [ ! -d "$CUDF_REPO_DIR/.git" ]; then
     echo "✓ Cloned cuDF repo to: $CUDF_REPO_DIR"
 else
     echo "✓ cuDF repo already exists at: $CUDF_REPO_DIR"
-    echo "  (Delete it to re-clone: rm -rf $CUDF_REPO_DIR)"
+    echo "  (Delete it to re-clone: rm -rf \"$CUDF_REPO_DIR\")"
 fi
 
 echo ""

@@ -177,8 +177,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
+                            <!-- Try downloading with classifier first (for release versions) -->
                             <execution>
-                                <id>download-rapids-jar</id>
+                                <id>download-rapids-jar-with-classifier</id>
                                 <phase>generate-sources</phase>
                                 <goals>
                                     <goal>copy</goal>
@@ -195,7 +196,31 @@
                                             <outputDirectory>${project.build.directory}/rapids-jar</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
-                                    <!-- Don't fail if jar can't be downloaded, let extraction phase handle it -->
+                                    <!-- Don't fail if not found - SNAPSHOT versions may not have classifier -->
+                                    <skip>false</skip>
+                                    <ignoreMissingArtifact>true</ignoreMissingArtifact>
+                                </configuration>
+                            </execution>
+                            <!-- Try downloading without classifier (for SNAPSHOT versions) -->
+                            <execution>
+                                <id>download-rapids-jar-no-classifier</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.nvidia</groupId>
+                                            <artifactId>rapids-4-spark_${scala.binary.version}</artifactId>
+                                            <version>${rapids4spark.version}</version>
+                                            <!-- No classifier for SNAPSHOT versions -->
+                                            <type>jar</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.build.directory}/rapids-jar</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <!-- Don't fail if not found - one of the two attempts should succeed -->
                                     <skip>false</skip>
                                     <ignoreMissingArtifact>true</ignoreMissingArtifact>
                                 </configuration>
@@ -242,54 +267,72 @@
                                             <path location="${project.target.base}"/>
                                         </pathconvert>
 
-                                        <!-- Pattern 1: With classifier (release versions) -->
+                                        <!-- Pattern 1: Maven repo with classifier (release versions) -->
                                         <property name="rapids.jar.maven.with.classifier" 
                                                   value="${maven.repo.normalized}/com/nvidia/rapids-4-spark_${scala.binary.version}/${rapids4spark.version}/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}-${cuda.version}.jar"/>
 
-                                        <!-- Pattern 2: Without classifier (snapshot versions) -->
+                                        <!-- Pattern 2: Maven repo without classifier (SNAPSHOT versions) -->
                                         <property name="rapids.jar.maven.no.classifier" 
                                                   value="${maven.repo.normalized}/com/nvidia/rapids-4-spark_${scala.binary.version}/${rapids4spark.version}/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}.jar"/>
 
-                                        <!-- Pattern 3: Downloaded location -->
-                                        <property name="rapids.jar.downloaded.path" 
+                                        <!-- Pattern 3: Downloaded with classifier (release versions) -->
+                                        <property name="rapids.jar.downloaded.with.classifier" 
                                                   value="${project.target.normalized}/rapids-jar/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}-${cuda.version}.jar"/>
 
+                                        <!-- Pattern 4: Downloaded without classifier (SNAPSHOT versions) -->
+                                        <property name="rapids.jar.downloaded.no.classifier" 
+                                                  value="${project.target.normalized}/rapids-jar/rapids-4-spark_${scala.binary.version}-${rapids4spark.version}.jar"/>
+
                                         <echo message="Looking for rapids-4-spark jar..."/>
-                                        <echo message="  Pattern 1 (with classifier): ${rapids.jar.maven.with.classifier}"/>
-                                        <echo message="  Pattern 2 (no classifier):   ${rapids.jar.maven.no.classifier}"/>
-                                        <echo message="  Pattern 3 (downloaded):      ${rapids.jar.downloaded.path}"/>
+                                        <echo message="  Pattern 1 (Maven with classifier):     ${rapids.jar.maven.with.classifier}"/>
+                                        <echo message="  Pattern 2 (Maven no classifier):       ${rapids.jar.maven.no.classifier}"/>
+                                        <echo message="  Pattern 3 (Downloaded with classifier): ${rapids.jar.downloaded.with.classifier}"/>
+                                        <echo message="  Pattern 4 (Downloaded no classifier):  ${rapids.jar.downloaded.no.classifier}"/>
 
                                         <!-- Check all locations -->
                                         <available file="${rapids.jar.maven.with.classifier}" 
                                                    property="rapids.jar.maven.with.classifier.exists"/>
                                         <available file="${rapids.jar.maven.no.classifier}" 
                                                    property="rapids.jar.maven.no.classifier.exists"/>
-                                        <available file="${rapids.jar.downloaded.path}" 
-                                                   property="rapids.jar.downloaded.exists"/>
+                                        <available file="${rapids.jar.downloaded.with.classifier}" 
+                                                   property="rapids.jar.downloaded.with.classifier.exists"/>
+                                        <available file="${rapids.jar.downloaded.no.classifier}" 
+                                                   property="rapids.jar.downloaded.no.classifier.exists"/>
 
-                                        <!-- Set the actual path to use (try in order) -->
+                                        <!-- Set the actual path to use (try in order of preference) -->
+                                        <!-- 1. Try Maven repo with classifier (release) -->
                                         <condition property="rapids.jar.path" value="${rapids.jar.maven.with.classifier}">
                                             <isset property="rapids.jar.maven.with.classifier.exists"/>
                                         </condition>
+                                        <!-- 2. Try Maven repo without classifier (SNAPSHOT) -->
                                         <condition property="rapids.jar.path" value="${rapids.jar.maven.no.classifier}">
                                             <and>
                                                 <not><isset property="rapids.jar.path"/></not>
                                                 <isset property="rapids.jar.maven.no.classifier.exists"/>
                                             </and>
                                         </condition>
-                                        <condition property="rapids.jar.path" value="${rapids.jar.downloaded.path}">
+                                        <!-- 3. Try downloaded with classifier (release) -->
+                                        <condition property="rapids.jar.path" value="${rapids.jar.downloaded.with.classifier}">
                                             <and>
                                                 <not><isset property="rapids.jar.path"/></not>
-                                                <isset property="rapids.jar.downloaded.exists"/>
+                                                <isset property="rapids.jar.downloaded.with.classifier.exists"/>
+                                            </and>
+                                        </condition>
+                                        <!-- 4. Try downloaded without classifier (SNAPSHOT) -->
+                                        <condition property="rapids.jar.path" value="${rapids.jar.downloaded.no.classifier}">
+                                            <and>
+                                                <not><isset property="rapids.jar.path"/></not>
+                                                <isset property="rapids.jar.downloaded.no.classifier.exists"/>
                                             </and>
                                         </condition>
 
-                                        <!-- Verify we have the jar -->
+                                        <!-- Verify we have the jar from at least one location -->
                                         <condition property="rapids.jar.exists">
                                             <or>
                                                 <isset property="rapids.jar.maven.with.classifier.exists"/>
                                                 <isset property="rapids.jar.maven.no.classifier.exists"/>
-                                                <isset property="rapids.jar.downloaded.exists"/>
+                                                <isset property="rapids.jar.downloaded.with.classifier.exists"/>
+                                                <isset property="rapids.jar.downloaded.no.classifier.exists"/>
                                             </or>
                                         </condition>
 
@@ -318,11 +361,15 @@
                                             <echo message="WARNING: rapids-4-spark jar not found!" level="warning"/>
                                             <echo message="========================================================" level="warning"/>
                                             <echo message="Tried locations:" level="warning"/>
-                                            <echo message="  With classifier: ${rapids.jar.maven.with.classifier}" level="warning"/>
-                                            <echo message="  No classifier:   ${rapids.jar.maven.no.classifier}" level="warning"/>
-                                            <echo message="  Downloaded:      ${rapids.jar.downloaded.path}" level="warning"/>
+                                            <echo message="  Maven (with classifier):    ${rapids.jar.maven.with.classifier}" level="warning"/>
+                                            <echo message="  Maven (no classifier):      ${rapids.jar.maven.no.classifier}" level="warning"/>
+                                            <echo message="  Downloaded (with classifier): ${rapids.jar.downloaded.with.classifier}" level="warning"/>
+                                            <echo message="  Downloaded (no classifier):  ${rapids.jar.downloaded.no.classifier}" level="warning"/>
                                             <echo message="" level="warning"/>
-                                            <echo message="For SNAPSHOT versions (26.02.0-SNAPSHOT):" level="warning"/>
+                                            <echo message="Note: Release versions use classifier (e.g., cuda12)" level="warning"/>
+                                            <echo message="      SNAPSHOT versions typically do not use classifier" level="warning"/>
+                                            <echo message="" level="warning"/>
+                                            <echo message="For SNAPSHOT versions:" level="warning"/>
                                             <echo message="  1. Build spark-rapids locally:" level="warning"/>
                                             <echo message="     cd /path/to/spark-rapids" level="warning"/>
                                             <echo message="     mvn clean install -DskipTests" level="warning"/>
