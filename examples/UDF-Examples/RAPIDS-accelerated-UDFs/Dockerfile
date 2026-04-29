@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2025, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2026, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ ARG LINUX_VERSION=rockylinux8
 
 FROM nvidia/cuda:${CUDA_VERSION}-devel-${LINUX_VERSION}
 
-ARG TOOLSET_VERSION=14
-ENV TOOLSET_VERSION=14
+ARG TOOLSET_VERSION=13
+ENV TOOLSET_VERSION=13
 ARG PARALLEL_LEVEL=10
 ENV PARALLEL_LEVEL=10
 
