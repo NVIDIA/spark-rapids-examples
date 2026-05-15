@@ -17,6 +17,7 @@
 import argparse
 import subprocess
 import json
+import tempfile
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 
@@ -59,6 +60,10 @@ def create_emr_cluster(release_label, key_name, service_role, subnet_id, az, ins
             bootstrap_fn="cgroup-bootstrap-action-emr6.sh"
         # Replace the fields in the json
         exec_cores = g4dn_instance_map.get(worker_instance)
+        if exec_cores is None:
+            print(f"Error: Unsupported worker instance type '{worker_instance}'. "
+                  f"Supported types: {list(g4dn_instance_map.keys())}")
+            return
 
         print("Config Json" + conf_json_fn)
         with open(conf_json_fn, 'r') as file:
@@ -71,25 +76,27 @@ def create_emr_cluster(release_label, key_name, service_role, subnet_id, az, ins
         updated_data = json.loads(json_string)
 
         print(json.dumps(updated_data, indent=4))
-        with open(conf_json_fn, "w") as file:
-            file.write(json_string)
         upload_file_to_s3(bootstrap_fn, s3_bucket_name, bootstrap_fn)
 
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as config_file:
+            json.dump(updated_data, config_file)
+            config_file.flush()
 
-        command = [
-            "aws", "emr", "create-cluster",
-            "--release-label", release_label,
-            "--applications", "Name=Hadoop", "Name=Spark", "Name=Livy", "Name=JupyterEnterpriseGateway",
-            "--service-role", service_role,
-            "--ec2-attributes", f"AvailabilityZone={az},InstanceProfile={instance_profile}",
-            "--instance-groups",
-            "InstanceGroupType=MASTER,InstanceCount=1,InstanceType=m4.4xlarge",
-            f"InstanceGroupType=CORE,InstanceCount=1,InstanceType={worker_instance}",
-            "--configurations", f"file://{conf_json_fn}",
-            "--bootstrap-actions", f"Name='Setup cgroups bootstrap',Path=s3://{s3_bucket_name}/{bootstrap_fn}"
-        ]
+            command = [
+                "aws", "emr", "create-cluster",
+                "--release-label", release_label,
+                "--applications", "Name=Hadoop", "Name=Spark", "Name=Livy", "Name=JupyterEnterpriseGateway",
+                "--service-role", service_role,
+                "--ec2-attributes",
+                f"KeyName={key_name},SubnetId={subnet_id},AvailabilityZone={az},InstanceProfile={instance_profile}",
+                "--instance-groups",
+                "InstanceGroupType=MASTER,InstanceCount=1,InstanceType=m4.4xlarge",
+                f"InstanceGroupType=CORE,InstanceCount=1,InstanceType={worker_instance}",
+                "--configurations", f"file://{config_file.name}",
+                "--bootstrap-actions", f"Name='Setup cgroups bootstrap',Path=s3://{s3_bucket_name}/{bootstrap_fn}"
+            ]
 
-        result = subprocess.run(command, check=True, text=True, capture_output=True)
+            result = subprocess.run(command, check=True, text=True, capture_output=True)
 
         print("Cluster created successfully!")
         print(result.stdout)
