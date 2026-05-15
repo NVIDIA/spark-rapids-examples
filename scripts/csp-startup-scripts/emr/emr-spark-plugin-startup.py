@@ -15,8 +15,9 @@
 #
 
 import argparse
-import subprocess
 import json
+import os
+import subprocess
 import tempfile
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
@@ -50,6 +51,8 @@ g4dn_instance_map = {
     "g4dn.16xlarge": 64
 }
 
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def create_emr_cluster(release_label, key_name, service_role, subnet_id, az, instance_profile, worker_instance, s3_bucket_name):
     try:
         conf_json_fn = None
@@ -67,8 +70,10 @@ def create_emr_cluster(release_label, key_name, service_role, subnet_id, az, ins
                   f"Supported types: {list(g4dn_instance_map.keys())}")
             return
 
+        conf_json_path = os.path.join(_SCRIPT_DIR, conf_json_fn)
+        bootstrap_path = os.path.join(_SCRIPT_DIR, bootstrap_fn)
         print("Config Json" + conf_json_fn)
-        with open(conf_json_fn, 'r') as file:
+        with open(conf_json_path, 'r') as file:
             data = json.load(file)
         json_string = json.dumps(data)
 
@@ -78,7 +83,7 @@ def create_emr_cluster(release_label, key_name, service_role, subnet_id, az, ins
         updated_data = json.loads(json_string)
 
         print(json.dumps(updated_data, indent=4))
-        if not upload_file_to_s3(bootstrap_fn, s3_bucket_name, bootstrap_fn):
+        if not upload_file_to_s3(bootstrap_path, s3_bucket_name, bootstrap_fn):
             return
 
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as config_file:
