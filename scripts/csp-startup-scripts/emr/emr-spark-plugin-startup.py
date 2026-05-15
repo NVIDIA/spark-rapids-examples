@@ -31,6 +31,7 @@ def upload_file_to_s3(file_name, bucket_name, object_name=None):
     try:
         s3.upload_file(file_name, bucket_name, object_name)
         print(f"File '{file_name}' uploaded successfully to bucket '{bucket_name}' as '{object_name}'")
+        return True
     except FileNotFoundError:
         print(f"Error: The file {file_name} was not found.")
     except NoCredentialsError:
@@ -39,6 +40,7 @@ def upload_file_to_s3(file_name, bucket_name, object_name=None):
         print("Error: Incomplete AWS credentials.")
     except Exception as e:
         print(f"An error occurred: {e}")
+    return False
 
 g4dn_instance_map = {
     "g4dn.xlarge": 4,
@@ -76,7 +78,8 @@ def create_emr_cluster(release_label, key_name, service_role, subnet_id, az, ins
         updated_data = json.loads(json_string)
 
         print(json.dumps(updated_data, indent=4))
-        upload_file_to_s3(bootstrap_fn, s3_bucket_name, bootstrap_fn)
+        if not upload_file_to_s3(bootstrap_fn, s3_bucket_name, bootstrap_fn):
+            return
 
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as config_file:
             json.dump(updated_data, config_file)
