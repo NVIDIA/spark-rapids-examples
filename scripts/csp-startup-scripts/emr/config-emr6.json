@@ -49,7 +49,7 @@
       "spark.rapids.sql.concurrentGpuTasks":"2",
       "spark.executor.resource.gpu.amount":"1",
       "spark.executor.cores":"${executor_cores}",
-      "spark.task.cpus ":"1",
+      "spark.task.cpus":"1",
       "spark.task.resource.gpu.amount":"${task_gpu_amount}",
       "spark.rapids.memory.pinnedPool.size":"2G",
       "spark.executor.memoryOverhead":"2G",
