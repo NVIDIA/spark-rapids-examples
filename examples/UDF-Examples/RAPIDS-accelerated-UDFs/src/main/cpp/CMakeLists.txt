@@ -15,7 +15,7 @@
 #=============================================================================
 
 # Keep the same with https://github.com/rapidsai/rapids-cmake/blob/main/RAPIDS.cmake
-cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
+cmake_minimum_required(VERSION 4.0 FATAL_ERROR)
 
 # set to the rapids-cmake-branch
 set(rapids-cmake-branch "main")
