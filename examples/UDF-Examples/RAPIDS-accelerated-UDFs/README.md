@@ -149,6 +149,24 @@ The build will automatically:
 - Clone cuDF repository for headers (shallow clone)
 - Build only your UDF native code against the prebuilt library
 
+**Native ABI compatibility note:**
+
+Native UDFs compile C++ code against cuDF, RMM, and CCCL headers, and the
+resulting shared library is loaded with the `libcudf.so` packaged in the
+rapids-4-spark jar. Those native dependencies do not guarantee ABI
+compatibility across RAPIDS releases or across different `-SNAPSHOT` builds.
+If the headers used at compile time do not match the `libcudf.so` in the jar,
+the UDF may fail with undefined symbols or crash when Spark loads the native
+library.
+
+When changing the rapids-4-spark jar version, rebuild the native UDFs with
+matching cuDF/RMM/CCCL headers and libraries. For snapshot or locally built
+jars, make sure `cudf.git.branch`, the rapids-cmake branch in
+`src/main/cpp/CMakeLists.txt`, and the RMM/CCCL versions resolved by
+rapids-cmake correspond to the same source state used to build the jar. After
+changing these values, remove `target/native-deps` and `target/cudf-repo`
+before rebuilding so stale headers or libraries are not reused.
+
 **Or manually extract first:**
 ```bash
 ./extract-cudf-libs.sh
