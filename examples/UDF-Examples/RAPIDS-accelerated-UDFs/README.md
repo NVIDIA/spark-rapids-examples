@@ -146,8 +146,28 @@ mvn clean package -Pudf-native-examples
 
 The build will automatically:
 - Extract `libcudf.so` from the rapids-4-spark jar
-- Clone cuDF repository for headers (shallow clone)
+- Read the embedded `spark-rapids-jni` and `cudf-java` version metadata from the jar
+- Download the matching `spark-rapids-jni` `cudf-pins` files
+- Clone the cuDF repository at the revision recorded in the jar
+- Configure rapids-cmake with the matching `rapids-cmake` sha and package override file
 - Build only your UDF native code against the prebuilt library
+
+**Native ABI compatibility note:**
+
+Native UDFs compile C++ code against cuDF, RMM, and CCCL headers, and the
+resulting shared library is loaded with the `libcudf.so` packaged in the
+rapids-4-spark jar. Those native dependencies do not guarantee ABI
+compatibility across RAPIDS releases or across different `-SNAPSHOT` builds.
+If the headers used at compile time do not match the `libcudf.so` in the jar,
+the UDF may fail with undefined symbols or crash when Spark loads the native
+library.
+
+When changing the rapids-4-spark jar version, rebuild the native UDFs with
+matching cuDF/RMM/CCCL headers and libraries. In prebuilt mode, the Maven build
+derives those native dependency pins from the `spark-rapids-jni` revision
+recorded in the jar. After changing jar versions, remove `target/native-deps`,
+`target/cudf-repo`, `target/cudf-pins`, and `target/cpp-build` before
+rebuilding so stale headers, pins, or libraries are not reused.
 
 **Or manually extract first:**
 ```bash
@@ -199,7 +219,7 @@ You can customize the build by passing Maven system properties via `-D<property>
 | `BUILD_UDF_BENCHMARKS` | `OFF` | Build benchmark executables |
 | `PER_THREAD_DEFAULT_STREAM` | `ON` | Enable per-thread default CUDA streams |
 | `CUDF_ENABLE_ARROW_S3` | `OFF` | Enable Arrow S3 support in cuDF |
-| `cudf.git.branch` | `main` | cuDF git branch to clone for headers |
+| `cudf.git.branch` | `main` | cuDF git branch to clone for source builds or fallback paths |
 | `skipCudfExtraction` | `false` | Skip extracting cuDF dependencies from jar |
 
 **Example usage:**
